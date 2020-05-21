@@ -81,14 +81,13 @@ case $# in
 	sudo mv -v ${PIHOLE_DIR}/${GRAVITY_FI} ${PIHOLE_DIR}/${GRAVITY_FI}.backup
 	echo -e "${CYAN}Replacing the ${GRAVITY_FI} configuration on this server${NC}"
 	sudo cp -v ~/${LOCAL_FOLDR}/${GRAVITY_FI} ${PIHOLE_DIR}
-	echo -e "${GRAVITY_FI} moved to ${PIHOLE_DIR}"
 	sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI}
 	sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}
-	echo -e "${GRAVITY_FI} ownership and file permissions set"
+	echo -e "${GRAVITY_FI} ownership and file permissions reset"
 	echo -e "${CYAN}Reloading FTLDNS with configuration from new ${GRAVITY_FI}${NC}"
 	pihole restartdns reloadlists
 	pihole restartdns
-	echo -e "${CYAN}Retaining additional copy of remote ${GRAVITY_FI}{NC}"
+	echo -e "${CYAN}Retaining additional copy of remote ${GRAVITY_FI}${NC}"
 	mv -v ~/${LOCAL_FOLDR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${GRAVITY_FI}.last
 	date >> ~/${LOCAL_FOLDR}/${SYNCING_LOG}
 	echo -e "${GREEN}gravity.db pull completed${NC}"
