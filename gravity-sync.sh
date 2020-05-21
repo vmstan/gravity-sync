@@ -12,8 +12,9 @@ VERSION='1.1.1'
 # You must change the REMOTE_HOST and REMOTE_USER variables below to match your configuration
 
 # STANDARD SETTINGS
-REMOTE_HOST='192.168.7.5'
-REMOTE_USER='ubuntu'
+source gravity-sync.conf
+# REMOTE_HOST='192.168.7.5'
+# REMOTE_USER='ubuntu'
 
 # PUSH SETTINGS
 
