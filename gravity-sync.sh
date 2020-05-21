@@ -1,11 +1,13 @@
 #!/bin/bash
 
 # Gravity Sync by vmstan
+VERSION='1.1.1'
 
 # Must execute from a location in the home folder of the user who own's it (ex: /home/pi/gravity-sync)
 # Configure certificate based SSH authentication between the Pihole HA nodes - it does not use passwords
-# Tested against Pihole 5.0 GA on Raspbian Jesse and Ubuntu 20.04, but it should work on most configs
+# Tested against Pihole 5.0 GA on Raspbian Buster and Ubuntu 20.04, but it should work on most configs
 # More installation instructions available at https://vmstan.com/gravity-sync
+# For the latest version please visit https://github.com/vmstan/gravity-sync under Releases
 
 # You must change the REMOTE_HOST and REMOTE_USER variables below to match your configuration
 
@@ -30,12 +32,18 @@ GREEN='\033[92m'
 CYAN='\033[96m'
 NC='\033[0m'
 
-VERSION='1.1'
-
 ##############################################
 
 # print title
 # echo -e "${GREEN}Gravity Sync ${VERSION}${NC}"
+
+if [ -d ~/${LOCAL_FOLDR} ]
+then
+    
+else
+	echo -e "${RED}Failure${NC}: Required directory ~/{LOCAL_FOLDR} is missing"
+	exit
+fi
 
 case $# in
    0)
