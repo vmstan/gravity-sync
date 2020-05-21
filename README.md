@@ -73,7 +73,7 @@ I've automated by synchronization using Crontab. If you'd like to keep this a ma
 
 ```
 crontab -e
-*/30 * * * * sh /home/USER/gravity-sync/gravity-sync.sh pull >/dev/null 2>&1
+*/30 * * * * /home/USER/gravity-sync/gravity-sync.sh pull >/dev/null 2>&1
 ```
 
 Make another small adjustment to your primary settings. Now just wait until the annointed hour, and see if your changes have been synchronized. If so, profit!
