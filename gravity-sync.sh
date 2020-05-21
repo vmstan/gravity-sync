@@ -37,9 +37,12 @@ NC='\033[0m'
 # print title
 # echo -e "${GREEN}Gravity Sync ${VERSION}${NC}"
 
+echo -e "${CYAN}Validating configuration${NC}"
+
+# check to see if logging/backup directory is available
 if [ -d ~/${LOCAL_FOLDR} ]
 then
-    
+    echo -e "${GREEN}Success${NC}: Required directory ~/{LOCAL_FOLDR} is present"
 else
 	echo -e "${RED}Failure${NC}: Required directory ~/{LOCAL_FOLDR} is missing"
 	exit
