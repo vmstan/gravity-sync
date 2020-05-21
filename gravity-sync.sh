@@ -19,8 +19,8 @@ REMOTE_USER='ubuntu'
 
 
 # CUSTOMIZATION
-LOCAL_FOLDR='gravity-sync' # see above
-SYNCING_LOG='gravity-sync.log' # see above
+LOCAL_FOLDR='gravity-sync' # must exist in running user home folder
+SYNCING_LOG='gravity-sync.log' # will be created in above folder
 
 # PIHOLE DEFAULTS
 PIHOLE_DIR='/etc/pihole'  # default install directory
@@ -45,6 +45,15 @@ then
     echo -e "${GREEN}Success${NC}: Required directory ~/{LOCAL_FOLDR} is present"
 else
 	echo -e "${RED}Failure${NC}: Required directory ~/{LOCAL_FOLDR} is missing"
+	exit
+fi
+
+# check to see if current pihole directory is correct
+if [ -d ${PIHOLE_DIR}/${GRAVITY_FI} ]
+then
+    echo -e "${GREEN}Success${NC}: Required file ${PIHOLE_DIR}/${GRAVITY_FI} is present"
+else
+	echo -e "${RED}Failure${NC}: Required file ${PIHOLE_DIR}/${GRAVITY_FI} is missing"
 	exit
 fi
 
