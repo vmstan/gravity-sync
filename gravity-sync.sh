@@ -51,11 +51,11 @@ else
 fi
 
 # check to see if current pihole directory is correct
-if [ -f ${PIHOLE_DIR}/${GRAVITY_FI} ]
+if [ -d ${PIHOLE_DIR} ]
 then
-    echo -e "${GREEN}Success${NC}: Required file ${PIHOLE_DIR}/${GRAVITY_FI} is present"
+    echo -e "${GREEN}Success${NC}: Required folder ${PIHOLE_DIR} is present"
 else
-	echo -e "${RED}Failure${NC}: Required file ${PIHOLE_DIR}/${GRAVITY_FI} is missing"
+	echo -e "${RED}Failure${NC}: Required folder ${PIHOLE_DIR} is missing"
 	exit
 fi
 
