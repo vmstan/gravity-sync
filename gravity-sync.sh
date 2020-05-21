@@ -75,17 +75,20 @@ case $# in
 	pull)
 
 	echo -e "${GREEN}Success${NC}: Pull requested"
-	echo -e "${CYAN}Copying remote ${GRAVITY_FI} from ${REMOTE_HOST}${NC}"
+	echo -e "${CYAN}Copying ${GRAVITY_FI} from remote server ${REMOTE_HOST}${NC}"
 	rsync -v --progress -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${GRAVITY_FI}
-	echo -e "${CYAN}Replacing gravity.db on HA secondary${NC}"
+	echo -e "${CYAN}Backing up the running ${GRAVITY_FI} on this server${NC}"
 	sudo mv -v ${PIHOLE_DIR}/${GRAVITY_FI} ${PIHOLE_DIR}/${GRAVITY_FI}.backup
+	echo -e "${CYAN}Replacing the ${GRAVITY_FI} configuration on this server${NC}"
 	sudo cp -v ~/${LOCAL_FOLDR}/${GRAVITY_FI} ${PIHOLE_DIR}
+	echo -e "${GRAVITY_FI} moved to ${PIHOLE_DIR}"
 	sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI}
 	sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}
-	echo -e "${CYAN}Reloading configuration of HA secondary FTLDNS from new gravity.db${NC}"
+	echo -e "${GRAVITY_FI} ownership and file permissions set"
+	echo -e "${CYAN}Reloading FTLDNS with configuration from new ${GRAVITY_FI}${NC}"
 	pihole restartdns reloadlists
 	pihole restartdns
-	echo -e "${CYAN}Cleaning up things${NC}"
+	echo -e "${CYAN}Retaining additional copy of remote ${GRAVITY_FI}{NC}"
 	mv -v ~/${LOCAL_FOLDR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${GRAVITY_FI}.last
 	date >> ~/${LOCAL_FOLDR}/${SYNCING_LOG}
 	echo -e "${GREEN}gravity.db pull completed${NC}"
@@ -95,6 +98,7 @@ case $# in
 		
 	echo -e "${GREEN}Success${NC}: Push requested"
 	echo -e "${RED}WARNING - DATA LOSS POSSIBLE${NC}"
+	echo -e "This will send the running ${GRAVITY_FI} from this server to your primary Pihole"
 	echo -e "Are you sure you want to overwrite the primary node configuration on ${REMOTE_HOST}?"
 	select yn in "Yes" "No"; do
 	    case $yn in
