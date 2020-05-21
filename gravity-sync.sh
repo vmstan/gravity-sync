@@ -74,6 +74,7 @@ case $# in
       case $1 in
 	pull)
 
+	echo -e "${GREEN}Success${NC}: Pull requested"
 	echo -e "${CYAN}Copying remote ${GRAVITY_FI} from ${REMOTE_HOST}${NC}"
 	rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${GRAVITY_FI}
 	echo -e "${CYAN}Replacing gravity.db on HA secondary${NC}"
@@ -91,6 +92,8 @@ case $# in
  	;;
 
 	push)
+		
+	echo -e "${GREEN}Success${NC}: Push requested"
 	echo -e "${RED}WARNING - DATA LOSS POSSIBLE${NC}"
 	echo -e "Are you sure you want to overwrite the primary node configuration on ${REMOTE_HOST}?"
 	select yn in "Yes" "No"; do
