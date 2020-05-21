@@ -37,7 +37,7 @@ NC='\033[0m'
 # print title
 # echo -e "${GREEN}Gravity Sync ${VERSION}${NC}"
 
-echo -e "${CYAN}Validating configuration${NC}"
+echo -e "${CYAN}Validating sync folder configuration${NC}"
 
 # check to see if logging/backup directory is available
 if [ -d ~/${LOCAL_FOLDR} ]
@@ -59,10 +59,10 @@ fi
 
 case $# in
    0)
-	echo -e "You must define the direction you want to replicate ${GRAVITY_FI}"
+	echo -e "${RED}Failure${NC}: ${GRAVITY_FI} replication direction required"
 	echo "Usage: $0 {pull|push}"
-	echo -e "${RED}Pull${NC} will copy the primary blocklists ($REMOTE_HOST) to this server"
-	echo -e "${RED}Push${NC} will force any changes made on this server to the primary"
+	echo -e "> ${RED}Pull${NC} will copy the ${GRAVITY_FI} configuration on $REMOTE_HOST to this server"
+	echo -e "> ${RED}Push${NC} will force any changes made on this server to the primary"
       	exit 1
 	;;
    1)
