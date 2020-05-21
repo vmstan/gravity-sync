@@ -49,7 +49,7 @@ else
 fi
 
 # check to see if current pihole directory is correct
-if [ -d ${PIHOLE_DIR}/${GRAVITY_FI} ]
+if [ -f ${PIHOLE_DIR}/${GRAVITY_FI} ]
 then
     echo -e "${GREEN}Success${NC}: Required file ${PIHOLE_DIR}/${GRAVITY_FI} is present"
 else
