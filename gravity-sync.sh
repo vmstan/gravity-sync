@@ -53,9 +53,9 @@ fi
 # check to see if current pihole directory is correct
 if [ -d ${PIHOLE_DIR} ]
 then
-    echo -e "${GREEN}Success${NC}: Required folder ${PIHOLE_DIR} is present"
+    echo -e "${GREEN}Success${NC}: Required directory ${PIHOLE_DIR} is present"
 else
-	echo -e "${RED}Failure${NC}: Required folder ${PIHOLE_DIR} is missing"
+	echo -e "${RED}Failure${NC}: Required directory ${PIHOLE_DIR} is missing"
 	exit
 fi
 
@@ -96,8 +96,9 @@ case $# in
 	push)
 		
 	echo -e "${GREEN}Success${NC}: Push requested"
-	echo -e "${RED}WARNING - DATA LOSS POSSIBLE${NC}"
+	echo -e "${PURPLE}WARNING: DATA LOSS IS POSSIBLE${NC}"
 	echo -e "This will send the running ${GRAVITY_FI} from this server to your primary Pihole"
+	echo -e "No backup copies are made on the primary Pihole before or after executing this command!"
 	echo -e "Are you sure you want to overwrite the primary node configuration on ${REMOTE_HOST}?"
 	select yn in "Yes" "No"; do
 	    case $yn in
