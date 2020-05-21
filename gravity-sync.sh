@@ -59,12 +59,15 @@ else
 	exit
 fi
 
+echo -e "${CYAN}Evaluating command for sync direction${NC}"
+
 case $# in
    0)
 	echo -e "${RED}Failure${NC}: ${GRAVITY_FI} replication direction required"
 	echo "Usage: $0 {pull|push}"
 	echo -e "> ${YELLOW}Pull${NC} will copy the ${GRAVITY_FI} configuration on $REMOTE_HOST to this server"
 	echo -e "> ${YELLOW}Push${NC} will force any changes made on this server to the primary"
+	echo -e "No changes have been made to the system"
       	exit 1
 	;;
    1)
