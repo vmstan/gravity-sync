@@ -30,8 +30,8 @@ GRAVITY_FI='gravity.db' # this should not change
 RED='\033[0;91m'
 GREEN='\033[0;92m'
 CYAN='\033[0;96m'
-YELLOW='033[0;93m'
-PURPLE='033[0;95m'
+YELLOW='\033[0;93m'
+PURPLE='\033[0;95m'
 NC='\033[0m'
 
 ##############################################
