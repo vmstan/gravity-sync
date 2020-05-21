@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Gravity Sync by vmstan
-VERSION='1.1.2'
+VERSION='1.1.3'
 
 # Must execute from a location in the home folder of the user who own's it (ex: /home/pi/gravity-sync)
 # Configure certificate based SSH authentication between the Pihole HA nodes - it does not use passwords

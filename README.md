@@ -41,8 +41,8 @@ Example:
 ```
 cd ~
 wget https://github.com/vmstan/gravity-sync/archive/v1.1.2.zip
-unzip v1.1.2.zip
-mv ~/gravity-sync-1.1.2 ~/gravity-sync
+unzip v1.1.3.zip
+mv ~/gravity-sync-1.1.3 ~/gravity-sync
 cd gravity-sync
 ```
 
@@ -52,22 +52,23 @@ Please note the script **must** be run from a folder in your user home directory
 
 ## Configuration
 
-After you clone the base configuration, you will need to create a configuration file called `gravity-sync.conf` in the same folder as the script.
+After you clone the base configuration, you will need to create a configuration file called `gravity-sync.conf` in the same folder as the script. There will be a file called gravity-sync.conf.example that you can use as the basis for your file. Make a copy to remove the .example
 
 ```
+cp gravity-sync.conf.example gravity-sync.conf
 vim gravity-sync.conf
 ```
 
-If you don't like VIM, use NANO or your text editor of choice.
+If you don't have VIM use VI, if you don't like those use NANO, or if you don't like any of those subsitute for your text editor of choice.
 
-Paste the following into your file, making sure to change the IP (or DNS name) and user account to authenticate to the master Pi.
+Make sure you've set the REMOTE_HOST and REMOTE_USER variables with IP (or DNS name) and user account to authenticate to the master Pi.
 
 ```
-REMOTE_HOST='192.168.7.5'
+REMOTE_HOST='192.168.1.10'
 REMOTE_USER='pi'
 ```
 
-Now test the script. I suggest making a subtle change to a whitelist/blacklist on your primary Pihole, such as a description field, and then seeing if the change propagates to your secondary.
+Save. Now test the script. I suggest making a subtle change to a whitelist/blacklist on your primary Pihole, such as a description field, and then seeing if the change propagates to your secondary.
 
 ```
 ./gravity-sync.sh pull
