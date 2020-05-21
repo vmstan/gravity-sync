@@ -27,9 +27,11 @@ PIHOLE_DIR='/etc/pihole'  # default install directory
 GRAVITY_FI='gravity.db' # this should not change
 
 # SCRIPT COLORS
-RED='\033[91m'
-GREEN='\033[92m'
-CYAN='\033[96m'
+RED='\033[0;91m'
+GREEN='\033[0;92m'
+CYAN='\033[0;96m'
+YELLOW='033[0;93m'
+PURPLE='033[0;95m'
 NC='\033[0m'
 
 ##############################################
