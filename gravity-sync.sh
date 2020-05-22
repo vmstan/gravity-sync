@@ -41,13 +41,13 @@ NC='\033[0m'
 
 # Import Settings
 function import_gs {
-	echo -e "[ ${CYAN}STATUS${NC} ] Importing ${CONFIG_FILE} Settings$"
+	echo -e "[ ${CYAN}STATUS${NC} ] Importing ${CONFIG_FILE} Settings"
 	if [ -f ~/${LOCAL_FOLDR}/${CONFIG_FILE} ]
 	then
 	    source ${CONFIG_FILE}
 		echo -e "[ ${GREEN}SUCCESS${NC} ] Using ${REMOTE_USER}@${REMOTE_HOST}"
 	else
-		echo -e "[ ${RED}FAILURE${NC} ] Required ${CONFIG_FILE} Missing!"
+		echo -e "[ ${RED}FAILURE${NC} ] Required ${CONFIG_FILE} Missing"
 		echo -e "Please review installation documentation for more information"
 		exit_nochange
 	fi
@@ -176,7 +176,7 @@ function list_gs_arguments {
 # Exit Codes
 ## No Changes Made
 function exit_nochange {
-	echo -e "[ ${CYAN}STATUS${NC} ] Exiting Without Making Changes$"
+	echo -e "[ ${CYAN}STATUS${NC} ] Exiting Without Making Changes"
 	exit
 }
 
@@ -240,7 +240,7 @@ case $# in
 			;;
 
 			*)
-				echo -e "[ ${RED}FAILURE${NC} ] ${RED}'$1'${NC} is Invalid Arguments"
+				echo -e "[ ${RED}FAILURE${NC} ] ${RED}'$1'${NC} is Invalid Argument"
         			list_gs_arguments
 			;;
 		esac
