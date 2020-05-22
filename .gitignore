@@ -1,3 +1,5 @@
 gravity-sync.log
 gravity.db.last
 gravity-sync.conf
+!backup
+backup/*
