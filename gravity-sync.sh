@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Gravity Sync by vmstan
-VERSION='1.1.3'
+VERSION='1.1.4'
 
 # Must execute from a location in the home folder of the user who own's it (ex: /home/pi/gravity-sync)
 # Configure certificate based SSH authentication between the Pihole HA nodes - it does not use passwords
@@ -10,9 +10,6 @@ VERSION='1.1.3'
 # For the latest version please visit https://github.com/vmstan/gravity-sync under Releases
 
 # You must define REMOTE_HOST and REMOTE_USER in a file called 'gravity-sync.conf' -- see above documentation 
-
-# IMPORT SETTINGS
-source gravity-sync.conf
 
 # PUSH SETTINGS
 
@@ -31,6 +28,20 @@ CYAN='\033[0;96m'
 YELLOW='\033[0;93m'
 PURPLE='\033[0;95m'
 NC='\033[0m'
+
+##############################################
+
+# IMPORT SETTINGS
+if [ -f ~/${LOCAL_FOLDR}/gravity-sync.conf ]
+then
+    echo -e "${GREEN}Success${NC}: Importing gravity-sync.conf settings"
+	source gravity-sync.conf
+	echo -e "Configured for ${REMOTE_USER}@${REMOTE_HOST}"
+else
+	echo -e "${RED}Failure${NC}: Required file gravity-sync.conf is missing!"
+	echo -e "Please review installation documentation for more information"
+	exit
+fi
 
 ##############################################
 
