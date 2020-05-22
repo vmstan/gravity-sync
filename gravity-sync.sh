@@ -188,7 +188,7 @@ function exit_withchange {
 
 # SCRIPT EXECUTION ###########################
 
-echo -e "[ ${CYAN}STATUS${NC} ] Evaluating Script Arguments$"
+echo -e "[ ${CYAN}STATUS${NC} ] Evaluating Script Arguments"
 
 case $# in
 	
