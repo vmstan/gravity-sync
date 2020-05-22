@@ -41,10 +41,10 @@ NC='\033[0m'
 
 # Import Settings
 function import_gs {
-	echo -e "${CYAN}Importing ${SYNCING_LOG} Settings${NC}"
-	if [ -f ~/${LOCAL_FOLDR}/${SYNCING_LOG} ]
+	echo -e "${CYAN}Importing ${CONFIG_FILE} Settings${NC}"
+	if [ -f ~/${LOCAL_FOLDR}/${CONFIG_FILE} ]
 	then
-	    source ${SYNCING_LOG}
+	    source ${CONFIG_FILE}
 		echo -e "${GREEN}Success${NC}: Configured for ${REMOTE_USER}@${REMOTE_HOST}"
 	else
 		echo -e "${RED}Failure${NC}: Required file ${SYNCING_LOG} is missing!"
