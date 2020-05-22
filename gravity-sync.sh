@@ -41,15 +41,15 @@ NC='\033[0m'
 
 # Import Settings
 function import_gs {
-	echo -e "${CYAN}Importing ${CONFIG_FILE} Settings${NC}"
+	echo -e "[ ${CYAN}STATUS${NC} ] Importing ${CONFIG_FILE} Settings$"
 	if [ -f ~/${LOCAL_FOLDR}/${CONFIG_FILE} ]
 	then
 	    source ${CONFIG_FILE}
-		echo -e "${GREEN}Success${NC}: Configured for ${REMOTE_USER}@${REMOTE_HOST}"
+		echo -e "[ ${GREEN}SUCCESS${NC} ] Using ${REMOTE_USER}@${REMOTE_HOST}"
 	else
-		echo -e "${RED}Failure${NC}: Required file ${SYNCING_LOG} is missing!"
+		echo -e "[ ${RED}FAILURE${NC} ] Required ${CONFIG_FILE} Missing!"
 		echo -e "Please review installation documentation for more information"
-		exit
+		exit_nochange
 	fi
 }
 
@@ -57,7 +57,7 @@ function import_gs {
 function update_gs {
 	TASKTYPE='UPDATE'
 	logs_export 	# dumps log prior to execution because script stops after successful pull
-	echo -e "${YELLOW}This update will fail if Gravity Sync was not installed via GitHub${NC}"
+	echo -e "[ ${PURPLE}WARNING${NC} ] Requires GitHub Installation"
 		git reset --hard
 		git pull
 	exit
@@ -66,52 +66,49 @@ function update_gs {
 # Pull Function
 function pull_gs {
 	TASKTYPE='PULL'
-	echo -e "${CYAN}Copying ${GRAVITY_FI} from remote server ${REMOTE_HOST}${NC}"
+	echo -e "[ ${CYAN}STATUS${NC} ] Copying ${GRAVITY_FI} from ${REMOTE_HOST}"
 		rsync -v --progress -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${GRAVITY_FI}
-	echo -e "${CYAN}Backing up the running ${GRAVITY_FI} on this server${NC}"
+	echo -e "[ ${CYAN}STATUS${NC} ] Backup Current ${GRAVITY_FI} on $HOSTNAME"
 		sudo mv -v ${PIHOLE_DIR}/${GRAVITY_FI} ${PIHOLE_DIR}/${GRAVITY_FI}.backup
-	echo -e "${CYAN}Replacing the ${GRAVITY_FI} configuration on this server${NC}"
+	echo -e "[ ${CYAN}STATUS${NC} ] Replacing ${GRAVITY_FI} on $HOSTNAME"
 		sudo cp -v ~/${LOCAL_FOLDR}/${GRAVITY_FI} ${PIHOLE_DIR}
 		sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI}
 		sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}
 	echo -e "${GRAVITY_FI} ownership and file permissions reset"
-	echo -e "${CYAN}Reloading FTLDNS with configuration from new ${GRAVITY_FI}${NC}"
+	echo -e "[ ${CYAN}STATUS${NC} ] Reloading FTLDNS Configuration"
 		pihole restartdns reloadlists
 		pihole restartdns
-	echo -e "${CYAN}Retaining additional copy of remote ${GRAVITY_FI}${NC}"
+	echo -e "[ ${CYAN}STATUS${NC} ] Archiving Latest ${GRAVITY_FI}"
 		mv -v ~/${LOCAL_FOLDR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${GRAVITY_FI}.last
-	echo -e "${GREEN}gravity.db pull completed${NC}"
-	logs_export
-	exit
+		logs_export
+	exit_withchange
 }
 
 # Push Function
 function push_gs {
 	TASKTYPE='PUSH'
-	echo -e "${YELLOW}WARNING: DATA LOSS IS POSSIBLE${NC}"
+	echo -e "[ ${PURPLE}WARNING${NC} ] DATA LOSS IS POSSIBLE"
 	echo -e "This will send the running ${GRAVITY_FI} from this server to your primary Pihole"
 	echo -e "No backup copies are made on the primary Pihole before or after executing this command!"
 	echo -e "Are you sure you want to overwrite the primary node configuration on ${REMOTE_HOST}?"
 	select yn in "Yes" "No"; do
 		case $yn in
 		Yes )
-			echo "Replacing gravity.db on primary"
-			echo -e "${CYAN}Copying local ${GRAVITY_FI} to ${REMOTE_HOST}${NC}"
+			# echo "Replacing gravity.db on primary"
+			echo -e "[ ${CYAN}STATUS${NC} ] Copying ${GRAVITY_FI} to ${REMOTE_HOST}"
 				rsync --rsync-path="sudo rsync" -v --progress -e 'ssh -p 22' ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}
-			echo -e "${CYAN}Applying permissions to remote gravity.db${NC}"
+			echo -e "[ ${CYAN}STATUS${NC} ] Applying Rermissions to Remote ${GRAVITY_FI}"
 				ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI}"
 				ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}"
-			echo -e "${CYAN}Reloading configuration on remote FTLDNS${NC}"
+			echo -e "[ ${CYAN}STATUS${NC} ] Reloading FTLDNS Configuration"
 				ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns reloadlists'
 				ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns'
-			echo -e "${GREEN}gravity.db push completed${NC}"
 				logs_export
-			exit
+			exit_withchange
 		;;
 		
 		No )
-			echo "No changes have been made to the system"
-			exit
+			exit_nochange
 		;;
 		esac
 	done
@@ -126,11 +123,12 @@ function logs_gs {
 		tail -n 10 ${SYNCING_LOG} | grep UPDATE
 	echo -e "Recent ${PURPLE}PUSH${NC} attempts"
 			tail -n 10 ${SYNCING_LOG} | grep PUSH
+	exit_nochange
 }
 
 ## Log Out
 function logs_export {
-	echo -e "Logging timestamps to ${SYNCING_LOG}"
+	echo -e "[ ${CYAN}STATUS${NC} ] Logging Timestamps to ${SYNCING_LOG}"
 	# date >> ~/${LOCAL_FOLDR}/${SYNCING_LOG}
 	echo -e $(date) "[${TASKTYPE}]" >> ~/${LOCAL_FOLDR}/${SYNCING_LOG}
 }
@@ -140,10 +138,10 @@ function logs_export {
 function validate_gs_folders {
 	if [ -d ~/${LOCAL_FOLDR} ]
 	then
-	    echo -e "${GREEN}Success${NC}: Required directory ~/${LOCAL_FOLDR} is present"
+	    echo -e "[ ${GREEN}SUCCESS${NC} ] Required ~/${LOCAL_FOLDR} Located"
 	else
-		echo -e "${RED}Failure${NC}: Required directory ~/${LOCAL_FOLDR} is missing"
-		exit
+		echo -e "[ ${RED}FAILURE${NC} ] Required ~/${LOCAL_FOLDR} Missing"
+		exit_nochange
 	fi
 }
 
@@ -151,10 +149,10 @@ function validate_gs_folders {
 function validate_ph_folders {
 	if [ -d ${PIHOLE_DIR} ]
 	then
-	    echo -e "${GREEN}Success${NC}: Required directory ${PIHOLE_DIR} is present"
+	    echo -e "[ ${GREEN}SUCCESS${NC} ] Required ${PIHOLE_DIR} Located"
 	else
-		echo -e "${RED}Failure${NC}: Required directory ${PIHOLE_DIR} is missing"
-		exit
+		echo -e "[ ${RED}FAILURE${NC} ] Required ${PIHOLE_DIR} Missing"
+		exit_nochange
 	fi
 }
 
@@ -172,8 +170,20 @@ function list_gs_arguments {
 	echo -e " ${YELLOW}VERSION${NC}	Display the version of the current installed script"
 	echo -e " ${YELLOW}LOGS${NC}		Show recent successful jobs"
 	echo -e ""
-	echo -e "No changes have been made to the system"
-  	exit
+	exit_nochange
+}
+
+# Exit Codes
+## No Changes Made
+function exit_nochange {
+	echo -e "[ ${CYAN}STATUS${NC} ] Exiting Without Making Changes$"
+	exit
+}
+
+## Changes Made
+function exit_withchange {
+	echo -e "[ ${CYAN}STATUS${NC} ] ${GRAVITY_FI} ${TASKTYPE} Completed"
+	exit
 }
 
 # SCRIPT EXECUTION ###########################
@@ -184,8 +194,7 @@ case $# in
 	
 	0)
 		echo -e "[ ${RED}FAILURE${NC} ] Missing Required Arguments"
-		list_gs_arguments
-		exit
+			list_gs_arguments
 	;;
 	
 	1)
@@ -216,14 +225,13 @@ case $# in
 	
 			version)
 				echo -e "[ ${PURPLE}INFO${NC} ] Gravity Sync ${VERSION}"
-				echo -e "No changes have been made to the system"
-				exit
+				exit_nochange
 			;;
 	
 			update)
 				echo -e "[ ${GREEN}SUCCESS${NC} ] Update Requested"
 					update_gs
-				exit
+				exit_nochange
 			;;
 	
 			logs)
@@ -234,7 +242,6 @@ case $# in
 			*)
 				echo -e "[ ${RED}FAILURE${NC} ] ${RED}'$1'${NC} is Invalid Arguments"
         			list_gs_arguments
-        		exit
 			;;
 		esac
 	;;
@@ -242,6 +249,6 @@ case $# in
 	*)
       echo -e "[ ${RED}FAILURE${NC} ] Too Many Arguments"
       	list_gs_arguments
-      exit
+      exit_nochange
 	;;
 esac
