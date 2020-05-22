@@ -66,9 +66,9 @@ Download the latest release from [GitHub](https://github.com/vmstan/gravity-sync
 
 ```
 cd ~
-wget https://github.com/vmstan/gravity-sync/archive/v1.2.2.zip
-unzip v1.2.2.zip
-mv ~/gravity-sync-1.2.2 ~/gravity-sync
+wget https://github.com/vmstan/gravity-sync/archive/v1.2.3.zip
+unzip v1.2.3.zip
+mv ~/gravity-sync-1.2.3 ~/gravity-sync
 cd gravity-sync
 ```
 
@@ -106,7 +106,7 @@ The script, when functioning in `pull` mode, will not prompt for user input afte
 ./gravity-sync.sh pull
 ```
 
-If the execution completes, you will now have overwritten your running gravity.db on the secondary PH after creating a copy (`gravity.db.backup`) in the `/etc/pihole` directory. The script will also keep a copy of the last sync'd gravity.db from the master, in the `gravity-sync` folder (`gravity.db.last`) should you need it. 
+If the execution completes, you will now have overwritten your running gravity.db on the secondary PH after creating a copy (`gravity.db.backup`) in the `backup` directory located with your script. The script will also keep a copy of the last sync'd gravity.db from the master, in the `backup` folder called `gravity.db.last` should you need it for some reason. 
 
 Finally, a file called `gravity-sync.log` will be created in the `gravity-sync` folder along side the script, with the date the script was last executed appended to the bottom. Over time I intend for this logging function to become more helpful.
 
