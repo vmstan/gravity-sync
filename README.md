@@ -22,7 +22,7 @@ Additionally, some things to consider:
 - This script was designed to work with the inital release of Pi-Hole 5.0 but should work with any future versions that have a gravity.db file holding the configurations.
 - This script will not work on any version of Pi-Hole prior to version 5.0, as it uses a different list format.
 - This script has been tested with Ubuntu  and Rasbian, both based on Debian Linux. It will likely work on other distros but they have not been tested.
-- This script has not been tested with Docker container deployments of Pihole. I do not suspect it will work without major modifications. You will need Pihole setup with a "traditional" install directly in the base operating system.
+- This script has not been tested with Docker container deployments of Pi-hole. I do not suspect it will work without major modifications. You will need Pi-hole setup with a "traditional" install directly in the base operating system.
 - This script has been tested between two Raspberry Pi 4 devices, but should work fine between any two PH instances that meet the above requirements. (Such as VM > VM, or VM > Pi, etc.)
 - While not strictly a requirement, for the purposes of running a multi-PH network, I suggest using your router's DHCP function (or another DHCP server) to hand out PH DNS settings to clients. I have not tested this script on networks using the PH DHCP function, however as outlined above it will not have any direct impact to the functionality.
 
@@ -47,13 +47,15 @@ If this is too aggressive for you, you want to make changes to the script specif
 
 ### Option 1
 
-From your *secondary* Pi, login via SSH and copy the `gravity-sync.sh` script to your user. In this example we will use git to keep the latest copy of the script on your server.
+Login to your *secondary* PH, and while in your users home directory, use `git` to clone the script to your server and keep the latest copy of the script on your server.
 
 ```
 cd ~
 git clone https://github.com/vmstan/gravity-sync.git
 cd gravity-sync
 ```
+
+Proceed to the Configuration section.
 
 ### Option 2
 
@@ -70,7 +72,7 @@ mv ~/gravity-sync-1.1.3 ~/gravity-sync
 cd gravity-sync
 ```
 
-Please note the script **must** be run from a folder in your user home directory (ex: /home/USER/gravity-sync) -- I wouldn't suggest deviating from the gravity-sync folder name. If you do you'll need to also change the configuration settings defined in the `gravity-sync.sh` script, which can be a little tedious when it comes time to upgrade.
+Please note the script **must** be run from a folder in your user home directory (ex: /home/USER/gravity-sync) -- I wouldn't suggest deviating from the gravity-sync folder name. If you do you'll need to also change the configuration settings defined in the `gravity-sync.sh` script, which can be a little tedious to do everytime you upgrade the script.
 
 ## Configuration
 
@@ -104,7 +106,7 @@ The script, when functioning in `pull` mode, will not prompt for user input afte
 ./gravity-sync.sh pull
 ```
 
-If the execution completes, you will now have overwritten your running gravity.db on the secondary PH after creating a copy (gravity.db.backup) in the /etc/pihole directory. The script will also keep a copy of the last sync'd gravity.db from the master, in the gravity-sync folder (gravity.db.last) should you need it. 
+If the execution completes, you will now have overwritten your running gravity.db on the secondary PH after creating a copy (`gravity.db.backup`) in the `/etc/pihole` directory. The script will also keep a copy of the last sync'd gravity.db from the master, in the `gravity-sync` folder (`gravity.db.last`) should you need it. 
 
 Finally, a file called `gravity-sync.log` will be created in the `gravity-sync` folder along side the script, with the date the script was last executed appended to the bottom. Over time I intend for this logging function to become more helpful.
 
