@@ -20,7 +20,7 @@ You will need to designate one Pi-Hole as primary and one as secondary. The desi
 Additionally, some things to consider:
 
 - This script was designed to work with the inital release of Pi-Hole 5.0 but should work with any future versions that have a gravity.db file holding the configurations.
-- This script will not work on any version of Pi-Hole prior to version 5.0, as it uses a different 
+- This script will not work on any version of Pi-Hole prior to version 5.0, as it uses a different list format.
 - This script has been tested with Ubuntu  and Rasbian, both based on Debian Linux. It will likely work on other distros but they have not been tested.
 - This script has not been tested with Docker container deployments of Pihole. I do not suspect it will work without major modifications. You will need Pihole setup with a "traditional" install directly in the base operating system.
 - This script has been tested between two Raspberry Pi 4 devices, but should work fine between any two PH instances that meet the above requirements. (Such as VM > VM, or VM > Pi, etc.)
