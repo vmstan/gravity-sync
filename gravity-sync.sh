@@ -162,13 +162,13 @@ function list_gs_arguments {
 	echo -e "Example: '$0 pull'"
 	echo -e ""
 	echo -e "Replication Options:"
-	echo -e " ${YELLOW}PULL${NC}		Sync the ${GRAVITY_FI} configuration on primary PH to this server"
-	echo -e " ${YELLOW}PUSH${NC}		Force any changes made on this server back to the primary PH"
+	echo -e " ${YELLOW}pull${NC}		Sync the ${GRAVITY_FI} configuration on primary PH to this server"
+	echo -e " ${YELLOW}push${NC}		Force any changes made on this server back to the primary PH"
 	echo -e ""
 	echo -e "Debugging Options:"
-	echo -e " ${YELLOW}UPDATE${NC}		Use GitHub to update this script to the latest version available"
-	echo -e " ${YELLOW}VERSION${NC}	Display the version of the current installed script"
-	echo -e " ${YELLOW}LOGS${NC}		Show recent successful jobs"
+	echo -e " ${YELLOW}update${NC}		Use GitHub to update this script to the latest version available"
+	echo -e " ${YELLOW}version${NC}	Display the version of the current installed script"
+	echo -e " ${YELLOW}logs${NC}		Show recent successful jobs"
 	echo -e ""
 	exit_nochange
 }
