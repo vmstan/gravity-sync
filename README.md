@@ -43,7 +43,7 @@ Subsitute USERNAME for the account on the primary PH with sudo permissions, and 
 
 The main purpose of this script is my own personal use, but if you find it helpful then I encourage you to use it and if you'd like provide feedback or contribute. As such, I'll lay out two ways to consume it. The first is more bleeding edge in that you'll download and run whatever the latest version of the script is on GitHub.
 
-If this is too aggressive for you, you want to make changes to the script specific to your environment and not contribute those changes back, or your worried it'll blow something up, then please proceed to option 2.
+If this is too aggressive for you, maybe becayse you want to make changes to the script that are specific to your environment, or you're worried it'll blow something up, then please proceed to option 2.
 
 ### Option 1
 
