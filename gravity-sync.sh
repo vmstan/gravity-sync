@@ -32,11 +32,11 @@ NC='\033[0m'
 ##############################################
 
 # IMPORT SETTINGS
+echo -e "${CYAN}Importing gravity-sync.conf settings${NC}"
 if [ -f ~/${LOCAL_FOLDR}/gravity-sync.conf ]
 then
-    echo -e "${GREEN}Success${NC}: Importing gravity-sync.conf settings"
-	source gravity-sync.conf
-	echo -e "Configured for ${REMOTE_USER}@${REMOTE_HOST}"
+    source gravity-sync.conf
+	echo -e "${GREEN}Success${NC}: Configured for ${REMOTE_USER}@${REMOTE_HOST}"
 else
 	echo -e "${RED}Failure${NC}: Required file gravity-sync.conf is missing!"
 	echo -e "Please review installation documentation for more information"
@@ -100,6 +100,7 @@ case $# in
 	mv -v ~/${LOCAL_FOLDR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${GRAVITY_FI}.last
 	date >> ~/${LOCAL_FOLDR}/${SYNCING_LOG}
 	echo -e "${GREEN}gravity.db pull completed${NC}"
+	exit
  	;;
 
 	push)
@@ -128,6 +129,11 @@ case $# in
 			exit;;
 	    esac
 	done
+	;;
+	
+	version)
+		echo -e "Gravity Sync ${VERSION}"
+		exit
 	;;
 
 	*)
