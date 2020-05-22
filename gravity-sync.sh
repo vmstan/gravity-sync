@@ -68,7 +68,7 @@ else
 	exit
 fi
 
-echo -e "${CYAN}Evaluating command for sync direction${NC}"
+echo -e "${CYAN}Evaluating $0 script arguments${NC}"
 
 case $# in
    0)
@@ -125,14 +125,15 @@ case $# in
 			echo -e "${GREEN}gravity.db push completed${NC}"
 			break;;
 	        No )
-			echo "No changes have been made"
+			echo "No changes have been made to the system"
 			exit;;
 	    esac
 	done
 	;;
 	
 	version)
-		echo -e "Gravity Sync ${VERSION}"
+		echo -e "${PURPLE}Info:${NC} Gravity Sync ${VERSION}"
+		echo -e "No changes have been made to the system"
 		exit
 	;;
 
