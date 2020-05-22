@@ -141,6 +141,7 @@ case $# in
 	update)
 		
 		echo -e "${GREEN}Success:${NC} Update Requested"
+		# echo -e "${PURPLE}Info:${NC} Gravity Sync ${VERSION}"
 		# echo -e "${YELLOW}UPDATING REQUIRES ORIGINAL INSTALL VIA GIT${NC}"
 		echo -e "Are you sure you want to update?"
 		select yn in "Yes" "No"; do
