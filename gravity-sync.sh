@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Gravity Sync by vmstan
-VERSION='1.1.4'
+VERSION='1.1.5'
 
 # Must execute from a location in the home folder of the user who own's it (ex: /home/pi/gravity-sync)
 # Configure certificate based SSH authentication between the Pihole HA nodes - it does not use passwords
@@ -103,8 +103,7 @@ case $# in
 	exit
  	;;
 
-	push)
-		
+	push)	
 	echo -e "${GREEN}Success${NC}: Push Requested"
 	echo -e "${YELLOW}WARNING: DATA LOSS IS POSSIBLE${NC}"
 	echo -e "This will send the running ${GRAVITY_FI} from this server to your primary Pihole"
@@ -139,7 +138,6 @@ case $# in
 	;;
 	
 	update)
-		
 		echo -e "${GREEN}Success:${NC} Update Requested"
 		# echo -e "${PURPLE}Info:${NC} Gravity Sync ${VERSION}"
 		# echo -e "${YELLOW}UPDATING REQUIRES ORIGINAL INSTALL VIA GIT${NC}"
@@ -158,10 +156,10 @@ case $# in
 	;;
 	
 	logs)
-	
 		echo -e "${GREEN}Success:${NC} Logs Requested"
 		echo -e "Showing last three successful execution timestamps"
 		tail -n 3 ${SYNCING_LOG}
+	;;
 
 	*)
 	echo -e "${RED}'$1' is not a valid argument${NC}"
