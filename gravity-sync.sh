@@ -143,12 +143,12 @@ case $# in
 		echo -e "${GREEN}Success:${NC} Update Requested"
 		# echo -e "${YELLOW}UPDATING REQUIRES ORIGINAL INSTALL VIA GIT${NC}"
 		echo -e "Are you sure you want to update?"
-		select yn in "Update" "Cancel"; do
+		select yn in "Yes" "No"; do
 		    case $yn in
-		        Update )
+		        Yes )
 					git pull
 					break;;
-		        Cancel )
+		        No )
 					echo "No changes have been made to the system"
 					exit;;
 		    esac
