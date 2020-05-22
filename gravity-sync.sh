@@ -106,7 +106,7 @@ case $# in
 	push)
 		
 	echo -e "${GREEN}Success${NC}: Push requested"
-	echo -e "${PURPLE}WARNING: DATA LOSS IS POSSIBLE${NC}"
+	echo -e "${YELLOW}WARNING: DATA LOSS IS POSSIBLE${NC}"
 	echo -e "This will send the running ${GRAVITY_FI} from this server to your primary Pihole"
 	echo -e "No backup copies are made on the primary Pihole before or after executing this command!"
 	echo -e "Are you sure you want to overwrite the primary node configuration on ${REMOTE_HOST}?"
@@ -141,13 +141,14 @@ case $# in
 	update)
 		
 		echo -e "${GREEN}Success:${NC} Update requested"
-		echo -e "This will function only if you installed with Git"
+		echo -e "${YELLOW}UPDATE SCRIPT REQUIRES ORIGINAL INSTALL VIA GIT${NC}"
+		echo -e "Are you sure you want to update?"
 		select yn in "Update" "Cancel"; do
 		    case $yn in
-		        Yes )
+		        Update )
 					git pull
-				break;;
-		        No )
+					break;;
+		        Cancel )
 					echo "No changes have been made to the system"
 					exit;;
 		    esac
