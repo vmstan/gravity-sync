@@ -20,6 +20,7 @@ VERSION='1.2.3'
 LOCAL_FOLDR='gravity-sync' # must exist in running user home folder
 CONFIG_FILE='gravity-sync.conf' # must exist as explained above
 SYNCING_LOG='gravity-sync.log' # will be created in above folder
+BACKUP_FOLD='backup'
 
 # PH Folder/File Locations
 PIHOLE_DIR='/etc/pihole'  # default install directory
@@ -67,19 +68,19 @@ function update_gs {
 function pull_gs {
 	TASKTYPE='PULL'
 	echo -e "[${CYAN}STAT${NC}] Copying ${GRAVITY_FI} from ${REMOTE_HOST}"
-		rsync -v --progress -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${GRAVITY_FI}
-	echo -e "[${CYAN}STAT${NC}] Backup Current ${GRAVITY_FI} on $HOSTNAME"
-		sudo mv -v ${PIHOLE_DIR}/${GRAVITY_FI} ${PIHOLE_DIR}/${GRAVITY_FI}.backup
+		rsync -v --progress -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.last
+	echo -e "[${CYAN}STAT${NC}] Backing Up Current ${GRAVITY_FI} on $HOSTNAME"
+		sudo mv -v ${PIHOLE_DIR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.backup
 	echo -e "[${CYAN}STAT${NC}] Replacing ${GRAVITY_FI} on $HOSTNAME"
-		sudo cp -v ~/${LOCAL_FOLDR}/${GRAVITY_FI} ${PIHOLE_DIR}
+		sudo cp -v ~/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.last ${PIHOLE_DIR}/${GRAVITY_FI}
 		sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI}
 		sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}
 	echo -e "${GRAVITY_FI} ownership and file permissions reset"
 	echo -e "[${CYAN}STAT${NC}] Reloading FTLDNS Configuration"
 		pihole restartdns reloadlists
 		pihole restartdns
-	echo -e "[${CYAN}STAT${NC}] Archiving Latest ${GRAVITY_FI}"
-		mv -v ~/${LOCAL_FOLDR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${GRAVITY_FI}.last
+	# echo -e "[${CYAN}STAT${NC}] Archiving Latest ${GRAVITY_FI}"
+	#	mv -v ~/${LOCAL_FOLDR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.last
 		logs_export
 	exit_withchange
 }
