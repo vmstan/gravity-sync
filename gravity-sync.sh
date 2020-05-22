@@ -145,20 +145,8 @@ case $# in
 				echo -e "${GREEN}Success:${NC} Update Requested"
 				# echo -e "${PURPLE}Info:${NC} Gravity Sync ${VERSION}"
 				# echo -e "${YELLOW}UPDATING REQUIRES ORIGINAL INSTALL VIA GIT${NC}"
-				echo -e "Are you sure you want to update?"
-				select yn in "Yes" "No"; do
-		    		case $yn in
-		        	Yes )
-						git pull
-						exit
-					;;
-					
-		        	No )
-						echo "No changes have been made to the system"
-					exit
-					;;
-		    		esac
-				done
+				git reset --hard
+				git pull
 				exit
 			;;
 	
