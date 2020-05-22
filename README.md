@@ -12,8 +12,6 @@ The designation of master/primary and secondary is purely at your discretion and
 
 If you have both running in an active/passive HA configuration using keepslived, as I do, then you will likely make all your changes to the active member of the pair. In this case the script runs from the passive node.
 
-After the script executes it will copy the gravity.db from the master to any secondary nodes you configure it to run on.
-
 ## Prereqs
 
 - This script is designed to work with Pihole 5.0 GA
@@ -50,7 +48,7 @@ Example:
 
 ```
 cd ~
-wget https://github.com/vmstan/gravity-sync/archive/v1.1.2.zip
+wget https://github.com/vmstan/gravity-sync/archive/v1.1.3.zip
 unzip v1.1.3.zip
 mv ~/gravity-sync-1.1.3 ~/gravity-sync
 cd gravity-sync
