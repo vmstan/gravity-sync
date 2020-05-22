@@ -105,7 +105,7 @@ function push_gs {
 	done
 }
 
-function logs_gs{
+function logs_gs {
 	echo -e "These are the last three valid PULL timestamps"
 	tail -n 3 ${SYNCING_LOG}
 }
