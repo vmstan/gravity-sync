@@ -54,6 +54,7 @@ function update_gs {
 
 # Pull Function
 function pull_gs {
+	TASKTYPE='PULL'
 	echo -e "${CYAN}Copying ${GRAVITY_FI} from remote server ${REMOTE_HOST}${NC}"
 		rsync -v --progress -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${GRAVITY_FI}
 	echo -e "${CYAN}Backing up the running ${GRAVITY_FI} on this server${NC}"
@@ -112,7 +113,8 @@ function logs_gs {
 ## Log Out
 function logs_export {
 	echo -e "Logging timestamps to ${SYNCING_LOG}"
-	date >> ~/${LOCAL_FOLDR}/${SYNCING_LOG}
+	# date >> ~/${LOCAL_FOLDR}/${SYNCING_LOG}
+	echo -e $(date -u) " [${TASKTYPE}]" >> ~/${LOCAL_FOLDR}/${SYNCING_LOG}
 }
 
 # Validate Functions
