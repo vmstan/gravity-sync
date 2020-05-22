@@ -138,19 +138,13 @@ function validate_ph_folders {
 
 function validate_gs_arguments {
 	echo "Usage: $0 {pull|push}"
-	echo -e "> ${YELLOW}Pull${NC} will copy the ${GRAVITY_FI} configuration on $REMOTE_HOST to this server"
+	echo -e "> ${YELLOW}Pull${NC} will copy the ${GRAVITY_FI} configuration on a remote host to this server"
 	echo -e "> ${YELLOW}Push${NC} will force any changes made on this server to the primary"
 	echo -e "No changes have been made to the system"
   	exit 1
 }
 
 # SCRIPT EXECUTION ###########################
-
-import_gs
-
-echo -e "${CYAN}Validating sync folder configuration${NC}"
-	validate_gs_folders
-	validate_ph_folders
 
 echo -e "${CYAN}Evaluating $0 script arguments${NC}"
 
@@ -165,13 +159,25 @@ case $# in
    		case $1 in
    	 		pull)
 				echo -e "${GREEN}Success${NC}: Pull Requested"
-					pull_gs
+					import_gs
+
+				echo -e "${CYAN}Validating sync folder configuration${NC}"
+					validate_gs_folders
+					validate_ph_folders
+					
+				pull_gs
 				exit
  			;;
 
 			push)	
 				echo -e "${GREEN}Success${NC}: Push Requested"
-					push_gs
+					import_gs
+
+				echo -e "${CYAN}Validating sync folder configuration${NC}"
+					validate_gs_folders
+					validate_ph_folders
+					
+				push_gs
 				exit
 			;;
 	
