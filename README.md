@@ -6,7 +6,7 @@ For more information visit [https://vmstan.com/gravity-sync/](https://vmstan.com
 
 If you have more than one Pi-hole (PH) in your network and you want to keep the list configurations identical between the two, you've come to the right place.
 
-The script assumes you have one "primary" PH as the place you make all your configuration changes through the Web UI, doing things such as; manual whitelisting, adding blocklists, device/group management, and other list settings. The script will pull the configuration of the primary PH to the secondary. 
+The script assumes you have one "primary" PH as the place you make all your configuration changes through the Web UI, doing things such as; manual whitelisting, adding blocklists, device/group management, and other list settings. The script will pull the configuration of the primary PH to the secondary. It will also bring over the downloaded blocklist files after a `pihole -g` update on the primary, so you do not need to reach out to all your blocklist hosts for updates after syncing.
 
 It will **not** overwrite device specific settings such as local network configuration, admin/API passwords/keys, upstream DNS resolvers, etc. It will also **not** keep DHCP settings or device leases synchronized. 
 
