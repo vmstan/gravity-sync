@@ -14,10 +14,11 @@ VERSION='1.2.2'
 # You MUST define REMOTE_HOST and REMOTE_USER in a file called 'gravity-sync.conf' 
 # You can copy the 'gravity-sync.conf.example' file in the script directory to get started 
 
-# CUSTOMIZATION ########### (not required) ###
+# STANDARD VARIABLES #########################
 
 # GS Folder/File Locations
 LOCAL_FOLDR='gravity-sync' # must exist in running user home folder
+CONFIG_FILE='gravity-sync.conf' # must exist as explained above
 SYNCING_LOG='gravity-sync.log' # will be created in above folder
 
 # PH Folder/File Locations
@@ -40,13 +41,13 @@ NC='\033[0m'
 
 # Import Settings
 function import_gs {
-	echo -e "${CYAN}Importing gravity-sync.conf settings${NC}"
-	if [ -f ~/${LOCAL_FOLDR}/gravity-sync.conf ]
+	echo -e "${CYAN}Importing ${SYNCING_LOG} Settings${NC}"
+	if [ -f ~/${LOCAL_FOLDR}/${SYNCING_LOG} ]
 	then
-	    source gravity-sync.conf
+	    source ${SYNCING_LOG}
 		echo -e "${GREEN}Success${NC}: Configured for ${REMOTE_USER}@${REMOTE_HOST}"
 	else
-		echo -e "${RED}Failure${NC}: Required file gravity-sync.conf is missing!"
+		echo -e "${RED}Failure${NC}: Required file ${SYNCING_LOG} is missing!"
 		echo -e "Please review installation documentation for more information"
 		exit
 	fi
