@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Gravity Sync by vmstan
-VERSION='1.1.6'
+VERSION='1.1.7'
 
 # Must execute from a location in the home folder of the user who own's it (ex: /home/pi/gravity-sync)
 # Configure certificate based SSH authentication between the Pihole HA nodes - it does not use passwords
@@ -42,6 +42,17 @@ else
 	echo -e "Please review installation documentation for more information"
 	exit
 fi
+
+##############################################
+
+# FUNCTIONS
+
+function update_gs {
+	git reset --hard
+	git pull
+}
+
+
 
 ##############################################
 
@@ -143,10 +154,7 @@ case $# in
 	
 			update)
 				echo -e "${GREEN}Success:${NC} Update Requested"
-				# echo -e "${PURPLE}Info:${NC} Gravity Sync ${VERSION}"
-				# echo -e "${YELLOW}UPDATING REQUIRES ORIGINAL INSTALL VIA GIT${NC}"
-				git reset --hard
-				git pull
+					update_gs
 				exit
 			;;
 	
