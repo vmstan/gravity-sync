@@ -49,6 +49,7 @@ function import_gs {
 # Update Function
 
 function update_gs {
+	echo -e "${YELLOW}This update will fail if Gravity Sync was not installed via GitHub${NC}"
 	git reset --hard
 	git pull
 }
