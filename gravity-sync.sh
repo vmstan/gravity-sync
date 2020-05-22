@@ -160,40 +160,41 @@ function validate_ph_folders {
 
 # List GS Arguments
 function list_gs_arguments {
-	echo -e "[ ${RED}FAILURE${NC} ] Missing Required Arguments"
 	echo -e "Usage: $0 [options]"
 	echo -e "Example: '$0 pull'"
 	echo -e ""
 	echo -e "Replication Options:"
-	echo -e " ${YELLOW}PULL${NC}	Sync the ${GRAVITY_FI} configuration on primary PH to this server"
-	echo -e " ${YELLOW}PUSH${NC}	Force any changes made on this server back to the primary PH"
+	echo -e " ${YELLOW}PULL${NC}		Sync the ${GRAVITY_FI} configuration on primary PH to this server"
+	echo -e " ${YELLOW}PUSH${NC}		Force any changes made on this server back to the primary PH"
 	echo -e ""
 	echo -e "Debugging Options:"
-	echo -e " ${YELLOW}UPDATE${NC}	Use GitHub to update this script to the latest version available"
+	echo -e " ${YELLOW}UPDATE${NC}		Use GitHub to update this script to the latest version available"
 	echo -e " ${YELLOW}VERSION${NC}	Display the version of the current installed script"
-	echo -e " ${YELLOW}LOGS${NC}	Show recent successful jobs"
+	echo -e " ${YELLOW}LOGS${NC}		Show recent successful jobs"
 	echo -e ""
 	echo -e "No changes have been made to the system"
-  	exit 1
+  	exit
 }
 
 # SCRIPT EXECUTION ###########################
 
-echo -e "${CYAN}Evaluating $0 script arguments${NC}"
+echo -e "[ ${CYAN}STATUS${NC} ] Evaluating Script Arguments$"
 
 case $# in
 	
 	0)
+		echo -e "[ ${RED}FAILURE${NC} ] Missing Required Arguments"
 		list_gs_arguments
+		exit
 	;;
 	
 	1)
    		case $1 in
    	 		pull)
-				echo -e "${GREEN}Success${NC}: Pull Requested"
+				echo -e "[ ${GREEN}SUCCESS${NC} ] Pull Requested"
 					import_gs
 
-				echo -e "${CYAN}Validating sync folder configuration${NC}"
+				echo -e "[ ${CYAN}STATUS${NC} ] Validating Folder Configuration"
 					validate_gs_folders
 					validate_ph_folders
 					
@@ -202,10 +203,10 @@ case $# in
  			;;
 
 			push)	
-				echo -e "${GREEN}Success${NC}: Push Requested"
+				echo -e "[ ${GREEN}SUCCESS${NC} ] Push Requested"
 					import_gs
 
-				echo -e "${CYAN}Validating sync folder configuration${NC}"
+				echo -e "[ ${CYAN}STATUS${NC} ] Validating Folder Configuration"
 					validate_gs_folders
 					validate_ph_folders
 					
@@ -214,33 +215,33 @@ case $# in
 			;;
 	
 			version)
-				echo -e "${PURPLE}Info:${NC} Gravity Sync ${VERSION}"
+				echo -e "[ ${PURPLE}INFO${NC} ] Gravity Sync ${VERSION}"
 				echo -e "No changes have been made to the system"
 				exit
 			;;
 	
 			update)
-				echo -e "${GREEN}Success:${NC} Update Requested"
+				echo -e "[ ${GREEN}SUCCESS${NC} ] Update Requested"
 					update_gs
 				exit
 			;;
 	
 			logs)
-				echo -e "${GREEN}Success:${NC} Logs Requested"
+				echo -e "[ ${GREEN}SUCCESS${NC} ] Logs Requested"
 					logs_gs
 			;;
 
 			*)
-				echo -e "${RED}'$1' is not a valid argument${NC}"
-        		echo "Usage: $0 {pull|push}"
-        		exit 2
+				echo -e "[ ${RED}FAILURE${NC} ] ${RED}'$1'${NC} is Invalid Arguments"
+        			list_gs_arguments
+        		exit
 			;;
 		esac
 	;;
 	
 	*)
-      echo -e "${RED}Too many arguments provided ($#)${NC}"
-      echo "Usage: $0 {pull|push}"
-      exit 3
+      echo -e "[ ${RED}FAILURE${NC} ] Too Many Arguments"
+      	list_gs_arguments
+      exit
 	;;
 esac
