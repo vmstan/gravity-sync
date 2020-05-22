@@ -48,10 +48,10 @@ function import_gs {
 # Update Function
 function update_gs {
 	TASKTYPE='UPDATE'
+	logs_export 	# dumps log prior to execution because script stops after successful pull
 	echo -e "${YELLOW}This update will fail if Gravity Sync was not installed via GitHub${NC}"
 		git reset --hard
 		git pull
-	logs_export
 	exit
 }
 
