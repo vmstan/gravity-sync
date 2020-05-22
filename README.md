@@ -2,7 +2,17 @@
 
 For more information visit [https://vmstan.com/gravity-sync/](https://vmstan.com/gravity-sync/)
 
-The scripts assumes you have one "master" Pihole as the primary place you make all your configuration changes, such as whitelist, blacklist, group management, and blocklist settings. After the script executes it will copy the gravity.db from the master to any secondary nodes you configure it to run on.
+## Background
+
+If you have more than one Pihole in your network and you want to keep the list configurations identical between the two, you've come to the right place.
+
+The script assumes you have one "master" Pihole as the primary place you make all your configuration changes, such as whitelist, blacklist, group management, and blocklist settings. 
+
+The designation of master/primary and secondary is purely at your discretion and depends on your desired use case. If you have multiple Pihole instances advertised to your users via DHCP pick one to consistently use for changes and put this script on the other one(s).
+
+If you have both running in an active/passive HA configuration using keepslived, as I do, then you will likely make all your changes to the active member of the pair. In this case the script runs from the passive node.
+
+After the script executes it will copy the gravity.db from the master to any secondary nodes you configure it to run on.
 
 ## Prereqs
 
