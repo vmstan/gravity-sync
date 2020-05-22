@@ -129,6 +129,7 @@ case $# in
 			exit;;
 	    esac
 	done
+	exit
 	;;
 	
 	version)
@@ -138,9 +139,19 @@ case $# in
 	;;
 	
 	update)
-		echo -e "${PURPLE}Info:${NC} Update requested"
-		echo -e "This will fail unless you installed via Git"
-		git pull
+		
+		echo -e "${GREEN}Success:${NC} Update requested"
+		echo -e "This will function only if you installed with Git"
+		select yn in "Update" "Cancel"; do
+		    case $yn in
+		        Yes )
+					git pull
+				break;;
+		        No )
+					echo "No changes have been made to the system"
+					exit;;
+		    esac
+		done
 		exit
 	;;
 
