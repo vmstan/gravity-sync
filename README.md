@@ -14,23 +14,30 @@ If you have both running in an active/passive HA configuration using keepslived,
 
 ## Prereqs
 
-- This script is designed to work with Pihole 5.0 GA
-- This script has been tested with Ubuntu 20.04 and Rasbian
+- This script was designed to work with the inital release if Pihole 5.0 but should work with any future versions that have a gravity.db file holding the configurations.
+- This script has been tested with Ubuntu  and Rasbian, both based on Debian Linux. It will likely work on other distros but they have not been tested.
+- This script has not been tested with Docker container deployments of Pihole. I do not suspect it will work without major modifications. You will need Pihole setup with a "traditional" install directly in the base operating system.
+
+### SSH Keypairs
 
 You'll need to generate an SSH key for your secondary Pihole user and copy it to your primary Pihole. This will allow you to connect to and copy the gravity.db file without needing a password each time.
+
+If you already have this setup on your systems for other purposes, you can skip this step.
 
 ```
 ssh-keygen -t rsa
 ssh-copy-id -i ~/.ssh/id_rsa.pub USERNAME@PRIMARYPI
 ```
 
-## Installation
+Subsitute USERNAME for the account on the master Pi with sudo permissions, and PRIMARYPI for the IP or DNS name of the Pihole you have designated as the master. 
 
-### Option 1
+## Installation
 
 The main purpose of this script is my own personal use, but if you find it helpful then I encourage you to use it and if you'd like provide feedback or contribute. This option is more bleeding edge in that you'll download and run whatever the latest version of the script is on GitHub.
 
 If this is too aggressive for you, proceed to option 2.
+
+### Option 1
 
 From your *secondary* Pi, login via SSH and copy the gravity-sync.sh script to your user. In this example we will use git to keep the latest copy of the script on your server.
 
@@ -42,9 +49,10 @@ cd gravity-sync
 
 ### Option 2
 
-Download the latest release from [https://github.com/vmstan/gravity-sync/releases](https://github.com/vmstan/gravity-sync/releases) and exact the files to your server.
+So a life on the wildside of file sync isn't for you? That's fine.
 
-Example:
+Download the latest release from [GitHub](https://github.com/vmstan/gravity-sync/releases) and extract the files to your server.
+
 
 ```
 cd ~
@@ -54,13 +62,13 @@ mv ~/gravity-sync-1.1.3 ~/gravity-sync
 cd gravity-sync
 ```
 
-**MAKE SURE YOU REPLACE THE ZIP VERSIONS WITH THE LATEST ONE**
-
-Please note the script **must** be run from a folder in your user home directory (ex: /home/pi/gravity-sync) -- I wouldn't suggest changing the folder name.
+Please note the script **must** be run from a folder in your user home directory (ex: /home/USER/gravity-sync) -- I wouldn't suggest changing the gravity-sync folder name.
 
 ## Configuration
 
-After you clone the base configuration, you will need to create a configuration file called `gravity-sync.conf` in the same folder as the script. There will be a file called gravity-sync.conf.example that you can use as the basis for your file. Make a copy to remove the .example
+After you clone the base configuration, you will need to create a configuration file called `gravity-sync.conf` in the same folder as the script. There will be a file called `gravity-sync.conf.example` that you can use as the basis for your file. 
+
+Make a copy example file and modify it with your site specific settings.
 
 ```
 cp gravity-sync.conf.example gravity-sync.conf
@@ -76,7 +84,11 @@ REMOTE_HOST='192.168.1.10'
 REMOTE_USER='pi'
 ```
 
-Save. Now test the script. I suggest making a subtle change to a whitelist/blacklist on your primary Pihole, such as a description field, and then seeing if the change propagates to your secondary.
+Save. 
+
+## Execution
+
+Now test the script. I suggest making a subtle change to a whitelist/blacklist on your primary Pihole, such as a description field, and then seeing if the change propagates to your secondary.
 
 ```
 ./gravity-sync.sh pull
@@ -96,7 +108,11 @@ Please note that the "push" option does not make any backups of anything. There 
 
 ## Updates
 
-If you do a `git pull` while in the `gravity-sync` directory you should be able to levegage git to update to the latest copy of the script. Your changes to the .conf file, logs and backups should be uneffected by this.
+If you installed via Option 1, just do a `git pull` while in the `gravity-sync` directory on your server and you should be  update to the latest copy of the script. Your changes to the .conf file, logs and gravity.db backups should be uneffected by this update as they are ignored by git.
+
+If you installed via Option 2, overwrite the 'gravity-sync.sh' file with a newer version.
+
+With either version, you should review the contents of the example configuration file to make sure there are no new required settings.
 
 ## Automation
 
