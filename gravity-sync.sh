@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # GRAVITY SYNC BY VMSTAN #####################
-VERSION='1.2.2'
+VERSION='1.2.3'
 
 # Must execute from a location in the home folder of the user who own's it (ex: /home/pi/gravity-sync)
 # Configure certificate based SSH authentication between the Pi-hole HA nodes - it does not use passwords
@@ -41,13 +41,13 @@ NC='\033[0m'
 
 # Import Settings
 function import_gs {
-	echo -e "[ ${CYAN}STATUS${NC} ] Importing ${CONFIG_FILE} Settings"
+	echo -e "[${CYAN}STAT${NC}] Importing ${CONFIG_FILE} Settings"
 	if [ -f ~/${LOCAL_FOLDR}/${CONFIG_FILE} ]
 	then
 	    source ${CONFIG_FILE}
-		echo -e "[ ${GREEN}SUCCESS${NC} ] Using ${REMOTE_USER}@${REMOTE_HOST}"
+		echo -e "[${GREEN}GOOD${NC}] Using ${REMOTE_USER}@${REMOTE_HOST}"
 	else
-		echo -e "[ ${RED}FAILURE${NC} ] Required ${CONFIG_FILE} Missing"
+		echo -e "[${RED}FAIL${NC}] Required ${CONFIG_FILE} Missing"
 		echo -e "Please review installation documentation for more information"
 		exit_nochange
 	fi
@@ -57,7 +57,7 @@ function import_gs {
 function update_gs {
 	TASKTYPE='UPDATE'
 	logs_export 	# dumps log prior to execution because script stops after successful pull
-	echo -e "[ ${PURPLE}WARNING${NC} ] Requires GitHub Installation"
+	echo -e "[${PURPLE}WARN${NC}] Requires GitHub Installation"
 		git reset --hard
 		git pull
 	exit
@@ -66,19 +66,19 @@ function update_gs {
 # Pull Function
 function pull_gs {
 	TASKTYPE='PULL'
-	echo -e "[ ${CYAN}STATUS${NC} ] Copying ${GRAVITY_FI} from ${REMOTE_HOST}"
+	echo -e "[${CYAN}STAT${NC}] Copying ${GRAVITY_FI} from ${REMOTE_HOST}"
 		rsync -v --progress -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${GRAVITY_FI}
-	echo -e "[ ${CYAN}STATUS${NC} ] Backup Current ${GRAVITY_FI} on $HOSTNAME"
+	echo -e "[${CYAN}STAT${NC}] Backup Current ${GRAVITY_FI} on $HOSTNAME"
 		sudo mv -v ${PIHOLE_DIR}/${GRAVITY_FI} ${PIHOLE_DIR}/${GRAVITY_FI}.backup
-	echo -e "[ ${CYAN}STATUS${NC} ] Replacing ${GRAVITY_FI} on $HOSTNAME"
+	echo -e "[${CYAN}STAT${NC}] Replacing ${GRAVITY_FI} on $HOSTNAME"
 		sudo cp -v ~/${LOCAL_FOLDR}/${GRAVITY_FI} ${PIHOLE_DIR}
 		sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI}
 		sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}
 	echo -e "${GRAVITY_FI} ownership and file permissions reset"
-	echo -e "[ ${CYAN}STATUS${NC} ] Reloading FTLDNS Configuration"
+	echo -e "[${CYAN}STAT${NC}] Reloading FTLDNS Configuration"
 		pihole restartdns reloadlists
 		pihole restartdns
-	echo -e "[ ${CYAN}STATUS${NC} ] Archiving Latest ${GRAVITY_FI}"
+	echo -e "[${CYAN}STAT${NC}] Archiving Latest ${GRAVITY_FI}"
 		mv -v ~/${LOCAL_FOLDR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${GRAVITY_FI}.last
 		logs_export
 	exit_withchange
@@ -87,7 +87,7 @@ function pull_gs {
 # Push Function
 function push_gs {
 	TASKTYPE='PUSH'
-	echo -e "[ ${PURPLE}WARNING${NC} ] DATA LOSS IS POSSIBLE"
+	echo -e "[${PURPLE}WARN${NC}] DATA LOSS IS POSSIBLE"
 	echo -e "This will send the running ${GRAVITY_FI} from this server to your primary Pihole"
 	echo -e "No backup copies are made on the primary Pihole before or after executing this command!"
 	echo -e "Are you sure you want to overwrite the primary node configuration on ${REMOTE_HOST}?"
@@ -95,12 +95,12 @@ function push_gs {
 		case $yn in
 		Yes )
 			# echo "Replacing gravity.db on primary"
-			echo -e "[ ${CYAN}STATUS${NC} ] Copying ${GRAVITY_FI} to ${REMOTE_HOST}"
+			echo -e "[${CYAN}STAT${NC}] Copying ${GRAVITY_FI} to ${REMOTE_HOST}"
 				rsync --rsync-path="sudo rsync" -v --progress -e 'ssh -p 22' ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}
-			echo -e "[ ${CYAN}STATUS${NC} ] Applying Rermissions to Remote ${GRAVITY_FI}"
+			echo -e "[${CYAN}STAT${NC}] Applying Rermissions to Remote ${GRAVITY_FI}"
 				ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI}"
 				ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}"
-			echo -e "[ ${CYAN}STATUS${NC} ] Reloading FTLDNS Configuration"
+			echo -e "[${CYAN}STAT${NC}] Reloading FTLDNS Configuration"
 				ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns reloadlists'
 				ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns'
 				logs_export
@@ -117,18 +117,18 @@ function push_gs {
 # Logging Functions
 ## Check Log Function
 function logs_gs {
-	echo -e "Recent ${PURPLE}PULL${NC} attempts"
+	echo -e "Recent ${YELLOW}PULL${NC} attempts"
 		tail -n 10 ${SYNCING_LOG} | grep PULL
-	echo -e "Recent ${PURPLE}UPDATE${NC} attempts"
+	echo -e "Recent ${YELLOW}UPDATE${NC} attempts"
 		tail -n 10 ${SYNCING_LOG} | grep UPDATE
-	echo -e "Recent ${PURPLE}PUSH${NC} attempts"
+	echo -e "Recent ${YELLOW}PUSH${NC} attempts"
 			tail -n 10 ${SYNCING_LOG} | grep PUSH
 	exit_nochange
 }
 
 ## Log Out
 function logs_export {
-	echo -e "[ ${CYAN}STATUS${NC} ] Logging Timestamps to ${SYNCING_LOG}"
+	echo -e "[${CYAN}STAT${NC}] Logging Timestamps to ${SYNCING_LOG}"
 	# date >> ~/${LOCAL_FOLDR}/${SYNCING_LOG}
 	echo -e $(date) "[${TASKTYPE}]" >> ~/${LOCAL_FOLDR}/${SYNCING_LOG}
 }
@@ -138,9 +138,9 @@ function logs_export {
 function validate_gs_folders {
 	if [ -d ~/${LOCAL_FOLDR} ]
 	then
-	    echo -e "[ ${GREEN}SUCCESS${NC} ] Required ~/${LOCAL_FOLDR} Located"
+	    echo -e "[${GREEN}GOOD${NC}] Required ~/${LOCAL_FOLDR} Located"
 	else
-		echo -e "[ ${RED}FAILURE${NC} ] Required ~/${LOCAL_FOLDR} Missing"
+		echo -e "[${RED}FAIL${NC}] Required ~/${LOCAL_FOLDR} Missing"
 		exit_nochange
 	fi
 }
@@ -149,9 +149,9 @@ function validate_gs_folders {
 function validate_ph_folders {
 	if [ -d ${PIHOLE_DIR} ]
 	then
-	    echo -e "[ ${GREEN}SUCCESS${NC} ] Required ${PIHOLE_DIR} Located"
+	    echo -e "[${GREEN}GOOD${NC}] Required ${PIHOLE_DIR} Located"
 	else
-		echo -e "[ ${RED}FAILURE${NC} ] Required ${PIHOLE_DIR} Missing"
+		echo -e "[${RED}FAIL${NC}] Required ${PIHOLE_DIR} Missing"
 		exit_nochange
 	fi
 }
@@ -176,34 +176,34 @@ function list_gs_arguments {
 # Exit Codes
 ## No Changes Made
 function exit_nochange {
-	echo -e "[ ${CYAN}STATUS${NC} ] Exiting Without Making Changes"
+	echo -e "[${CYAN}STAT${NC}] Exiting Without Making Changes"
 	exit
 }
 
 ## Changes Made
 function exit_withchange {
-	echo -e "[ ${CYAN}STATUS${NC} ] ${GRAVITY_FI} ${TASKTYPE} Completed"
+	echo -e "[${CYAN}STAT${NC}] ${GRAVITY_FI} ${TASKTYPE} Completed"
 	exit
 }
 
 # SCRIPT EXECUTION ###########################
 
-echo -e "[ ${CYAN}STATUS${NC} ] Evaluating Script Arguments"
+echo -e "[${CYAN}STAT${NC}] Evaluating Script Arguments"
 
 case $# in
 	
 	0)
-		echo -e "[ ${RED}FAILURE${NC} ] Missing Required Arguments"
+		echo -e "[${RED}FAIL${NC}] Missing Required Arguments"
 			list_gs_arguments
 	;;
 	
 	1)
    		case $1 in
    	 		pull)
-				echo -e "[ ${GREEN}SUCCESS${NC} ] Pull Requested"
+				echo -e "[${GREEN}GOOD${NC}] Pull Requested"
 					import_gs
 
-				echo -e "[ ${CYAN}STATUS${NC} ] Validating Folder Configuration"
+				echo -e "[${CYAN}STAT${NC}] Validating Folder Configuration"
 					validate_gs_folders
 					validate_ph_folders
 					
@@ -212,10 +212,10 @@ case $# in
  			;;
 
 			push)	
-				echo -e "[ ${GREEN}SUCCESS${NC} ] Push Requested"
+				echo -e "[${GREEN}GOOD${NC}] Push Requested"
 					import_gs
 
-				echo -e "[ ${CYAN}STATUS${NC} ] Validating Folder Configuration"
+				echo -e "[${CYAN}STAT${NC}] Validating Folder Configuration"
 					validate_gs_folders
 					validate_ph_folders
 					
@@ -229,25 +229,25 @@ case $# in
 			;;
 	
 			update)
-				echo -e "[ ${GREEN}SUCCESS${NC} ] Update Requested"
+				echo -e "[${GREEN}GOOD${NC}] Update Requested"
 					update_gs
 				exit_nochange
 			;;
 	
 			logs)
-				echo -e "[ ${GREEN}SUCCESS${NC} ] Logs Requested"
+				echo -e "[${GREEN}GOOD${NC}] Logs Requested"
 					logs_gs
 			;;
 
 			*)
-				echo -e "[ ${RED}FAILURE${NC} ] ${RED}'$1'${NC} is Invalid Argument"
+				echo -e "[${RED}FAIL${NC}] ${RED}'$1'${NC} is Invalid Argument"
         			list_gs_arguments
 			;;
 		esac
 	;;
 	
 	*)
-      echo -e "[ ${RED}FAILURE${NC} ] Too Many Arguments"
+      echo -e "[${RED}FAIL${NC}] Too Many Arguments"
       	list_gs_arguments
       exit_nochange
 	;;
