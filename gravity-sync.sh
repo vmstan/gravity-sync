@@ -157,7 +157,7 @@ case $# in
 	
 	logs)
 		echo -e "${GREEN}Success:${NC} Logs Requested"
-		echo -e "Showing last three successful execution timestamps"
+		echo -e "These are the last three valid PULL timestamps"
 		tail -n 3 ${SYNCING_LOG}
 	;;
 
