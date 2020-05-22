@@ -240,7 +240,7 @@ case $# in
 			;;
 
 			*)
-				echo -e "[${RED}FAIL${NC}] ${RED}'$1'${NC} is Invalid Argument"
+				echo -e "[${RED}FAIL${NC}] '${YELLOW}$1${NC}' is Invalid Argument"
         			list_gs_arguments
 			;;
 		esac
