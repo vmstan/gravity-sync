@@ -83,7 +83,7 @@ case $# in
       case $1 in
 	pull)
 
-	echo -e "${GREEN}Success${NC}: Pull requested"
+	echo -e "${GREEN}Success${NC}: Pull Requested"
 	echo -e "${CYAN}Copying ${GRAVITY_FI} from remote server ${REMOTE_HOST}${NC}"
 	rsync -v --progress -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${GRAVITY_FI}
 	echo -e "${CYAN}Backing up the running ${GRAVITY_FI} on this server${NC}"
@@ -105,7 +105,7 @@ case $# in
 
 	push)
 		
-	echo -e "${GREEN}Success${NC}: Push requested"
+	echo -e "${GREEN}Success${NC}: Push Requested"
 	echo -e "${YELLOW}WARNING: DATA LOSS IS POSSIBLE${NC}"
 	echo -e "This will send the running ${GRAVITY_FI} from this server to your primary Pihole"
 	echo -e "No backup copies are made on the primary Pihole before or after executing this command!"
@@ -140,8 +140,8 @@ case $# in
 	
 	update)
 		
-		echo -e "${GREEN}Success:${NC} Update requested"
-		echo -e "${YELLOW}UPDATE SCRIPT REQUIRES ORIGINAL INSTALL VIA GIT${NC}"
+		echo -e "${GREEN}Success:${NC} Update Requested"
+		# echo -e "${YELLOW}UPDATING REQUIRES ORIGINAL INSTALL VIA GIT${NC}"
 		echo -e "Are you sure you want to update?"
 		select yn in "Update" "Cancel"; do
 		    case $yn in
