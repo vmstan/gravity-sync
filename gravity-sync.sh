@@ -158,11 +158,21 @@ function validate_ph_folders {
 	fi
 }
 
-## Validate GS Argument Used
-function validate_gs_arguments {
-	echo "Usage: $0 {pull|push}"
-	echo -e "> ${YELLOW}Pull${NC} will copy the ${GRAVITY_FI} configuration on a remote host to this server"
-	echo -e "> ${YELLOW}Push${NC} will force any changes made on this server to the primary"
+# List GS Arguments
+function list_gs_arguments {
+	echo -e "[ ${RED}FAILURE${NC} ] Missing Required Arguments"
+	echo -e "Usage: $0 [options]"
+	echo -e "Example: '$0 pull'"
+	echo -e ""
+	echo -e "Replication Options:"
+	echo -e "	${YELLOW}PULL${NC}		Sync the ${GRAVITY_FI} configuration on primary PH to this server"
+	echo -e "	${YELLOW}PUSH${NC} 		Force any changes made on this server back to the primary PH"
+	echo -e ""
+	echo -e "Debugging Options:"
+	echo -e "	${YELLOW}UPDATE${NC}	Use GitHub to update this script to the latest version available"
+	echo -e "	${YELLOW}VERSION${NC}	Display the version of the current installed script"
+	echo -e "	${YELLOW}LOGS${NC}		Show recent successful jobs"
+	echo -e ""
 	echo -e "No changes have been made to the system"
   	exit 1
 }
@@ -174,8 +184,7 @@ echo -e "${CYAN}Evaluating $0 script arguments${NC}"
 case $# in
 	
 	0)
-		echo -e "${RED}Failure${NC}: ${GRAVITY_FI} replication direction required"
-		validate_gs_arguments
+		list_gs_arguments
 	;;
 	
 	1)
