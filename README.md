@@ -66,9 +66,9 @@ Download the latest release from [GitHub](https://github.com/vmstan/gravity-sync
 
 ```
 cd ~
-wget https://github.com/vmstan/gravity-sync/archive/v1.1.4.zip
-unzip v1.1.4.zip
-mv ~/gravity-sync-1.1.4 ~/gravity-sync
+wget https://github.com/vmstan/gravity-sync/archive/v1.1.5.zip
+unzip v1.1.5.zip
+mv ~/gravity-sync-1.1.5 ~/gravity-sync
 cd gravity-sync
 ```
 
@@ -166,3 +166,9 @@ If you'd like to know what version of the script you have running.
 If the update script fails, make sure you did your original deployment via `git clone` and not a manual install. If it doesn't kick off, you can manually execute a `git pull` while in the `gravity-sync` directory. 
 
 For additional Git issues, get in line.
+
+If you'd like to quickly see if a pull executed successfully
+
+```
+./gravity-sync.sh logs
+```
