@@ -88,8 +88,10 @@ function pull_gs {
 function push_gs {
 	TASKTYPE='PUSH'
 	echo -e "[${PURPLE}WARN${NC}] DATA LOSS IS POSSIBLE"
-	echo -e "This will send the running ${GRAVITY_FI} from this server to your primary Pihole"
+	echo -e "The standard use of this script is to ${YELLOW}PULL${NC} data from the primary PH server to the secondary."
+	echo -e "By issuing a ${YELLOW}PUSH${NC} we will overwrite ${GRAVITY_FI} on ${YELLOW}${REMOTE_HOST}${NC} with ${YELLOW}$HOSTNAME${NC} data."
 	echo -e "No backup copies are made on the primary Pihole before or after executing this command!"
+	echo -e ""
 	echo -e "Are you sure you want to overwrite the primary node configuration on ${REMOTE_HOST}?"
 	select yn in "Yes" "No"; do
 		case $yn in
