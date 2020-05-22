@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Gravity Sync by vmstan
-VERSION='1.2.0'
+VERSION='1.2.1'
 
 # Must execute from a location in the home folder of the user who own's it (ex: /home/pi/gravity-sync)
 # Configure certificate based SSH authentication between the Pihole HA nodes - it does not use passwords
@@ -47,9 +47,12 @@ function import_gs {
 
 # Update Function
 function update_gs {
+	TASKTYPE='UPDATE'
 	echo -e "${YELLOW}This update will fail if Gravity Sync was not installed via GitHub${NC}"
 		git reset --hard
 		git pull
+	logs_export
+	exit
 }
 
 # Pull Function
@@ -69,12 +72,14 @@ function pull_gs {
 		pihole restartdns
 	echo -e "${CYAN}Retaining additional copy of remote ${GRAVITY_FI}${NC}"
 		mv -v ~/${LOCAL_FOLDR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${GRAVITY_FI}.last
-		logs_export
 	echo -e "${GREEN}gravity.db pull completed${NC}"
+	logs_export
+	exit
 }
 
 # Push Function
 function push_gs {
+	TASKTYPE='PUSH'
 	echo -e "${YELLOW}WARNING: DATA LOSS IS POSSIBLE${NC}"
 	echo -e "This will send the running ${GRAVITY_FI} from this server to your primary Pihole"
 	echo -e "No backup copies are made on the primary Pihole before or after executing this command!"
@@ -92,6 +97,7 @@ function push_gs {
 				ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns reloadlists'
 				ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns'
 			echo -e "${GREEN}gravity.db push completed${NC}"
+				logs_export
 			exit
 		;;
 		
@@ -114,7 +120,7 @@ function logs_gs {
 function logs_export {
 	echo -e "Logging timestamps to ${SYNCING_LOG}"
 	# date >> ~/${LOCAL_FOLDR}/${SYNCING_LOG}
-	echo -e $(date -u) " [${TASKTYPE}]" >> ~/${LOCAL_FOLDR}/${SYNCING_LOG}
+	echo -e $(date) "[${TASKTYPE}]" >> ~/${LOCAL_FOLDR}/${SYNCING_LOG}
 }
 
 # Validate Functions
