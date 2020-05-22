@@ -29,22 +29,22 @@ YELLOW='\033[0;93m'
 PURPLE='\033[0;95m'
 NC='\033[0m'
 
-##############################################
-
-# IMPORT SETTINGS
-
-echo -e "${CYAN}Importing gravity-sync.conf settings${NC}"
-if [ -f ~/${LOCAL_FOLDR}/gravity-sync.conf ]
-then
-    source gravity-sync.conf
-	echo -e "${GREEN}Success${NC}: Configured for ${REMOTE_USER}@${REMOTE_HOST}"
-else
-	echo -e "${RED}Failure${NC}: Required file gravity-sync.conf is missing!"
-	echo -e "Please review installation documentation for more information"
-	exit
-fi
-
 # FUNCTION DEFINITIONS #######################
+
+# Import Settings
+
+function import_gs {
+	echo -e "${CYAN}Importing gravity-sync.conf settings${NC}"
+	if [ -f ~/${LOCAL_FOLDR}/gravity-sync.conf ]
+	then
+	    source gravity-sync.conf
+		echo -e "${GREEN}Success${NC}: Configured for ${REMOTE_USER}@${REMOTE_HOST}"
+	else
+		echo -e "${RED}Failure${NC}: Required file gravity-sync.conf is missing!"
+		echo -e "Please review installation documentation for more information"
+		exit
+	fi
+}
 
 # Update Function
 
@@ -145,6 +145,8 @@ function validate_gs_arguments {
 }
 
 # SCRIPT EXECUTION ###########################
+
+import_gs
 
 echo -e "${CYAN}Validating sync folder configuration${NC}"
 	validate_gs_folders
