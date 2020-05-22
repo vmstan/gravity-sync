@@ -146,6 +146,14 @@ function validate_gs_folders {
 		echo -e "[${RED}FAIL${NC}] Required ~/${LOCAL_FOLDR} Missing"
 		exit_nochange
 	fi
+	
+	if [ -d ~/${LOCAL_FOLDR}/${BACKUP_FOLD} ]
+	then
+	    echo -e "[${GREEN}GOOD${NC}] Required ~/${LOCAL_FOLDR}/${BACKUP_FOLD} Located"
+	else
+		echo -e "[${RED}FAIL${NC}] Required ~/${LOCAL_FOLDR}/${BACKUP_FOLD} Missing"
+		exit_nochange
+	fi
 }
 
 ## Validate PH Folders
