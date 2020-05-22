@@ -50,28 +50,28 @@ function import_gs {
 
 function update_gs {
 	echo -e "${YELLOW}This update will fail if Gravity Sync was not installed via GitHub${NC}"
-	git reset --hard
-	git pull
+		git reset --hard
+		git pull
 }
 
 # Pull Function
 
 function pull_gs {
 	echo -e "${CYAN}Copying ${GRAVITY_FI} from remote server ${REMOTE_HOST}${NC}"
-	rsync -v --progress -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${GRAVITY_FI}
+		rsync -v --progress -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${GRAVITY_FI}
 	echo -e "${CYAN}Backing up the running ${GRAVITY_FI} on this server${NC}"
-	sudo mv -v ${PIHOLE_DIR}/${GRAVITY_FI} ${PIHOLE_DIR}/${GRAVITY_FI}.backup
+		sudo mv -v ${PIHOLE_DIR}/${GRAVITY_FI} ${PIHOLE_DIR}/${GRAVITY_FI}.backup
 	echo -e "${CYAN}Replacing the ${GRAVITY_FI} configuration on this server${NC}"
-	sudo cp -v ~/${LOCAL_FOLDR}/${GRAVITY_FI} ${PIHOLE_DIR}
-	sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI}
-	sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}
+		sudo cp -v ~/${LOCAL_FOLDR}/${GRAVITY_FI} ${PIHOLE_DIR}
+		sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI}
+		sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}
 	echo -e "${GRAVITY_FI} ownership and file permissions reset"
 	echo -e "${CYAN}Reloading FTLDNS with configuration from new ${GRAVITY_FI}${NC}"
-	pihole restartdns reloadlists
-	pihole restartdns
+		pihole restartdns reloadlists
+		pihole restartdns
 	echo -e "${CYAN}Retaining additional copy of remote ${GRAVITY_FI}${NC}"
-	mv -v ~/${LOCAL_FOLDR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${GRAVITY_FI}.last
-	date >> ~/${LOCAL_FOLDR}/${SYNCING_LOG}
+		mv -v ~/${LOCAL_FOLDR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${GRAVITY_FI}.last
+		date >> ~/${LOCAL_FOLDR}/${SYNCING_LOG}
 	echo -e "${GREEN}gravity.db pull completed${NC}"
 }
 
@@ -87,13 +87,13 @@ function push_gs {
 		Yes )
 			echo "Replacing gravity.db on primary"
 			echo -e "${CYAN}Copying local ${GRAVITY_FI} to ${REMOTE_HOST}${NC}"
-			rsync --rsync-path="sudo rsync" -v --progress -e 'ssh -p 22' ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}
+				rsync --rsync-path="sudo rsync" -v --progress -e 'ssh -p 22' ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}
 			echo -e "${CYAN}Applying permissions to remote gravity.db${NC}"
-			ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI}"
-			ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}"
+				ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI}"
+				ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}"
 			echo -e "${CYAN}Reloading configuration on remote FTLDNS${NC}"
-			ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns reloadlists'
-			ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns'
+				ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns reloadlists'
+				ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns'
 			echo -e "${GREEN}gravity.db push completed${NC}"
 			exit
 		;;
@@ -108,7 +108,7 @@ function push_gs {
 
 function logs_gs {
 	echo -e "These are the last three valid PULL timestamps"
-	tail -n 3 ${SYNCING_LOG}
+		tail -n 3 ${SYNCING_LOG}
 }
 
 # Validate Functions
@@ -136,6 +136,8 @@ function validate_ph_folders {
 		exit
 	fi
 }
+
+## Validate GS Argument Used
 
 function validate_gs_arguments {
 	echo "Usage: $0 {pull|push}"
