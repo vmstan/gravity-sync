@@ -112,12 +112,12 @@ function push_gs {
 # Logging Functions
 ## Check Log Function
 function logs_gs {
-	echo -e "Last few PULL attempts"
+	echo -e "Recent ${PURPLE}PULL${NC} attempts"
 		tail -n 10 ${SYNCING_LOG} | grep PULL
-	echo -e "Last few PULL attempts"
-		tail -n 10 ${SYNCING_LOG} | grep PUSH
-	echo -e "Last few UPDATE attempts"
+	echo -e "Recent ${PURPLE}UPDATE${NC} attempts"
 		tail -n 10 ${SYNCING_LOG} | grep UPDATE
+	echo -e "Recent ${PURPLE}PUSH${NC} attempts"
+			tail -n 10 ${SYNCING_LOG} | grep PUSH
 }
 
 ## Log Out
