@@ -136,6 +136,13 @@ case $# in
 		echo -e "No changes have been made to the system"
 		exit
 	;;
+	
+	update)
+		echo -e "${PURPLE}Info:${NC} Update requested"
+		echo -e "This will fail unless you installed via Git"
+		git pull
+		exit
+	;;
 
 	*)
 	echo -e "${RED}'$1' is not a valid argument${NC}"
