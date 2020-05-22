@@ -156,6 +156,12 @@ case $# in
 		done
 		exit
 	;;
+	
+	logs)
+	
+		echo -e "${GREEN}Success:${NC} Logs Requested"
+		echo -e "Showing last three successful execution timestamps"
+		tail -n 3 ${SYNCING_LOG}
 
 	*)
 	echo -e "${RED}'$1' is not a valid argument${NC}"
