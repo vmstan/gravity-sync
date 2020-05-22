@@ -32,7 +32,6 @@ NC='\033[0m'
 # FUNCTION DEFINITIONS #######################
 
 # Import Settings
-
 function import_gs {
 	echo -e "${CYAN}Importing gravity-sync.conf settings${NC}"
 	if [ -f ~/${LOCAL_FOLDR}/gravity-sync.conf ]
@@ -47,7 +46,6 @@ function import_gs {
 }
 
 # Update Function
-
 function update_gs {
 	echo -e "${YELLOW}This update will fail if Gravity Sync was not installed via GitHub${NC}"
 		git reset --hard
@@ -55,7 +53,6 @@ function update_gs {
 }
 
 # Pull Function
-
 function pull_gs {
 	echo -e "${CYAN}Copying ${GRAVITY_FI} from remote server ${REMOTE_HOST}${NC}"
 		rsync -v --progress -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${GRAVITY_FI}
@@ -71,12 +68,11 @@ function pull_gs {
 		pihole restartdns
 	echo -e "${CYAN}Retaining additional copy of remote ${GRAVITY_FI}${NC}"
 		mv -v ~/${LOCAL_FOLDR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${GRAVITY_FI}.last
-		date >> ~/${LOCAL_FOLDR}/${SYNCING_LOG}
+		logs_export
 	echo -e "${GREEN}gravity.db pull completed${NC}"
 }
 
 # Push Function
-
 function push_gs {
 	echo -e "${YELLOW}WARNING: DATA LOSS IS POSSIBLE${NC}"
 	echo -e "This will send the running ${GRAVITY_FI} from this server to your primary Pihole"
@@ -106,15 +102,21 @@ function push_gs {
 	done
 }
 
+# Logging Functions
+## Check Log Function
 function logs_gs {
 	echo -e "These are the last three valid PULL timestamps"
 		tail -n 3 ${SYNCING_LOG}
 }
 
+## Log Out
+function logs_export {
+	echo -e "Logging timestamps to ${SYNCING_LOG}"
+	date >> ~/${LOCAL_FOLDR}/${SYNCING_LOG}
+}
+
 # Validate Functions
-
 ## Validate GS Folders
-
 function validate_gs_folders {
 	if [ -d ~/${LOCAL_FOLDR} ]
 	then
@@ -126,7 +128,6 @@ function validate_gs_folders {
 }
 
 ## Validate PH Folders
-
 function validate_ph_folders {
 	if [ -d ${PIHOLE_DIR} ]
 	then
@@ -138,7 +139,6 @@ function validate_ph_folders {
 }
 
 ## Validate GS Argument Used
-
 function validate_gs_arguments {
 	echo "Usage: $0 {pull|push}"
 	echo -e "> ${YELLOW}Pull${NC} will copy the ${GRAVITY_FI} configuration on a remote host to this server"
@@ -208,9 +208,10 @@ case $# in
 			;;
 		esac
 	;;
+	
 	*)
       echo -e "${RED}Too many arguments provided ($#)${NC}"
       echo "Usage: $0 {pull|push}"
       exit 3
-	 ;;
+	;;
 esac
