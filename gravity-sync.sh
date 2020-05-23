@@ -68,7 +68,7 @@ function update_gs {
 function pull_gs {
 	TASKTYPE='PULL'
 	echo -e "[${CYAN}STAT${NC}] Copying ${GRAVITY_FI} from ${REMOTE_HOST}"
-		rsync -v --progress -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.last
+		sudo rsync -v --progress -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.last
 	echo -e "[${CYAN}STAT${NC}] Backing Up Current ${GRAVITY_FI} on $HOSTNAME"
 		cp -v ${PIHOLE_DIR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.backup
 	echo -e "[${CYAN}STAT${NC}] Replacing ${GRAVITY_FI} on $HOSTNAME"
