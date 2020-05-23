@@ -43,7 +43,7 @@ NC='\033[0m'
 # Import Settings
 function import_gs {
 	echo -e "[${CYAN}STAT${NC}] Importing ${CONFIG_FILE} Settings"
-	if [ -f ~/${LOCAL_FOLDR}/${CONFIG_FILE} ]
+	if [ -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE} ]
 	then
 	    source ${CONFIG_FILE}
 		echo -e "[${GREEN}GOOD${NC}] Using ${REMOTE_USER}@${REMOTE_HOST}"
@@ -68,12 +68,11 @@ function update_gs {
 function pull_gs {
 	TASKTYPE='PULL'
 	echo -e "[${CYAN}STAT${NC}] Copying ${GRAVITY_FI} from ${REMOTE_HOST}"
-		rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.last
-		# mv -v ~/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.last
+		rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.last
 	echo -e "[${CYAN}STAT${NC}] Backing Up Current ${GRAVITY_FI} on $HOSTNAME"
-		cp -v ${PIHOLE_DIR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.backup
+		cp -v ${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.backup
 	echo -e "[${CYAN}STAT${NC}] Replacing ${GRAVITY_FI} on $HOSTNAME"
-		sudo cp -v ~/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.last ${PIHOLE_DIR}/${GRAVITY_FI}
+		sudo cp -v $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.last ${PIHOLE_DIR}/${GRAVITY_FI}
 		sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI}
 		sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}
 	echo -e "${GRAVITY_FI} ownership and file permissions reset"
@@ -131,26 +130,26 @@ function logs_gs {
 ## Log Out
 function logs_export {
 	echo -e "[${CYAN}STAT${NC}] Logging Timestamps to ${SYNCING_LOG}"
-	# date >> ~/${LOCAL_FOLDR}/${SYNCING_LOG}
-	echo -e $(date) "[${TASKTYPE}]" >> ~/${LOCAL_FOLDR}/${SYNCING_LOG}
+	# date >> $HOME/${LOCAL_FOLDR}/${SYNCING_LOG}
+	echo -e $(date) "[${TASKTYPE}]" >> $HOME/${LOCAL_FOLDR}/${SYNCING_LOG}
 }
 
 # Validate Functions
 ## Validate GS Folders
 function validate_gs_folders {
-	if [ -d ~/${LOCAL_FOLDR} ]
+	if [ -d $HOME/${LOCAL_FOLDR} ]
 	then
-	    echo -e "[${GREEN}GOOD${NC}] Required ~/${LOCAL_FOLDR} Located"
+	    echo -e "[${GREEN}GOOD${NC}] Required $HOME/${LOCAL_FOLDR} Located"
 	else
-		echo -e "[${RED}FAIL${NC}] Required ~/${LOCAL_FOLDR} Missing"
+		echo -e "[${RED}FAIL${NC}] Required $HOME/${LOCAL_FOLDR} Missing"
 		exit_nochange
 	fi
 	
-	if [ -d ~/${LOCAL_FOLDR}/${BACKUP_FOLD} ]
+	if [ -d $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} ]
 	then
-	    echo -e "[${GREEN}GOOD${NC}] Required ~/${LOCAL_FOLDR}/${BACKUP_FOLD} Located"
+	    echo -e "[${GREEN}GOOD${NC}] Required $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} Located"
 	else
-		echo -e "[${RED}FAIL${NC}] Required ~/${LOCAL_FOLDR}/${BACKUP_FOLD} Missing"
+		echo -e "[${RED}FAIL${NC}] Required $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} Missing"
 		exit_nochange
 	fi
 }
