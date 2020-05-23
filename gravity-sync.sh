@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # GRAVITY SYNC BY VMSTAN #####################
+PROGRAM='Gravity Sync'
 VERSION='1.3.0'
 
 # Must execute from a location in the home folder of the user who own's it (ex: /home/pi/gravity-sync)
@@ -39,6 +40,7 @@ FAIL="[${RED}FAIL${NC}]"
 WARN="[${PURPLE}WARN${NC}]"
 GOOD="[${GREEN}GOOD${NC}]"
 STAT="[${CYAN}STAT${NC}]"
+INFO="[${YELLOW}INFO${NC}]"
 
 ##############################################
 ### DO NOT CHANGE ANYTHING BELOW THIS LINE ###
@@ -112,7 +114,7 @@ function pull_gs {
 # Push Function
 function push_gs {
 	TASKTYPE='PUSH'
-	echo -e "[${PURPLE}WARN${NC}] DATA LOSS IS POSSIBLE"
+	echo -e "${WARN} DATA LOSS IS POSSIBLE"
 	echo -e "The standard use of this script is to ${YELLOW}PULL${NC} data from the" 
 	echo -e "primary PH server to the secondary. By issuing a ${YELLOW}PUSH${NC}, we" 
 	echo -e "will instead overwrite the ${GRAVITY_FI} on ${YELLOW}${REMOTE_HOST}${NC}"
@@ -216,14 +218,14 @@ function list_gs_arguments {
 # Exit Codes
 ## No Changes Made
 function exit_nochange {
-	echo -e "[${CYAN}STAT${NC}] Exiting Without Making Changes"
-	exit
+	echo -e "${INFO} ${PROGRAM} ${YELLOW}${TASKTYPE}${NC} Exiting Without Changes"
+	exit 0
 }
 
 ## Changes Made
 function exit_withchange {
-	echo -e "[${CYAN}STAT${NC}] ${GRAVITY_FI} ${TASKTYPE} Completed"
-	exit
+	echo -e "${GOOD} ${PROGRAM} ${YELLOW}${TASKTYPE}${NC} Completed"
+	exit 0
 }
 
 # Error Validation
@@ -238,6 +240,7 @@ function error_validate {
 
 # SCRIPT EXECUTION ###########################
 
+echo -e "${INFO} ${PROGRAM} ${VERSION}"
 echo -e "[${CYAN}STAT${NC}] Evaluating Script Arguments"
 
 case $# in
