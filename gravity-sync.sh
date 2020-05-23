@@ -45,7 +45,7 @@ function import_gs {
 	echo -e "[${CYAN}STAT${NC}] Importing ${CONFIG_FILE} Settings"
 	if [ -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE} ]
 	then
-	    source ${CONFIG_FILE}
+	    source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 		echo -e "[${GREEN}GOOD${NC}] Using ${REMOTE_USER}@${REMOTE_HOST}"
 	else
 		echo -e "[${RED}FAIL${NC}] Required ${CONFIG_FILE} Missing"
