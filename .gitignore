@@ -3,3 +3,5 @@ gravity.db.last
 gravity-sync.conf
 backup/*.last
 backup/*.backup
+backup/*.push
+backup/*.pull

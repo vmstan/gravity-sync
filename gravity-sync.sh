@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # GRAVITY SYNC BY VMSTAN #####################
-VERSION='1.2.4'
+VERSION='1.2.5'
 
 # Must execute from a location in the home folder of the user who own's it (ex: /home/pi/gravity-sync)
 # Configure certificate based SSH authentication between the Pi-hole HA nodes - it does not use passwords
@@ -67,12 +67,12 @@ function update_gs {
 # Pull Function
 function pull_gs {
 	TASKTYPE='PULL'
-	echo -e "[${CYAN}STAT${NC}] Copying ${GRAVITY_FI} from ${REMOTE_HOST}"
-		rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.last
+	echo -e "[${CYAN}STAT${NC}] Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
+		rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull
 	echo -e "[${CYAN}STAT${NC}] Backing Up Current ${GRAVITY_FI} on $HOSTNAME"
 		cp -v ${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.backup
 	echo -e "[${CYAN}STAT${NC}] Replacing ${GRAVITY_FI} on $HOSTNAME"
-		sudo cp -v $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.last ${PIHOLE_DIR}/${GRAVITY_FI}
+		sudo cp -v $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull ${PIHOLE_DIR}/${GRAVITY_FI}
 		sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI}
 		sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}
 	echo -e "${GRAVITY_FI} ownership and file permissions reset"
@@ -87,17 +87,17 @@ function pull_gs {
 function push_gs {
 	TASKTYPE='PUSH'
 	echo -e "[${PURPLE}WARN${NC}] DATA LOSS IS POSSIBLE"
-	echo -e "The standard use of this script is to ${YELLOW}PULL${NC} data from the primary PH server to the secondary."
-	echo -e "By issuing a ${YELLOW}PUSH${NC} we will overwrite ${GRAVITY_FI} on ${YELLOW}${REMOTE_HOST}${NC} with ${YELLOW}$HOSTNAME${NC} server data."
-	echo -e "No backup copies are made on the primary Pihole before or after executing this command!"
+	echo -e "The standard use of this script is to ${YELLOW}PULL${NC} data from the primary PH server to the secondary. By issuing a ${YELLOW}PUSH${NC}, we will instead overwrite the ${GRAVITY_FI} on ${YELLOW}${REMOTE_HOST}${NC} with ${YELLOW}$HOSTNAME${NC} server data. A copy of the remote ${GRAVITY_FI} will be saved to this server at $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push"
 	echo -e ""
 	echo -e "Are you sure you want to overwrite the primary node configuration on ${REMOTE_HOST}?"
 	select yn in "Yes" "No"; do
 		case $yn in
 		Yes )
 			# echo "Replacing gravity.db on primary"
-			echo -e "[${CYAN}STAT${NC}] Copying ${GRAVITY_FI} to ${REMOTE_HOST}"
-				rsync --rsync-path="sudo rsync" -v --progress -e 'ssh -p 22' ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}
+			echo -e "[${CYAN}STAT${NC}] Backing Up ${GRAVITY_FI} from ${REMOTE_HOST}"
+				rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push
+			echo -e "[${CYAN}STAT${NC}] Pushing ${GRAVITY_FI} to ${REMOTE_HOST}"
+				rsync --rsync-path="sudo rsync" -v -e 'ssh -p 22' ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}
 			echo -e "[${CYAN}STAT${NC}] Applying Rermissions to Remote ${GRAVITY_FI}"
 				ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI}"
 				ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}"
