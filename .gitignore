@@ -1,4 +1,5 @@
 gravity-sync.log
+gravity-sync.cron
 gravity.db.last
 gravity-sync.conf
 backup/*.last
