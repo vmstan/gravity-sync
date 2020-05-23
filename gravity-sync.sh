@@ -78,6 +78,7 @@ function pull_gs {
 	echo -e "${STAT} ${MESSAGE}"
 		rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull
 		if_validate
+		
 	echo -e "[${CYAN}STAT${NC}] Backing Up Current ${GRAVITY_FI} on $HOSTNAME"
 		cp -v ${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.backup
 	echo -e "[${CYAN}STAT${NC}] Replacing ${GRAVITY_FI} on $HOSTNAME"
@@ -214,6 +215,8 @@ function if_validate {
 	if [ "$?" != "0" ]; then
 	    echo -e "${FAIL} ${MESSAGE}"
 	    exit 1
+	else
+		echo -e "${GOOD} ${MESSAGE}"
 	fi
 }
 
