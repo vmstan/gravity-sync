@@ -12,7 +12,7 @@ The script assumes you have one "primary" PH as the place you make all your conf
 
 It will **not** overwrite device specific settings such as local network configuration, admin/API passwords/keys, upstream DNS resolvers, etc. It will also **not** keep DHCP settings or device leases synchronized. 
 
-## Prereqs
+## Prerequisites
 
 You will need to designate one Pi-Hole as primary and one as secondary. The designation is purely at your discretion and depends on your desired use case:
 
