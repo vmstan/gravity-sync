@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # GRAVITY SYNC BY VMSTAN #####################
-VERSION='1.2.3'
+VERSION='1.2.4'
 
 # Must execute from a location in the home folder of the user who own's it (ex: /home/pi/gravity-sync)
 # Configure certificate based SSH authentication between the Pi-hole HA nodes - it does not use passwords
@@ -68,7 +68,8 @@ function update_gs {
 function pull_gs {
 	TASKTYPE='PULL'
 	echo -e "[${CYAN}STAT${NC}] Copying ${GRAVITY_FI} from ${REMOTE_HOST}"
-		sudo rsync -v --progress -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.last
+		rsync -v --progress -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}
+		mv -v ~/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.last
 	echo -e "[${CYAN}STAT${NC}] Backing Up Current ${GRAVITY_FI} on $HOSTNAME"
 		cp -v ${PIHOLE_DIR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.backup
 	echo -e "[${CYAN}STAT${NC}] Replacing ${GRAVITY_FI} on $HOSTNAME"
@@ -79,8 +80,6 @@ function pull_gs {
 	echo -e "[${CYAN}STAT${NC}] Reloading FTLDNS Configuration"
 		pihole restartdns reloadlists
 		pihole restartdns
-	# echo -e "[${CYAN}STAT${NC}] Archiving Latest ${GRAVITY_FI}"
-	#	mv -v ~/${LOCAL_FOLDR}/${GRAVITY_FI} ~/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.last
 		logs_export
 	exit_withchange
 }
