@@ -91,7 +91,8 @@ function push_gs {
 	echo -e "primary PH server to the secondary. By issuing a ${YELLOW}PUSH${NC}, we" 
 	echo -e "will instead overwrite the ${GRAVITY_FI} on ${YELLOW}${REMOTE_HOST}${NC}"
 	echo -e "with ${YELLOW}$HOSTNAME${NC} server data. A copy of the remote ${GRAVITY_FI}"
-	echo -e "will be saved to this server at $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push"
+	echo -e "will be saved to this server at:"
+	echo -e "${YELLOW}$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push${NC}"
 	echo -e ""
 	echo -e "Are you sure you want to overwrite the primary node configuration on ${REMOTE_HOST}?"
 	select yn in "Yes" "No"; do
