@@ -34,6 +34,12 @@ YELLOW='\033[0;93m'
 PURPLE='\033[0;95m'
 NC='\033[0m'
 
+# Message Codes
+FAIL="[${RED}FAIL${NC}]"
+WARN="[${PURPLE}WARN${NC}]"
+GOOD="[${GREEN}GOOD${NC}]"
+STAT="[${CYAN}STAT${NC}]"
+
 ##############################################
 ### DO NOT CHANGE ANYTHING BELOW THIS LINE ###
 ##############################################
@@ -68,8 +74,8 @@ function update_gs {
 function pull_gs {
 	TASKTYPE='PULL'
 	
-	MESSAGE="[${CYAN}STAT${NC}] Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
-	echo -e "${MESSAGE}"
+	MESSAGE="Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
+	echo -e "${STAT} ${MESSAGE}"
 		rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull
 		if_validate
 	echo -e "[${CYAN}STAT${NC}] Backing Up Current ${GRAVITY_FI} on $HOSTNAME"
@@ -206,7 +212,7 @@ function exit_withchange {
 
 function if_validate {
 	if [ "$?" != "0" ]; then
-	    echo -e "[${RED}FAIL${NC}] Previous Command Failed"
+	    echo -e "${FAIL} ${MESSAGE}"
 	    exit 1
 	fi
 }
