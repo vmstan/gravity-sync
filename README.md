@@ -2,6 +2,8 @@
 
 For more information visit [https://vmstan.com/gravity-sync/](https://vmstan.com/gravity-sync/)
 
+![Pull execution](https://user-images.githubusercontent.com/3002053/82719284-c396d880-9c6e-11ea-859c-b316357a495c.png)
+
 ## Background
 
 If you have more than one Pi-hole (PH) in your network and you want to keep the list configurations identical between the two, you've come to the right place.
