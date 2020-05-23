@@ -69,6 +69,7 @@ function pull_gs {
 	TASKTYPE='PULL'
 	echo -e "[${CYAN}STAT${NC}] Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
 		rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull
+		if_validate
 	echo -e "[${CYAN}STAT${NC}] Backing Up Current ${GRAVITY_FI} on $HOSTNAME"
 		cp -v ${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.backup
 	echo -e "[${CYAN}STAT${NC}] Replacing ${GRAVITY_FI} on $HOSTNAME"
@@ -198,6 +199,13 @@ function exit_nochange {
 function exit_withchange {
 	echo -e "[${CYAN}STAT${NC}] ${GRAVITY_FI} ${TASKTYPE} Completed"
 	exit
+}
+
+function if_validate {
+	if [ "$?" != "0" ]; then
+	    echo "[${RED}FAIL${NC}] Previous Command Failed"
+	    exit 1
+	fi
 }
 
 # SCRIPT EXECUTION ###########################
