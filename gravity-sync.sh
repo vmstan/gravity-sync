@@ -11,7 +11,7 @@ VERSION='1.3.0'
 
 # REQUIRED SETTINGS ##########################
 
-# You MUST define REMOTE_HOST and REMOTE_USER in a file called 'gravity-sync.conf' 
+# You MUST define REMOTE_HOST and REMOTE_USER in a file called 'gravity-sync.conf' OK
 # You can copy the 'gravity-sync.conf.example' file in the script directory to get started 
 
 # STANDARD VARIABLES #########################
