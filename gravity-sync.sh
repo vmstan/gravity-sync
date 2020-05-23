@@ -201,9 +201,10 @@ function exit_withchange {
 	exit
 }
 
+
 function if_validate {
 	if [ "$?" != "0" ]; then
-	    echo "[${RED}FAIL${NC}] Previous Command Failed"
+	    echo -e "[${RED}FAIL${NC}] Previous Command Failed"
 	    exit 1
 	fi
 }
