@@ -126,18 +126,34 @@ function push_gs {
 	select yn in "Yes" "No"; do
 		case $yn in
 		Yes )
-			# echo "Replacing gravity.db on primary"
-			echo -e "[${CYAN}STAT${NC}] Backing Up ${GRAVITY_FI} from ${REMOTE_HOST}"
+			
+			MESSAGE="Backing Up ${GRAVITY_FI} from ${REMOTE_HOST}"
+			echo -e "${STAT} ${MESSAGE}"
 				rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push
-			echo -e "[${CYAN}STAT${NC}] Pushing ${GRAVITY_FI} to ${REMOTE_HOST}"
+				error_validate
+	
+			MESSAGE="Pushing ${GRAVITY_FI} to ${REMOTE_HOST}"
+			echo -e "${STAT} ${MESSAGE}"
 				rsync --rsync-path="sudo rsync" -v -e 'ssh -p 22' ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}
-			echo -e "[${CYAN}STAT${NC}] Applying Permissions to Remote ${GRAVITY_FI}"
+				error_validate
+	
+			MESSAGE="Setting Permissions on ${GRAVITY_FI}"
+			echo -e "${STAT} ${MESSAGE}"	
 				ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI}"
+				error_validate
+		
+			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
+			echo -e "${STAT} ${MESSAGE}"	
 				ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}"
-			echo -e "[${CYAN}STAT${NC}] Reloading FTLDNS Configuration"
+				error_validate	
+	
+			MESSAGE="Reloading FTLDNS Configuration"
+			echo -e "${STAT} ${MESSAGE}"
 				ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns reloadlists'
 				ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns'
-				logs_export
+				error_validate
+			
+			logs_export
 			exit_withchange
 		;;
 		
