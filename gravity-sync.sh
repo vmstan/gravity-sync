@@ -67,7 +67,9 @@ function update_gs {
 # Pull Function
 function pull_gs {
 	TASKTYPE='PULL'
-	echo -e "[${CYAN}STAT${NC}] Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
+	
+	MESSAGE="[${CYAN}STAT${NC}] Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
+	echo -e "${MESSAGE}"
 		rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull
 		if_validate
 	echo -e "[${CYAN}STAT${NC}] Backing Up Current ${GRAVITY_FI} on $HOSTNAME"
