@@ -68,9 +68,9 @@ Download the latest release from [GitHub](https://github.com/vmstan/gravity-sync
 
 ```
 cd ~
-wget https://github.com/vmstan/gravity-sync/archive/v1.2.3.zip
-unzip v1.2.3.zip
-mv ~/gravity-sync-1.2.3 ~/gravity-sync
+wget https://github.com/vmstan/gravity-sync/archive/v1.2.4.zip
+unzip v1.2.4.zip
+mv ~/gravity-sync-1.2.4 ~/gravity-sync
 cd gravity-sync
 ```
 
