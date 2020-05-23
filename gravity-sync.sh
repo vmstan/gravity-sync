@@ -103,7 +103,7 @@ function push_gs {
 				rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push
 			echo -e "[${CYAN}STAT${NC}] Pushing ${GRAVITY_FI} to ${REMOTE_HOST}"
 				rsync --rsync-path="sudo rsync" -v -e 'ssh -p 22' ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}
-			echo -e "[${CYAN}STAT${NC}] Applying Rermissions to Remote ${GRAVITY_FI}"
+			echo -e "[${CYAN}STAT${NC}] Applying Permissions to Remote ${GRAVITY_FI}"
 				ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI}"
 				ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}"
 			echo -e "[${CYAN}STAT${NC}] Reloading FTLDNS Configuration"

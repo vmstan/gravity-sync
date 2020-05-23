@@ -68,9 +68,9 @@ Download the latest release from [GitHub](https://github.com/vmstan/gravity-sync
 
 ```
 cd ~
-wget https://github.com/vmstan/gravity-sync/archive/v1.2.4.zip
-unzip v1.2.4.zip
-mv ~/gravity-sync-1.2.4 ~/gravity-sync
+wget https://github.com/vmstan/gravity-sync/archive/v1.2.5.zip
+unzip v1.2.5.zip
+mv ~/gravity-sync-1.2.5 ~/gravity-sync
 cd gravity-sync
 ```
 
@@ -120,7 +120,9 @@ There is an option in the script to `push` from the secondary PH back to the pri
 ./gravity-sync.sh push
 ```
 
-Please note that the "push" option *does not make any backups of anything*. There is a warning about potental data loss before executing this function. This function purposefuly asks for user interaction to avoid being accidentally automated.
+Before executing, this will make a copy of the remote database under `backup/gravity.db.push` then push the local configuration to the remote server.
+
+This function purposefuly asks for user interaction to avoid being accidentally automated.
 
 ## Updates
 
