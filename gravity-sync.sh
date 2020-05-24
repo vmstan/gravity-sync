@@ -21,11 +21,16 @@ VERSION='1.3.0'
 LOCAL_FOLDR='gravity-sync' # must exist in running user home folder
 CONFIG_FILE='gravity-sync.conf' # must exist as explained above
 SYNCING_LOG='gravity-sync.log' # will be created in above folder
+CRONTAB_LOG='gravity-sync.cron'
 BACKUP_FOLD='backup'
 
 # PH Folder/File Locations
 PIHOLE_DIR='/etc/pihole'  # default install directory
 GRAVITY_FI='gravity.db' # this should not change
+
+##############################################
+### DO NOT CHANGE ANYTHING BELOW THIS LINE ###
+##############################################
 
 # Script Colors
 RED='\033[0;91m'
@@ -39,12 +44,8 @@ NC='\033[0m'
 FAIL="[${RED}FAIL${NC}]"
 WARN="[${PURPLE}WARN${NC}]"
 GOOD="[${GREEN}GOOD${NC}]"
-STAT="[${CYAN}STAT${NC}]"
+STAT="[${CYAN}EXEC${NC}]"
 INFO="[${YELLOW}INFO${NC}]"
-
-##############################################
-### DO NOT CHANGE ANYTHING BELOW THIS LINE ###
-##############################################
 
 # FUNCTION DEFINITIONS #######################
 
@@ -176,6 +177,17 @@ function logs_gs {
 	exit_nochange
 }
 
+## Check Last Crontab
+function logs_crontab {
+	echo -e "========================================================"
+	echo -e "========================================================"
+	echo -e ""
+	cat ${CRONTAB_LOG}
+	echo -e ""
+	echo -e "========================================================"
+	echo -e "========================================================"
+}
+
 ## Log Out
 function logs_export {
 	echo -e "[${CYAN}STAT${NC}] Logging Timestamps to ${SYNCING_LOG}"
@@ -257,19 +269,24 @@ function error_validate {
 # SCRIPT EXECUTION ###########################
 
 echo -e "${INFO} ${PROGRAM} ${VERSION}"
-echo -e "[${CYAN}STAT${NC}] Evaluating Script Arguments"
+	
+	MESSAGE="Evaluating Script Arguments"
+	echo -e "${STAT} ${MESSAGE}"
 
 case $# in
 	
 	0)
-		echo -e "[${RED}FAIL${NC}] Missing Required Arguments"
+		echo -e "${FAIL} ${MESSAGE}"
 			list_gs_arguments
 	;;
 	
 	1)
    		case $1 in
    	 		pull)
-				echo -e "[${GREEN}GOOD${NC}] Pull Requested"
+				echo -e "${GOOD} ${MESSAGE}"
+				
+				MESSAGE="Pull Requested"
+				echo -e "${STAT} ${MESSAGE}"
 					import_gs
 
 				echo -e "[${CYAN}STAT${NC}] Validating Folder Configuration"
@@ -304,20 +321,38 @@ case $# in
 			;;
 	
 			logs)
-				echo -e "[${GREEN}GOOD${NC}] Logs Requested"
+				MESSAGE="Logs Requested"
+				echo -e "${GOOD} ${MESSAGE}"
 					logs_gs
+			;;
+			
+			cron)
+				if [ -f $HOME/${LOCAL_FOLDR}/${CRONJOB_LOG} ]
+				then
+					MESSAGE="Replaying Last Cronjob"
+					echo -e "${GOOD} ${MESSAGE}"
+						logs_crontab
+				else
+					MESSAGE="Replaying Last Cronjob"
+					echo -e "${FAIL} ${MESSAGE}"
+					exit_nochange
+				fi
+				
+				exit_nochange
 			;;
 
 			*)
-				echo -e "[${RED}FAIL${NC}] '${YELLOW}$1${NC}' is Invalid Argument"
+				MESSAGE="'${YELLOW}$1${NC}' is an Invalid Argument"
+				echo -e "${FAIL} ${MESSAGE}"
         			list_gs_arguments
+					exit_nochange
 			;;
 		esac
 	;;
 	
 	*)
-      echo -e "[${RED}FAIL${NC}] Too Many Arguments"
-      	list_gs_arguments
-      exit_nochange
+		echo -e "${FAIL} Too Many Arguments"
+			list_gs_arguments
+			exit_nochange
 	;;
 esac
