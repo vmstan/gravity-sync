@@ -327,15 +327,25 @@ case $# in
 			;;
 			
 			cron)
-				if [ -f $HOME/${LOCAL_FOLDR}/${CRONJOB_LOG} ]
+				CRONPATH="$HOME/${LOCAL_FOLDR}/${CRONJOB_LOG}"
+				
+				MESSAGE="Replaying Last Cronjob"
+				echo -e "${STAT} ${MESSAGE}"
+				
+				if [ -f ${CRONPATH} ]
 				then
-					MESSAGE="Replaying Last Cronjob"
-					echo -e "${GOOD} ${MESSAGE}"
+					if [ -s ${CRONPATH} ]
+						echo -e "${GOOD} ${MESSAGE}"
 						logs_crontab
+					then
+						echo -e "${FAIL} ${MESSAGE}"
+						echo -e "${YELLOW}${CRONPATH}${NC} appears empty"
+							exit_nochange
+					fi
 				else
-					MESSAGE="Replaying Last Cronjob"
 					echo -e "${FAIL} ${MESSAGE}"
-					exit_nochange
+					echo -e "${YELLOW}${CRONPATH}${NC} cannot be located"
+						exit_nochange
 				fi
 				
 				exit_nochange
@@ -351,7 +361,8 @@ case $# in
 	;;
 	
 	*)
-		echo -e "${FAIL} Too Many Arguments"
+		MESSAGE="Too Many Arguments"
+		echo -e "${FAIL} ${MESSAGE}"
 			list_gs_arguments
 			exit_nochange
 	;;
