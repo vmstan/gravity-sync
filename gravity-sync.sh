@@ -266,9 +266,14 @@ function error_validate {
 	fi
 }
 
+# Output Version
+function show_version {
+	echo -e "${INFO} ${PROGRAM} ${VERSION}"
+}
+
 # SCRIPT EXECUTION ###########################
 
-echo -e "${INFO} ${PROGRAM} ${VERSION}"
+show_version
 	
 	MESSAGE="Evaluating Script Arguments"
 	echo -e "${STAT} ${MESSAGE}"
@@ -310,7 +315,7 @@ case $# in
 			;;
 	
 			version)
-				echo -e "[ ${PURPLE}INFO${NC} ] Gravity Sync ${VERSION}"
+				show_version
 				exit_nochange
 			;;
 	
@@ -336,7 +341,8 @@ case $# in
 				then
 					if [ -s ${CRONPATH} ]
 						echo -e "${GOOD} ${MESSAGE}"
-						logs_crontab
+							logs_crontab
+							exit_nochange
 					then
 						echo -e "${FAIL} ${MESSAGE}"
 						echo -e "${YELLOW}${CRONPATH}${NC} appears empty"
@@ -348,7 +354,6 @@ case $# in
 						exit_nochange
 				fi
 				
-				exit_nochange
 			;;
 
 			*)
