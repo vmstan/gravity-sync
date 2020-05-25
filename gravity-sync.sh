@@ -84,6 +84,20 @@ function update_gs {
 	exit
 }
 
+# Developer Build Update
+function beta_gs {
+	TASKTYPE='UPDATE'
+	logs_export 	# dumps log prior to execution because script stops after successful pull
+	
+	MESSAGE="Requires GitHub Installation" 
+	echo -e "${INFO} ${MESSAGE}"
+		git reset --hard
+		git pull
+		git checkout origin/development
+		
+	exit
+}
+
 # Pull Function
 function pull_gs {
 	TASKTYPE='PULL'
@@ -364,6 +378,13 @@ case $# in
 				TASKTYPE='UPDATE'
 				echo -e "[${GREEN}GOOD${NC}] Update Requested"
 					update_gs
+				exit_nochange
+			;;
+			
+			beta)
+				TASKTYPE='BETA'
+				echo -e "[${GREEN}GOOD${NC}] Beta Update Requested"
+					beta_gs
 				exit_nochange
 			;;
 	
