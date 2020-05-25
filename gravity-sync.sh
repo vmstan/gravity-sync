@@ -280,7 +280,7 @@ function validate_os_sshpass {
 			sshpassword=''
 			MESSAGE="Using SSH Key-Pair Authentication"
 		else
-			sshpassword="sshpass -p ${REMOTE_PASS}"
+			sshpassword="sshpass -p ${REMOTE_PASS} "
 			MESSAGE="Using SSH Password Authentication"
 		fi
     else
@@ -347,7 +347,7 @@ function md5_compare {
 	
 	MESSAGE="Analyzing Remote ${GRAVITY_FI}"
 	echo -e "${STAT} ${MESSAGE}"
-	primaryMD5=$(ssh ${REMOTE_USER}@${REMOTE_HOST} 'md5sum /etc/pihole/gravity.db')
+	primaryMD5=$(${sshpassword}ssh ${REMOTE_USER}@${REMOTE_HOST} 'md5sum /etc/pihole/gravity.db')
 		error_validate
 	
 	MESSAGE="Analyzing Local ${GRAVITY_FI}"
@@ -366,8 +366,6 @@ function md5_compare {
 }
 
 # SCRIPT EXECUTION ###########################
-
-validate_os_sshpass
 	
 	MESSAGE="Evaluating Script Arguments"
 	echo -e "${STAT} ${MESSAGE}"
@@ -390,6 +388,7 @@ case $# in
 				echo -e "${INFO} ${MESSAGE}"
 					validate_gs_folders
 					validate_ph_folders
+					validate_os_sshpass
 					
 				pull_gs
 				exit
@@ -403,6 +402,7 @@ case $# in
 				echo -e "${INFO} Validating Folder Configuration"
 					validate_gs_folders
 					validate_ph_folders
+					validate_os_sshpass
 					
 				push_gs
 				exit
@@ -444,7 +444,11 @@ case $# in
 				
 				echo -e "${GOOD} ${MESSAGE}"
 					import_gs
-					md5_compare
+				
+				echo -e "${INFO} Validating Folder Configuration"
+					validate_gs_folders
+					validate_ph_folders
+					validate_os_sshpass
 			;;
 			
 			cron)
