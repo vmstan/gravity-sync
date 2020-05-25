@@ -278,12 +278,17 @@ function validate_os_sshpass {
 		if test -z "$REMOTE_PASS"
 		then
 			sshpassword=''
+			MESSAGE="Using SSH Key-Pair Authentication"
 		else
 			sshpassword="sshpass -p ${REMOTE_PASS}"
+			MESSAGE="Using SSH Password Authentication"
 		fi
     else
         sshpassword=''
+		MESSAGE="Using SSH Key-Pair Authentication"
     fi
+	
+	echo -e "$INFO $MESSAGE"
 }
 
 # List GS Arguments
