@@ -277,7 +277,7 @@ function list_gs_arguments {
 	echo -e "Replication Options:"
 	echo -e " ${YELLOW}pull${NC}		Sync the ${GRAVITY_FI} configuration on primary PH to this server"
 	echo -e " ${YELLOW}push${NC}		Force any changes made on this server back to the primary PH"
-	echo -e " ${YELLOW}compare${NC}		Check to see if there is any variance between primary and secondary"
+	echo -e " ${YELLOW}compare${NC}	Check to see if there is any variance between primary and secondary"
 	echo -e ""
 	echo -e "Update Options:"
 	echo -e " ${YELLOW}update${NC}		Use GitHub to update this script to the latest version available"
