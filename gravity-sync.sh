@@ -298,6 +298,7 @@ function validate_os_sshpass {
 	
 	MESSAGE="Testing SSH Connection"
 	echo -e "$STAT $MESSAGE"
+	echo -e "${sshpassword} ssh -o ConnectTimeout=5 -o BatchMode=yes -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit'"
 	${sshpassword} ssh -o ConnectTimeout=5 -o BatchMode=yes -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit'
 		error_validate
 	
