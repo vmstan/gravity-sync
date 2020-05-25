@@ -272,14 +272,16 @@ function validate_ph_folders {
 
 ## Validate SSHPASS
 function validate_os_sshpass {
-    if hash sshpass 2>/dev/null
+    echo -e "${INFO} Checking SSH Configuration"
+	
+	if hash sshpass 2>/dev/null
     then
 		if test -z "$REMOTE_PASS"
 		then
 			SSHPASSWORD=''
 			MESSAGE="Using SSH Key-Pair Authentication"
 		else
-			ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
+			timeout 5 ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
 			if [ "$?" != "0" ]; then
 				SSHPASSWORD="sshpass -p ${REMOTE_PASS}"
 				MESSAGE="Using SSH Password Authentication"
