@@ -86,7 +86,7 @@ function update_gs {
 
 # Developer Build Update
 function beta_gs {
-	TASKTYPE='UPDATE'
+	TASKTYPE='BETA'
 	logs_export 	# dumps log prior to execution because script stops after successful pull
 	
 	MESSAGE="Requires GitHub Installation" 
@@ -312,7 +312,7 @@ function show_version {
 
 # Look for Changes
 function md5_compare {
-	primaryMD5=$(ssh ${REMOTE_USER}@${REMOTE_HOST} 'md5sum ${PIHOLE_DIR}/${GRAVITY_FI}')
+	primaryMD5=$(ssh ${REMOTE_USER}@${REMOTE_HOST} \'md5sum ${PIHOLE_DIR}/${GRAVITY_FI}\')
 	secondMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI})
 	
 	if [ "$primaryMD5" == "$secondMD5" ]
@@ -375,14 +375,14 @@ case $# in
 			;;
 	
 			update)
-				TASKTYPE='UPDATE'
+				# TASKTYPE='UPDATE'
 				echo -e "[${GREEN}GOOD${NC}] Update Requested"
 					update_gs
 				exit_nochange
 			;;
 			
 			beta)
-				TASKTYPE='BETA'
+				# TASKTYPE='BETA'
 				echo -e "[${GREEN}GOOD${NC}] Beta Update Requested"
 					beta_gs
 				exit_nochange
