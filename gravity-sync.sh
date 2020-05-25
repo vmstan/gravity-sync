@@ -277,11 +277,16 @@ function list_gs_arguments {
 	echo -e "Replication Options:"
 	echo -e " ${YELLOW}pull${NC}		Sync the ${GRAVITY_FI} configuration on primary PH to this server"
 	echo -e " ${YELLOW}push${NC}		Force any changes made on this server back to the primary PH"
+	echo -e " ${YELLOW}compare${NC}		Check to see if there is any variance between primary and secondary"
 	echo -e ""
-	echo -e "Debugging Options:"
+	echo -e "Update Options:"
 	echo -e " ${YELLOW}update${NC}		Use GitHub to update this script to the latest version available"
+	echo -e " ${YELLOW}beta${NC}		Use GitHub to update this script to the latest beta version available"
+	echo -e ""
+	echo -e "Debug Options:"
 	echo -e " ${YELLOW}version${NC}	Display the version of the current installed script"
 	echo -e " ${YELLOW}logs${NC}		Show recent successful jobs"
+	echo -e " ${YELLOW}cron${NC}		Display output of last crontab execution"
 	echo -e ""
 	exit_nochange
 }
