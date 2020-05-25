@@ -284,13 +284,13 @@ function validate_os_sshpass {
 				SSHPASSWORD="sshpass -p ${REMOTE_PASS}"
 				MESSAGE="Using SSH Password Authentication"
 			else
-		        sshpassword=''
+		        SSHPASSWORD=''
 				MESSAGE="Using SSH Key-Pair Authentication"
 			fi
 			
 		fi
     else
-        sshpassword=''
+        SSHPASSWORD=''
 		MESSAGE="Using SSH Key-Pair Authentication"
     fi
 	
@@ -298,8 +298,8 @@ function validate_os_sshpass {
 	
 	MESSAGE="Testing SSH Connection"
 	echo -e "$STAT $MESSAGE"
-	echo -e "${sshpassword} ssh -o ConnectTimeout=5 -o BatchMode=yes -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit'"
-	${sshpassword} ssh -o ConnectTimeout=5 -o BatchMode=yes -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit'
+	echo -e "${SSHPASSWORD} ssh -o ConnectTimeout=5 -o BatchMode=yes -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit'"
+	${SSHPASSWORD} ssh -o ConnectTimeout=5 -o BatchMode=yes -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit'
 		error_validate
 	
 }
@@ -360,7 +360,7 @@ function md5_compare {
 	
 	MESSAGE="Analyzing Remote ${GRAVITY_FI}"
 	echo -e "${STAT} ${MESSAGE}"
-	primaryMD5=$(${sshpassword}ssh -o ConnectTimeout=5 -o BatchMode=yes -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'md5sum /etc/pihole/gravity.db')
+	primaryMD5=$(${SSHPASSWORD} ssh -o ConnectTimeout=5 -o BatchMode=yes -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'md5sum /etc/pihole/gravity.db')
 		error_validate
 	
 	MESSAGE="Analyzing Local ${GRAVITY_FI}"
