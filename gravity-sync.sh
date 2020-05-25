@@ -279,9 +279,9 @@ function validate_os_sshpass {
 			SSHPASSWORD=''
 			MESSAGE="Using SSH Key-Pair Authentication"
 		else
-			ssh -o ConnectTimeout=5 -o BatchMode=yes -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit'
+			ssh -o ConnectTimeout=5 -o BatchMode=yes -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
 			if [ "$?" != "0" ]; then
-				SSHPASSWORD="sshpass -p '${REMOTE_PASS}' "
+				SSHPASSWORD="sshpass -p ${REMOTE_PASS}"
 				MESSAGE="Using SSH Password Authentication"
 			else
 		        sshpassword=''
@@ -298,7 +298,7 @@ function validate_os_sshpass {
 	
 	MESSAGE="Testing SSH Connection"
 	echo -e "$STAT $MESSAGE"
-	${sshpassword}ssh -o ConnectTimeout=5 -o BatchMode=yes -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit'
+	${sshpassword} ssh -o ConnectTimeout=5 -o BatchMode=yes -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit'
 		error_validate
 	
 }
