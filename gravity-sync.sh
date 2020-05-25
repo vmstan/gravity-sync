@@ -2,7 +2,7 @@
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.3.0'
+VERSION='1.3.1'
 
 # Must execute from a location in the home folder of the user who own's it (ex: /home/pi/gravity-sync)
 # Configure certificate based SSH authentication between the Pi-hole HA nodes - it does not use passwords
@@ -21,8 +21,8 @@ VERSION='1.3.0'
 LOCAL_FOLDR='gravity-sync' # must exist in running user home folder
 CONFIG_FILE='gravity-sync.conf' # must exist as explained above
 SYNCING_LOG='gravity-sync.log' # will be created in above folder
-CRONJOB_LOG='gravity-sync.cron'
-BACKUP_FOLD='backup'
+CRONJOB_LOG='gravity-sync.cron' # only used if cron is configured to output to this file
+BACKUP_FOLD='backup' # must exist as subdirectory in LOCAL_FOLD
 
 # PH Folder/File Locations
 PIHOLE_DIR='/etc/pihole'  # default install directory
@@ -43,7 +43,7 @@ NC='\033[0m'
 # Message Codes
 FAIL="[${RED}FAIL${NC}]"
 WARN="[${PURPLE}WARN${NC}]"
-GOOD="[${GREEN}GOOD${NC}]"
+GOOD="[${GREEN}DONE${NC}]"
 STAT="[${CYAN}EXEC${NC}]"
 INFO="[${YELLOW}INFO${NC}]"
 
