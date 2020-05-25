@@ -61,7 +61,12 @@ function import_gs {
 		MESSAGE="Using ${REMOTE_USER}@${REMOTE_HOST}"
 		echo -e "${INFO} ${MESSAGE}"
 	else
-		echo -e "[${RED}FAIL${NC}] Required ${CONFIG_FILE} Missing"
+		
+		echo -e "${FAIL} ${MESSAGE}"
+		
+		MESSAGE="${CONFIG_FILE} Missing"
+		echo -e "${INFO} ${MESSAGE}"
+		
 		exit_nochange
 	fi
 }
@@ -72,7 +77,7 @@ function update_gs {
 	logs_export 	# dumps log prior to execution because script stops after successful pull
 	
 	MESSAGE="Requires GitHub Installation" 
-	echo -e "${INFO} Requires GitHub Installation"
+	echo -e "${INFO} ${MESSAGE}"
 		git reset --hard
 		git pull
 		
@@ -108,7 +113,9 @@ function pull_gs {
 	MESSAGE="Setting Ownership on ${GRAVITY_FI}"
 	echo -e "${STAT} ${MESSAGE}"	
 		sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}
-		error_validate	
+		error_validate
+		
+	wait 3	
 	
 	MESSAGE="Reloading FTLDNS Configuration"
 	echo -e "${STAT} ${MESSAGE}"
