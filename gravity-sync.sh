@@ -312,17 +312,26 @@ function show_version {
 
 # Look for Changes
 function md5_compare {
+	echo -e "${INFO} Looking for Changes"
+	
+	MESSAGE="Analyzing Remote ${GRAVITY_FI}"
+	echo -e "${STAT} ${MESSAGE}"
 	primaryMD5=$(ssh ${REMOTE_USER}@${REMOTE_HOST} 'md5sum /etc/pihole/gravity.db')
+		error_validate
+	
+	MESSAGE="Analyzing Local ${GRAVITY_FI}"
+	echo -e "${STAT} ${MESSAGE}"
 	secondMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI})
+		error_validate
 	
 	if [ "$primaryMD5" == "$secondMD5" ]
 	then
-		echo "MD5 Match"
+		echo -e "${INFO} No Changes in ${GRAVITY_FI}"
+		exit_nochange
 	else
-		echo "MD5 Changed"
+		echo -e "${INFO} Changes Detected in ${GRAVITY_FI}"
 	fi
 	
-	exit_nochange
 }
 
 # SCRIPT EXECUTION ###########################
@@ -376,14 +385,18 @@ case $# in
 	
 			update)
 				# TASKTYPE='UPDATE'
-				echo -e "[${GREEN}GOOD${NC}] Update Requested"
+				echo -e "${GOOD} ${MESSAGE}"
+				
+				echo -e "${INFO} Update Requested"
 					update_gs
 				exit_nochange
 			;;
 			
 			beta)
 				# TASKTYPE='BETA'
-				echo -e "[${GREEN}GOOD${NC}] Beta Update Requested"
+				echo -e "${GOOD} ${MESSAGE}"
+				
+				echo -e "${INFO} Beta Update Requested"
 					beta_gs
 				exit_nochange
 			;;
@@ -398,9 +411,8 @@ case $# in
 			compare)
 				TASKTYPE='COMPARE'
 				
-				import_gs
-				
 				echo -e "${GOOD} ${MESSAGE}"
+					import_gs
 					md5_compare
 			;;
 			
