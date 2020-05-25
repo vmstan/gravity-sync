@@ -103,6 +103,7 @@ function pull_gs {
 	TASKTYPE='PULL'
 	
 	echo -e "${INFO} ${TASKTYPE} Requested"
+	md5_compare
 	
 	MESSAGE="Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo -e "${STAT} ${MESSAGE}"
@@ -148,15 +149,11 @@ function pull_gs {
 # Push Function
 function push_gs {
 	TASKTYPE='PUSH'
-	echo -e "${WARN} DATA LOSS IS POSSIBLE"
-	echo -e "The standard use of this script is to ${YELLOW}PULL${NC} data from the" 
-	echo -e "primary PH server to the secondary. By issuing a ${YELLOW}PUSH${NC}, we" 
-	echo -e "will instead overwrite the ${GRAVITY_FI} on ${YELLOW}${REMOTE_HOST}${NC}"
-	echo -e "with ${YELLOW}$HOSTNAME${NC} server data. A copy of the remote ${GRAVITY_FI}"
-	echo -e "will be saved to this server at:"
-	echo -e "${YELLOW}$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push${NC}"
-	echo -e ""
-	echo -e "Are you sure you want to overwrite the primary node configuration on ${REMOTE_HOST}?"
+	
+	echo -e "${INFO} ${TASKTYPE} Requested"
+	md5_compare
+	
+	echo -e "${WARN} Are you sure you want to overwrite the primary node configuration on ${REMOTE_HOST}?"
 	select yn in "Yes" "No"; do
 		case $yn in
 		Yes )
@@ -181,9 +178,16 @@ function push_gs {
 				ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}"
 				error_validate	
 	
-			MESSAGE="Reloading FTLDNS Configuration"
+			sleep 3
+	
+			MESSAGE="Updating FTLDNS Configuration"
 			echo -e "${STAT} ${MESSAGE}"
 				ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns reloadlists'
+				error_validate
+			
+			MESSAGE="Reloading FTLDNS Services"
+			echo -e "${STAT} ${MESSAGE}"	
+			
 				ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns'
 				error_validate
 			
@@ -312,7 +316,7 @@ function show_version {
 
 # Look for Changes
 function md5_compare {
-	echo -e "${INFO} Looking for Changes"
+	echo -e "${INFO} Comparing ${GRAVITY_FI} Changes"
 	
 	MESSAGE="Analyzing Remote ${GRAVITY_FI}"
 	echo -e "${STAT} ${MESSAGE}"
