@@ -449,6 +449,8 @@ case $# in
 					validate_gs_folders
 					validate_ph_folders
 					validate_os_sshpass
+					
+				md5_compare
 			;;
 			
 			cron)
