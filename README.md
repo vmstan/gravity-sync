@@ -27,7 +27,7 @@ Additionally, some things to consider:
 
 The main purpose of this script is my own personal use, but if you find it helpful then I encourage you to use it and if you'd like provide feedback or contribute. As such, I'll lay out two ways to consume it. The first is more bleeding edge in that you'll download and run whatever the latest version of the script is on GitHub.
 
-If this is too aggressive for you, maybe becayse you want to make changes to the script that are specific to your environment, or you're worried it'll blow something up, then please proceed to option 2.
+If this is too aggressive for you, maybe because you want to make changes to the script that are specific to your environment, or you're worried it'll blow something up, then please proceed to option 2.
 
 ### Option 1
 
@@ -75,7 +75,7 @@ Make sure you've set the REMOTE_HOST and REMOTE_USER variables with the IP (or D
 
 ```
 REMOTE_HOST='192.168.1.10'
-REMOTE_USER='pi'
+REMOTE_USER='*pi*'
 ```
 
 Do not set the `REMOTE_PASS` variable until you've read the next section on SSH.
@@ -88,16 +88,18 @@ Gravity Sync uses SSH to run commands on the primary Pi-hole, and sync the two s
 
 This is the preferred option, as it's more reliable and less dependant on third party plugins.
 
-You'll need to generate an SSH key for your secondary PH user and copy it to your primary PH. This will allow you to connect to and copy the gravity.db file without needing a password each time. Then generating the SSH key, accept all the defaults and do not put a passphrase on your key file.
+You'll need to generate an SSH key for your secondary PH user and copy it to your primary PH. This will allow you to connect to and copy the gravity.db file without needing a password each time. When generating the SSH key, accept all the defaults and do not put a passphrase on your key file.
 
 *Note: If you already have this setup on your systems for other purposes, you can skip this step.*
 
 ```
 ssh-keygen -t rsa
-ssh-copy-id -i ~/.ssh/id_rsa.pub USERNAME@PRIMARYPI
+ssh-copy-id -i ~/.ssh/id_rsa.pub REMOTE_USER@REMOTE_HOST
 ```
 
-Subsitute USERNAME for the account on the primary PH with sudo permissions, and PRIMARYPI for the IP or DNS name of the PH you have designated as the primary. 
+Subsitute REMOTE_USER for the account on the primary PH with sudo permissions, and REMOTE_HOST for the IP or DNS name of the PH you have designated as the primary. 
+
+Make sure to leave the `REMOTE_PASS` variable set to nothing in `gravity-sync.conf` if you want to use key-pair authentication.
 
 #### Password Authentication
 
@@ -108,6 +110,12 @@ sudo apt install sshpass
 ```
 
 Then enter your password in the `gravity-sync.conf` file you configured above.
+
+```
+REMOTE_PASS='password'
+```
+
+Gravity Sync will validate that the `sshpass` utility is installed on your system and failback to attempting key-pair authentication if it's not detected.
 
 Save. Keep calm, carry on.
 
