@@ -56,7 +56,7 @@ function import_gs {
 	if [ -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE} ]
 	then
 	    source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
-			if_validate
+			error_validate
 			
 		MESSAGE="Using ${REMOTE_USER}@${REMOTE_HOST}"
 		echo -e "${INFO} ${MESSAGE}"
