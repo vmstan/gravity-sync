@@ -340,23 +340,27 @@ case $# in
 			;;
 	
 			version)
+				TASKTYPE='VERSION'
 				show_version
 				exit_nochange
 			;;
 	
 			update)
+				TASKTYPE='UPDATE'
 				echo -e "[${GREEN}GOOD${NC}] Update Requested"
 					update_gs
 				exit_nochange
 			;;
 	
 			logs)
+				TASKTYPE='LOGS'
 				MESSAGE="Logs Requested"
 				echo -e "${GOOD} ${MESSAGE}"
 					logs_gs
 			;;
 			
 			cron)
+				TASKTYPE='CRON'
 				echo -e "${GOOD} ${MESSAGE}"
 				
 				CRONPATH="$HOME/${LOCAL_FOLDR}/${CRONJOB_LOG}"
