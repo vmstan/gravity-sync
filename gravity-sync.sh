@@ -117,9 +117,13 @@ function pull_gs {
 		
 	wait 3	
 	
-	MESSAGE="Reloading FTLDNS Configuration"
+	MESSAGE="Updating FTLDNS Configuration"
 	echo -e "${STAT} ${MESSAGE}"
 		pihole restartdns reloadlists
+		error_validate
+	
+	MESSAGE="Reloading FTLDNS Services"
+	echo -e "${STAT} ${MESSAGE}"
 		pihole restartdns
 		error_validate
 	
