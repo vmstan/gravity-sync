@@ -21,7 +21,7 @@ VERSION='1.3.0'
 LOCAL_FOLDR='gravity-sync' # must exist in running user home folder
 CONFIG_FILE='gravity-sync.conf' # must exist as explained above
 SYNCING_LOG='gravity-sync.log' # will be created in above folder
-CRONTAB_LOG='gravity-sync.cron'
+CRONJOB_LOG='gravity-sync.cron'
 BACKUP_FOLD='backup'
 
 # PH Folder/File Locations
@@ -260,13 +260,13 @@ function list_gs_arguments {
 # Exit Codes
 ## No Changes Made
 function exit_nochange {
-	echo -e "${INFO} ${PROGRAM} ${YELLOW}${TASKTYPE}${NC} Aborting"
+	echo -e "${INFO} ${PROGRAM} ${TASKTYPE} Aborting"
 	exit 0
 }
 
 ## Changes Made
 function exit_withchange {
-	echo -e "${GOOD} ${PROGRAM} ${YELLOW}${TASKTYPE}${NC} Completed"
+	echo -e "${INFO} ${PROGRAM} ${TASKTYPE} Completed"
 	exit 0
 }
 
@@ -346,6 +346,8 @@ case $# in
 			;;
 			
 			cron)
+				echo -e "${GOOD} ${MESSAGE}"
+				
 				CRONPATH="$HOME/${LOCAL_FOLDR}/${CRONJOB_LOG}"
 				
 				MESSAGE="Replaying Last Cronjob"
@@ -359,7 +361,7 @@ case $# in
 							exit_nochange
 					then
 						echo -e "${FAIL} ${MESSAGE}"
-						echo -e "${YELLOW}${CRONPATH}${NC} appears empty"
+						echo -e "${INFO} ${CRONPATH} appears empty"
 							exit_nochange
 					fi
 				else
