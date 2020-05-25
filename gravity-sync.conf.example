@@ -1,3 +1,10 @@
-# REQUIRED SETTINGS
-REMOTE_HOST='192.168.1.10' 	# your master Pihole IP or DNS
-REMOTE_USER='pi'			# user account with sudo rights on master Pihole
+# REQUIRED SETTINGS ######################
+# Pi-hole Primary Node in IP or DNS
+REMOTE_HOST='192.168.1.10'
+
+# User on Primary PH with SUDO rights
+REMOTE_USER='pi'	
+
+# Password for REMOTE_USER account
+# Leave blank to use key-pair SSH auth
+REMOTE_PASS=''
