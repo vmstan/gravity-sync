@@ -107,7 +107,7 @@ function pull_gs {
 	
 	MESSAGE="Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo -e "${STAT} ${MESSAGE}"
-		rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull
+		${SSHPASSWORD} rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull
 		error_validate
 	
 	MESSAGE="Backing Up ${GRAVITY_FI} on $HOSTNAME"
@@ -160,34 +160,34 @@ function push_gs {
 			
 			MESSAGE="Backing Up ${GRAVITY_FI} from ${REMOTE_HOST}"
 			echo -e "${STAT} ${MESSAGE}"
-				rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push
+				${SSHPASSWORD} rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push
 				error_validate
 	
 			MESSAGE="Pushing ${GRAVITY_FI} to ${REMOTE_HOST}"
 			echo -e "${STAT} ${MESSAGE}"
-				rsync --rsync-path="sudo rsync" -v -e 'ssh -p 22' ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}
+				${SSHPASSWORD} rsync --rsync-path="sudo rsync" -v -e 'ssh -p 22' ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}
 				error_validate
 	
 			MESSAGE="Setting Permissions on ${GRAVITY_FI}"
 			echo -e "${STAT} ${MESSAGE}"	
-				ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI}"
+				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI}"
 				error_validate
 		
 			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
 			echo -e "${STAT} ${MESSAGE}"	
-				ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}"
+				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}"
 				error_validate	
 	
 			sleep 3
 	
 			MESSAGE="Updating FTLDNS Configuration"
 			echo -e "${STAT} ${MESSAGE}"
-				ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns reloadlists'
+				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns reloadlists'
 				error_validate
 			
 			MESSAGE="Reloading FTLDNS Services"
 			echo -e "${STAT} ${MESSAGE}"	
-				ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns'
+				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns'
 				error_validate
 			
 			logs_export
@@ -300,7 +300,6 @@ function validate_os_sshpass {
 	
 	MESSAGE="Testing SSH Connection"
 	echo -e "${STAT} ${MESSAGE}"
-	echo -e "${SSHPASSWORD} ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit'"
 		timeout 5 ${SSHPASSWORD} ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit'
 			error_validate
 	
@@ -362,7 +361,7 @@ function md5_compare {
 	
 	MESSAGE="Analyzing Remote ${GRAVITY_FI}"
 	echo -e "${STAT} ${MESSAGE}"
-	primaryMD5=$(${SSHPASSWORD} ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'md5sum /etc/pihole/gravity.db')
+	primaryMD5=$(${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} 'md5sum /etc/pihole/gravity.db')
 		error_validate
 	
 	MESSAGE="Analyzing Local ${GRAVITY_FI}"
