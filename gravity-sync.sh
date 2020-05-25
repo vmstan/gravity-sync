@@ -281,7 +281,7 @@ function validate_os_sshpass {
 		else
 			ssh -o ConnectTimeout=5 -o BatchMode=yes -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit'
 			if [ "$?" != "0" ]; then
-				SSHPASSWORD="sshpass -p ${REMOTE_PASS} "
+				SSHPASSWORD="sshpass -p '${REMOTE_PASS}' "
 				MESSAGE="Using SSH Password Authentication"
 			else
 		        sshpassword=''
