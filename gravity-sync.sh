@@ -296,6 +296,21 @@ function show_version {
 	echo -e "${INFO} ${PROGRAM} ${VERSION}"
 }
 
+# Look for Changes
+function md5_compare {
+	primaryMD5=$(ssh ${REMOTE_USER}@${REMOTE_HOST} 'md5sum ${PIHOLE_DIR}/${GRAVITY_FI}')
+	secondMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI})
+	
+	if [ "$primaryMD5" == "$secondMD5" ]
+	then
+		echo "MD5 Match"
+	else
+		echo "MD5 Changed"
+	fi
+	
+	exit_nochange
+}
+
 # SCRIPT EXECUTION ###########################
 
 show_version
@@ -358,6 +373,11 @@ case $# in
 				echo -e "${GOOD} ${MESSAGE}"
 					logs_gs
 			;;
+			
+			compare)
+				TASKTYPE='COMPARE'
+				echo -e "${GOOD} ${MESSAGE}"
+					md5_compare
 			
 			cron)
 				TASKTYPE='CRON'
