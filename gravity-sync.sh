@@ -12,7 +12,7 @@ VERSION='1.3.1'
 
 # REQUIRED SETTINGS ##########################
 
-# You MUST define REMOTE_HOST and REMOTE_USER in a file called 'gravity-sync.conf' OK
+# You MUST define REMOTE_HOST and REMOTE_USER in a file called 'gravity-sync.conf'
 # You can copy the 'gravity-sync.conf.example' file in the script directory to get started 
 
 # STANDARD VARIABLES #########################
@@ -347,7 +347,7 @@ function md5_compare {
 	
 	MESSAGE="Analyzing Remote ${GRAVITY_FI}"
 	echo -e "${STAT} ${MESSAGE}"
-	primaryMD5=$(ssh ${REMOTE_USER}@${REMOTE_HOST} 'md5sum /etc/pihole/gravity.db')
+	primaryMD5=$(ssh -o ConnectTimeout 10 -o BatchMode=yes -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'md5sum /etc/pihole/gravity.db')
 		error_validate
 	
 	MESSAGE="Analyzing Local ${GRAVITY_FI}"
