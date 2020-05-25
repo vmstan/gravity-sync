@@ -115,7 +115,7 @@ function pull_gs {
 		sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}
 		error_validate
 		
-	wait 3	
+	sleep 3	
 	
 	MESSAGE="Updating FTLDNS Configuration"
 	echo -e "${STAT} ${MESSAGE}"
