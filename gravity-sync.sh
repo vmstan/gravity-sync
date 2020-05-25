@@ -378,6 +378,7 @@ case $# in
 				TASKTYPE='COMPARE'
 				echo -e "${GOOD} ${MESSAGE}"
 					md5_compare
+			;;
 			
 			cron)
 				TASKTYPE='CRON'
