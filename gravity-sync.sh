@@ -295,6 +295,12 @@ function validate_os_sshpass {
     fi
 	
 	echo -e "$INFO $MESSAGE"
+	
+	MESSAGE="Testing SSH Connection"
+	echo -e "$STAT $MESSAGE"
+	${sshpassword}ssh -o ConnectTimeout=5 -o BatchMode=yes -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit'
+		error_validate
+	
 }
 
 # List GS Arguments
