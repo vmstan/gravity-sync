@@ -2,7 +2,7 @@
 
 For more information visit [https://vmstan.com/gravity-sync/](https://vmstan.com/gravity-sync/)
 
-![Pull execution](https://user-images.githubusercontent.com/3002053/82719284-c396d880-9c6e-11ea-859c-b316357a495c.png)
+![Pull execution](https://user-images.githubusercontent.com/3002053/82774990-f88c6200-9e0b-11ea-97e5-23c8b38f32e3.png)
 
 ## Background
 
@@ -108,7 +108,7 @@ The script, when functioning in `pull` mode, will not prompt for user input afte
 ./gravity-sync.sh pull
 ```
 
-If the execution completes, you will now have overwritten your running gravity.db on the secondary PH after creating a copy (`gravity.db.backup`) in the `backup` directory located with your script. The script will also keep a copy of the last sync'd gravity.db from the master, in the `backup` folder called `gravity.db.last` should you need it for some reason. 
+If the execution completes, you will now have overwritten your running gravity.db on the secondary PH after creating a copy (`gravity.db.backup`) in the `backup` directory located with your script. The script will also keep a copy of the last sync'd gravity.db from the master, in the `backup` folder called `gravity.db.pull` should you need it for some reason. 
 
 Finally, a file called `gravity-sync.log` will be created in the `gravity-sync` folder along side the script, with the date the script was last executed appended to the bottom. Over time I intend for this logging function to become more helpful.
 
@@ -144,7 +144,7 @@ I've automated my synchronization using Crontab. If you'd like to keep this a ma
 
 ```
 crontab -e
-*/30 * * * * /home/USER/gravity-sync/gravity-sync.sh pull >/dev/null 2>&1
+*/30 * * * * /bin/bash /home/USER/gravity-sync/gravity-sync.sh pull > /home/USER/gravity-sync/gravity-sync.cron
 ```
 
 Now, make another small adjustment to your primary settings. Now just wait until the annointed hour, and see if your changes have been synchronized. If so, profit!

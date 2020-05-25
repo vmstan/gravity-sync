@@ -347,7 +347,7 @@ function md5_compare {
 	
 	MESSAGE="Analyzing Remote ${GRAVITY_FI}"
 	echo -e "${STAT} ${MESSAGE}"
-	primaryMD5=$(${sshpassword}ssh ${REMOTE_USER}@${REMOTE_HOST} 'md5sum /etc/pihole/gravity.db')
+	primaryMD5=$(ssh ${REMOTE_USER}@${REMOTE_HOST} 'md5sum /etc/pihole/gravity.db')
 		error_validate
 	
 	MESSAGE="Analyzing Local ${GRAVITY_FI}"

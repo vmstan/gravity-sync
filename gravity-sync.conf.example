@@ -6,4 +6,5 @@ REMOTE_HOST='192.168.1.10'
 REMOTE_USER='pi'	
 
 # Password for REMOTE_USER account
-REMOTE_PASS=‘password’	
+# Leave blank to use key-pair SSH auth
+REMOTE_PASS=''
