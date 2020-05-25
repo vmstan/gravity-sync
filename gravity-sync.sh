@@ -312,7 +312,7 @@ function show_version {
 
 # Look for Changes
 function md5_compare {
-	primaryMD5=$(ssh \${REMOTE_USER}@\${REMOTE_HOST} 'md5sum /etc/pihole/gravity.db')
+	primaryMD5=$(ssh ${REMOTE_USER}@${REMOTE_HOST} 'md5sum /etc/pihole/gravity.db')
 	secondMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI})
 	
 	if [ "$primaryMD5" == "$secondMD5" ]
@@ -397,6 +397,9 @@ case $# in
 			
 			compare)
 				TASKTYPE='COMPARE'
+				
+				import_gs
+				
 				echo -e "${GOOD} ${MESSAGE}"
 					md5_compare
 			;;
