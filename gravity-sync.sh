@@ -229,7 +229,7 @@ function logs_crontab {
 
 ## Log Out
 function logs_export {
-	echo -e "[${CYAN}STAT${NC}] Logging Timestamps to ${SYNCING_LOG}"
+	echo -e "${INFO} Logging Timestamps to ${SYNCING_LOG}"
 	# date >> $HOME/${LOCAL_FOLDR}/${SYNCING_LOG}
 	echo -e $(date) "[${TASKTYPE}]" >> $HOME/${LOCAL_FOLDR}/${SYNCING_LOG}
 }
