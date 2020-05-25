@@ -205,12 +205,14 @@ function push_gs {
 # Logging Functions
 ## Check Log Function
 function logs_gs {
-	echo -e "Recent ${YELLOW}PULL${NC} attempts"
+	echo -e "========================================================"
+	echo -e "Recent Complete ${YELLOW}PULL${NC} Executions"
 		tail -n 10 ${SYNCING_LOG} | grep PULL
-	echo -e "Recent ${YELLOW}UPDATE${NC} attempts"
+	echo -e "Recent Complete ${YELLOW}UPDATE${NC} Executions"
 		tail -n 10 ${SYNCING_LOG} | grep UPDATE
-	echo -e "Recent ${YELLOW}PUSH${NC} attempts"
+	echo -e "Recent Complete ${YELLOW}PUSH${NC} Executions"
 			tail -n 10 ${SYNCING_LOG} | grep PUSH
+	echo -e "========================================================"
 	exit_nochange
 }
 
@@ -267,6 +269,21 @@ function validate_ph_folders {
 			echo -e "${FAIL} ${MESSAGE}"
 			exit_nochange
 		fi
+}
+
+## Validate SSHPASS
+function validate_os_sshpass {
+    if hash sshpass 2>/dev/null
+    then
+		if ${REMOTE_PASS} != ''
+		then
+			sshpassword="sshpass -p ${REMOTE_PASS}"
+		else
+			sshpassword=''
+		fi
+    else
+        sshpassword=''
+    fi
 }
 
 # List GS Arguments
@@ -345,7 +362,7 @@ function md5_compare {
 
 # SCRIPT EXECUTION ###########################
 
-show_version
+validate_os_sshpass
 	
 	MESSAGE="Evaluating Script Arguments"
 	echo -e "${STAT} ${MESSAGE}"
