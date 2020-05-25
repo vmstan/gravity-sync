@@ -51,14 +51,17 @@ INFO="[${YELLOW}INFO${NC}]"
 
 # Import Settings
 function import_gs {
-	echo -e "[${CYAN}STAT${NC}] Importing ${CONFIG_FILE} Settings"
+	MESSAGE="Importing ${CONFIG_FILE} Settings"
+	echo -e "${STAT} $MESSAGE"
 	if [ -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE} ]
 	then
 	    source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
-		echo -e "[${GREEN}GOOD${NC}] Using ${REMOTE_USER}@${REMOTE_HOST}"
+			if_validate
+			
+		MESSAGE="Using ${REMOTE_USER}@${REMOTE_HOST}"
+		echo -e "${INFO} ${MESSAGE}"
 	else
 		echo -e "[${RED}FAIL${NC}] Required ${CONFIG_FILE} Missing"
-		echo -e "Please review installation documentation for more information"
 		exit_nochange
 	fi
 }
@@ -67,15 +70,20 @@ function import_gs {
 function update_gs {
 	TASKTYPE='UPDATE'
 	logs_export 	# dumps log prior to execution because script stops after successful pull
-	echo -e "[${PURPLE}WARN${NC}] Requires GitHub Installation"
+	
+	MESSAGE="Requires GitHub Installation" 
+	echo -e "${INFO} Requires GitHub Installation"
 		git reset --hard
 		git pull
+		
 	exit
 }
 
 # Pull Function
 function pull_gs {
 	TASKTYPE='PULL'
+	
+	echo -e "${INFO} ${TASKTYPE} Requested"
 	
 	MESSAGE="Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo -e "${STAT} ${MESSAGE}"
@@ -198,32 +206,38 @@ function logs_export {
 # Validate Functions
 ## Validate GS Folders
 function validate_gs_folders {
-	if [ -d $HOME/${LOCAL_FOLDR} ]
-	then
-	    echo -e "[${GREEN}GOOD${NC}] Required $HOME/${LOCAL_FOLDR} Located"
-	else
-		echo -e "[${RED}FAIL${NC}] Required $HOME/${LOCAL_FOLDR} Missing"
-		exit_nochange
-	fi
+	MESSAGE="Locating $HOME/${LOCAL_FOLDR}"
+	echo -e "${STAT} ${MESSAGE}"
+		if [ -d $HOME/${LOCAL_FOLDR} ]
+		then
+	    	echo -e "${GOOD} ${MESSAGE}"
+		else
+			echo -e "${FAIL} ${MESSAGE}"
+			exit_nochange
+		fi
 	
-	if [ -d $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} ]
-	then
-	    echo -e "[${GREEN}GOOD${NC}] Required $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} Located"
-	else
-		echo -e "[${RED}FAIL${NC}] Required $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} Missing"
-		exit_nochange
-	fi
+	MESSAGE="Locating $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}"
+	echo -e "${STAT} ${MESSAGE}"
+		if [ -d $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} ]
+		then
+	    	echo -e "${GOOD} ${MESSAGE}"
+		else
+			echo -e "${FAIL} ${MESSAGE}"
+			exit_nochange
+		fi
 }
 
 ## Validate PH Folders
 function validate_ph_folders {
-	if [ -d ${PIHOLE_DIR} ]
-	then
-	    echo -e "[${GREEN}GOOD${NC}] Required ${PIHOLE_DIR} Located"
-	else
-		echo -e "[${RED}FAIL${NC}] Required ${PIHOLE_DIR} Missing"
-		exit_nochange
-	fi
+	MESSAGE="Locating ${PIHOLE_DIR}"
+	echo -e "${STAT} ${MESSAGE}"
+		if [ -d ${PIHOLE_DIR} ]
+		then
+	    	echo -e "${GOOD} ${MESSAGE}"
+		else
+			echo -e "${FAIL} ${MESSAGE}"
+			exit_nochange
+		fi
 }
 
 # List GS Arguments
@@ -246,7 +260,7 @@ function list_gs_arguments {
 # Exit Codes
 ## No Changes Made
 function exit_nochange {
-	echo -e "${INFO} ${PROGRAM} ${YELLOW}${TASKTYPE}${NC} Exiting Without Changes"
+	echo -e "${INFO} ${PROGRAM} ${YELLOW}${TASKTYPE}${NC} Aborting"
 	exit 0
 }
 
@@ -290,11 +304,10 @@ case $# in
    	 		pull)
 				echo -e "${GOOD} ${MESSAGE}"
 				
-				MESSAGE="Pull Requested"
-				echo -e "${STAT} ${MESSAGE}"
-					import_gs
-
-				echo -e "[${CYAN}STAT${NC}] Validating Folder Configuration"
+				import_gs
+				
+				MESSAGE="Validating Folder Configuration"
+				echo -e "${INFO} ${MESSAGE}"
 					validate_gs_folders
 					validate_ph_folders
 					
@@ -303,10 +316,11 @@ case $# in
  			;;
 
 			push)	
-				echo -e "[${GREEN}GOOD${NC}] Push Requested"
-					import_gs
+				echo -e "${GOOD} ${MESSAGE}"
+				
+				import_gs
 
-				echo -e "[${CYAN}STAT${NC}] Validating Folder Configuration"
+				echo -e "${INFO} Validating Folder Configuration"
 					validate_gs_folders
 					validate_ph_folders
 					
