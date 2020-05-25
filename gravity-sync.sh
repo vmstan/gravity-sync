@@ -153,7 +153,7 @@ function push_gs {
 	echo -e "${INFO} ${TASKTYPE} Requested"
 	md5_compare
 	
-	echo -e "${WARN} Are you sure you want to overwrite the primary node configuration on ${REMOTE_HOST}?"
+	echo -e "${WARN} Are you sure you want to overwrite the primary PH configuration on ${REMOTE_HOST}?"
 	select yn in "Yes" "No"; do
 		case $yn in
 		Yes )
@@ -187,7 +187,6 @@ function push_gs {
 			
 			MESSAGE="Reloading FTLDNS Services"
 			echo -e "${STAT} ${MESSAGE}"	
-			
 				ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns'
 				error_validate
 			
@@ -277,11 +276,18 @@ function validate_os_sshpass {
     then
 		if test -z "$REMOTE_PASS"
 		then
-			sshpassword=''
+			SSHPASSWORD=''
 			MESSAGE="Using SSH Key-Pair Authentication"
 		else
-			sshpassword="sshpass -p ${REMOTE_PASS} "
-			MESSAGE="Using SSH Password Authentication"
+			ssh -o ConnectTimeout=5 -o BatchMode=yes -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit'
+			if [ "$?" != "0" ]; then
+				SSHPASSWORD="sshpass -p ${REMOTE_PASS} "
+				MESSAGE="Using SSH Password Authentication"
+			else
+		        sshpassword=''
+				MESSAGE="Using SSH Key-Pair Authentication"
+			fi
+			
 		fi
     else
         sshpassword=''
