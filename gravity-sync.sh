@@ -2,7 +2,7 @@
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.3.0'
+VERSION='1.3.1'
 
 # Must execute from a location in the home folder of the user who own's it (ex: /home/pi/gravity-sync)
 # Configure certificate based SSH authentication between the Pi-hole HA nodes - it does not use passwords
@@ -12,7 +12,7 @@ VERSION='1.3.0'
 
 # REQUIRED SETTINGS ##########################
 
-# You MUST define REMOTE_HOST and REMOTE_USER in a file called 'gravity-sync.conf' OK
+# You MUST define REMOTE_HOST and REMOTE_USER in a file called 'gravity-sync.conf'
 # You can copy the 'gravity-sync.conf.example' file in the script directory to get started 
 
 # STANDARD VARIABLES #########################
@@ -21,8 +21,8 @@ VERSION='1.3.0'
 LOCAL_FOLDR='gravity-sync' # must exist in running user home folder
 CONFIG_FILE='gravity-sync.conf' # must exist as explained above
 SYNCING_LOG='gravity-sync.log' # will be created in above folder
-CRONJOB_LOG='gravity-sync.cron'
-BACKUP_FOLD='backup'
+CRONJOB_LOG='gravity-sync.cron' # only used if cron is configured to output to this file
+BACKUP_FOLD='backup' # must exist as subdirectory in LOCAL_FOLD
 
 # PH Folder/File Locations
 PIHOLE_DIR='/etc/pihole'  # default install directory
@@ -43,7 +43,7 @@ NC='\033[0m'
 # Message Codes
 FAIL="[${RED}FAIL${NC}]"
 WARN="[${PURPLE}WARN${NC}]"
-GOOD="[${GREEN}GOOD${NC}]"
+GOOD="[${GREEN}DONE${NC}]"
 STAT="[${CYAN}EXEC${NC}]"
 INFO="[${YELLOW}INFO${NC}]"
 
@@ -107,7 +107,7 @@ function pull_gs {
 	
 	MESSAGE="Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo -e "${STAT} ${MESSAGE}"
-		rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull
+		${SSHPASSWORD} rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull
 		error_validate
 	
 	MESSAGE="Backing Up ${GRAVITY_FI} on $HOSTNAME"
@@ -153,42 +153,41 @@ function push_gs {
 	echo -e "${INFO} ${TASKTYPE} Requested"
 	md5_compare
 	
-	echo -e "${WARN} Are you sure you want to overwrite the primary node configuration on ${REMOTE_HOST}?"
+	echo -e "${WARN} Are you sure you want to overwrite the primary PH configuration on ${REMOTE_HOST}?"
 	select yn in "Yes" "No"; do
 		case $yn in
 		Yes )
 			
 			MESSAGE="Backing Up ${GRAVITY_FI} from ${REMOTE_HOST}"
 			echo -e "${STAT} ${MESSAGE}"
-				rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push
+				${SSHPASSWORD} rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push
 				error_validate
 	
 			MESSAGE="Pushing ${GRAVITY_FI} to ${REMOTE_HOST}"
 			echo -e "${STAT} ${MESSAGE}"
-				rsync --rsync-path="sudo rsync" -v -e 'ssh -p 22' ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}
+				${SSHPASSWORD} rsync --rsync-path="sudo rsync" -v -e 'ssh -p 22' ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}
 				error_validate
 	
 			MESSAGE="Setting Permissions on ${GRAVITY_FI}"
 			echo -e "${STAT} ${MESSAGE}"	
-				ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI}"
+				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI}"
 				error_validate
 		
 			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
 			echo -e "${STAT} ${MESSAGE}"	
-				ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}"
+				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}"
 				error_validate	
 	
 			sleep 3
 	
 			MESSAGE="Updating FTLDNS Configuration"
 			echo -e "${STAT} ${MESSAGE}"
-				ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns reloadlists'
+				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns reloadlists'
 				error_validate
 			
 			MESSAGE="Reloading FTLDNS Services"
 			echo -e "${STAT} ${MESSAGE}"	
-			
-				ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns'
+				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns'
 				error_validate
 			
 			logs_export
@@ -229,7 +228,7 @@ function logs_crontab {
 
 ## Log Out
 function logs_export {
-	echo -e "[${CYAN}STAT${NC}] Logging Timestamps to ${SYNCING_LOG}"
+	echo -e "${INFO} Logging Timestamps to ${SYNCING_LOG}"
 	# date >> $HOME/${LOCAL_FOLDR}/${SYNCING_LOG}
 	echo -e $(date) "[${TASKTYPE}]" >> $HOME/${LOCAL_FOLDR}/${SYNCING_LOG}
 }
@@ -273,22 +272,37 @@ function validate_ph_folders {
 
 ## Validate SSHPASS
 function validate_os_sshpass {
-    if hash sshpass 2>/dev/null
+    echo -e "${INFO} Checking SSH Configuration"
+	
+	if hash sshpass 2>/dev/null
     then
 		if test -z "$REMOTE_PASS"
 		then
-			sshpassword=''
+			SSHPASSWORD=''
 			MESSAGE="Using SSH Key-Pair Authentication"
 		else
-			sshpassword="sshpass -p ${REMOTE_PASS} "
-			MESSAGE="Using SSH Password Authentication"
+			timeout 5 ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
+			if [ "$?" != "0" ]; then
+				SSHPASSWORD="sshpass -p ${REMOTE_PASS}"
+				MESSAGE="Using SSH Password Authentication"
+			else
+		        SSHPASSWORD=''
+				MESSAGE="Using SSH Key-Pair Authentication"
+			fi
+			
 		fi
     else
-        sshpassword=''
+        SSHPASSWORD=''
 		MESSAGE="Using SSH Key-Pair Authentication"
     fi
 	
-	echo -e "$INFO $MESSAGE"
+	echo -e "${INFO} ${MESSAGE}"
+	
+	MESSAGE="Testing SSH Connection"
+	echo -e "${STAT} ${MESSAGE}"
+		timeout 5 ${SSHPASSWORD} ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit'
+			error_validate
+	
 }
 
 # List GS Arguments
@@ -347,7 +361,7 @@ function md5_compare {
 	
 	MESSAGE="Analyzing Remote ${GRAVITY_FI}"
 	echo -e "${STAT} ${MESSAGE}"
-	primaryMD5=$(ssh ${REMOTE_USER}@${REMOTE_HOST} 'md5sum /etc/pihole/gravity.db')
+	primaryMD5=$(${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} 'md5sum /etc/pihole/gravity.db')
 		error_validate
 	
 	MESSAGE="Analyzing Local ${GRAVITY_FI}"

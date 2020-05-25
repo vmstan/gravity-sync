@@ -1,10 +1,16 @@
 # REQUIRED SETTINGS ######################
+
 # Pi-hole Primary Node in IP or DNS
 REMOTE_HOST='192.168.1.10'
 
 # User on Primary PH with SUDO rights
 REMOTE_USER='pi'	
 
+# OPTIONAL SETTING #######################
+
 # Password for REMOTE_USER account
+# Requires SSHPASS installed on server
 # Leave blank to use key-pair SSH auth
+# Less secure and possibly less reliable
+
 REMOTE_PASS=''
