@@ -275,7 +275,7 @@ function validate_ph_folders {
 function validate_os_sshpass {
     if hash sshpass 2>/dev/null
     then
-		if [-z "$REMOTE_PASS" ]
+		if test -z "$REMOTE_PASS"
 		then
 			sshpassword=''
 		else
