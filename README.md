@@ -75,7 +75,7 @@ Make sure you've set the REMOTE_HOST and REMOTE_USER variables with the IP (or D
 
 ```
 REMOTE_HOST='192.168.1.10'
-REMOTE_USER='*pi*'
+REMOTE_USER='pi'
 ```
 
 Do not set the `REMOTE_PASS` variable until you've read the next section on SSH.

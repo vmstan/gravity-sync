@@ -382,7 +382,7 @@ function md5_compare {
 # SCRIPT EXECUTION ###########################
 	
 	MESSAGE="Evaluating Script Arguments"
-	echo -e "${STAT} ${MESSAGE}"
+	echo -e "${STAT} ${MESSAGE}" \r
 
 case $# in
 	
