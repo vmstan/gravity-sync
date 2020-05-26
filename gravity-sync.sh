@@ -29,6 +29,9 @@ PIHOLE_DIR='/etc/pihole'  # default PH data directory
 GRAVITY_FI='gravity.db' # this should not change
 PIHOLE_BIN='/usr/local/bin/pihole' # default PH binary directory
 
+# SSH Configuration
+SSH_PORT='22'
+
 ##############################################
 ### DO NOT CHANGE ANYTHING BELOW THIS LINE ###
 ##############################################
@@ -117,7 +120,7 @@ function pull_gs {
 	
 	MESSAGE="Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo -en "${STAT} ${MESSAGE}"
-		${SSHPASSWORD} rsync -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull >/dev/null 2>&1
+		${SSHPASSWORD} rsync -e 'ssh -p ${SSH_PORT}' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull >/dev/null 2>&1
 		error_validate
 		
 	MESSAGE="Replacing ${GRAVITY_FI} on $HOSTNAME"
@@ -195,12 +198,12 @@ function push_gs {
 			
 			MESSAGE="Backing Up ${GRAVITY_FI} from ${REMOTE_HOST}"
 			echo -en "${STAT} ${MESSAGE}"
-				${SSHPASSWORD} rsync -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push >/dev/null 2>&1
+				${SSHPASSWORD} rsync -e 'ssh -p ${SSH_PORT}' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push >/dev/null 2>&1
 				error_validate
 	
 			MESSAGE="Pushing ${GRAVITY_FI} to ${REMOTE_HOST}"
 			echo -en "${STAT} ${MESSAGE}"
-				${SSHPASSWORD} rsync --rsync-path="sudo rsync" -e 'ssh -p 22' ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+				${SSHPASSWORD} rsync --rsync-path="sudo rsync" -e 'ssh -p ${SSH_PORT}' ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 				error_validate
 	
 			MESSAGE="Setting Permissions on ${GRAVITY_FI}"
@@ -590,17 +593,13 @@ case $# in
 					cp $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}.example $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 						error_validate
 						
-						echo ""
-						
 						MESSAGE="Enter IP or DNS of primary Pi-hole server"
 						echo -e "${NEED} ${MESSAGE}"
 						read INPUT_REMOTE_HOST
 						
-						MESSAGE="Enter User with SUDO rights on primary Pi-hole server"
+						MESSAGE="Enter SSH user with SUDO rights on primary Pi-hole server"
 						echo -e "${NEED} ${MESSAGE}"
 						read INPUT_REMOTE_USER
-						
-						echo ""
 						
 						MESSAGE="Saving Host to ${CONFIG_FILE}"
 						echo -en "${STAT} ${MESSAGE}"
@@ -611,7 +610,47 @@ case $# in
 						echo -en "${STAT} ${MESSAGE}"
 						sed -i "/REMOTE_USER='pi'/c\REMOTE_USER='${INPUT_REMOTE_USER}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 							error_validate
-								
+	
+						if hash sshpass 2>/dev/null
+						then
+							echo -e "${INFO} SSHPASS Utility Detected"
+							MESSAGE="Do you want to configure password based SSH authentication (not reccomended)?"
+							echo -e "${WARN} ${MESSAGE}"
+							MESSAGE="Your password will be saved in clear-text in the ${CONFIG_FILE} file!"
+							echo -e "${WARN} ${MESSAGE}"
+							MESSAGE="Select NO to use (preferred) SSH Key-Pair Authentication."
+							echo -e "${WARN} ${MESSAGE}"
+							
+							select yn in "Yes" "No"; do
+								case $yn in
+								Yes )
+									MESSAGE="Enter SSH password for primary Pi-hole server"
+									echo -e "${NEED} ${MESSAGE}"
+									read INPUT_REMOTE_PASS
+									
+									MESSAGE="Saving Password to ${CONFIG_FILE}"
+									echo -en "${STAT} ${MESSAGE}"
+									sed -i "/REMOTE_PASS=''/c\REMOTE_PASS='${INPUT_REMOTE_PASS}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+										error_validate
+								;;
+		
+								No )
+									echo -e "${INFO} Defaulting to SSH Key-Pair Authentication"
+								;;
+								esac
+							done
+							
+						else
+							MESSAGE="SSHPASS Not Installed"
+							echo -e "${INFO} ${MESSAGE}"
+							
+							MESSAGE="Defaulting to SSH Key-Pair Authentication"
+							echo -e "${INFO} ${MESSAGE}"
+						fi	
+						    				
+						source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+						validate_os_sshpass
+							
 					exit_withchange
 				fi
 				
