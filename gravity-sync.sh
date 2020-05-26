@@ -106,6 +106,8 @@ function pull_gs {
 	echo -e "${INFO} ${TASKTYPE} Requested"
 	md5_compare
 	
+	echo -e "${INFO} ${TASKTYPE} Commencing"
+	
 	MESSAGE="Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo -en "${STAT} ${MESSAGE}"
 		${SSHPASSWORD} rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull >/dev/null 2>&1
@@ -120,26 +122,44 @@ function pull_gs {
 	echo -en "${STAT} ${MESSAGE}"	
 		sudo cp -v $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 		error_validate
-	
-	MESSAGE="Setting Permissions on ${GRAVITY_FI}"
-	echo -en "${STAT} ${MESSAGE}"	
-		sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
-		error_validate
-		
-	MESSAGE="Setting Ownership on ${GRAVITY_FI}"
-	echo -en "${STAT} ${MESSAGE}"	
-		sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
-		error_validate
 		
 	MESSAGE="Validating Ownership on ${GRAVITY_FI}"
-	echo -en "${STAT} ${MESSAGE}"	
+	echo -en "${STAT} ${MESSAGE}"
+		
 		GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk '{print $3 $4}')
 		if [ $GRAVDB_OWN == "piholepihole" ]
 		then
 			echo -e "\r${GOOD} ${MESSAGE}"
 		else
-			echo -e "\r${FAIL} ${MESSAGE}"
+			echo -e "\r${FAIL} $MESSAGE"
+			
+			MESSAGE2="Attempting to Compensate"
+			echo -e "${INFO} ${MESSAGE2}"
+			
+			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
+			echo -en "${STAT} ${MESSAGE}"	
+				sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+				error_validate
 		fi
+		
+	MESSAGE="Validating Permissions on ${GRAVITY_FI}"
+	echo -en "${STAT} ${MESSAGE}"
+	
+		if [ ! -w "${PIHOLE_DIR}/${GRAVITY_FI}" ]
+		then
+			echo -e "\r${FAIL} $MESSAGE"
+		
+			MESSAGE2="Attempting to Compensate"
+			sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+				error_validate
+			else
+				echo -e "\r${GOOD} ${MESSAGE}"
+		fi
+		
+	# MESSAGE="Setting Permissions on ${GRAVITY_FI}"
+	# echo -en "${STAT} ${MESSAGE}"	
+	#	sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+	#	error_validate
 		
 	MESSAGE="Pausing One Second"
 	echo -e "${INFO} ${MESSAGE}"
