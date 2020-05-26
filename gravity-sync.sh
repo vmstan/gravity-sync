@@ -39,6 +39,7 @@ GREEN='\033[0;92m'
 CYAN='\033[0;96m'
 YELLOW='\033[0;93m'
 PURPLE='\033[0;95m'
+BLUE='\033[0;94m'
 NC='\033[0m'
 
 # Message Codes
@@ -47,6 +48,7 @@ WARN="[${PURPLE}WARN${NC}]"
 GOOD="[${GREEN}DONE${NC}]"
 STAT="[${CYAN}EXEC${NC}]"
 INFO="[${YELLOW}INFO${NC}]"
+NEED="[${BLUE}NEED${NC}]"
 
 # FUNCTION DEFINITIONS #######################
 
@@ -583,12 +585,34 @@ case $# in
 					MESSAGE="${CONFIG_FILE} Missing"
 					echo -e "${INFO} ${MESSAGE}"
 					
-					MESSAGE="Creating New Configuration"
+					MESSAGE="Creating ${CONFIG_FILE} from Template"
 					echo -en "${STAT} ${MESSAGE}"
 					cp $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}.example $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 						error_validate
-		
-					exit_nochange
+						
+						echo ""
+						
+						MESSAGE="Enter IP or DNS of primary Pi-hole server"
+						echo -e "${NEED} ${MESSAGE}"
+						read INPUT_REMOTE_HOST
+						
+						MESSAGE="Enter User with SUDO rights on primary Pi-hole server"
+						echo -e "${NEED} ${MESSAGE}"
+						read INPUT_REMOTE_USER
+						
+						echo ""
+						
+						MESSAGE="Saving Host to ${CONFIG_FILE}"
+						echo -en "${STAT} ${MESSAGE}"
+						sed -i "/REMOTE_HOST='192.168.1.10'/c\REMOTE_HOST='${INPUT_REMOTE_HOST}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+							error_validate
+						
+						MESSAGE="Saving User to ${CONFIG_FILE}"
+						echo -en "${STAT} ${MESSAGE}"
+						sed -i "/REMOTE_USER='pi'/c\REMOTE_USER='${INPUT_REMOTE_USER}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+							error_validate
+								
+					exit_withchange
 				fi
 				
 			;;
