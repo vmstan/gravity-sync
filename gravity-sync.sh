@@ -160,34 +160,34 @@ function push_gs {
 			
 			MESSAGE="Backing Up ${GRAVITY_FI} from ${REMOTE_HOST}"
 			echo -en "${STAT} ${MESSAGE}"
-				${SSHPASSWORD} rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push
+				${SSHPASSWORD} rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push >/dev/null 2>&1
 				error_validate
 	
 			MESSAGE="Pushing ${GRAVITY_FI} to ${REMOTE_HOST}"
 			echo -en "${STAT} ${MESSAGE}"
-				${SSHPASSWORD} rsync --rsync-path="sudo rsync" -v -e 'ssh -p 22' ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}
+				${SSHPASSWORD} rsync --rsync-path="sudo rsync" -v -e 'ssh -p 22' ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 				error_validate
 	
 			MESSAGE="Setting Permissions on ${GRAVITY_FI}"
 			echo -en "${STAT} ${MESSAGE}"	
-				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI}"
+				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
 				error_validate
 		
 			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
 			echo -en "${STAT} ${MESSAGE}"	
-				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}"
+				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
 				error_validate	
 	
 			sleep 3
 	
 			MESSAGE="Updating FTLDNS Configuration"
 			echo -en "${STAT} ${MESSAGE}"
-				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns reloadlists'
+				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns reloadlists' >/dev/null 2>&1
 				error_validate
 			
 			MESSAGE="Reloading FTLDNS Services"
 			echo -en "${STAT} ${MESSAGE}"	
-				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns'
+				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns' >/dev/null 2>&1
 				error_validate
 			
 			logs_export
