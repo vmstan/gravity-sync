@@ -387,14 +387,14 @@ function md5_compare {
 case $# in
 	
 	0)
-		echo -e "\\r${FAIL} ${MESSAGE}"
+		echo -e "\r${FAIL} ${MESSAGE}"
 			list_gs_arguments
 	;;
 	
 	1)
    		case $1 in
    	 		pull)
-				echo -e "${GOOD} ${MESSAGE}"
+				echo -e "\r${GOOD} ${MESSAGE}"
 				
 				import_gs
 				
@@ -409,7 +409,7 @@ case $# in
  			;;
 
 			push)	
-				echo -e "${GOOD} ${MESSAGE}"
+				echo -e "\r${GOOD} ${MESSAGE}"
 				
 				import_gs
 
@@ -430,7 +430,7 @@ case $# in
 	
 			update)
 				# TASKTYPE='UPDATE'
-				echo -e "${GOOD} ${MESSAGE}"
+				echo -e "\r${GOOD} ${MESSAGE}"
 				
 				echo -e "${INFO} Update Requested"
 					update_gs
@@ -439,7 +439,7 @@ case $# in
 			
 			beta)
 				# TASKTYPE='BETA'
-				echo -e "${GOOD} ${MESSAGE}"
+				echo -e "$\r{GOOD} ${MESSAGE}"
 				
 				echo -e "${INFO} Beta Update Requested"
 					beta_gs
@@ -448,15 +448,18 @@ case $# in
 	
 			logs)
 				TASKTYPE='LOGS'
+				
+				echo -e "\r${GOOD} ${MESSAGE}"
+				
 				MESSAGE="Logs Requested"
-				echo -e "${GOOD} ${MESSAGE}"
+				echo -e "${INFO} ${MESSAGE}"
 					logs_gs
 			;;
 			
 			compare)
 				TASKTYPE='COMPARE'
 				
-				echo -e "${GOOD} ${MESSAGE}"
+				echo -e "\r${GOOD} ${MESSAGE}"
 					import_gs
 				
 				echo -e "${INFO} Validating Folder Configuration"
@@ -469,7 +472,7 @@ case $# in
 			
 			cron)
 				TASKTYPE='CRON'
-				echo -e "${GOOD} ${MESSAGE}"
+				echo -e "\r${GOOD} ${MESSAGE}"
 				
 				CRONPATH="$HOME/${LOCAL_FOLDR}/${CRONJOB_LOG}"
 				
@@ -496,8 +499,7 @@ case $# in
 			;;
 
 			*)
-				MESSAGE="'${YELLOW}$1${NC}' is an Invalid Argument"
-				echo -e "${FAIL} ${MESSAGE}"
+				echo -e "\r${FAIL} ${MESSAGE}"
         			list_gs_arguments
 					exit_nochange
 			;;
@@ -505,8 +507,7 @@ case $# in
 	;;
 	
 	*)
-		MESSAGE="Too Many Arguments"
-		echo -e "${FAIL} ${MESSAGE}"
+		echo -e "\r${FAIL} ${MESSAGE}"
 			list_gs_arguments
 			exit_nochange
 	;;
