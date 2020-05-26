@@ -361,7 +361,9 @@ function exit_nochange {
 
 ## Changes Made
 function exit_withchange {
-	echo -e "${INFO} ${PROGRAM} ${TASKTYPE} Completed"
+	SCRIPT_END='date +%s'
+	SCRIPT_RUNTIME=$((SCRIPT_END-SCRIPT_START))
+	echo -e "${INFO} ${PROGRAM} ${TASKTYPE} Completed in ${SCRIPT_RUNTIME}"
 	exit 0
 }
 
@@ -405,6 +407,7 @@ function md5_compare {
 }
 
 # SCRIPT EXECUTION ###########################
+SCRIPT_START='date +%s'
 	
 	MESSAGE="Evaluating Script Arguments"
 	echo -en "${STAT} ${MESSAGE}"
