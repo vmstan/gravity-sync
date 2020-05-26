@@ -133,8 +133,8 @@ function pull_gs {
 		
 	MESSAGE="Validating Ownership on ${GRAVITY_FI}"
 	echo -en "${STAT} ${MESSAGE}"	
-		GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk '\{print $3\}')
-		if $GRAVDB_OWN = 'pihole'
+		GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk '{print $3 $4}')
+		if $GRAVDB_OWN = 'piholepihole'
 		then
 			echo -e "\r${GOOD} ${MESSAGE}"
 		else
