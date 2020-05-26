@@ -387,7 +387,7 @@ function md5_compare {
 case $# in
 	
 	0)
-		echo -e "\033[2k${FAIL} ${MESSAGE}"
+		echo -e "\\r${FAIL} ${MESSAGE}"
 			list_gs_arguments
 	;;
 	
