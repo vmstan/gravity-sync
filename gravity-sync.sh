@@ -62,7 +62,7 @@ function import_gs {
 		echo -e "${INFO} ${MESSAGE}"
 	else
 		
-		echo -e "/r${FAIL} ${MESSAGE}"
+		echo -e "\r${FAIL} ${MESSAGE}"
 		
 		MESSAGE="${CONFIG_FILE} Missing"
 		echo -e "${INFO} ${MESSAGE}"
@@ -265,9 +265,9 @@ function validate_gs_folders {
 	echo -en "${STAT} ${MESSAGE}"
 		if [ -d $HOME/${LOCAL_FOLDR} ]
 		then
-	    	echo -e "/r${GOOD} ${MESSAGE}"
+	    	echo -e "\r${GOOD} ${MESSAGE}"
 		else
-			echo -e "/r${FAIL} ${MESSAGE}"
+			echo -e "\r${FAIL} ${MESSAGE}"
 			exit_nochange
 		fi
 	
@@ -275,9 +275,9 @@ function validate_gs_folders {
 	echo -en "${STAT} ${MESSAGE}"
 		if [ -d $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} ]
 		then
-	    	echo -e "/r${GOOD} ${MESSAGE}"
+	    	echo -e "\r${GOOD} ${MESSAGE}"
 		else
-			echo -e "/r${FAIL} ${MESSAGE}"
+			echo -e "\r${FAIL} ${MESSAGE}"
 			exit_nochange
 		fi
 }
@@ -288,9 +288,9 @@ function validate_ph_folders {
 	echo -en "${STAT} ${MESSAGE}"
 		if [ -d ${PIHOLE_DIR} ]
 		then
-	    	echo -e "/r${GOOD} ${MESSAGE}"
+	    	echo -e "\r${GOOD} ${MESSAGE}"
 		else
-			echo -e "/r${FAIL} ${MESSAGE}"
+			echo -e "\r${FAIL} ${MESSAGE}"
 			exit_nochange
 		fi
 }
@@ -368,10 +368,10 @@ function exit_withchange {
 # Error Validation
 function error_validate {
 	if [ "$?" != "0" ]; then
-	    echo -e "/r${FAIL} ${MESSAGE}"
+	    echo -e "\r${FAIL} ${MESSAGE}"
 	    exit 1
 	else
-		echo -e "/r${GOOD} ${MESSAGE}"
+		echo -e "\r${GOOD} ${MESSAGE}"
 	fi
 }
 
