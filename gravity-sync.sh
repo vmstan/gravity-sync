@@ -2,7 +2,7 @@
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.3.4'
+VERSION='1.4.0'
 
 # Must execute from a location in the home folder of the user who own's it (ex: /home/pi/gravity-sync)
 # Configure certificate based SSH authentication between the Pi-hole HA nodes - it does not use passwords
@@ -539,6 +539,57 @@ case $# in
 				show_crontab
 				
 			;;
+			
+			config)
+				TASKTYPE='CONFIG'
+				echo -e "\r${GOOD} ${MESSAGE}"
+				echo -e "${INFO} Entering ${TASKTYPE} Mode"
+				
+				if [ -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE} ]
+				then		
+					source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+					MESSAGE="Configuration File Exists"
+					echo -e "${WARN} ${MESSAGE}"
+					
+					echo -e "========================================================"
+					echo -e "========================================================"
+					echo -e ""
+					cat $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+					echo -e ""
+					echo -e "========================================================"
+					echo -e "========================================================"
+					
+					MESSAGE="Are you sure you want to erase this configuration?"
+					echo -e "${WARN} ${MESSAGE}"
+					
+					select yn in "Yes" "No"; do
+						case $yn in
+						Yes )
+							MESSAGE="Erasing Existing Configuration"
+							echo -en "${STAT} ${MESSAGE}"
+							rm -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+								error_validate
+							
+							exit_withchange
+						;;
+		
+						No )
+							exit_nochange
+						;;
+						esac
+					done
+
+				else
+					echo -e "\r${FAIL} ${MESSAGE}"
+		
+					MESSAGE="${CONFIG_FILE} Missing"
+					echo -e "${INFO} ${MESSAGE}"
+		
+					exit_nochange
+				fi
+				
+			;;
+				
 
 			*)
 				echo -e "\r${FAIL} ${MESSAGE}"
