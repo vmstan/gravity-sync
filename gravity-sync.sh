@@ -115,7 +115,12 @@ function pull_gs {
 	
 	MESSAGE="Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo -en "${STAT} ${MESSAGE}"
-		${SSHPASSWORD} rsync -pog -b --backup-dir=$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} --suffix=.pull -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} ${PIHOLE_DIR} >/dev/null 2>&1
+		${SSHPASSWORD} rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull >/dev/null 2>&1
+		error_validate
+		
+	MESSAGE="Replacing ${GRAVITY_FI} on $HOSTNAME"
+	echo -en "${STAT} ${MESSAGE}"	
+		sudo cp -v $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 		error_validate
 	
 	MESSAGE="Validating Ownership on ${GRAVITY_FI}"
