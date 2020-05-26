@@ -131,6 +131,16 @@ function pull_gs {
 		sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 		error_validate
 		
+	MESSAGE="Validating Ownership on ${GRAVITY_FI}"
+	echo -en "${STAT} ${MESSAGE}"	
+		GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk '{print $3}')
+		if $GRAVDB_OWN = 'pihole'
+		then
+			echo -e "\r${GOOD} ${MESSAGE}"
+		else
+			echo -e "\r${FAIL} ${MESSAGE}"
+		fi
+		
 	MESSAGE="Pausing One Second"
 	echo -e "${INFO} ${MESSAGE}"
 	sleep 1	
