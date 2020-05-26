@@ -2,7 +2,7 @@
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.3.1'
+VERSION='1.3.3'
 
 # Must execute from a location in the home folder of the user who own's it (ex: /home/pi/gravity-sync)
 # Configure certificate based SSH authentication between the Pi-hole HA nodes - it does not use passwords
@@ -25,8 +25,9 @@ CRONJOB_LOG='gravity-sync.cron' # only used if cron is configured to output to t
 BACKUP_FOLD='backup' # must exist as subdirectory in LOCAL_FOLD
 
 # PH Folder/File Locations
-PIHOLE_DIR='/etc/pihole'  # default install directory
+PIHOLE_DIR='/etc/pihole'  # default PH data directory
 GRAVITY_FI='gravity.db' # this should not change
+PIHOLE_BIN='/usr/local/bin/pihole' # default PH binary directory
 
 ##############################################
 ### DO NOT CHANGE ANYTHING BELOW THIS LINE ###
@@ -130,16 +131,18 @@ function pull_gs {
 		sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 		error_validate
 		
-	sleep 3	
+	MESSAGE="Pausing One Second"
+	echo -e "${INFO} ${MESSAGE}"
+	sleep 1	
 	
 	MESSAGE="Updating FTLDNS Configuration"
 	echo -en "${STAT} ${MESSAGE}"
-		pihole restartdns reloadlists >/dev/null 2>&1
+		${PIHOLE_BIN} restartdns reloadlists >/dev/null 2>&1
 		error_validate
 	
 	MESSAGE="Reloading FTLDNS Services"
 	echo -en "${STAT} ${MESSAGE}"
-		pihole restartdns >/dev/null 2>&1
+		${PIHOLE_BIN} restartdns >/dev/null 2>&1
 		error_validate
 	
 	logs_export
@@ -178,16 +181,18 @@ function push_gs {
 				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
 				error_validate	
 	
-			sleep 3
+			MESSAGE="Pausing One Second"
+			echo -e "${INFO} ${MESSAGE}"
+			sleep 1	
 	
 			MESSAGE="Updating FTLDNS Configuration"
 			echo -en "${STAT} ${MESSAGE}"
-				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns reloadlists' >/dev/null 2>&1
+				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} '${PIHOLE_BIN} restartdns reloadlists' >/dev/null 2>&1
 				error_validate
 			
 			MESSAGE="Reloading FTLDNS Services"
 			echo -en "${STAT} ${MESSAGE}"	
-				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns' >/dev/null 2>&1
+				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} '${PIHOLE_BIN} restartdns' >/dev/null 2>&1
 				error_validate
 			
 			logs_export
@@ -220,22 +225,22 @@ function show_crontab {
 	CRONPATH="$HOME/${LOCAL_FOLDR}/${CRONJOB_LOG}"
 	
 	MESSAGE="Replaying Last Cronjob"
-	echo -e "${STAT} ${MESSAGE}"
+	echo -en "${STAT} ${MESSAGE}"
 	
 	if [ -f ${CRONPATH} ]
 	then
 		if [ -s ${CRONPATH} ]
-			echo -e "${GOOD} ${MESSAGE}"
+			echo -e "\r${GOOD} ${MESSAGE}"
 				logs_crontab
 				exit_nochange
 		then
-			echo -e "${FAIL} ${MESSAGE}"
+			echo -e "\r${FAIL} ${MESSAGE}"
 			echo -e "${INFO} ${CRONPATH} appears empty"
 				exit_nochange
 		fi
 	else
-		echo -e "${FAIL} ${MESSAGE}"
-		echo -e "${YELLOW}${CRONPATH}${NC} cannot be located"
+		echo -e "\r${FAIL} ${MESSAGE}"
+		echo -e "${INFO} ${CRONPATH} cannot be located"
 			exit_nochange
 	fi
 }
