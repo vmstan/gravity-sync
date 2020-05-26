@@ -6,9 +6,9 @@ What is better than a [Pi-hole](https://github.com/pi-hole/pi-hole) blocking ads
 
 That's Gravity Sync.
 
-![Pull execution](https://user-images.githubusercontent.com/3002053/82774990-f88c6200-9e0b-11ea-97e5-23c8b38f32e3.png)
+![Pull execution](https://user-images.githubusercontent.com/3002053/82855198-4074bd00-9ed0-11ea-96ca-65e0f3d9b71a.gif)
 
-Gravity Sync will **not** overwrite device specific settings such as local network configuration, admin/API passwords/keys, upstream DNS resolvers, etc. It will also **not** keep DHCP settings or device leases synchronized. 
+Gravity Sync will **not** overwrite device specific settings such as local network configuration, admin/API passwords/keys, local hostfiles, upstream DNS resolvers, etc. It will also **not** keep DHCP settings or device leases synchronized. 
 
 ## Prerequisites
 
@@ -50,9 +50,9 @@ Download the latest release from [GitHub](https://github.com/vmstan/gravity-sync
 
 ```
 cd ~
-wget https://github.com/vmstan/gravity-sync/archive/v1.3.1.zip
-unzip v1.3.1.zip
-mv ~/gravity-sync-1.3.1 ~/gravity-sync
+wget https://github.com/vmstan/gravity-sync/archive/v1.3.2.zip
+unzip v1.3.2.zip
+mv ~/gravity-sync-1.3.2 ~/gravity-sync
 cd gravity-sync
 ```
 
