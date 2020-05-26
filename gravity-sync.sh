@@ -145,14 +145,15 @@ function pull_gs {
 	MESSAGE="Validating Permissions on ${GRAVITY_FI}"
 	echo -en "${STAT} ${MESSAGE}"
 	
-		GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep ${GRAVITY_FI} | awk '{print $1}' )
+		GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep ${GRAVITY_FI} | awk '{print $1}')
 		if [ $GRAVDB_RWE == "-rw-r--r--" ]
 		then
 			echo -e "\r${GOOD} ${MESSAGE}"
 		else
-			echo -e "\r${FAIL} $MESSAGE"
+			echo -e "\r${FAIL} ${MESSAGE}"
 				
 			MESSAGE2="Attempting to Compensate"
+			echo -e "${INFO} ${MESSAGE2}"
 		
 			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
 			echo -en "${STAT} ${MESSAGE}"
