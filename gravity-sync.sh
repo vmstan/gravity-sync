@@ -161,12 +161,7 @@ function pull_gs {
 				error_validate
 		fi
 		
-	# MESSAGE="Setting Permissions on ${GRAVITY_FI}"
-	# echo -en "${STAT} ${MESSAGE}"	
-	#	sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
-	#	error_validate
-		
-	MESSAGE="Pausing One Second"
+	MESSAGE="Inverting Tachyon Pulse"
 	echo -e "${INFO} ${MESSAGE}"
 	sleep 1	
 	
