@@ -145,15 +145,19 @@ function pull_gs {
 	MESSAGE="Validating Permissions on ${GRAVITY_FI}"
 	echo -en "${STAT} ${MESSAGE}"
 	
-		if [ ! u-w "${PIHOLE_DIR}/${GRAVITY_FI}" ]
+		GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep ${GRAVITY_FI} | awk '{print $1}' )
+		if [ $GRAVDB_RWE "-rw-r--r--" ]
 		then
+			echo -e "\r${GOOD} ${MESSAGE}"
+		else
 			echo -e "\r${FAIL} $MESSAGE"
-		
+				
 			MESSAGE2="Attempting to Compensate"
+		
+			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
+			echo -en "${STAT} ${MESSAGE}"
 			sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 				error_validate
-			else
-				echo -e "\r${GOOD} ${MESSAGE}"
 		fi
 		
 	# MESSAGE="Setting Permissions on ${GRAVITY_FI}"
