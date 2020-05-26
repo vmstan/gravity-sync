@@ -110,17 +110,17 @@ function pull_gs {
 	
 	MESSAGE="Backing Up ${GRAVITY_FI} on $HOSTNAME"
 	echo -en "${STAT} ${MESSAGE}"
-		cp -v ${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.backup >/dev/null 2>&1
+		cp ${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.backup >/dev/null 2>&1
 		error_validate
 	
 	MESSAGE="Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo -en "${STAT} ${MESSAGE}"
-		${SSHPASSWORD} rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull >/dev/null 2>&1
+		${SSHPASSWORD} rsync -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull >/dev/null 2>&1
 		error_validate
 		
 	MESSAGE="Replacing ${GRAVITY_FI} on $HOSTNAME"
 	echo -en "${STAT} ${MESSAGE}"	
-		sudo cp -v $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+		sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 		error_validate
 	
 	MESSAGE="Validating Ownership on ${GRAVITY_FI}"
