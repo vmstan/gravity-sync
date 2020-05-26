@@ -145,7 +145,7 @@ function pull_gs {
 	MESSAGE="Validating Permissions on ${GRAVITY_FI}"
 	echo -en "${STAT} ${MESSAGE}"
 	
-		if [ ! -w "${PIHOLE_DIR}/${GRAVITY_FI}" ]
+		if [ ! u-w "${PIHOLE_DIR}/${GRAVITY_FI}" ]
 		then
 			echo -e "\r${FAIL} $MESSAGE"
 		
