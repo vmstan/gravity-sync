@@ -25,8 +25,9 @@ CRONJOB_LOG='gravity-sync.cron' # only used if cron is configured to output to t
 BACKUP_FOLD='backup' # must exist as subdirectory in LOCAL_FOLD
 
 # PH Folder/File Locations
-PIHOLE_DIR='/etc/pihole'  # default install directory
+PIHOLE_DIR='/etc/pihole'  # default PH data directory
 GRAVITY_FI='gravity.db' # this should not change
+PIHOLE_BIN='/usr/local/bin/pihole' # default PH binary directory
 
 ##############################################
 ### DO NOT CHANGE ANYTHING BELOW THIS LINE ###
@@ -136,12 +137,12 @@ function pull_gs {
 	
 	MESSAGE="Updating FTLDNS Configuration"
 	echo -en "${STAT} ${MESSAGE}"
-		/usr/local/bin/pihole restartdns reloadlists >/dev/null 2>&1
+		${PIHOLE_BIN} restartdns reloadlists >/dev/null 2>&1
 		error_validate
 	
 	MESSAGE="Reloading FTLDNS Services"
 	echo -en "${STAT} ${MESSAGE}"
-		/usr/local/bin/pihole restartdns >/dev/null 2>&1
+		${PIHOLE_BIN} restartdns >/dev/null 2>&1
 		error_validate
 	
 	logs_export
@@ -186,12 +187,12 @@ function push_gs {
 	
 			MESSAGE="Updating FTLDNS Configuration"
 			echo -en "${STAT} ${MESSAGE}"
-				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns reloadlists' >/dev/null 2>&1
+				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} '${PIHOLE_BIN} restartdns reloadlists' >/dev/null 2>&1
 				error_validate
 			
 			MESSAGE="Reloading FTLDNS Services"
 			echo -en "${STAT} ${MESSAGE}"	
-				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns' >/dev/null 2>&1
+				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} '${PIHOLE_BIN} restartdns' >/dev/null 2>&1
 				error_validate
 			
 			logs_export
