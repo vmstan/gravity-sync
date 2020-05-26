@@ -146,7 +146,7 @@ function pull_gs {
 	echo -en "${STAT} ${MESSAGE}"
 	
 		GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep ${GRAVITY_FI} | awk '{print $1}' )
-		if [ $GRAVDB_RWE "-rw-r--r--" ]
+		if [ $GRAVDB_RWE == "-rw-r--r--" ]
 		then
 			echo -e "\r${GOOD} ${MESSAGE}"
 		else
