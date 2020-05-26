@@ -613,32 +613,24 @@ case $# in
 	
 						if hash sshpass 2>/dev/null
 						then
-							echo -e "${INFO} SSHPASS Utility Detected"
+							MESSAGE="SSHPASS Utility Detected"
+							echo -e "${INFO} ${MESSAGE}"
+							
 							MESSAGE="Do you want to configure password based SSH authentication (not reccomended)?"
 							echo -e "${WARN} ${MESSAGE}"
 							MESSAGE="Your password will be saved in clear-text in the ${CONFIG_FILE} file!"
 							echo -e "${WARN} ${MESSAGE}"
-							MESSAGE="Select NO to use (preferred) SSH Key-Pair Authentication."
+							MESSAGE="Leave blank to use (preferred) SSH Key-Pair Authentication."
 							echo -e "${WARN} ${MESSAGE}"
+							MESSAGE="Enter SSH password for primary Pi-hole server (optional)"
 							
-							select yn in "Yes" "No"; do
-								case $yn in
-								Yes )
-									MESSAGE="Enter SSH password for primary Pi-hole server"
-									echo -e "${NEED} ${MESSAGE}"
-									read INPUT_REMOTE_PASS
+							echo -e "${NEED} ${MESSAGE}"
+							read INPUT_REMOTE_PASS
 									
-									MESSAGE="Saving Password to ${CONFIG_FILE}"
-									echo -en "${STAT} ${MESSAGE}"
-									sed -i "/REMOTE_PASS=''/c\REMOTE_PASS='${INPUT_REMOTE_PASS}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
-										error_validate
-								;;
-		
-								No )
-									echo -e "${INFO} Defaulting to SSH Key-Pair Authentication"
-								;;
-								esac
-							done
+							MESSAGE="Saving Password to ${CONFIG_FILE}"
+							echo -en "${STAT} ${MESSAGE}"
+							sed -i "/REMOTE_PASS=''/c\REMOTE_PASS='${INPUT_REMOTE_PASS}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+								error_validate
 							
 						else
 							MESSAGE="SSHPASS Not Installed"
@@ -646,11 +638,11 @@ case $# in
 							
 							MESSAGE="Defaulting to SSH Key-Pair Authentication"
 							echo -e "${INFO} ${MESSAGE}"
-						fi	
-						    				
+						fi
+						
 						source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 						validate_os_sshpass
-							
+						
 					exit_withchange
 				fi
 				
