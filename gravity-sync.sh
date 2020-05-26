@@ -580,10 +580,13 @@ case $# in
 					done
 
 				else
-					echo -e "\r${FAIL} ${MESSAGE}"
-		
 					MESSAGE="${CONFIG_FILE} Missing"
 					echo -e "${INFO} ${MESSAGE}"
+					
+					MESSAGE="Creating New Configuration"
+					echo -en "${STAT} ${MESSAGE}"
+					cp $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}.example $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+						error_validate
 		
 					exit_nochange
 				fi
