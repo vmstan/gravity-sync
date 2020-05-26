@@ -52,7 +52,7 @@ INFO="[${YELLOW}INFO${NC}]"
 # Import Settings
 function import_gs {
 	MESSAGE="Importing ${CONFIG_FILE} Settings"
-	echo -e "${STAT} $MESSAGE"
+	echo -en "${STAT} $MESSAGE"
 	if [ -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE} ]
 	then
 	    source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
@@ -62,7 +62,7 @@ function import_gs {
 		echo -e "${INFO} ${MESSAGE}"
 	else
 		
-		echo -e "${FAIL} ${MESSAGE}"
+		echo -e "/r${FAIL} ${MESSAGE}"
 		
 		MESSAGE="${CONFIG_FILE} Missing"
 		echo -e "${INFO} ${MESSAGE}"
@@ -106,40 +106,40 @@ function pull_gs {
 	md5_compare
 	
 	MESSAGE="Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
-	echo -e "${STAT} ${MESSAGE}"
-		${SSHPASSWORD} rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull
+	echo -en "${STAT} ${MESSAGE}"
+		${SSHPASSWORD} rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull >/dev/null 2>&1
 		error_validate
 	
 	MESSAGE="Backing Up ${GRAVITY_FI} on $HOSTNAME"
-	echo -e "${STAT} ${MESSAGE}"
-		cp -v ${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.backup
+	echo -en "${STAT} ${MESSAGE}"
+		cp -v ${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.backup >/dev/null 2>&1
 		error_validate
 	
 	MESSAGE="Replacing ${GRAVITY_FI} on $HOSTNAME"
-	echo -e "${STAT} ${MESSAGE}"	
-		sudo cp -v $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull ${PIHOLE_DIR}/${GRAVITY_FI}
+	echo -en "${STAT} ${MESSAGE}"	
+		sudo cp -v $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 		error_validate
 	
 	MESSAGE="Setting Permissions on ${GRAVITY_FI}"
-	echo -e "${STAT} ${MESSAGE}"	
-		sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI}
+	echo -en "${STAT} ${MESSAGE}"	
+		sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 		error_validate
 		
 	MESSAGE="Setting Ownership on ${GRAVITY_FI}"
-	echo -e "${STAT} ${MESSAGE}"	
-		sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}
+	echo -en "${STAT} ${MESSAGE}"	
+		sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 		error_validate
 		
 	sleep 3	
 	
 	MESSAGE="Updating FTLDNS Configuration"
-	echo -e "${STAT} ${MESSAGE}"
-		pihole restartdns reloadlists
+	echo -en "${STAT} ${MESSAGE}"
+		pihole restartdns reloadlists >/dev/null 2>&1
 		error_validate
 	
 	MESSAGE="Reloading FTLDNS Services"
-	echo -e "${STAT} ${MESSAGE}"
-		pihole restartdns
+	echo -en "${STAT} ${MESSAGE}"
+		pihole restartdns >/dev/null 2>&1
 		error_validate
 	
 	logs_export
@@ -159,34 +159,34 @@ function push_gs {
 		Yes )
 			
 			MESSAGE="Backing Up ${GRAVITY_FI} from ${REMOTE_HOST}"
-			echo -e "${STAT} ${MESSAGE}"
+			echo -en "${STAT} ${MESSAGE}"
 				${SSHPASSWORD} rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push
 				error_validate
 	
 			MESSAGE="Pushing ${GRAVITY_FI} to ${REMOTE_HOST}"
-			echo -e "${STAT} ${MESSAGE}"
+			echo -en "${STAT} ${MESSAGE}"
 				${SSHPASSWORD} rsync --rsync-path="sudo rsync" -v -e 'ssh -p 22' ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}
 				error_validate
 	
 			MESSAGE="Setting Permissions on ${GRAVITY_FI}"
-			echo -e "${STAT} ${MESSAGE}"	
+			echo -en "${STAT} ${MESSAGE}"	
 				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI}"
 				error_validate
 		
 			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
-			echo -e "${STAT} ${MESSAGE}"	
+			echo -en "${STAT} ${MESSAGE}"	
 				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}"
 				error_validate	
 	
 			sleep 3
 	
 			MESSAGE="Updating FTLDNS Configuration"
-			echo -e "${STAT} ${MESSAGE}"
+			echo -en "${STAT} ${MESSAGE}"
 				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns reloadlists'
 				error_validate
 			
 			MESSAGE="Reloading FTLDNS Services"
-			echo -e "${STAT} ${MESSAGE}"	
+			echo -en "${STAT} ${MESSAGE}"	
 				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} 'pihole restartdns'
 				error_validate
 			
@@ -215,6 +215,31 @@ function logs_gs {
 	exit_nochange
 }
 
+## Crontab Logic
+function show_crontab {
+	CRONPATH="$HOME/${LOCAL_FOLDR}/${CRONJOB_LOG}"
+	
+	MESSAGE="Replaying Last Cronjob"
+	echo -e "${STAT} ${MESSAGE}"
+	
+	if [ -f ${CRONPATH} ]
+	then
+		if [ -s ${CRONPATH} ]
+			echo -e "${GOOD} ${MESSAGE}"
+				logs_crontab
+				exit_nochange
+		then
+			echo -e "${FAIL} ${MESSAGE}"
+			echo -e "${INFO} ${CRONPATH} appears empty"
+				exit_nochange
+		fi
+	else
+		echo -e "${FAIL} ${MESSAGE}"
+		echo -e "${YELLOW}${CRONPATH}${NC} cannot be located"
+			exit_nochange
+	fi
+}
+
 ## Check Last Crontab
 function logs_crontab {
 	echo -e "========================================================"
@@ -237,22 +262,22 @@ function logs_export {
 ## Validate GS Folders
 function validate_gs_folders {
 	MESSAGE="Locating $HOME/${LOCAL_FOLDR}"
-	echo -e "${STAT} ${MESSAGE}"
+	echo -en "${STAT} ${MESSAGE}"
 		if [ -d $HOME/${LOCAL_FOLDR} ]
 		then
-	    	echo -e "${GOOD} ${MESSAGE}"
+	    	echo -e "/r${GOOD} ${MESSAGE}"
 		else
-			echo -e "${FAIL} ${MESSAGE}"
+			echo -e "/r${FAIL} ${MESSAGE}"
 			exit_nochange
 		fi
 	
 	MESSAGE="Locating $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}"
-	echo -e "${STAT} ${MESSAGE}"
+	echo -en "${STAT} ${MESSAGE}"
 		if [ -d $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} ]
 		then
-	    	echo -e "${GOOD} ${MESSAGE}"
+	    	echo -e "/r${GOOD} ${MESSAGE}"
 		else
-			echo -e "${FAIL} ${MESSAGE}"
+			echo -e "/r${FAIL} ${MESSAGE}"
 			exit_nochange
 		fi
 }
@@ -260,12 +285,12 @@ function validate_gs_folders {
 ## Validate PH Folders
 function validate_ph_folders {
 	MESSAGE="Locating ${PIHOLE_DIR}"
-	echo -e "${STAT} ${MESSAGE}"
+	echo -en "${STAT} ${MESSAGE}"
 		if [ -d ${PIHOLE_DIR} ]
 		then
-	    	echo -e "${GOOD} ${MESSAGE}"
+	    	echo -e "/r${GOOD} ${MESSAGE}"
 		else
-			echo -e "${FAIL} ${MESSAGE}"
+			echo -e "/r${FAIL} ${MESSAGE}"
 			exit_nochange
 		fi
 }
@@ -299,8 +324,8 @@ function validate_os_sshpass {
 	echo -e "${INFO} ${MESSAGE}"
 	
 	MESSAGE="Testing SSH Connection"
-	echo -e "${STAT} ${MESSAGE}"
-		timeout 5 ${SSHPASSWORD} ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit'
+	echo -en "${STAT} ${MESSAGE}"
+		timeout 5 ${SSHPASSWORD} ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
 			error_validate
 	
 }
@@ -343,10 +368,10 @@ function exit_withchange {
 # Error Validation
 function error_validate {
 	if [ "$?" != "0" ]; then
-	    echo -e "${FAIL} ${MESSAGE}"
+	    echo -e "/r${FAIL} ${MESSAGE}"
 	    exit 1
 	else
-		echo -e "${GOOD} ${MESSAGE}"
+		echo -e "/r${GOOD} ${MESSAGE}"
 	fi
 }
 
@@ -360,12 +385,12 @@ function md5_compare {
 	echo -e "${INFO} Comparing ${GRAVITY_FI} Changes"
 	
 	MESSAGE="Analyzing Remote ${GRAVITY_FI}"
-	echo -e "${STAT} ${MESSAGE}"
+	echo -en "${STAT} ${MESSAGE}"
 	primaryMD5=$(${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} 'md5sum /etc/pihole/gravity.db')
 		error_validate
 	
 	MESSAGE="Analyzing Local ${GRAVITY_FI}"
-	echo -e "${STAT} ${MESSAGE}"
+	echo -en "${STAT} ${MESSAGE}"
 	secondMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI})
 		error_validate
 	
@@ -439,7 +464,7 @@ case $# in
 			
 			beta)
 				# TASKTYPE='BETA'
-				echo -e "$\r{GOOD} ${MESSAGE}"
+				echo -e "\r${GOOD} ${MESSAGE}"
 				
 				echo -e "${INFO} Beta Update Requested"
 					beta_gs
@@ -474,27 +499,7 @@ case $# in
 				TASKTYPE='CRON'
 				echo -e "\r${GOOD} ${MESSAGE}"
 				
-				CRONPATH="$HOME/${LOCAL_FOLDR}/${CRONJOB_LOG}"
-				
-				MESSAGE="Replaying Last Cronjob"
-				echo -e "${STAT} ${MESSAGE}"
-				
-				if [ -f ${CRONPATH} ]
-				then
-					if [ -s ${CRONPATH} ]
-						echo -e "${GOOD} ${MESSAGE}"
-							logs_crontab
-							exit_nochange
-					then
-						echo -e "${FAIL} ${MESSAGE}"
-						echo -e "${INFO} ${CRONPATH} appears empty"
-							exit_nochange
-					fi
-				else
-					echo -e "${FAIL} ${MESSAGE}"
-					echo -e "${YELLOW}${CRONPATH}${NC} cannot be located"
-						exit_nochange
-				fi
+				show_crontab
 				
 			;;
 
