@@ -163,7 +163,7 @@ function pull_gs {
 		
 	MESSAGE="Inverting Tachyon Pulse"
 	echo -e "${INFO} ${MESSAGE}"
-	sleep 1	
+		sleep 1	
 	
 	MESSAGE="Updating FTLDNS Configuration"
 	echo -en "${STAT} ${MESSAGE}"
@@ -193,12 +193,12 @@ function push_gs {
 			
 			MESSAGE="Backing Up ${GRAVITY_FI} from ${REMOTE_HOST}"
 			echo -en "${STAT} ${MESSAGE}"
-				${SSHPASSWORD} rsync -v -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push >/dev/null 2>&1
+				${SSHPASSWORD} rsync -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push >/dev/null 2>&1
 				error_validate
 	
 			MESSAGE="Pushing ${GRAVITY_FI} to ${REMOTE_HOST}"
 			echo -en "${STAT} ${MESSAGE}"
-				${SSHPASSWORD} rsync --rsync-path="sudo rsync" -v -e 'ssh -p 22' ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+				${SSHPASSWORD} rsync --rsync-path="sudo rsync" -e 'ssh -p 22' ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 				error_validate
 	
 			MESSAGE="Setting Permissions on ${GRAVITY_FI}"
@@ -211,9 +211,9 @@ function push_gs {
 				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
 				error_validate	
 	
-			MESSAGE="Pausing One Second"
+			MESSAGE="Contacting Borg Collective"
 			echo -e "${INFO} ${MESSAGE}"
-			sleep 1	
+				sleep 1	
 	
 			MESSAGE="Updating FTLDNS Configuration"
 			echo -en "${STAT} ${MESSAGE}"
