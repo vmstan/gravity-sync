@@ -382,12 +382,12 @@ function md5_compare {
 # SCRIPT EXECUTION ###########################
 	
 	MESSAGE="Evaluating Script Arguments"
-	echo -e "${STAT} ${MESSAGE}\r"
+	echo -en "${STAT} ${MESSAGE}"
 
 case $# in
 	
 	0)
-		echo -e "${FAIL} ${MESSAGE}"
+		echo -e "\\r${FAIL} ${MESSAGE}"
 			list_gs_arguments
 	;;
 	
