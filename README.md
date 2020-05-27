@@ -6,7 +6,7 @@ What is better than a [Pi-hole](https://github.com/pi-hole/pi-hole) blocking ads
 
 That's Gravity Sync.
 
-![Pull execution](https://user-images.githubusercontent.com/3002053/82855198-4074bd00-9ed0-11ea-96ca-65e0f3d9b71a.gif)
+![Pull execution](https://user-images.githubusercontent.com/3002053/82915078-e870a180-9f35-11ea-8b36-271a02acdeaa.gif)
 
 Gravity Sync will **not** overwrite device specific settings such as local network configuration, admin/API passwords/keys, local hostfiles, upstream DNS resolvers, etc. It will also **not** keep DHCP settings or device leases synchronized. 
 
@@ -220,3 +220,4 @@ chmod +x gravity-sync.sh
 - If you'd like to know what version of the script you have running by running `./gravity-sync.sh version` 
 - If the update script fails, make sure you did your original deployment via `git clone` and not a manual install. 
 - If it doesn't kick off, you can manually execute a `git pull` while in the `gravity-sync` directory. 
+
