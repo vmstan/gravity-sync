@@ -26,11 +26,12 @@ BACKUP_FOLD='backup' # must exist as subdirectory in LOCAL_FOLD
 
 # PH Folder/File Locations
 PIHOLE_DIR='/etc/pihole'  # default PH data directory
-GRAVITY_FI='gravity.db' # this should not change
+GRAVITY_FI='gravity.db' # default 
 PIHOLE_BIN='/usr/local/bin/pihole' # default PH binary directory
 
 # SSH Configuration
-SSH_PORT='22'
+SSH_PORT='22' # default SSH port
+SSH_PKIF='.ssh/id_rsa.pub' # default local SSH key
 
 ##############################################
 ### DO NOT CHANGE ANYTHING BELOW THIS LINE ###
@@ -640,7 +641,61 @@ case $# in
 							echo -e "${INFO} ${MESSAGE}"
 						fi
 						
+						if [ $INPUT_REMOTE_PASS == '' ]
+						then
+							if [ -f $HOME/${SSH_PKIF} ]
+							then
+								MESSAGE="Using Existing ~/${SSH_PKIF}"
+								echo -e "${INFO} ${MESSAGE}"
+							else
+								MESSAGE="Generating ~/${SSH_PKIF}"
+								echo -e "${INFO} ${MESSAGE}"
+								
+								MESSAGE="Leave Key Passphrase Blank"
+								echo -e "${WARN} ${MESSAGE}"
+								
+								MESSAGE="Complete Key-Pair Creation"
+								echo -e "${NEED} ${MESSAGE}"
+								
+								echo -e "========================================================"
+								echo -e "========================================================"
+								echo -e ""
+								ssh-keygen -t rsa
+								echo -e ""
+								echo -e "========================================================"
+								echo -e "========================================================"
+							fi
+						fi
+						
+						MESSAGE="Importing New ${CONFIG_FILE}"
+						echo -en "${STAT} ${MESSAGE}"
 						source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+							error_validate
+						
+						if [ REMOTE_PASS == '' ]
+						then
+							if [ -f $HOME/${SSH_PKIF} ]
+							then
+								MESSAGE="Registering Key-Pair on ${REMOTE_HOST}"
+								echo -e "${INFO} ${MESSAGE}"
+								
+								MESSAGE="Enter ${REMOTE_USER}@${REMOTE_HOST}"
+								echo -e "${NEED} ${MESSAGE}"
+								
+								echo -e "========================================================"
+								echo -e "========================================================"
+								echo -e ""
+								ssh-copy-id -i $HOME/${SSH_PKIF} ${REMOTE_USER}@${REMOTE_HOST}
+								echo -e ""
+								echo -e "========================================================"
+								echo -e "========================================================"
+							fi
+							MESSAGE="Error Creating Key-Pair"
+							echo -e "${FAIL} ${MESSAGE}"
+							
+							exit_withchange
+						fi
+						
 						validate_os_sshpass
 						
 					exit_withchange
