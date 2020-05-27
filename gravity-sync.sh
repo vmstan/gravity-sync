@@ -34,7 +34,7 @@ PIHOLE_BIN='/usr/local/bin/pihole' 	# default PH binary directory
 # Add replacement variables to gravity-sync.conf
 
 SSH_PORT='22' 						# default SSH port
-SSH_PKIF='.ssh/id_rsa.pub'			# default local SSH key
+SSH_PKIF='.ssh/id_rsa'				# default local SSH key
 
 ##############################################
 ### DO NOT CHANGE ANYTHING BELOW THIS LINE ###
@@ -500,7 +500,7 @@ function config_generate {
 			
 			echo -e "========================================================"
 			echo -e "========================================================"
-			ssh-copy-id -f -i $HOME/${SSH_PKIF} ${REMOTE_USER}@${REMOTE_HOST}
+			ssh-copy-id -f -i $HOME/${SSH_PKIF}.pub ${REMOTE_USER}@${REMOTE_HOST}
 			echo -e "========================================================"
 			echo -e "========================================================"
 		else
