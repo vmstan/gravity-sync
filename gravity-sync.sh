@@ -2,7 +2,7 @@
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.4.2'
+VERSION='1.4.3'
 
 # Execute from the home folder of the user who own's it (ex: 'cd ~/gravity-sync')
 # For documentation or download updates visit https://github.com/vmstan/gravity-sync
