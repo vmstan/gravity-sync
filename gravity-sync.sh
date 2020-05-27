@@ -258,7 +258,8 @@ function logs_export {
 ### Output Sync Logs
 function logs_gs {
 	import_gs
-	
+
+	echo -e "${INFO} Tailing ${LOG_PATH}/${SYNCING_LOG}"
 	echo -e "========================================================"
 	echo -e "Recent Complete ${YELLOW}PULL${NC} Executions"
 		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PULL
