@@ -78,7 +78,7 @@ function import_gs {
 
 		TASKTYPE='CONFIG'
 		config_generate
-		echo -e "Please run ${YELLOW}$#${NC} again."
+		# echo -e "Please run ${YELLOW}$#${NC} again."
 	fi
 }
 
@@ -92,7 +92,6 @@ function update_gs {
 	echo -e "${INFO} ${MESSAGE}"
 		git reset --hard
 		git pull
-		
 	exit
 }
 
@@ -106,7 +105,6 @@ function beta_gs {
 		git reset --hard
 		git pull
 		git checkout origin/development
-		
 	exit
 }
 
