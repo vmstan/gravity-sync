@@ -575,8 +575,6 @@ case $# in
 							echo -en "${STAT} ${MESSAGE}"
 							rm -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 								error_validate
-							
-							exit_withchange
 						;;
 		
 						No )
@@ -641,7 +639,7 @@ case $# in
 							echo -e "${INFO} ${MESSAGE}"
 						fi
 						
-						if [ $INPUT_REMOTE_PASS == '' ]
+						if [ $INPUT_REMOTE_PASS = '' ]
 						then
 							if [ -f $HOME/${SSH_PKIF} ]
 							then

@@ -10,7 +10,7 @@ REMOTE_USER='pi'
 
 # Password for REMOTE_USER account
 # Requires SSHPASS installed on server
-# Leave blank to use key-pair SSH auth
 # Less secure and possibly less reliable
+# Leave blank to use (preferred) key-pair SSH auth!
 
 REMOTE_PASS=''
