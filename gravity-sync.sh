@@ -2,32 +2,36 @@
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.3.4'
+VERSION='1.4.0'
 
-# Must execute from a location in the home folder of the user who own's it (ex: /home/pi/gravity-sync)
-# Configure certificate based SSH authentication between the Pi-hole HA nodes - it does not use passwords
-# Tested against Pihole 5.0 GA on Raspbian Buster and Ubuntu 20.04, but it should work on most configs
-# More installation instructions available at https://vmstan.com/gravity-sync
-# For the latest version please visit https://github.com/vmstan/gravity-sync under Releases
+# Execute from the home folder of the user who own's it (ex: 'cd ~/gravity-sync')
+# For documentation or download updates visit https://github.com/vmstan/gravity-sync
 
 # REQUIRED SETTINGS ##########################
 
-# You MUST define REMOTE_HOST and REMOTE_USER in a file called 'gravity-sync.conf'
-# You can copy the 'gravity-sync.conf.example' file in the script directory to get started 
+# Run './gravity-sync.sh config' to get started
 
 # STANDARD VARIABLES #########################
 
 # GS Folder/File Locations
-LOCAL_FOLDR='gravity-sync' # must exist in running user home folder
-CONFIG_FILE='gravity-sync.conf' # must exist as explained above
-SYNCING_LOG='gravity-sync.log' # will be created in above folder
-CRONJOB_LOG='gravity-sync.cron' # only used if cron is configured to output to this file
-BACKUP_FOLD='backup' # must exist as subdirectory in LOCAL_FOLD
+LOCAL_FOLDR='gravity-sync' 			# must exist in running user home folder
+CONFIG_FILE='gravity-sync.conf' 	# must exist as explained above
+SYNCING_LOG='gravity-sync.log' 		# will be created in above folder
+CRONJOB_LOG='gravity-sync.cron' 	# only used if cron is configured to output to this file
+BACKUP_FOLD='backup' 				# must exist as subdirectory in LOCAL_FOLDR
 
 # PH Folder/File Locations
-PIHOLE_DIR='/etc/pihole'  # default PH data directory
-GRAVITY_FI='gravity.db' # this should not change
-PIHOLE_BIN='/usr/local/bin/pihole' # default PH binary directory
+PIHOLE_DIR='/etc/pihole' 			# default PH data directory
+GRAVITY_FI='gravity.db' 			# default PH database file
+PIHOLE_BIN='/usr/local/bin/pihole' 	# default PH binary directory
+
+# SSH CONFIGURATION ##########################
+
+# Suggested not to replace these values here
+# Add replacement variables to gravity-sync.conf
+
+SSH_PORT='22' 						# default SSH port
+SSH_PKIF='.ssh/id_rsa.pub' 			# default local SSH key
 
 ##############################################
 ### DO NOT CHANGE ANYTHING BELOW THIS LINE ###
@@ -39,6 +43,7 @@ GREEN='\033[0;92m'
 CYAN='\033[0;96m'
 YELLOW='\033[0;93m'
 PURPLE='\033[0;95m'
+BLUE='\033[0;94m'
 NC='\033[0m'
 
 # Message Codes
@@ -47,6 +52,7 @@ WARN="[${PURPLE}WARN${NC}]"
 GOOD="[${GREEN}DONE${NC}]"
 STAT="[${CYAN}EXEC${NC}]"
 INFO="[${YELLOW}INFO${NC}]"
+NEED="[${BLUE}NEED${NC}]"
 
 # FUNCTION DEFINITIONS #######################
 
@@ -72,10 +78,11 @@ function import_gs {
 	fi
 }
 
-# Update Function
+# GS Update Functions
+## Master Branch
 function update_gs {
 	TASKTYPE='UPDATE'
-	logs_export 	# dumps log prior to execution because script stops after successful pull
+	# logs_export 	# dumps log prior to execution because script stops after successful pull
 	
 	MESSAGE="Requires GitHub Installation" 
 	echo -e "${INFO} ${MESSAGE}"
@@ -85,10 +92,10 @@ function update_gs {
 	exit
 }
 
-# Developer Build Update
+## Developer Branch
 function beta_gs {
 	TASKTYPE='BETA'
-	logs_export 	# dumps log prior to execution because script stops after successful pull
+	# logs_export 	# dumps log prior to execution because script stops after successful pull
 	
 	MESSAGE="Requires GitHub Installation" 
 	echo -e "${INFO} ${MESSAGE}"
@@ -99,7 +106,8 @@ function beta_gs {
 	exit
 }
 
-# Pull Function
+# Gravity Core Functions
+## Pull Function
 function pull_gs {
 	TASKTYPE='PULL'
 	
@@ -115,7 +123,7 @@ function pull_gs {
 	
 	MESSAGE="Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo -en "${STAT} ${MESSAGE}"
-		${SSHPASSWORD} rsync -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull >/dev/null 2>&1
+		${SSHPASSWORD} rsync -e "ssh -p ${SSH_PORT}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull >/dev/null 2>&1
 		error_validate
 		
 	MESSAGE="Replacing ${GRAVITY_FI} on $HOSTNAME"
@@ -146,7 +154,7 @@ function pull_gs {
 	echo -en "${STAT} ${MESSAGE}"
 	
 		GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | awk '{print $1}')
-		if [ $GRAVDB_RWE = "-rw-r--r--" ]
+		if [ $GRAVDB_RWE = "-rw-rw-r--" ]
 		then
 			echo -e "\r${GOOD} ${MESSAGE}"
 		else
@@ -157,7 +165,7 @@ function pull_gs {
 		
 			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
 			echo -en "${STAT} ${MESSAGE}"
-				sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+				sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 				error_validate
 		fi
 		
@@ -179,7 +187,7 @@ function pull_gs {
 	exit_withchange
 }
 
-# Push Function
+## Push Function
 function push_gs {
 	TASKTYPE='PUSH'
 	
@@ -193,17 +201,17 @@ function push_gs {
 			
 			MESSAGE="Backing Up ${GRAVITY_FI} from ${REMOTE_HOST}"
 			echo -en "${STAT} ${MESSAGE}"
-				${SSHPASSWORD} rsync -e 'ssh -p 22' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push >/dev/null 2>&1
+				${SSHPASSWORD} rsync -e "ssh -p ${SSH_PORT}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push >/dev/null 2>&1
 				error_validate
 	
 			MESSAGE="Pushing ${GRAVITY_FI} to ${REMOTE_HOST}"
 			echo -en "${STAT} ${MESSAGE}"
-				${SSHPASSWORD} rsync --rsync-path="sudo rsync" -e 'ssh -p 22' ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+				${SSHPASSWORD} rsync --rsync-path="sudo rsync" -e "ssh -p ${SSH_PORT}" ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 				error_validate
 	
 			MESSAGE="Setting Permissions on ${GRAVITY_FI}"
 			echo -en "${STAT} ${MESSAGE}"	
-				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 644 ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
+				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
 				error_validate
 		
 			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
@@ -217,12 +225,12 @@ function push_gs {
 	
 			MESSAGE="Updating FTLDNS Configuration"
 			echo -en "${STAT} ${MESSAGE}"
-				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} '${PIHOLE_BIN} restartdns reloadlists' >/dev/null 2>&1
+				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} "${PIHOLE_BIN} restartdns reloadlists" >/dev/null 2>&1
 				error_validate
 			
 			MESSAGE="Reloading FTLDNS Services"
 			echo -en "${STAT} ${MESSAGE}"	
-				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} '${PIHOLE_BIN} restartdns' >/dev/null 2>&1
+				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} "${PIHOLE_BIN} restartdns" >/dev/null 2>&1
 				error_validate
 			
 			logs_export
@@ -237,20 +245,29 @@ function push_gs {
 }
 
 # Logging Functions
-## Check Log Function
+## Core Logging
+### Write Logs Out
+function logs_export {
+	echo -e "${INFO} Logging Timestamps to ${SYNCING_LOG}"
+	# date >> $HOME/${LOCAL_FOLDR}/${SYNCING_LOG}
+	echo -e $(date) "[${TASKTYPE}]" >> $HOME/${LOCAL_FOLDR}/${SYNCING_LOG}
+}
+
+### Output Sync Logs
 function logs_gs {
 	echo -e "========================================================"
 	echo -e "Recent Complete ${YELLOW}PULL${NC} Executions"
 		tail -n 10 ${SYNCING_LOG} | grep PULL
-	echo -e "Recent Complete ${YELLOW}UPDATE${NC} Executions"
-		tail -n 10 ${SYNCING_LOG} | grep UPDATE
+	#echo -e "Recent Complete ${YELLOW}UPDATE${NC} Executions"
+	#	tail -n 10 ${SYNCING_LOG} | grep UPDATE
 	echo -e "Recent Complete ${YELLOW}PUSH${NC} Executions"
 			tail -n 10 ${SYNCING_LOG} | grep PUSH
 	echo -e "========================================================"
 	exit_nochange
 }
 
-## Crontab Logic
+## Crontab Logs
+### Core Crontab Logs
 function show_crontab {
 	CRONPATH="$HOME/${LOCAL_FOLDR}/${CRONJOB_LOG}"
 	
@@ -275,7 +292,7 @@ function show_crontab {
 	fi
 }
 
-## Check Last Crontab
+### Output Crontab
 function logs_crontab {
 	echo -e "========================================================"
 	echo -e "========================================================"
@@ -284,13 +301,6 @@ function logs_crontab {
 	echo -e ""
 	echo -e "========================================================"
 	echo -e "========================================================"
-}
-
-## Log Out
-function logs_export {
-	echo -e "${INFO} Logging Timestamps to ${SYNCING_LOG}"
-	# date >> $HOME/${LOCAL_FOLDR}/${SYNCING_LOG}
-	echo -e $(date) "[${TASKTYPE}]" >> $HOME/${LOCAL_FOLDR}/${SYNCING_LOG}
 }
 
 # Validate Functions
@@ -332,7 +342,8 @@ function validate_ph_folders {
 
 ## Validate SSHPASS
 function validate_os_sshpass {
-    echo -e "${INFO} Checking SSH Configuration"
+	MESSAGE="Checking SSH Configuration"
+    echo -e "${INFO} ${MESSAGE}"
 	
 	if hash sshpass 2>/dev/null
     then
@@ -365,43 +376,7 @@ function validate_os_sshpass {
 	
 }
 
-# List GS Arguments
-function list_gs_arguments {
-	echo -e "Usage: $0 [options]"
-	echo -e "Example: '$0 pull'"
-	echo -e ""
-	echo -e "Replication Options:"
-	echo -e " ${YELLOW}pull${NC}		Sync the ${GRAVITY_FI} configuration on primary PH to this server"
-	echo -e " ${YELLOW}push${NC}		Force any changes made on this server back to the primary PH"
-	echo -e " ${YELLOW}compare${NC}	Check to see if there is any variance between primary and secondary"
-	echo -e ""
-	echo -e "Update Options:"
-	echo -e " ${YELLOW}update${NC}		Use GitHub to update this script to the latest version available"
-	echo -e " ${YELLOW}beta${NC}		Use GitHub to update this script to the latest beta version available"
-	echo -e ""
-	echo -e "Debug Options:"
-	echo -e " ${YELLOW}version${NC}	Display the version of the current installed script"
-	echo -e " ${YELLOW}logs${NC}		Show recent successful jobs"
-	echo -e " ${YELLOW}cron${NC}		Display output of last crontab execution"
-	echo -e ""
-	exit_nochange
-}
-
-# Exit Codes
-## No Changes Made
-function exit_nochange {
-	echo -e "${INFO} ${PROGRAM} ${TASKTYPE} Aborting"
-	exit 0
-}
-
-## Changes Made
-function exit_withchange {
-	SCRIPT_END=$SECONDS
-	echo -e "${INFO} ${PROGRAM} ${TASKTYPE} Completed in $((SCRIPT_END-SCRIPT_START)) seconds"
-	exit 0
-}
-
-# Error Validation
+## Error Validation
 function error_validate {
 	if [ "$?" != "0" ]; then
 	    echo -e "\r${FAIL} ${MESSAGE}"
@@ -411,12 +386,7 @@ function error_validate {
 	fi
 }
 
-# Output Version
-function show_version {
-	echo -e "${INFO} ${PROGRAM} ${VERSION}"
-}
-
-# Look for Changes
+## Validate Sync Required
 function md5_compare {
 	echo -e "${INFO} Comparing ${GRAVITY_FI} Changes"
 	
@@ -438,6 +408,193 @@ function md5_compare {
 		echo -e "${INFO} Changes Detected in ${GRAVITY_FI}"
 	fi
 	
+}
+
+# Configuration Management
+## Generate New Configuration
+function config_generate {
+	MESSAGE="Creating ${CONFIG_FILE} from Template"
+	echo -en "${STAT} ${MESSAGE}"
+	cp $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}.example $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+	error_validate
+	
+	MESSAGE="Enter IP or DNS of primary Pi-hole server"
+	echo -e "${NEED} ${MESSAGE}"
+	read INPUT_REMOTE_HOST
+	
+	MESSAGE="Enter SSH user with SUDO rights on primary Pi-hole server"
+	echo -e "${NEED} ${MESSAGE}"
+	read INPUT_REMOTE_USER
+	
+	MESSAGE="Saving Host to ${CONFIG_FILE}"
+	echo -en "${STAT} ${MESSAGE}"
+	sed -i "/REMOTE_HOST='192.168.1.10'/c\REMOTE_HOST='${INPUT_REMOTE_HOST}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+	error_validate
+	
+	MESSAGE="Saving User to ${CONFIG_FILE}"
+	echo -en "${STAT} ${MESSAGE}"
+	sed -i "/REMOTE_USER='pi'/c\REMOTE_USER='${INPUT_REMOTE_USER}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+	error_validate
+
+	if hash sshpass 2>/dev/null
+	then
+		MESSAGE="SSHPASS Utility Detected"
+		echo -e "${INFO} ${MESSAGE}"
+		
+		MESSAGE="Do you want to configure password based SSH authentication?"
+		echo -e "${WARN} ${MESSAGE}"
+		MESSAGE="Your password will be stored clear-text in the ${CONFIG_FILE}!"
+		echo -e "${WARN} ${MESSAGE}"
+		MESSAGE="Leave blank to use (preferred) SSH Key-Pair Authentication:"
+		
+		echo -e "${NEED} ${MESSAGE}"
+		read INPUT_REMOTE_PASS
+				
+		MESSAGE="Saving Password to ${CONFIG_FILE}"
+		echo -en "${STAT} ${MESSAGE}"
+		sed -i "/REMOTE_PASS=''/c\REMOTE_PASS='${INPUT_REMOTE_PASS}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+		error_validate
+		
+	else
+		MESSAGE="SSHPASS Not Installed"
+		echo -e "${INFO} ${MESSAGE}"
+		
+		MESSAGE="Defaulting to SSH Key-Pair Authentication"
+		echo -e "${INFO} ${MESSAGE}"
+	fi
+	
+	if [ -z $INPUT_REMOTE_PASS ]
+	then
+		if [ -f $HOME/${SSH_PKIF} ]
+		then
+			MESSAGE="Using Existing ~/${SSH_PKIF}"
+			echo -e "${INFO} ${MESSAGE}"
+		else
+			MESSAGE="Generating ~/${SSH_PKIF}"
+			echo -e "${INFO} ${MESSAGE}"
+			
+			MESSAGE="Accept All Defaults"
+			echo -e "${WARN} ${MESSAGE}"
+			
+			MESSAGE="Complete Key-Pair Creation"
+			echo -e "${NEED} ${MESSAGE}"
+			
+			echo -e "========================================================"
+			echo -e "========================================================"
+			ssh-keygen -t rsa
+			echo -e "========================================================"
+			echo -e "========================================================"
+		fi
+	fi
+	
+	MESSAGE="Importing New ${CONFIG_FILE}"
+	echo -en "${STAT} ${MESSAGE}"
+	source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+	error_validate
+	
+	if [ -z $REMOTE_PASS ]
+	then
+		if [ -f $HOME/${SSH_PKIF} ]
+		then
+			MESSAGE="Registering Key-Pair on ${REMOTE_HOST}"
+			echo -e "${INFO} ${MESSAGE}"
+			
+			MESSAGE="Enter ${REMOTE_USER}@${REMOTE_HOST} Password"
+			echo -e "${NEED} ${MESSAGE}"
+			
+			echo -e "========================================================"
+			echo -e "========================================================"
+			ssh-copy-id -f -i $HOME/${SSH_PKIF} ${REMOTE_USER}@${REMOTE_HOST}
+			echo -e "========================================================"
+			echo -e "========================================================"
+		else
+		MESSAGE="Error Creating Key-Pair"
+		echo -e "${FAIL} ${MESSAGE}"
+		fi
+	fi
+	
+	validate_os_sshpass
+	
+	exit_withchange
+}
+
+## Delete Existing Configuration
+function config_delete {
+	source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+	MESSAGE="Configuration File Exists"
+	echo -e "${WARN} ${MESSAGE}"
+	
+	echo -e "========================================================"
+	echo -e "========================================================"
+	echo -e ""
+	cat $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+	echo -e ""
+	echo -e "========================================================"
+	echo -e "========================================================"
+	
+	MESSAGE="Are you sure you want to erase this configuration?"
+	echo -e "${WARN} ${MESSAGE}"
+	
+	select yn in "Yes" "No"; do
+		case $yn in
+		Yes )
+			MESSAGE="Erasing Existing Configuration"
+			echo -en "${STAT} ${MESSAGE}"
+			rm -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+				error_validate
+			
+			config_generate
+		;;
+
+		No )
+			exit_nochange
+		;;
+		esac
+	done
+}
+
+# Exit Codes
+## No Changes Made
+function exit_nochange {
+	echo -e "${INFO} ${PROGRAM} ${TASKTYPE} Aborting"
+	exit 0
+}
+
+## Changes Made
+function exit_withchange {
+	SCRIPT_END=$SECONDS
+	echo -e "${INFO} ${PROGRAM} ${TASKTYPE} Completed in $((SCRIPT_END-SCRIPT_START)) seconds"
+	exit 0
+}
+
+## List GS Arguments
+function list_gs_arguments {
+	echo -e "Usage: $0 [options]"
+	echo -e "Example: '$0 pull'"
+	echo -e ""
+	echo -e "Setup Options:"
+	echo -e " ${YELLOW}config${NC}		Create a new ${CONFIG_FILE} file"
+	echo -e ""
+	echo -e "Replication Options:"
+	echo -e " ${YELLOW}pull${NC}		Sync the ${GRAVITY_FI} database on primary PH to this server"
+	echo -e " ${YELLOW}push${NC}		Force any changes made on this server back to the primary PH"
+	echo -e " ${YELLOW}compare${NC}	Just check for differences between primary and secondary"
+	echo -e ""
+	echo -e "Update Options:"
+	echo -e " ${YELLOW}update${NC}		Use GitHub to update this script to the latest version"
+	echo -e " ${YELLOW}beta${NC}		Use GitHub to update this script to the latest beta version"
+	echo -e ""
+	echo -e "Debug Options:"
+	echo -e " ${YELLOW}version${NC}	Display your version of ${PROGRAM}"
+	echo -e " ${YELLOW}logs${NC}		Show recent successful replication jobs"
+	echo -e " ${YELLOW}cron${NC}		Display output of last crontab execution"
+	echo -e ""
+	exit_nochange
+}
+
+# Output Version
+function show_version {
+	echo -e "${INFO} ${PROGRAM} ${VERSION}"
 }
 
 # SCRIPT EXECUTION ###########################
@@ -539,6 +696,25 @@ case $# in
 				show_crontab
 				
 			;;
+			
+			config)
+				TASKTYPE='CONFIG'
+				echo -e "\r${GOOD} ${MESSAGE}"
+				echo -e "${INFO} Entering ${TASKTYPE} Mode"
+				
+				if [ -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE} ]
+				then		
+					config_delete
+
+				else
+					MESSAGE="${CONFIG_FILE} Missing"
+					echo -e "${INFO} ${MESSAGE}"
+					
+					config_generate
+				fi
+				
+			;;
+				
 
 			*)
 				echo -e "\r${FAIL} ${MESSAGE}"
