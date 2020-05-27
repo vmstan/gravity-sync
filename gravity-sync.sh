@@ -259,9 +259,9 @@ function logs_export {
 function logs_gs {
 	echo -e "========================================================"
 	echo -e "Recent Complete ${YELLOW}PULL${NC} Executions"
-		tail -n 7 ${LOG_PATH}/${SYNCING_LOG} | grep PULL
+		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PULL
 	echo -e "Recent Complete ${YELLOW}PUSH${NC} Executions"
-		tail -n 7 ${LOG_PATH}/${SYNCING_LOG} | grep PUSH
+		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PUSH
 	echo -e "========================================================"
 	exit_nochange
 }
