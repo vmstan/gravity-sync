@@ -82,7 +82,7 @@ function import_gs {
 ## Master Branch
 function update_gs {
 	TASKTYPE='UPDATE'
-	logs_export 	# dumps log prior to execution because script stops after successful pull
+	# logs_export 	# dumps log prior to execution because script stops after successful pull
 	
 	MESSAGE="Requires GitHub Installation" 
 	echo -e "${INFO} ${MESSAGE}"
@@ -95,7 +95,7 @@ function update_gs {
 ## Developer Branch
 function beta_gs {
 	TASKTYPE='BETA'
-	logs_export 	# dumps log prior to execution because script stops after successful pull
+	# logs_export 	# dumps log prior to execution because script stops after successful pull
 	
 	MESSAGE="Requires GitHub Installation" 
 	echo -e "${INFO} ${MESSAGE}"
@@ -258,8 +258,8 @@ function logs_gs {
 	echo -e "========================================================"
 	echo -e "Recent Complete ${YELLOW}PULL${NC} Executions"
 		tail -n 10 ${SYNCING_LOG} | grep PULL
-	echo -e "Recent Complete ${YELLOW}UPDATE${NC} Executions"
-		tail -n 10 ${SYNCING_LOG} | grep UPDATE
+	#echo -e "Recent Complete ${YELLOW}UPDATE${NC} Executions"
+	#	tail -n 10 ${SYNCING_LOG} | grep UPDATE
 	echo -e "Recent Complete ${YELLOW}PUSH${NC} Executions"
 			tail -n 10 ${SYNCING_LOG} | grep PUSH
 	echo -e "========================================================"
@@ -441,13 +441,11 @@ function config_generate {
 		MESSAGE="SSHPASS Utility Detected"
 		echo -e "${INFO} ${MESSAGE}"
 		
-		MESSAGE="Do you want to configure password based SSH authentication (not reccomended)?"
+		MESSAGE="Do you want to configure password based SSH authentication?"
 		echo -e "${WARN} ${MESSAGE}"
-		MESSAGE="Your password will be saved in clear-text in the ${CONFIG_FILE} file!"
+		MESSAGE="Your password will be stored clear-text in the ${CONFIG_FILE}!"
 		echo -e "${WARN} ${MESSAGE}"
-		MESSAGE="Leave blank to use (preferred) SSH Key-Pair Authentication."
-		echo -e "${WARN} ${MESSAGE}"
-		MESSAGE="Enter SSH password for primary Pi-hole server (optional)"
+		MESSAGE="Leave blank to use (preferred) SSH Key-Pair Authentication:"
 		
 		echo -e "${NEED} ${MESSAGE}"
 		read INPUT_REMOTE_PASS
@@ -574,18 +572,21 @@ function list_gs_arguments {
 	echo -e "Usage: $0 [options]"
 	echo -e "Example: '$0 pull'"
 	echo -e ""
+	echo -e "Setup Options:"
+	echo -e " ${YELLOW}config${NC}		Create a new ${CONFIG_FILE} file"
+	echo -e ""
 	echo -e "Replication Options:"
-	echo -e " ${YELLOW}pull${NC}		Sync the ${GRAVITY_FI} configuration on primary PH to this server"
+	echo -e " ${YELLOW}pull${NC}		Sync the ${GRAVITY_FI} database on primary PH to this server"
 	echo -e " ${YELLOW}push${NC}		Force any changes made on this server back to the primary PH"
-	echo -e " ${YELLOW}compare${NC}	Check to see if there is any variance between primary and secondary"
+	echo -e " ${YELLOW}compare${NC}	Just check for differences between primary and secondary"
 	echo -e ""
 	echo -e "Update Options:"
-	echo -e " ${YELLOW}update${NC}		Use GitHub to update this script to the latest version available"
-	echo -e " ${YELLOW}beta${NC}		Use GitHub to update this script to the latest beta version available"
+	echo -e " ${YELLOW}update${NC}		Use GitHub to update this script to the latest version"
+	echo -e " ${YELLOW}beta${NC}		Use GitHub to update this script to the latest beta version"
 	echo -e ""
 	echo -e "Debug Options:"
-	echo -e " ${YELLOW}version${NC}	Display the version of the current installed script"
-	echo -e " ${YELLOW}logs${NC}		Show recent successful jobs"
+	echo -e " ${YELLOW}version${NC}	Display your version of ${PROGRAM}"
+	echo -e " ${YELLOW}logs${NC}		Show recent successful replication jobs"
 	echo -e " ${YELLOW}cron${NC}		Display output of last crontab execution"
 	echo -e ""
 	exit_nochange
