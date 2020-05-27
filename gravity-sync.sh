@@ -2,7 +2,7 @@
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.4.0'
+VERSION='1.4.1'
 
 # Execute from the home folder of the user who own's it (ex: 'cd ~/gravity-sync')
 # For documentation or download updates visit https://github.com/vmstan/gravity-sync
@@ -15,10 +15,13 @@ VERSION='1.4.0'
 
 # GS Folder/File Locations
 LOCAL_FOLDR='gravity-sync' 			# must exist in running user home folder
-CONFIG_FILE='gravity-sync.conf' 	# must exist as explained above
-SYNCING_LOG='gravity-sync.log' 		# will be created in above folder
-CRONJOB_LOG='gravity-sync.cron' 	# only used if cron is configured to output to this file
+CONFIG_FILE='gravity-sync.conf' 	# must exist with primary host/user configured
 BACKUP_FOLD='backup' 				# must exist as subdirectory in LOCAL_FOLDR
+
+# Logging Folder/File Locations
+LOG_PATH="$HOME/${LOCAL_FOLDR}"		# replace in gravity-sync.conf to overwrite
+SYNCING_LOG='gravity-sync.log' 		# replace in gravity-sync.conf to overwrite
+CRONJOB_LOG='gravity-sync.cron' 	# replace in gravity-sync.conf to overwrite
 
 # PH Folder/File Locations
 PIHOLE_DIR='/etc/pihole' 			# default PH data directory
@@ -249,19 +252,16 @@ function push_gs {
 ### Write Logs Out
 function logs_export {
 	echo -e "${INFO} Logging Timestamps to ${SYNCING_LOG}"
-	# date >> $HOME/${LOCAL_FOLDR}/${SYNCING_LOG}
-	echo -e $(date) "[${TASKTYPE}]" >> $HOME/${LOCAL_FOLDR}/${SYNCING_LOG}
+	echo -e $(date) "[${TASKTYPE}]" >> ${LOG_PATH}/${SYNCING_LOG}
 }
 
 ### Output Sync Logs
 function logs_gs {
 	echo -e "========================================================"
 	echo -e "Recent Complete ${YELLOW}PULL${NC} Executions"
-		tail -n 10 ${SYNCING_LOG} | grep PULL
-	#echo -e "Recent Complete ${YELLOW}UPDATE${NC} Executions"
-	#	tail -n 10 ${SYNCING_LOG} | grep UPDATE
+		tail -n 10 ${LOG_PATH}/${SYNCING_LOG} | grep PULL
 	echo -e "Recent Complete ${YELLOW}PUSH${NC} Executions"
-			tail -n 10 ${SYNCING_LOG} | grep PUSH
+		tail -n 10 ${LOG_PATH}/${SYNCING_LOG} | grep PUSH
 	echo -e "========================================================"
 	exit_nochange
 }
@@ -269,25 +269,25 @@ function logs_gs {
 ## Crontab Logs
 ### Core Crontab Logs
 function show_crontab {
-	CRONPATH="$HOME/${LOCAL_FOLDR}/${CRONJOB_LOG}"
+	import_gs
 	
 	MESSAGE="Replaying Last Cronjob"
 	echo -en "${STAT} ${MESSAGE}"
 	
-	if [ -f ${CRONPATH} ]
+	if [ -f ${LOG_PATH}/${CRONJOB_LOG} ]
 	then
-		if [ -s ${CRONPATH} ]
+		if [ -s ${LOG_PATH}/${CRONJOB_LOG} ]
 			echo -e "\r${GOOD} ${MESSAGE}"
 				logs_crontab
 				exit_nochange
 		then
 			echo -e "\r${FAIL} ${MESSAGE}"
-			echo -e "${INFO} ${CRONPATH} appears empty"
+			echo -e "${INFO} ${LOG_PATH}/${CRONJOB_LOG} appears empty"
 				exit_nochange
 		fi
 	else
 		echo -e "\r${FAIL} ${MESSAGE}"
-		echo -e "${INFO} ${CRONPATH} cannot be located"
+		echo -e "${INFO} ${LOG_PATH}/${CRONJOB_LOG} cannot be located"
 			exit_nochange
 	fi
 }
@@ -297,7 +297,7 @@ function logs_crontab {
 	echo -e "========================================================"
 	echo -e "========================================================"
 	echo -e ""
-	cat ${CRONJOB_LOG}
+	cat ${LOG_PATH}/${CRONJOB_LOG}
 	echo -e ""
 	echo -e "========================================================"
 	echo -e "========================================================"
