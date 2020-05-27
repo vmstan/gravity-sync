@@ -6,7 +6,7 @@ REMOTE_HOST='192.168.1.10'
 # User account on primary with SUDO rights
 REMOTE_USER='pi'	
 
-# OPTIONAL SETTING #######################
+# OPTIONAL SETTINGS ######################
 
 # Password for REMOTE_USER account
 # Requires 'SSHPASS' installed on server
@@ -15,3 +15,14 @@ REMOTE_USER='pi'
 # Leave blank to use (preferred) key-pair
 
 REMOTE_PASS=''
+
+# ADVANCED SETTINGS ######################
+
+# Uncomment and set for auxillary control
+# Overrides gravity-sync.sh defaults
+
+# SSH_PORT=''
+# SSH_PKIF=''
+# LOG_PATH=''
+# SYNCING_LOG=''
+# CRONJOB_LOG=''
