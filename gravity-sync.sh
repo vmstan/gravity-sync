@@ -282,6 +282,7 @@ function show_crontab {
 		if [ -s ${LOG_PATH}/${CRONJOB_LOG} ]
 			echo -e "\r${GOOD} ${MESSAGE}"
 			
+			echo -e "${INFO} Tailing ${LOG_PATH}/${CRONJOB_LOG}"
 			echo -e "========================================================"
 			date -r ${LOG_PATH}/${CRONJOB_LOG}
 			cat ${LOG_PATH}/${CRONJOB_LOG}
