@@ -446,6 +446,155 @@ function md5_compare {
 	
 }
 
+# Generate Config
+function config_generate {
+	MESSAGE="Creating ${CONFIG_FILE} from Template"
+	echo -en "${STAT} ${MESSAGE}"
+	cp $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}.example $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+	error_validate
+	
+	MESSAGE="Enter IP or DNS of primary Pi-hole server"
+	echo -e "${NEED} ${MESSAGE}"
+	read INPUT_REMOTE_HOST
+	
+	MESSAGE="Enter SSH user with SUDO rights on primary Pi-hole server"
+	echo -e "${NEED} ${MESSAGE}"
+	read INPUT_REMOTE_USER
+	
+	MESSAGE="Saving Host to ${CONFIG_FILE}"
+	echo -en "${STAT} ${MESSAGE}"
+	sed -i "/REMOTE_HOST='192.168.1.10'/c\REMOTE_HOST='${INPUT_REMOTE_HOST}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+	error_validate
+	
+	MESSAGE="Saving User to ${CONFIG_FILE}"
+	echo -en "${STAT} ${MESSAGE}"
+	sed -i "/REMOTE_USER='pi'/c\REMOTE_USER='${INPUT_REMOTE_USER}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+	error_validate
+
+	if hash sshpass 2>/dev/null
+	then
+		MESSAGE="SSHPASS Utility Detected"
+		echo -e "${INFO} ${MESSAGE}"
+		
+		MESSAGE="Do you want to configure password based SSH authentication (not reccomended)?"
+		echo -e "${WARN} ${MESSAGE}"
+		MESSAGE="Your password will be saved in clear-text in the ${CONFIG_FILE} file!"
+		echo -e "${WARN} ${MESSAGE}"
+		MESSAGE="Leave blank to use (preferred) SSH Key-Pair Authentication."
+		echo -e "${WARN} ${MESSAGE}"
+		MESSAGE="Enter SSH password for primary Pi-hole server (optional)"
+		
+		echo -e "${NEED} ${MESSAGE}"
+		read INPUT_REMOTE_PASS
+				
+		MESSAGE="Saving Password to ${CONFIG_FILE}"
+		echo -en "${STAT} ${MESSAGE}"
+		sed -i "/REMOTE_PASS=''/c\REMOTE_PASS='${INPUT_REMOTE_PASS}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+		error_validate
+		
+	else
+		MESSAGE="SSHPASS Not Installed"
+		echo -e "${INFO} ${MESSAGE}"
+		
+		MESSAGE="Defaulting to SSH Key-Pair Authentication"
+		echo -e "${INFO} ${MESSAGE}"
+	fi
+	
+	if [ $INPUT_REMOTE_PASS = '' ]
+	then
+		if [ -f $HOME/${SSH_PKIF} ]
+		then
+			MESSAGE="Using Existing ~/${SSH_PKIF}"
+			echo -e "${INFO} ${MESSAGE}"
+		else
+			MESSAGE="Generating ~/${SSH_PKIF}"
+			echo -e "${INFO} ${MESSAGE}"
+			
+			MESSAGE="Leave Key Passphrase Blank"
+			echo -e "${WARN} ${MESSAGE}"
+			
+			MESSAGE="Complete Key-Pair Creation"
+			echo -e "${NEED} ${MESSAGE}"
+			
+			echo -e "========================================================"
+			echo -e "========================================================"
+			echo -e ""
+			ssh-keygen -t rsa
+			echo -e ""
+			echo -e "========================================================"
+			echo -e "========================================================"
+		fi
+	fi
+	
+	MESSAGE="Importing New ${CONFIG_FILE}"
+	echo -en "${STAT} ${MESSAGE}"
+	source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+	error_validate
+	
+	if [ REMOTE_PASS == '' ]
+	then
+		if [ -f $HOME/${SSH_PKIF} ]
+		then
+			MESSAGE="Registering Key-Pair on ${REMOTE_HOST}"
+			echo -e "${INFO} ${MESSAGE}"
+			
+			MESSAGE="Enter ${REMOTE_USER}@${REMOTE_HOST}"
+			echo -e "${NEED} ${MESSAGE}"
+			
+			echo -e "========================================================"
+			echo -e "========================================================"
+			echo -e ""
+			ssh-copy-id -i $HOME/${SSH_PKIF} ${REMOTE_USER}@${REMOTE_HOST}
+			echo -e ""
+			echo -e "========================================================"
+			echo -e "========================================================"
+		fi
+		MESSAGE="Error Creating Key-Pair"
+		echo -e "${FAIL} ${MESSAGE}"
+		
+		exit_withchange
+	fi
+	
+	validate_os_sshpass
+	
+	exit_withchange
+}
+
+# Delete Existing Configuration
+function config_delete {
+	source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+	MESSAGE="Configuration File Exists"
+	echo -e "${WARN} ${MESSAGE}"
+	
+	echo -e "========================================================"
+	echo -e "========================================================"
+	echo -e ""
+	cat $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+	echo -e ""
+	echo -e "========================================================"
+	echo -e "========================================================"
+	
+	MESSAGE="Are you sure you want to erase this configuration?"
+	echo -e "${WARN} ${MESSAGE}"
+	
+	select yn in "Yes" "No"; do
+		case $yn in
+		Yes )
+			MESSAGE="Erasing Existing Configuration"
+			echo -en "${STAT} ${MESSAGE}"
+			rm -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+				error_validate
+			
+			config_generate
+		;;
+
+		No )
+			exit_nochange
+		;;
+		esac
+	done
+}
+
 # SCRIPT EXECUTION ###########################
 SCRIPT_START=$SECONDS
 	
@@ -553,150 +702,14 @@ case $# in
 				
 				if [ -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE} ]
 				then		
-					source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
-					MESSAGE="Configuration File Exists"
-					echo -e "${WARN} ${MESSAGE}"
-					
-					echo -e "========================================================"
-					echo -e "========================================================"
-					echo -e ""
-					cat $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
-					echo -e ""
-					echo -e "========================================================"
-					echo -e "========================================================"
-					
-					MESSAGE="Are you sure you want to erase this configuration?"
-					echo -e "${WARN} ${MESSAGE}"
-					
-					select yn in "Yes" "No"; do
-						case $yn in
-						Yes )
-							MESSAGE="Erasing Existing Configuration"
-							echo -en "${STAT} ${MESSAGE}"
-							rm -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
-								error_validate
-						;;
-		
-						No )
-							exit_nochange
-						;;
-						esac
-					done
+					config_delete
 
 				else
 					MESSAGE="${CONFIG_FILE} Missing"
 					echo -e "${INFO} ${MESSAGE}"
 					
-					MESSAGE="Creating ${CONFIG_FILE} from Template"
-					echo -en "${STAT} ${MESSAGE}"
-					cp $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}.example $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
-						error_validate
-						
-						MESSAGE="Enter IP or DNS of primary Pi-hole server"
-						echo -e "${NEED} ${MESSAGE}"
-						read INPUT_REMOTE_HOST
-						
-						MESSAGE="Enter SSH user with SUDO rights on primary Pi-hole server"
-						echo -e "${NEED} ${MESSAGE}"
-						read INPUT_REMOTE_USER
-						
-						MESSAGE="Saving Host to ${CONFIG_FILE}"
-						echo -en "${STAT} ${MESSAGE}"
-						sed -i "/REMOTE_HOST='192.168.1.10'/c\REMOTE_HOST='${INPUT_REMOTE_HOST}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
-							error_validate
-						
-						MESSAGE="Saving User to ${CONFIG_FILE}"
-						echo -en "${STAT} ${MESSAGE}"
-						sed -i "/REMOTE_USER='pi'/c\REMOTE_USER='${INPUT_REMOTE_USER}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
-							error_validate
-	
-						if hash sshpass 2>/dev/null
-						then
-							MESSAGE="SSHPASS Utility Detected"
-							echo -e "${INFO} ${MESSAGE}"
-							
-							MESSAGE="Do you want to configure password based SSH authentication (not reccomended)?"
-							echo -e "${WARN} ${MESSAGE}"
-							MESSAGE="Your password will be saved in clear-text in the ${CONFIG_FILE} file!"
-							echo -e "${WARN} ${MESSAGE}"
-							MESSAGE="Leave blank to use (preferred) SSH Key-Pair Authentication."
-							echo -e "${WARN} ${MESSAGE}"
-							MESSAGE="Enter SSH password for primary Pi-hole server (optional)"
-							
-							echo -e "${NEED} ${MESSAGE}"
-							read INPUT_REMOTE_PASS
-									
-							MESSAGE="Saving Password to ${CONFIG_FILE}"
-							echo -en "${STAT} ${MESSAGE}"
-							sed -i "/REMOTE_PASS=''/c\REMOTE_PASS='${INPUT_REMOTE_PASS}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
-								error_validate
-							
-						else
-							MESSAGE="SSHPASS Not Installed"
-							echo -e "${INFO} ${MESSAGE}"
-							
-							MESSAGE="Defaulting to SSH Key-Pair Authentication"
-							echo -e "${INFO} ${MESSAGE}"
-						fi
-						
-						if [ $INPUT_REMOTE_PASS = '' ]
-						then
-							if [ -f $HOME/${SSH_PKIF} ]
-							then
-								MESSAGE="Using Existing ~/${SSH_PKIF}"
-								echo -e "${INFO} ${MESSAGE}"
-							else
-								MESSAGE="Generating ~/${SSH_PKIF}"
-								echo -e "${INFO} ${MESSAGE}"
-								
-								MESSAGE="Leave Key Passphrase Blank"
-								echo -e "${WARN} ${MESSAGE}"
-								
-								MESSAGE="Complete Key-Pair Creation"
-								echo -e "${NEED} ${MESSAGE}"
-								
-								echo -e "========================================================"
-								echo -e "========================================================"
-								echo -e ""
-								ssh-keygen -t rsa
-								echo -e ""
-								echo -e "========================================================"
-								echo -e "========================================================"
-							fi
-						fi
-						
-						MESSAGE="Importing New ${CONFIG_FILE}"
-						echo -en "${STAT} ${MESSAGE}"
-						source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
-							error_validate
-						
-						if [ REMOTE_PASS == '' ]
-						then
-							if [ -f $HOME/${SSH_PKIF} ]
-							then
-								MESSAGE="Registering Key-Pair on ${REMOTE_HOST}"
-								echo -e "${INFO} ${MESSAGE}"
-								
-								MESSAGE="Enter ${REMOTE_USER}@${REMOTE_HOST}"
-								echo -e "${NEED} ${MESSAGE}"
-								
-								echo -e "========================================================"
-								echo -e "========================================================"
-								echo -e ""
-								ssh-copy-id -i $HOME/${SSH_PKIF} ${REMOTE_USER}@${REMOTE_HOST}
-								echo -e ""
-								echo -e "========================================================"
-								echo -e "========================================================"
-							fi
-							MESSAGE="Error Creating Key-Pair"
-							echo -e "${FAIL} ${MESSAGE}"
-							
-							exit_withchange
-						fi
-						
-						validate_os_sshpass
-						
-					exit_withchange
+					config_generate
+
 				fi
 				
 			;;
