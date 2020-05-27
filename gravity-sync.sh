@@ -34,7 +34,7 @@ PIHOLE_BIN='/usr/local/bin/pihole' 	# default PH binary directory
 # Add replacement variables to gravity-sync.conf
 
 SSH_PORT='22' 						# default SSH port
-SSH_PKIF='.ssh/id_rsa.pub' 			# default local SSH key
+SSH_PKIF="$HOME/.ssh/id_rsa.pub"	# default local SSH key
 
 ##############################################
 ### DO NOT CHANGE ANYTHING BELOW THIS LINE ###
@@ -213,12 +213,12 @@ function push_gs {
 	
 			MESSAGE="Setting Permissions on ${GRAVITY_FI}"
 			echo -en "${STAT} ${MESSAGE}"	
-				${SSHPASSWORD} ssh -p ${SSH_PORT} -i ${SSH_PKIF} ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
+				${SSHPASSWORD} ssh -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
 				error_validate
 		
 			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
 			echo -en "${STAT} ${MESSAGE}"	
-				${SSHPASSWORD} ssh -p ${SSH_PORT} -i ${SSH_PKIF} ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
+				${SSHPASSWORD} ssh -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
 				error_validate	
 	
 			MESSAGE="Contacting Borg Collective"
@@ -227,12 +227,12 @@ function push_gs {
 	
 			MESSAGE="Updating FTLDNS Configuration"
 			echo -en "${STAT} ${MESSAGE}"
-				${SSHPASSWORD} ssh -p ${SSH_PORT} -i ${SSH_PKIF} ${REMOTE_USER}@${REMOTE_HOST} "${PIHOLE_BIN} restartdns reloadlists" >/dev/null 2>&1
+				${SSHPASSWORD} ssh -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${PIHOLE_BIN} restartdns reloadlists" >/dev/null 2>&1
 				error_validate
 			
 			MESSAGE="Reloading FTLDNS Services"
 			echo -en "${STAT} ${MESSAGE}"	
-				${SSHPASSWORD} ssh -p ${SSH_PORT} -i ${SSH_PKIF} ${REMOTE_USER}@${REMOTE_HOST} "${PIHOLE_BIN} restartdns" >/dev/null 2>&1
+				${SSHPASSWORD} ssh -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${PIHOLE_BIN} restartdns" >/dev/null 2>&1
 				error_validate
 			
 			logs_export
@@ -348,7 +348,7 @@ function validate_os_sshpass {
 			SSHPASSWORD=''
 			MESSAGE="Using SSH Key-Pair Authentication"
 		else
-			timeout 5 ssh -p ${SSH_PORT} -i ${SSH_PKIF} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
+			timeout 5 ssh -p ${SSH_PORT} -i "${SSH_PKIF}" -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
 			if [ "$?" != "0" ]; then
 				SSHPASSWORD="sshpass -p ${REMOTE_PASS}"
 				MESSAGE="Using SSH Password Authentication"
@@ -367,7 +367,7 @@ function validate_os_sshpass {
 	
 	MESSAGE="Testing SSH Connection"
 	echo -en "${STAT} ${MESSAGE}"
-		timeout 5 ${SSHPASSWORD} ssh -p ${SSH_PORT} -i ${SSH_PKIF} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
+		timeout 5 ${SSHPASSWORD} ssh -p ${SSH_PORT} -i "${SSH_PKIF}" -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
 			error_validate
 	
 }
@@ -388,7 +388,7 @@ function md5_compare {
 	
 	MESSAGE="Analyzing Remote ${GRAVITY_FI}"
 	echo -en "${STAT} ${MESSAGE}"
-	primaryMD5=$(${SSHPASSWORD} ssh -p ${SSH_PORT} -i ${SSH_PKIF} ${REMOTE_USER}@${REMOTE_HOST} 'md5sum /etc/pihole/gravity.db')
+	primaryMD5=$(${SSHPASSWORD} ssh -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${GRAVITY_FI}")
 		error_validate
 	
 	MESSAGE="Analyzing Local ${GRAVITY_FI}"
@@ -500,7 +500,7 @@ function config_generate {
 			
 			echo -e "========================================================"
 			echo -e "========================================================"
-			ssh-copy-id -f -i $HOME/${SSH_PKIF} ${REMOTE_USER}@${REMOTE_HOST}
+			ssh-copy-id -f -i ${SSH_PKIF} ${REMOTE_USER}@${REMOTE_HOST}
 			echo -e "========================================================"
 			echo -e "========================================================"
 		else
