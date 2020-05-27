@@ -278,7 +278,11 @@ function show_crontab {
 	then
 		if [ -s ${LOG_PATH}/${CRONJOB_LOG} ]
 			echo -e "\r${GOOD} ${MESSAGE}"
-				logs_crontab
+			
+			echo -e "========================================================"
+			echo -e date -r ${LOG_PATH}/${CRONJOB_LOG}
+			cat ${LOG_PATH}/${CRONJOB_LOG}
+			echo -e "========================================================"
 				exit_nochange
 		then
 			echo -e "\r${FAIL} ${MESSAGE}"
@@ -290,17 +294,6 @@ function show_crontab {
 		echo -e "${INFO} ${LOG_PATH}/${CRONJOB_LOG} cannot be located"
 			exit_nochange
 	fi
-}
-
-### Output Crontab
-function logs_crontab {
-	echo -e "========================================================"
-	echo -e "========================================================"
-	echo -e ""
-	cat ${LOG_PATH}/${CRONJOB_LOG}
-	echo -e ""
-	echo -e "========================================================"
-	echo -e "========================================================"
 }
 
 # Validate Functions
