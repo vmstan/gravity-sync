@@ -280,7 +280,7 @@ function show_crontab {
 			echo -e "\r${GOOD} ${MESSAGE}"
 			
 			echo -e "========================================================"
-			echo -e date -r ${LOG_PATH}/${CRONJOB_LOG}
+			date -r ${LOG_PATH}/${CRONJOB_LOG}
 			cat ${LOG_PATH}/${CRONJOB_LOG}
 			echo -e "========================================================"
 				exit_nochange
