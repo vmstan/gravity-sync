@@ -500,7 +500,7 @@ function config_generate {
 		echo -e "${INFO} ${MESSAGE}"
 	fi
 	
-	if [ $INPUT_REMOTE_PASS = '' ]
+	if [ -z $INPUT_REMOTE_PASS ]
 	then
 		if [ -f $HOME/${SSH_PKIF} ]
 		then
@@ -531,7 +531,7 @@ function config_generate {
 	source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 	error_validate
 	
-	if [ REMOTE_PASS == '' ]
+	if [ -z $REMOTE_PASS ]
 	then
 		if [ -f $HOME/${SSH_PKIF} ]
 		then
