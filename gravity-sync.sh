@@ -123,7 +123,7 @@ function pull_gs {
 	
 	MESSAGE="Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo -en "${STAT} ${MESSAGE}"
-		${SSHPASSWORD} rsync -e 'ssh -p ${SSH_PORT}' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull >/dev/null 2>&1
+		${SSHPASSWORD} rsync -e "ssh -p ${SSH_PORT}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull >/dev/null 2>&1
 		error_validate
 		
 	MESSAGE="Replacing ${GRAVITY_FI} on $HOSTNAME"
@@ -201,12 +201,12 @@ function push_gs {
 			
 			MESSAGE="Backing Up ${GRAVITY_FI} from ${REMOTE_HOST}"
 			echo -en "${STAT} ${MESSAGE}"
-				${SSHPASSWORD} rsync -e 'ssh -p ${SSH_PORT}' ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push >/dev/null 2>&1
+				${SSHPASSWORD} rsync -e "ssh -p ${SSH_PORT}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push >/dev/null 2>&1
 				error_validate
 	
 			MESSAGE="Pushing ${GRAVITY_FI} to ${REMOTE_HOST}"
 			echo -en "${STAT} ${MESSAGE}"
-				${SSHPASSWORD} rsync --rsync-path="sudo rsync" -e 'ssh -p ${SSH_PORT}' ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+				${SSHPASSWORD} rsync --rsync-path="sudo rsync" -e "ssh -p ${SSH_PORT}" ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 				error_validate
 	
 			MESSAGE="Setting Permissions on ${GRAVITY_FI}"
