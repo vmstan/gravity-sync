@@ -71,13 +71,14 @@ function import_gs {
 		MESSAGE="Using ${REMOTE_USER}@${REMOTE_HOST}"
 		echo -e "${INFO} ${MESSAGE}"
 	else
-		
 		echo -e "\r${FAIL} ${MESSAGE}"
 		
 		MESSAGE="${CONFIG_FILE} Missing"
 		echo -e "${INFO} ${MESSAGE}"
 
+		TASKTYPE='CONFIG'
 		config_generate
+		echo -e "Please run ${YELLOW}$#${NC} again."
 	fi
 }
 
