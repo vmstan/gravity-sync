@@ -510,7 +510,7 @@ function config_generate {
 			MESSAGE="Generating ~/${SSH_PKIF}"
 			echo -e "${INFO} ${MESSAGE}"
 			
-			MESSAGE="Leave Key Passphrase Blank"
+			MESSAGE="Accept All Defaults"
 			echo -e "${WARN} ${MESSAGE}"
 			
 			MESSAGE="Complete Key-Pair Creation"
@@ -544,15 +544,14 @@ function config_generate {
 			echo -e "========================================================"
 			echo -e "========================================================"
 			echo -e ""
-			ssh-copy-id -i $HOME/${SSH_PKIF} ${REMOTE_USER}@${REMOTE_HOST}
+			ssh-copy-id -f -i $HOME/${SSH_PKIF} ${REMOTE_USER}@${REMOTE_HOST}
 			echo -e ""
 			echo -e "========================================================"
 			echo -e "========================================================"
-		fi
+		else
 		MESSAGE="Error Creating Key-Pair"
 		echo -e "${FAIL} ${MESSAGE}"
-		
-		exit_withchange
+		fi
 	fi
 	
 	validate_os_sshpass
