@@ -2,7 +2,7 @@
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.4.1'
+VERSION='1.4.2'
 
 # Execute from the home folder of the user who own's it (ex: 'cd ~/gravity-sync')
 # For documentation or download updates visit https://github.com/vmstan/gravity-sync
@@ -71,13 +71,14 @@ function import_gs {
 		MESSAGE="Using ${REMOTE_USER}@${REMOTE_HOST}"
 		echo -e "${INFO} ${MESSAGE}"
 	else
-		
 		echo -e "\r${FAIL} ${MESSAGE}"
 		
 		MESSAGE="${CONFIG_FILE} Missing"
 		echo -e "${INFO} ${MESSAGE}"
-		
-		exit_nochange
+
+		TASKTYPE='CONFIG'
+		config_generate
+		# echo -e "Please run ${YELLOW}$#${NC} again."
 	fi
 }
 
@@ -91,7 +92,6 @@ function update_gs {
 	echo -e "${INFO} ${MESSAGE}"
 		git reset --hard
 		git pull
-		
 	exit
 }
 
@@ -105,7 +105,6 @@ function beta_gs {
 		git reset --hard
 		git pull
 		git checkout origin/development
-		
 	exit
 }
 
