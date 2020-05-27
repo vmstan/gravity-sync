@@ -225,12 +225,12 @@ function push_gs {
 	
 			MESSAGE="Updating FTLDNS Configuration"
 			echo -en "${STAT} ${MESSAGE}"
-				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} '${PIHOLE_BIN} restartdns reloadlists' >/dev/null 2>&1
+				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} "${PIHOLE_BIN} restartdns reloadlists" >/dev/null 2>&1
 				error_validate
 			
 			MESSAGE="Reloading FTLDNS Services"
 			echo -en "${STAT} ${MESSAGE}"	
-				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} '${PIHOLE_BIN} restartdns' >/dev/null 2>&1
+				${SSHPASSWORD} ssh ${REMOTE_USER}@${REMOTE_HOST} "${PIHOLE_BIN} restartdns" >/dev/null 2>&1
 				error_validate
 			
 			logs_export
