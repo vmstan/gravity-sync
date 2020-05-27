@@ -4,34 +4,34 @@
 PROGRAM='Gravity Sync'
 VERSION='1.4.0'
 
-# Must execute from a location in the home folder of the user who own's it (ex: /home/pi/gravity-sync)
-# Configure certificate based SSH authentication between the Pi-hole HA nodes - it does not use passwords
-# Tested against Pihole 5.0 GA on Raspbian Buster and Ubuntu 20.04, but it should work on most configs
-# More installation instructions available at https://vmstan.com/gravity-sync
-# For the latest version please visit https://github.com/vmstan/gravity-sync under Releases
+# Execute from the home folder of the user who own's it (ex: 'cd ~/gravity-sync')
+# For documentation or download updates visit https://github.com/vmstan/gravity-sync
 
 # REQUIRED SETTINGS ##########################
 
-# You MUST define REMOTE_HOST and REMOTE_USER in a file called 'gravity-sync.conf'
-# You can copy the 'gravity-sync.conf.example' file in the script directory to get started 
+# Run './gravity-sync.sh config' to get started
 
 # STANDARD VARIABLES #########################
 
 # GS Folder/File Locations
-LOCAL_FOLDR='gravity-sync' # must exist in running user home folder
-CONFIG_FILE='gravity-sync.conf' # must exist as explained above
-SYNCING_LOG='gravity-sync.log' # will be created in above folder
-CRONJOB_LOG='gravity-sync.cron' # only used if cron is configured to output to this file
-BACKUP_FOLD='backup' # must exist as subdirectory in LOCAL_FOLD
+LOCAL_FOLDR='gravity-sync' 			# must exist in running user home folder
+CONFIG_FILE='gravity-sync.conf' 	# must exist as explained above
+SYNCING_LOG='gravity-sync.log' 		# will be created in above folder
+CRONJOB_LOG='gravity-sync.cron' 	# only used if cron is configured to output to this file
+BACKUP_FOLD='backup' 				# must exist as subdirectory in LOCAL_FOLDR
 
 # PH Folder/File Locations
-PIHOLE_DIR='/etc/pihole'  # default PH data directory
-GRAVITY_FI='gravity.db' # default 
-PIHOLE_BIN='/usr/local/bin/pihole' # default PH binary directory
+PIHOLE_DIR='/etc/pihole' 			# default PH data directory
+GRAVITY_FI='gravity.db' 			# default PH database file
+PIHOLE_BIN='/usr/local/bin/pihole' 	# default PH binary directory
 
-# SSH Configuration
-SSH_PORT='22' # default SSH port
-SSH_PKIF='.ssh/id_rsa.pub' # default local SSH key
+# SSH CONFIGURATION ##########################
+
+# Suggested not to replace these values here
+# Add replacement variables to gravity-sync.conf
+
+SSH_PORT='22' 						# default SSH port
+SSH_PKIF='.ssh/id_rsa.pub' 			# default local SSH key
 
 ##############################################
 ### DO NOT CHANGE ANYTHING BELOW THIS LINE ###
@@ -78,7 +78,8 @@ function import_gs {
 	fi
 }
 
-# Update Function
+# GS Update Functions
+## Master Branch
 function update_gs {
 	TASKTYPE='UPDATE'
 	logs_export 	# dumps log prior to execution because script stops after successful pull
@@ -91,7 +92,7 @@ function update_gs {
 	exit
 }
 
-# Developer Build Update
+## Developer Branch
 function beta_gs {
 	TASKTYPE='BETA'
 	logs_export 	# dumps log prior to execution because script stops after successful pull
@@ -105,7 +106,8 @@ function beta_gs {
 	exit
 }
 
-# Pull Function
+# Gravity Core Functions
+## Pull Function
 function pull_gs {
 	TASKTYPE='PULL'
 	
@@ -185,7 +187,7 @@ function pull_gs {
 	exit_withchange
 }
 
-# Push Function
+## Push Function
 function push_gs {
 	TASKTYPE='PUSH'
 	
@@ -243,7 +245,15 @@ function push_gs {
 }
 
 # Logging Functions
-## Check Log Function
+## Core Logging
+### Write Logs Out
+function logs_export {
+	echo -e "${INFO} Logging Timestamps to ${SYNCING_LOG}"
+	# date >> $HOME/${LOCAL_FOLDR}/${SYNCING_LOG}
+	echo -e $(date) "[${TASKTYPE}]" >> $HOME/${LOCAL_FOLDR}/${SYNCING_LOG}
+}
+
+### Output Sync Logs
 function logs_gs {
 	echo -e "========================================================"
 	echo -e "Recent Complete ${YELLOW}PULL${NC} Executions"
@@ -256,7 +266,8 @@ function logs_gs {
 	exit_nochange
 }
 
-## Crontab Logic
+## Crontab Logs
+### Core Crontab Logs
 function show_crontab {
 	CRONPATH="$HOME/${LOCAL_FOLDR}/${CRONJOB_LOG}"
 	
@@ -281,7 +292,7 @@ function show_crontab {
 	fi
 }
 
-## Check Last Crontab
+### Output Crontab
 function logs_crontab {
 	echo -e "========================================================"
 	echo -e "========================================================"
@@ -290,13 +301,6 @@ function logs_crontab {
 	echo -e ""
 	echo -e "========================================================"
 	echo -e "========================================================"
-}
-
-## Log Out
-function logs_export {
-	echo -e "${INFO} Logging Timestamps to ${SYNCING_LOG}"
-	# date >> $HOME/${LOCAL_FOLDR}/${SYNCING_LOG}
-	echo -e $(date) "[${TASKTYPE}]" >> $HOME/${LOCAL_FOLDR}/${SYNCING_LOG}
 }
 
 # Validate Functions
@@ -338,7 +342,8 @@ function validate_ph_folders {
 
 ## Validate SSHPASS
 function validate_os_sshpass {
-    echo -e "${INFO} Checking SSH Configuration"
+	MESSAGE="Checking SSH Configuration"
+    echo -e "${INFO} ${MESSAGE}"
 	
 	if hash sshpass 2>/dev/null
     then
@@ -371,43 +376,7 @@ function validate_os_sshpass {
 	
 }
 
-# List GS Arguments
-function list_gs_arguments {
-	echo -e "Usage: $0 [options]"
-	echo -e "Example: '$0 pull'"
-	echo -e ""
-	echo -e "Replication Options:"
-	echo -e " ${YELLOW}pull${NC}		Sync the ${GRAVITY_FI} configuration on primary PH to this server"
-	echo -e " ${YELLOW}push${NC}		Force any changes made on this server back to the primary PH"
-	echo -e " ${YELLOW}compare${NC}	Check to see if there is any variance between primary and secondary"
-	echo -e ""
-	echo -e "Update Options:"
-	echo -e " ${YELLOW}update${NC}		Use GitHub to update this script to the latest version available"
-	echo -e " ${YELLOW}beta${NC}		Use GitHub to update this script to the latest beta version available"
-	echo -e ""
-	echo -e "Debug Options:"
-	echo -e " ${YELLOW}version${NC}	Display the version of the current installed script"
-	echo -e " ${YELLOW}logs${NC}		Show recent successful jobs"
-	echo -e " ${YELLOW}cron${NC}		Display output of last crontab execution"
-	echo -e ""
-	exit_nochange
-}
-
-# Exit Codes
-## No Changes Made
-function exit_nochange {
-	echo -e "${INFO} ${PROGRAM} ${TASKTYPE} Aborting"
-	exit 0
-}
-
-## Changes Made
-function exit_withchange {
-	SCRIPT_END=$SECONDS
-	echo -e "${INFO} ${PROGRAM} ${TASKTYPE} Completed in $((SCRIPT_END-SCRIPT_START)) seconds"
-	exit 0
-}
-
-# Error Validation
+## Error Validation
 function error_validate {
 	if [ "$?" != "0" ]; then
 	    echo -e "\r${FAIL} ${MESSAGE}"
@@ -417,12 +386,7 @@ function error_validate {
 	fi
 }
 
-# Output Version
-function show_version {
-	echo -e "${INFO} ${PROGRAM} ${VERSION}"
-}
-
-# Look for Changes
+## Validate Sync Required
 function md5_compare {
 	echo -e "${INFO} Comparing ${GRAVITY_FI} Changes"
 	
@@ -446,7 +410,8 @@ function md5_compare {
 	
 }
 
-# Generate Config
+# Configuration Management
+## Generate New Configuration
 function config_generate {
 	MESSAGE="Creating ${CONFIG_FILE} from Template"
 	echo -en "${STAT} ${MESSAGE}"
@@ -518,9 +483,7 @@ function config_generate {
 			
 			echo -e "========================================================"
 			echo -e "========================================================"
-			echo -e ""
 			ssh-keygen -t rsa
-			echo -e ""
 			echo -e "========================================================"
 			echo -e "========================================================"
 		fi
@@ -538,14 +501,12 @@ function config_generate {
 			MESSAGE="Registering Key-Pair on ${REMOTE_HOST}"
 			echo -e "${INFO} ${MESSAGE}"
 			
-			MESSAGE="Enter ${REMOTE_USER}@${REMOTE_HOST}"
+			MESSAGE="Enter ${REMOTE_USER}@${REMOTE_HOST} Password"
 			echo -e "${NEED} ${MESSAGE}"
 			
 			echo -e "========================================================"
 			echo -e "========================================================"
-			echo -e ""
 			ssh-copy-id -f -i $HOME/${SSH_PKIF} ${REMOTE_USER}@${REMOTE_HOST}
-			echo -e ""
 			echo -e "========================================================"
 			echo -e "========================================================"
 		else
@@ -559,7 +520,7 @@ function config_generate {
 	exit_withchange
 }
 
-# Delete Existing Configuration
+## Delete Existing Configuration
 function config_delete {
 	source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 	MESSAGE="Configuration File Exists"
@@ -592,6 +553,47 @@ function config_delete {
 		;;
 		esac
 	done
+}
+
+# Exit Codes
+## No Changes Made
+function exit_nochange {
+	echo -e "${INFO} ${PROGRAM} ${TASKTYPE} Aborting"
+	exit 0
+}
+
+## Changes Made
+function exit_withchange {
+	SCRIPT_END=$SECONDS
+	echo -e "${INFO} ${PROGRAM} ${TASKTYPE} Completed in $((SCRIPT_END-SCRIPT_START)) seconds"
+	exit 0
+}
+
+## List GS Arguments
+function list_gs_arguments {
+	echo -e "Usage: $0 [options]"
+	echo -e "Example: '$0 pull'"
+	echo -e ""
+	echo -e "Replication Options:"
+	echo -e " ${YELLOW}pull${NC}		Sync the ${GRAVITY_FI} configuration on primary PH to this server"
+	echo -e " ${YELLOW}push${NC}		Force any changes made on this server back to the primary PH"
+	echo -e " ${YELLOW}compare${NC}	Check to see if there is any variance between primary and secondary"
+	echo -e ""
+	echo -e "Update Options:"
+	echo -e " ${YELLOW}update${NC}		Use GitHub to update this script to the latest version available"
+	echo -e " ${YELLOW}beta${NC}		Use GitHub to update this script to the latest beta version available"
+	echo -e ""
+	echo -e "Debug Options:"
+	echo -e " ${YELLOW}version${NC}	Display the version of the current installed script"
+	echo -e " ${YELLOW}logs${NC}		Show recent successful jobs"
+	echo -e " ${YELLOW}cron${NC}		Display output of last crontab execution"
+	echo -e ""
+	exit_nochange
+}
+
+# Output Version
+function show_version {
+	echo -e "${INFO} ${PROGRAM} ${VERSION}"
 }
 
 # SCRIPT EXECUTION ###########################
@@ -708,7 +710,6 @@ case $# in
 					echo -e "${INFO} ${MESSAGE}"
 					
 					config_generate
-
 				fi
 				
 			;;
