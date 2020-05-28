@@ -616,16 +616,16 @@ function task_automate {
 	echo -en "${NEED} ${MESSAGE}"
 	read INPUT_AUTO_FREQ
 
-	if [ INPUT_AUTO_FREQ == 1 ]
+	if [ $INPUT_AUTO_FREQ == 1 ]
 	then
 		AUTO_FREQ='60'
-	elif [ INPUT_AUTO_FREQ == 2 ]
+	elif [ $INPUT_AUTO_FREQ == 2 ]
 		AUTO_FREQ='30'
-	elif [ INPUT_AUTO_FREQ == 4 ]
+	elif [ $INPUT_AUTO_FREQ == 4 ]
 		AUTO_FREQ='15'
-	elif [ INPUT_AUTO_FREQ == 6 ]
+	elif [ $INPUT_AUTO_FREQ == 6 ]
 		AUTO_FREQ='10'
-	elif [ INPUT_AUTO_FREQ == 12 ]
+	elif [ $INPUT_AUTO_FREQ == 12 ]
 		AUTO_FREQ='5'
 	else
 		MESSAGE="Invalid Input"
