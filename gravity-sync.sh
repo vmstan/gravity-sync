@@ -192,12 +192,12 @@ function pull_gs {
 function push_gs {
 	md5_compare
 	
-	MESSAGE="Enter FIRE-PHOTON-TORPEDOS at this prompt to confirm"
+	MESSAGE="Enter FIRE PHOTON TORPEDOS at this prompt to confirm"
 	echo_need
 
 	read INPUT_TORPEDOS
 
-	if [ "${INPUT_TORPEDOS}" != "FIRE-PHOTON-TORPEDOS" ]
+	if [ "${INPUT_TORPEDOS}" != "FIRE PHOTON TORPEDOS" ]
 	then
 		MESSAGE="${TASKTYPE} Aborted"
 		echo_info
@@ -246,12 +246,12 @@ function restore_gs {
 	MESSAGE="This will restore ${GRAVITY_FI} on $HOSTNAME with the previous version!"
 	echo_warn
 
-	MESSAGE="Enter FIRE-ALL-PHASERS at this prompt to confirm"
+	MESSAGE="Enter FIRE ALL PHASERS at this prompt to confirm"
 	echo_need
 
 	read INPUT_PHASER
 
-	if [ "${INPUT_PHASER}" != "FIRE-ALL-PHASERS" ]
+	if [ "${INPUT_PHASER}" != "FIRE ALL PHASERS" ]
 	then
 		MESSAGE="${TASKTYPE} Aborted"
 		echo_info
@@ -615,12 +615,12 @@ function config_delete {
 	MESSAGE="Are you sure you want to erase this configuration?"
 	echo_warn
 
-	MESSAGE="Enter EJECT-THE-WARPCORE at this prompt to confirm"
+	MESSAGE="Enter EJECT THE WARPCORE at this prompt to confirm"
 	echo_need
 
 	read INPUT_WARPCORE
 
-	if [ "${INPUT_WARPCORE}" != "EJECT-THE-WARPCORE" ]
+	if [ "${INPUT_WARPCORE}" != "EJECT THE WARPCORE" ]
 	then
 		MESSAGE="${TASKTYPE} Aborted"
 		echo_info
