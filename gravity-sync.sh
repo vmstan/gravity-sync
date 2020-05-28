@@ -620,12 +620,16 @@ function task_automate {
 	then
 		AUTO_FREQ='60'
 	elif [ $INPUT_AUTO_FREQ == 2 ]
+	then
 		AUTO_FREQ='30'
 	elif [ $INPUT_AUTO_FREQ == 4 ]
+	then
 		AUTO_FREQ='15'
 	elif [ $INPUT_AUTO_FREQ == 6 ]
+	then
 		AUTO_FREQ='10'
 	elif [ $INPUT_AUTO_FREQ == 12 ]
+	then
 		AUTO_FREQ='5'
 	else
 		MESSAGE="Invalid Input"
