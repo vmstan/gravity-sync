@@ -28,6 +28,9 @@ PIHOLE_DIR='/etc/pihole' 			# default PH data directory
 GRAVITY_FI='gravity.db' 			# default PH database file
 PIHOLE_BIN='/usr/local/bin/pihole' 	# default PH binary directory
 
+# OS Settings
+BASH_PATH='/bin/bash'				# default OS bash path
+
 # SSH CONFIGURATION ##########################
 
 # Suggested not to replace these values here
@@ -595,7 +598,47 @@ function task_automate {
 
 	import_gs
 
-	(crontab -l 2>/dev/null; echo "*/30 * * * * /bin/bash $HOME/${LOCAL_FOLDR}/gravity-sync.sh pull > ${LOG_PATH}/${CRONJOB_LOG} -with args") | crontab -
+	MESSAGE="Set Automation Frequency Per Hour"
+	echo -e "${INFO} ${MESSAGE}"
+
+	MESSAGE="1 = Every 60 Minutes"
+	echo -e "${INFO} ${MESSAGE}"
+	MESSAGE="2 = Every 30 Minutes"
+	echo -e "${INFO} ${MESSAGE}"
+	MESSAGE="4 = Every 15 Minutes"
+	echo -e "${INFO} ${MESSAGE}"
+	MESSAGE="6 = Every 10 Minutes"
+	echo -e "${INFO} ${MESSAGE}"
+	MESSAGE="12 = Every 5 Minutes"
+	echo -e "${INFO} ${MESSAGE}"
+	
+	MESSAGE="Input Automation Frequency: "
+	echo -en "${NEED} ${MESSAGE}"
+	read INPUT_AUTO_FREQ
+
+	if [ INPUT_AUTO_FREQ == 1 ]
+	then
+		AUTO_FREQ='60'
+	elif [ INPUT_AUTO_FREQ == 2 ]
+		AUTO_FREQ='30'
+	elif [ INPUT_AUTO_FREQ == 4 ]
+		AUTO_FREQ='15'
+	elif [ INPUT_AUTO_FREQ == 6 ]
+		AUTO_FREQ='10'
+	elif [ INPUT_AUTO_FREQ == 12 ]
+		AUTO_FREQ='5'
+	else
+		MESSAGE="Invalid Input"
+		echo -e "${FAIL} ${MESSAGE}"
+	fi
+
+	MESSAGE="Saving to Crontab"
+		echo -en "${STAT} ${MESSAGE}"
+		(crontab -l 2>/dev/null; echo "*/${AUTO_FREQ} * * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/$0 pull > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
+			error_validate
+
+	MESSAGE="${PROGRAM} Execution Automated"
+	echo -e "${INFO} ${MESSAGE}"
 
 	exit_withchange
 }	
