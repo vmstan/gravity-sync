@@ -614,15 +614,15 @@ function task_automate {
 	echo -e "${INFO} ${MESSAGE}"
 
 	MESSAGE="1 = Every 60 Minutes"
-	echo -e "${INFO} ${MESSAGE}"
+	echo -e "++++++ ${MESSAGE}"
 	MESSAGE="2 = Every 30 Minutes"
-	echo -e "${INFO} ${MESSAGE}"
+	echo -e "++++++ ${MESSAGE}"
 	MESSAGE="4 = Every 15 Minutes"
-	echo -e "${INFO} ${MESSAGE}"
+	echo -e "++++++ ${MESSAGE}"
 	MESSAGE="6 = Every 10 Minutes"
-	echo -e "${INFO} ${MESSAGE}"
+	echo -e "++++++ ${MESSAGE}"
 	MESSAGE="12 = Every 5 Minutes"
-	echo -e "${INFO} ${MESSAGE}"
+	echo -e "++++++ ${MESSAGE}"
 	
 	MESSAGE="Input Automation Frequency: "
 	echo -en "${NEED} ${MESSAGE}"
@@ -653,9 +653,6 @@ function task_automate {
 		echo -en "${STAT} ${MESSAGE}"
 		(crontab -l 2>/dev/null; echo "*/${AUTO_FREQ} * * * * ${BASH_PATH} $0 pull > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
 			error_validate
-
-	MESSAGE="${PROGRAM} Execution Automated"
-	echo -e "${INFO} ${MESSAGE}"
 
 	exit_withchange
 }	
