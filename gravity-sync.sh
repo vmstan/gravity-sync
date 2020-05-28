@@ -2,10 +2,10 @@
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.4.3'
+VERSION='1.5.0'
 
-# Execute from the home folder of the user who own's it (ex: 'cd ~/gravity-sync')
-# For documentation or download updates visit https://github.com/vmstan/gravity-sync
+# Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
+# For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
 
 # REQUIRED SETTINGS ##########################
 
@@ -16,6 +16,7 @@ VERSION='1.4.3'
 # GS Folder/File Locations
 LOCAL_FOLDR='gravity-sync' 			# must exist in running user home folder
 CONFIG_FILE='gravity-sync.conf' 	# must exist with primary host/user configured
+GS_FILENAME='gravity-sync.sh'		# must exist because it's this script
 BACKUP_FOLD='backup' 				# must exist as subdirectory in LOCAL_FOLDR
 
 # Logging Folder/File Locations
@@ -27,6 +28,9 @@ CRONJOB_LOG='gravity-sync.cron' 	# replace in gravity-sync.conf to overwrite
 PIHOLE_DIR='/etc/pihole' 			# default PH data directory
 GRAVITY_FI='gravity.db' 			# default PH database file
 PIHOLE_BIN='/usr/local/bin/pihole' 	# default PH binary directory
+
+# OS Settings
+BASH_PATH='/bin/bash'				# default OS bash path
 
 # SSH CONFIGURATION ##########################
 
@@ -103,8 +107,8 @@ function beta_gs {
 	MESSAGE="Requires GitHub Installation" 
 	echo -e "${INFO} ${MESSAGE}"
 		git reset --hard
-		git pull
-		git checkout origin/development
+		git fetch origin
+		git pull origin development
 	exit
 }
 
@@ -294,7 +298,7 @@ function show_crontab {
 		fi
 	else
 		echo -e "\r${FAIL} ${MESSAGE}"
-		echo -e "${INFO} ${LOG_PATH}/${CRONJOB_LOG} cannot be located"
+		echo -e "${INFO} ${LOG_PATH}/${CRONJOB_LOG} not yet created"
 			exit_nochange
 	fi
 }
@@ -369,7 +373,6 @@ function validate_os_sshpass {
 	echo -en "${STAT} ${MESSAGE}"
 		timeout 5 ${SSHPASSWORD} ssh -p ${SSH_PORT} -i '$HOME/${SSH_PKIF}' -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
 			error_validate
-	
 }
 
 ## Error Validation
@@ -398,12 +401,11 @@ function md5_compare {
 	
 	if [ "$primaryMD5" == "$secondMD5" ]
 	then
-		echo -e "${INFO} No Changes in ${GRAVITY_FI}"
+		echo -e "${INFO} No Differences in ${GRAVITY_FI}"
 		exit_nochange
 	else
 		echo -e "${INFO} Changes Detected in ${GRAVITY_FI}"
 	fi
-	
 }
 
 # Configuration Management
@@ -414,12 +416,12 @@ function config_generate {
 	cp $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}.example $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 	error_validate
 	
-	MESSAGE="Enter IP or DNS of primary Pi-hole server"
-	echo -e "${NEED} ${MESSAGE}"
+	MESSAGE="Enter IP or DNS of primary Pi-hole server: "
+	echo -en "${NEED} ${MESSAGE}"
 	read INPUT_REMOTE_HOST
 	
-	MESSAGE="Enter SSH user with SUDO rights on primary Pi-hole server"
-	echo -e "${NEED} ${MESSAGE}"
+	MESSAGE="Enter SSH user with SUDO rights on primary Pi-hole server: "
+	echo -en "${NEED} ${MESSAGE}"
 	read INPUT_REMOTE_USER
 	
 	MESSAGE="Saving Host to ${CONFIG_FILE}"
@@ -441,9 +443,9 @@ function config_generate {
 		echo -e "${WARN} ${MESSAGE}"
 		MESSAGE="Your password will be stored clear-text in the ${CONFIG_FILE}!"
 		echo -e "${WARN} ${MESSAGE}"
-		MESSAGE="Leave blank to use (preferred) SSH Key-Pair Authentication:"
-		
-		echo -e "${NEED} ${MESSAGE}"
+
+		MESSAGE="Leave blank to use (preferred) SSH Key-Pair Authentication: "
+		echo -en "${NEED} ${MESSAGE}"
 		read INPUT_REMOTE_PASS
 				
 		MESSAGE="Saving Password to ${CONFIG_FILE}"
@@ -495,7 +497,7 @@ function config_generate {
 			MESSAGE="Registering Key-Pair on ${REMOTE_HOST}"
 			echo -e "${INFO} ${MESSAGE}"
 			
-			MESSAGE="Enter ${REMOTE_USER}@${REMOTE_HOST} Password"
+			MESSAGE="Enter ${REMOTE_USER}@${REMOTE_HOST} Password Below"
 			echo -e "${NEED} ${MESSAGE}"
 			
 			echo -e "========================================================"
@@ -521,11 +523,7 @@ function config_delete {
 	echo -e "${WARN} ${MESSAGE}"
 	
 	echo -e "========================================================"
-	echo -e "========================================================"
-	echo -e ""
 	cat $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
-	echo -e ""
-	echo -e "========================================================"
 	echo -e "========================================================"
 	
 	MESSAGE="Are you sure you want to erase this configuration?"
@@ -559,7 +557,8 @@ function exit_nochange {
 ## Changes Made
 function exit_withchange {
 	SCRIPT_END=$SECONDS
-	echo -e "${INFO} ${PROGRAM} ${TASKTYPE} Completed in $((SCRIPT_END-SCRIPT_START)) seconds"
+	MESSAGE="${PROGRAM} ${TASKTYPE} Completed in $((SCRIPT_END-SCRIPT_START)) seconds"
+	echo -e "${INFO} ${MESSAGE}"
 	exit 0
 }
 
@@ -570,6 +569,7 @@ function list_gs_arguments {
 	echo -e ""
 	echo -e "Setup Options:"
 	echo -e " ${YELLOW}config${NC}		Create a new ${CONFIG_FILE} file"
+	echo -e " ${YELLOW}automate${NC}	Add scheduled task to run sync"
 	echo -e ""
 	echo -e "Replication Options:"
 	echo -e " ${YELLOW}pull${NC}		Sync the ${GRAVITY_FI} database on primary PH to this server"
@@ -592,6 +592,71 @@ function list_gs_arguments {
 function show_version {
 	echo -e "${INFO} ${PROGRAM} ${VERSION}"
 }
+
+# Task Stack
+## Automate Task
+function task_automate {
+	TASKTYPE='AUTOMATE'
+	echo -e "\r${GOOD} ${MESSAGE}"
+
+	import_gs
+
+	CRON_CHECK=$(crontab -l | grep -q "${GS_FILENAME}"  && echo '1' || echo '0')
+	if [ ${CRON_CHECK} == 1 ]
+	then
+		MESSAGE="Automation Task Already Exists"
+		echo -e "${INFO} ${MESSAGE}"
+		MESSAGE="Use 'crontab -e' to manually remove/edit"
+		echo -e "${INFO} ${MESSAGE}"
+		exit_nochange
+	fi
+
+	MESSAGE="Set Automation Frequency Per Hour"
+	echo -e "${INFO} ${MESSAGE}"
+
+	MESSAGE="1  = Every 60 Minutes"
+	echo -e "++++++ ${MESSAGE}"
+	MESSAGE="2  = Every 30 Minutes"
+	echo -e "++++++ ${MESSAGE}"
+	MESSAGE="4  = Every 15 Minutes"
+	echo -e "++++++ ${MESSAGE}"
+	MESSAGE="6  = Every 10 Minutes"
+	echo -e "++++++ ${MESSAGE}"
+	MESSAGE="12 = Every 05 Minutes"
+	echo -e "++++++ ${MESSAGE}"
+	
+	MESSAGE="Input Automation Frequency: "
+	echo -en "${NEED} ${MESSAGE}"
+	read INPUT_AUTO_FREQ
+
+	if [ $INPUT_AUTO_FREQ == 1 ]
+	then
+		AUTO_FREQ='60'
+	elif [ $INPUT_AUTO_FREQ == 2 ]
+	then
+		AUTO_FREQ='30'
+	elif [ $INPUT_AUTO_FREQ == 4 ]
+	then
+		AUTO_FREQ='15'
+	elif [ $INPUT_AUTO_FREQ == 6 ]
+	then
+		AUTO_FREQ='10'
+	elif [ $INPUT_AUTO_FREQ == 12 ]
+	then
+		AUTO_FREQ='5'
+	else
+		MESSAGE="Invalid Input"
+		echo -e "${FAIL} ${MESSAGE}"
+		exit_nochange
+	fi
+
+	MESSAGE="Saving to Crontab"
+		echo -en "${STAT} ${MESSAGE}"
+		(crontab -l 2>/dev/null; echo "*/${AUTO_FREQ} * * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/${GS_FILENAME} pull > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
+			error_validate
+
+	exit_withchange
+}	
 
 # SCRIPT EXECUTION ###########################
 SCRIPT_START=$SECONDS
@@ -639,6 +704,8 @@ case $# in
 	
 			version)
 				TASKTYPE='VERSION'
+				echo -e "\r${GOOD} ${MESSAGE}"
+
 				show_version
 				exit_nochange
 			;;
@@ -690,11 +757,10 @@ case $# in
 				echo -e "\r${GOOD} ${MESSAGE}"
 				
 				show_crontab
-				
 			;;
 			
 			config)
-				TASKTYPE='CONFIG'
+				TASKTYPE='CONFIGURE'
 				echo -e "\r${GOOD} ${MESSAGE}"
 				echo -e "${INFO} Entering ${TASKTYPE} Mode"
 				
@@ -708,14 +774,19 @@ case $# in
 					
 					config_generate
 				fi
-				
 			;;
-				
+
+			auto)
+				task_automate
+			;;	
+
+			automate)
+				task_automate
+			;;	
 
 			*)
 				echo -e "\r${FAIL} ${MESSAGE}"
         			list_gs_arguments
-					exit_nochange
 			;;
 		esac
 	;;
@@ -723,6 +794,5 @@ case $# in
 	*)
 		echo -e "\r${FAIL} ${MESSAGE}"
 			list_gs_arguments
-			exit_nochange
 	;;
 esac
