@@ -34,7 +34,7 @@ Proceed to the Configuration section.
 ### The Easy Way
 Login to your *secondary* Pi-hole, and while in your users home directory, use `git` to clone the script to your server and keep the latest copy of the script on your server. (Note, this is exactly what **The Really Easy Way** does above.)
 
-```
+```bash
 cd ~
 git clone https://github.com/vmstan/gravity-sync.git
 cd gravity-sync
@@ -47,7 +47,7 @@ So a life on the wildside of file sync isn't for you? That's fine. Keep in mind 
 
 Download the latest release from [GitHub](https://github.com/vmstan/gravity-sync/releases) and extract the files to your *secondary* PH server.
 
-```
+```bash
 cd ~
 wget https://github.com/vmstan/gravity-sync/archive/v1.5.0zip
 unzip v1.5.0.zip
@@ -62,7 +62,7 @@ After you install Gravity Sync to your server (reguardless of the option you sel
 
 ### The Easy Way
 
-```
+```bash
 ./gravity-sync config
 ```
 
@@ -78,7 +78,7 @@ After you've completed your configuration, proceed to the Execution phase.
 ### The Less Easy Way
 There will be a file called `gravity-sync.conf.example` that you can use as the basis for your own `gravity-sync.conf` file. Make a copy of the example file and modify it with your site specific settings.
 
-```
+```bash
 cp gravity-sync.conf.example gravity-sync.conf
 vi gravity-sync.conf
 ```
@@ -87,7 +87,7 @@ vi gravity-sync.conf
 
 Make sure you've set the REMOTE_HOST and REMOTE_USER variables with the IP (or DNS name) and user account to authenticate to the primary Pi. This account will need to have sudo permissions on the remote system.
 
-```
+```bash
 REMOTE_HOST='192.168.1.10'
 REMOTE_USER='pi'
 ```
@@ -104,7 +104,7 @@ You'll need to generate an SSH key for your secondary PH user and copy it to you
 
 *Note: If you already have this setup on your systems for other purposes, you can skip this step.*
 
-```
+```bash
 ssh-keygen -t rsa
 ssh-copy-id -i ~/.ssh/id_rsa.pub REMOTE_USER@REMOTE_HOST
 ```
@@ -116,13 +116,13 @@ Make sure to leave the `REMOTE_PASS` variable set to nothing in `gravity-sync.co
 #### Password Authentication
 This is the non-preferred option, as it depends on an non-standard utility called `sshpass` which must be installed on your secondary PH. Install it using your package manager of choice. The example below is for Raspberry Pi OS (previously Raspbian) or Ubuntu.
 
-```
+```bash
 sudo apt install sshpass
 ```
 
 Then enter your password in the `gravity-sync.conf` file you configured above.
 
-```
+```bash
 REMOTE_PASS='password'
 ```
 
@@ -133,7 +133,7 @@ Save. Keep calm, carry on.
 ## Execution
 Now test the script. You can run a comparison between the two which will be non-distruptive and see if everything has been configured correctly.
 
-```
+```bash
 ./gravity-sync.sh compare
 ```
 
@@ -143,7 +143,7 @@ Assuming Gravity Sync runs successfully, it'll indicate if there are changes pen
 
 The Gravity Sync Pull, is the standard method of sync operation, and will not prompt for user input after execution. It will perform some checks to help insure success and then stop before making changes if it detects an issue. It will also perform the same `compare` function outlined above, and if there are no changes pending, it will exit without making an attempt to copy data.
 
-```
+```bash
 ./gravity-sync.sh pull
 ```
 
@@ -156,7 +156,7 @@ You can check for successful pull attempts by running: `./gravity-sync.sh logs`
 ### The Push Function
 Gravity Sync includes the ability to `push` from the secondary PH back to the primary. This would be useful in a situation where your primary PH is down for an extended period of time, and you have made list changes on the secondary PH that you want to force back to the primary, when it comes online.
 
-```
+```bash
 ./gravity-sync.sh push
 ```
 
@@ -168,7 +168,7 @@ This function purposefuly asks for user interaction to avoid being accidentally 
 ### The Easy Way
 If you installed **The Really Easy Way** or **The Easy Way**, you can run the built-in updater to get the latest version of all the files.
 
-```
+```bash
 ./gravity-sync.sh update
 ```
 
@@ -189,7 +189,7 @@ Automation of sync is accomplished by adding an execution of the script to the u
 ### The Easy Way
 Just run the built in `automate` function:
 
-```
+```bash
 ./gravity-sync.sh automate
 ```
 
@@ -198,7 +198,7 @@ Select the frequency per hour that you'd like to sync (once, twice, quadrice, et
 ### The Less Easy Way
 If you prefer to still use cron but modify your settings by hand, using the entry below will cause the entry to run at the top and bottom of every hour (1:00 PM, 1:30 PM, 2:00 PM, etc) but you are free to dial this back or be more agressive if you feel the need.
 
-```
+```bash
 crontab -e
 */30 * * * * /bin/bash /home/USER/gravity-sync/gravity-sync.sh pull > /home/USER/gravity-sync/gravity-sync.cron
 ```
@@ -212,14 +212,14 @@ From this point forward any blocklist changes you make to the primary will refle
 
 If you'd like to see the log of what was run the last crontab, you can view that output by running:
 
-```
+```bash
 ./gravity-sync.sh cron
 ```
 
 ## Troubleshooting
 If you are just straight up unable to run the `gravity-sync.sh` file, make sure it's marked as an executable by Linux.
 
-```
+```bash
 chmod +x gravity-sync.sh
 ```
 
