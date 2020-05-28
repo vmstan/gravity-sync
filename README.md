@@ -21,31 +21,24 @@ Additionally, some things to consider:
 - Gravity Sync has not been tested with Docker container deployments of Pi-hole, and is not expected to work there without major modifications. You will need Pi-hole setup with a "traditional" install directly in the base operating system.
 
 ## Installation
-### The Really Easy Way
+### The Easy Way
 
 Login to your *secondary* Pi-hole, and run:
 
-```
-curl -sR https://raw.githubusercontent.com/vmstan/gravity-sync/master/gs-install.sh | bash
-```
-
-Proceed to the Configuration section.
-
-### The Easy Way
-Login to your *secondary* Pi-hole, and while in your users home directory, use `git` to clone the script to your server and keep the latest copy of the script on your server. (Note, this is exactly what **The Really Easy Way** does above.)
-
 ```bash
-cd ~
-git clone https://github.com/vmstan/gravity-sync.git
-cd gravity-sync
+git clone https://github.com/vmstan/gravity-sync.git $HOME/gravity-sync
 ```
+
+You will now have a folder called `gravity-sync` in your home directory. Everything Gravity Sync runs from there.
 
 Proceed to the Configuration section.
 
 ### The Less Easy Way
-So a life on the wildside of file sync isn't for you? That's fine. Keep in mind that installing via this method means you won't be able to use Gravity Sync's built-in update mechanism.
+Don't trust `git` to install your software, or just like doing things by hand? That's fine. 
 
-Download the latest release from [GitHub](https://github.com/vmstan/gravity-sync/releases) and extract the files to your *secondary* PH server.
+*Keep in mind that installing via this method means you won't be able to use Gravity Sync's built-in update mechanism.*
+
+Download the latest release from [GitHub](https://github.com/vmstan/gravity-sync/releases) and extract the files to your *secondary* Pi-hole server.
 
 ```bash
 cd ~
@@ -166,7 +159,7 @@ This function purposefuly asks for user interaction to avoid being accidentally 
 
 ## Updates
 ### The Easy Way
-If you installed **The Really Easy Way** or **The Easy Way**, you can run the built-in updater to get the latest version of all the files.
+If you installed via **The Easy Way**, you can run the built-in updater to get the latest version of all the files.
 
 ```bash
 ./gravity-sync.sh update
@@ -176,7 +169,7 @@ Your copy of the `gravity-sync.conf` file, logs and backups should not be be imp
 
 ### The Less Easy Way
 
-You will essentially download and overwrite the `gravity-sync.sh` file with a newer version. You should review the contents of the script bundle (specifically the example configuration file) to make sure there are no new additional files or required settings. 
+You will need to download and overwrite the `gravity-sync.sh` file with a newer version. If you've chosen this path, I won't lay out exactly what you'll need to do every time, but you should at least review the contents of the script bundle (specifically the example configuration file) to make sure there are no new additional files or required settings. 
 
 ### Either Way
 The main goal of Gravity Sync is to be simple to execute and maintain, so any additional requirements should also be called out when it's executed. After updating, be sure to manually run a `./gravity-sync.sh compare` or `./gravity-sync.sh pull` to validate things are still working as expected. 
