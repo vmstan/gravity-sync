@@ -243,6 +243,83 @@ function push_gs {
 	done
 }
 
+function yank_gs {
+	MESSAGE="This will restore ${GRAVITY_FI} on $HOSTNAME with the previous version!"
+	echo_warn
+
+	MESSAGE="Enter WARP-CORE-EJECT at this prompt to confirm"
+	echo_need
+
+	read INPUT_WARPCORE
+
+	if [ $INPUT_WARPCORE != "WARP-CORE-EJECT" ]
+	then
+		MESSAGE="${TASKTYPE} Aborted"
+		echo_info
+		exit_nochange
+	fi
+	
+	MESSAGE="Restoring ${GRAVITY_FI} on $HOSTNAME"
+	echo_stat	
+		sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.backup ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+		error_validate
+	
+	MESSAGE="Validating Ownership on ${GRAVITY_FI}"
+	echo_stat
+		
+		GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk '{print $3 $4}')
+		if [ $GRAVDB_OWN == "piholepihole" ]
+		then
+			echo_good
+		else
+			echo_fail
+			
+			MESSAGE="Attempting to Compensate"
+			echo_info
+			
+			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
+			echo_stat	
+				sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+				error_validate
+		fi
+		
+	MESSAGE="Validating Permissions on ${GRAVITY_FI}"
+	echo_stat
+	
+		GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | awk '{print $1}')
+		if [ $GRAVDB_RWE = "-rw-rw-r--" ]
+		then
+			echo_good
+		else
+			echo_fail
+				
+			MESSAGE="Attempting to Compensate"
+			echo_info
+		
+			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
+			echo_stat
+				sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+				error_validate
+		fi
+		
+	MESSAGE="Evacuating Turbolifts"
+	echo_info
+		sleep 1	
+	
+	MESSAGE="Updating FTLDNS Configuration"
+	echo_stat
+		${PIHOLE_BIN} restartdns reloadlists >/dev/null 2>&1
+		error_validate
+	
+	MESSAGE="Reloading FTLDNS Services"
+	echo_stat
+		${PIHOLE_BIN} restartdns >/dev/null 2>&1
+		error_validate
+	
+	logs_export
+	exit_withchange
+}
+
 # Logging Functions
 ## Core Logging
 ### Write Logs Out
@@ -430,7 +507,7 @@ function config_generate {
 	echo_need
 	read INPUT_REMOTE_HOST
 	
-	MESSAGE="Enter SSH user with SUDO rights on primary Pi-hole server: "
+	MESSAGE="Enter SSH user with SUDO rights on primary Pi-hole server"
 	echo_need
 	read INPUT_REMOTE_USER
 	
@@ -585,6 +662,7 @@ function list_gs_arguments {
 	echo -e "Replication Options:"
 	echo -e " ${YELLOW}pull${NC}		Sync the ${GRAVITY_FI} database on primary PH to this server"
 	echo -e " ${YELLOW}push${NC}		Force any changes made on this server back to the primary PH"
+	echo -e " ${YELLOW}yank${NC}		Restore ${GRAVITY_FI} on this server from previous copy"
 	echo -e " ${YELLOW}compare${NC}	Just check for differences between primary and secondary"
 	echo -e ""
 	echo -e "Update Options:"
@@ -753,6 +831,25 @@ case $# in
 					validate_os_sshpass
 					
 				push_gs
+				exit
+			;;
+
+			push)	
+				TASKTYPE='YANK'
+				echo_good
+
+				MESSAGE="${TASKTYPE} Requested"
+				echo_info
+				
+				import_gs
+
+				MESSAGE="Validating Folder Configuration"
+				echo_info
+					validate_gs_folders
+					validate_ph_folders
+					# validate_os_sshpass
+					
+				yank_gs
 				exit
 			;;
 	
