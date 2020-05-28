@@ -242,16 +242,16 @@ function push_gs {
 	exit_withchange
 }
 
-function yank_gs {
+function restore_gs {
 	MESSAGE="This will restore ${GRAVITY_FI} on $HOSTNAME with the previous version!"
 	echo_warn
 
-	MESSAGE="Enter WARP-CORE-EJECT at this prompt to confirm"
+	MESSAGE="Enter FIRE-ALL-PHASERS at this prompt to confirm"
 	echo_need
 
-	read INPUT_WARPCORE
+	read INPUT_PHASER
 
-	if [ "${INPUT_WARPCORE}" != "WARP-CORE-EJECT" ]
+	if [ "${INPUT_PHASER}" != "FIRE-ALL-PHASERS" ]
 	then
 		MESSAGE="${TASKTYPE} Aborted"
 		echo_info
@@ -614,23 +614,24 @@ function config_delete {
 	
 	MESSAGE="Are you sure you want to erase this configuration?"
 	echo_warn
-	
-	select yn in "Yes" "No"; do
-		case $yn in
-		Yes )
-			MESSAGE="Erasing Existing Configuration"
-			echo_stat
-			rm -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
-				error_validate
-			
-			config_generate
-		;;
 
-		No )
-			exit_nochange
-		;;
-		esac
-	done
+	MESSAGE="Enter EJECT-THE-WARPCORE at this prompt to confirm"
+	echo_need
+
+	read INPUT_WARPCORE
+
+	if [ "${INPUT_WARPCORE}" != "EJECT-THE-WARPCORE" ]
+	then
+		MESSAGE="${TASKTYPE} Aborted"
+		echo_info
+		exit_nochange
+	else
+		MESSAGE="Erasing Existing Configuration"
+		echo_stat
+		rm -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+			error_validate
+		config_generate
+	fi
 }
 
 # Exit Codes
@@ -661,7 +662,7 @@ function list_gs_arguments {
 	echo -e "Replication Options:"
 	echo -e " ${YELLOW}pull${NC}		Sync the ${GRAVITY_FI} database on primary PH to this server"
 	echo -e " ${YELLOW}push${NC}		Force any changes made on this server back to the primary PH"
-	echo -e " ${YELLOW}yank${NC}		Restore ${GRAVITY_FI} on this server from previous copy"
+	echo -e " ${YELLOW}restore${NC}	Restore ${GRAVITY_FI} on this server from previous copy"
 	echo -e " ${YELLOW}compare${NC}	Just check for differences between primary and secondary"
 	echo -e ""
 	echo -e "Update Options:"
@@ -833,8 +834,8 @@ case $# in
 				exit
 			;;
 
-			yank)	
-				TASKTYPE='YANK'
+			restore)	
+				TASKTYPE='RESTORE'
 				echo_good
 
 				MESSAGE="${TASKTYPE} Requested"
@@ -848,7 +849,7 @@ case $# in
 					validate_ph_folders
 					# validate_os_sshpass
 					
-				yank_gs
+				restore_gs
 				exit
 			;;
 	
