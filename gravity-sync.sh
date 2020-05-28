@@ -115,15 +115,7 @@ function beta_gs {
 # Gravity Core Functions
 ## Pull Function
 function pull_gs {
-	TASKTYPE='PULL'
-	
-	MESSAGE="${TASKTYPE} Requested"
-	echo_info
-
 	md5_compare
-	
-	MESSAGE="${TASKTYPE} Starting"
-	echo_info
 	
 	MESSAGE="Backing Up ${GRAVITY_FI} on $HOSTNAME"
 	echo_stat
