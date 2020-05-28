@@ -252,7 +252,7 @@ function yank_gs {
 
 	read INPUT_WARPCORE
 
-	if [ $INPUT_WARPCORE != "WARP-CORE-EJECT" ]
+	if [ "${INPUT_WARPCORE}" != "WARP-CORE-EJECT" ]
 	then
 		MESSAGE="${TASKTYPE} Aborted"
 		echo_info
