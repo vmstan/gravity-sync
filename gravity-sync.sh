@@ -703,6 +703,8 @@ case $# in
 	
 			version)
 				TASKTYPE='VERSION'
+				echo -e "\r${GOOD} ${MESSAGE}"
+				
 				show_version
 				exit_nochange
 			;;
