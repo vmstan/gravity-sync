@@ -2,10 +2,10 @@
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.4.3'
+VERSION='1.4.4'
 
-# Execute from the home folder of the user who own's it (ex: 'cd ~/gravity-sync')
-# For documentation or download updates visit https://github.com/vmstan/gravity-sync
+# Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
+# For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
 
 # REQUIRED SETTINGS ##########################
 
@@ -369,7 +369,6 @@ function validate_os_sshpass {
 	echo -en "${STAT} ${MESSAGE}"
 		timeout 5 ${SSHPASSWORD} ssh -p ${SSH_PORT} -i '$HOME/${SSH_PKIF}' -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
 			error_validate
-	
 }
 
 ## Error Validation
@@ -403,7 +402,6 @@ function md5_compare {
 	else
 		echo -e "${INFO} Changes Detected in ${GRAVITY_FI}"
 	fi
-	
 }
 
 # Configuration Management
@@ -521,11 +519,7 @@ function config_delete {
 	echo -e "${WARN} ${MESSAGE}"
 	
 	echo -e "========================================================"
-	echo -e "========================================================"
-	echo -e ""
 	cat $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
-	echo -e ""
-	echo -e "========================================================"
 	echo -e "========================================================"
 	
 	MESSAGE="Are you sure you want to erase this configuration?"
@@ -592,6 +586,18 @@ function list_gs_arguments {
 function show_version {
 	echo -e "${INFO} ${PROGRAM} ${VERSION}"
 }
+
+# Task Stack
+## Automate Task
+function task_automate {
+	TASKTYPE='AUTOMATE'
+	echo -e "\r${GOOD} ${MESSAGE}"
+
+	import_gs
+
+	
+
+}	
 
 # SCRIPT EXECUTION ###########################
 SCRIPT_START=$SECONDS
@@ -694,7 +700,7 @@ case $# in
 			;;
 			
 			config)
-				TASKTYPE='CONFIG'
+				TASKTYPE='CONFIGURE'
 				echo -e "\r${GOOD} ${MESSAGE}"
 				echo -e "${INFO} Entering ${TASKTYPE} Mode"
 				
@@ -708,9 +714,15 @@ case $# in
 					
 					config_generate
 				fi
-				
 			;;
-				
+
+			auto)
+				task_automate
+			;;	
+
+			automate)
+				task_automate
+			;;	
 
 			*)
 				echo -e "\r${FAIL} ${MESSAGE}"
