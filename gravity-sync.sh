@@ -106,8 +106,8 @@ function beta_gs {
 	MESSAGE="Requires GitHub Installation" 
 	echo -e "${INFO} ${MESSAGE}"
 		git reset --hard
-		git pull
-		git checkout origin/development
+		git fetch origin
+		git pull origin development
 	exit
 }
 
