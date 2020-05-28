@@ -757,7 +757,6 @@ case $# in
 				echo -e "\r${GOOD} ${MESSAGE}"
 				
 				show_crontab
-				
 			;;
 			
 			config)
@@ -788,7 +787,6 @@ case $# in
 			*)
 				echo -e "\r${FAIL} ${MESSAGE}"
         			list_gs_arguments
-					exit_nochange
 			;;
 		esac
 	;;
@@ -796,6 +794,5 @@ case $# in
 	*)
 		echo -e "\r${FAIL} ${MESSAGE}"
 			list_gs_arguments
-			exit_nochange
 	;;
 esac
