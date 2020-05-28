@@ -400,7 +400,7 @@ function md5_compare {
 	
 	if [ "$primaryMD5" == "$secondMD5" ]
 	then
-		echo -e "${INFO} No Changes in ${GRAVITY_FI}"
+		echo -e "${INFO} No Differences in ${GRAVITY_FI}"
 		exit_nochange
 	else
 		echo -e "${INFO} Changes Detected in ${GRAVITY_FI}"

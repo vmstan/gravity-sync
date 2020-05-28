@@ -56,7 +56,7 @@ After you install Gravity Sync to your server (reguardless of the option you sel
 ### The Easy Way
 
 ```bash
-./gravity-sync config
+./gravity-sync.sh config
 ```
 
 This will guide you through the process of:
