@@ -75,7 +75,7 @@ function import_gs {
 		MESSAGE="Using ${REMOTE_USER}@${REMOTE_HOST}"
 		echo_info
 	else
-		echo -e "\r${FAIL} ${MESSAGE}"
+		echo_fail
 		
 		MESSAGE="${CONFIG_FILE} Missing"
 		echo_info
@@ -126,54 +126,54 @@ function pull_gs {
 	echo_info
 	
 	MESSAGE="Backing Up ${GRAVITY_FI} on $HOSTNAME"
-	echo -en "${STAT} ${MESSAGE}"
+	echo_stat
 		cp ${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.backup >/dev/null 2>&1
 		error_validate
 	
 	MESSAGE="Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
-	echo -en "${STAT} ${MESSAGE}"
+	echo_stat
 		${SSHPASSWORD} rsync -e "ssh -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull >/dev/null 2>&1
 		error_validate
 		
 	MESSAGE="Replacing ${GRAVITY_FI} on $HOSTNAME"
-	echo -en "${STAT} ${MESSAGE}"	
+	echo_stat	
 		sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 		error_validate
 	
 	MESSAGE="Validating Ownership on ${GRAVITY_FI}"
-	echo -en "${STAT} ${MESSAGE}"
+	echo_stat
 		
 		GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk '{print $3 $4}')
 		if [ $GRAVDB_OWN == "piholepihole" ]
 		then
-			echo -e "\r${GOOD} ${MESSAGE}"
+			echo_good
 		else
-			echo -e "\r${FAIL} $MESSAGE"
+			echo_fail
 			
-			MESSAGE2="Attempting to Compensate"
-			echo -e "${INFO} ${MESSAGE2}"
+			MESSAGE="Attempting to Compensate"
+			echo_info
 			
 			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
-			echo -en "${STAT} ${MESSAGE}"	
+			echo_stat	
 				sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 				error_validate
 		fi
 		
 	MESSAGE="Validating Permissions on ${GRAVITY_FI}"
-	echo -en "${STAT} ${MESSAGE}"
+	echo_stat
 	
 		GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | awk '{print $1}')
 		if [ $GRAVDB_RWE = "-rw-rw-r--" ]
 		then
-			echo -e "\r${GOOD} ${MESSAGE}"
+			echo_good
 		else
-			echo -e "\r${FAIL} ${MESSAGE}"
+			echo_fail
 				
-			MESSAGE2="Attempting to Compensate"
-			echo -e "${INFO} ${MESSAGE2}"
+			MESSAGE="Attempting to Compensate"
+			echo_info
 		
 			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
-			echo -en "${STAT} ${MESSAGE}"
+			echo_stat
 				sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 				error_validate
 		fi
@@ -183,12 +183,12 @@ function pull_gs {
 		sleep 1	
 	
 	MESSAGE="Updating FTLDNS Configuration"
-	echo -en "${STAT} ${MESSAGE}"
+	echo_stat
 		${PIHOLE_BIN} restartdns reloadlists >/dev/null 2>&1
 		error_validate
 	
 	MESSAGE="Reloading FTLDNS Services"
-	echo -en "${STAT} ${MESSAGE}"
+	echo_stat
 		${PIHOLE_BIN} restartdns >/dev/null 2>&1
 		error_validate
 	
@@ -198,33 +198,31 @@ function pull_gs {
 
 ## Push Function
 function push_gs {
-	TASKTYPE='PUSH'
-	
-	echo -e "${INFO} ${TASKTYPE} Requested"
 	md5_compare
 	
-	echo -e "${WARN} Are you sure you want to overwrite the primary PH configuration on ${REMOTE_HOST}?"
+	MESSAGE="Are you sure you want to overwrite ${GRAVITY_DB} on ${REMOTE_HOST}?"
+	echo_warn
 	select yn in "Yes" "No"; do
 		case $yn in
 		Yes )
 			
 			MESSAGE="Backing Up ${GRAVITY_FI} from ${REMOTE_HOST}"
-			echo -en "${STAT} ${MESSAGE}"
+			echo_stat
 				${SSHPASSWORD} rsync -e "ssh -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push >/dev/null 2>&1
 				error_validate
 	
 			MESSAGE="Pushing ${GRAVITY_FI} to ${REMOTE_HOST}"
-			echo -en "${STAT} ${MESSAGE}"
+			echo_stat
 				${SSHPASSWORD} rsync --rsync-path="sudo rsync" -e "ssh -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 				error_validate
 	
 			MESSAGE="Setting Permissions on ${GRAVITY_FI}"
-			echo -en "${STAT} ${MESSAGE}"	
+			echo_stat	
 				${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
 				error_validate
 		
 			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
-			echo -en "${STAT} ${MESSAGE}"	
+			echo_stat	
 				${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
 				error_validate	
 	
@@ -233,12 +231,12 @@ function push_gs {
 				sleep 1	
 	
 			MESSAGE="Updating FTLDNS Configuration"
-			echo -en "${STAT} ${MESSAGE}"
+			echo_stat
 				${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${PIHOLE_BIN} restartdns reloadlists" >/dev/null 2>&1
 				error_validate
 			
 			MESSAGE="Reloading FTLDNS Services"
-			echo -en "${STAT} ${MESSAGE}"	
+			echo_stat	
 				${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${PIHOLE_BIN} restartdns" >/dev/null 2>&1
 				error_validate
 			
@@ -257,7 +255,9 @@ function push_gs {
 ## Core Logging
 ### Write Logs Out
 function logs_export {
-	echo -e "${INFO} Logging Timestamps to ${SYNCING_LOG}"
+	MESSAGE="Logging Timestamps to ${SYNCING_LOG}"
+	echo_info
+
 	echo -e $(date) "[${TASKTYPE}]" >> ${LOG_PATH}/${SYNCING_LOG}
 }
 
@@ -265,13 +265,16 @@ function logs_export {
 function logs_gs {
 	import_gs
 
-	echo -e "${INFO} Tailing ${LOG_PATH}/${SYNCING_LOG}"
+	MESSAGE="Tailing ${LOG_PATH}/${SYNCING_LOG}"
+	echo_info
+
 	echo -e "========================================================"
 	echo -e "Recent Complete ${YELLOW}PULL${NC} Executions"
 		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PULL
 	echo -e "Recent Complete ${YELLOW}PUSH${NC} Executions"
 		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PUSH
 	echo -e "========================================================"
+
 	exit_nochange
 }
 
@@ -281,28 +284,37 @@ function show_crontab {
 	import_gs
 	
 	MESSAGE="Replaying Last Cronjob"
-	echo -en "${STAT} ${MESSAGE}"
+	echo_stat
 	
 	if [ -f ${LOG_PATH}/${CRONJOB_LOG} ]
 	then
 		if [ -s ${LOG_PATH}/${CRONJOB_LOG} ]
-			echo -e "\r${GOOD} ${MESSAGE}"
+			echo_good
 			
-			echo -e "${INFO} Tailing ${LOG_PATH}/${CRONJOB_LOG}"
+			MESSAGE="Tailing ${LOG_PATH}/${CRONJOB_LOG}"
+			echo_info
+
 			echo -e "========================================================"
 			date -r ${LOG_PATH}/${CRONJOB_LOG}
 			cat ${LOG_PATH}/${CRONJOB_LOG}
 			echo -e "========================================================"
-				exit_nochange
+
+			exit_nochange
 		then
-			echo -e "\r${FAIL} ${MESSAGE}"
-			echo -e "${INFO} ${LOG_PATH}/${CRONJOB_LOG} appears empty"
-				exit_nochange
+			echo_fail
+
+			MESSAGE="${LOG_PATH}/${CRONJOB_LOG} is Empty"
+			echo_info
+
+			exit_nochange
 		fi
 	else
-		echo -e "\r${FAIL} ${MESSAGE}"
-		echo -e "${INFO} ${LOG_PATH}/${CRONJOB_LOG} not yet created"
-			exit_nochange
+		echo_fail
+
+		MESSAGE="${LOG_PATH}/${CRONJOB_LOG} is Missing"
+		echo_info
+
+		exit_nochange
 	fi
 }
 
@@ -310,22 +322,22 @@ function show_crontab {
 ## Validate GS Folders
 function validate_gs_folders {
 	MESSAGE="Locating $HOME/${LOCAL_FOLDR}"
-	echo -en "${STAT} ${MESSAGE}"
+	echo_stat
 		if [ -d $HOME/${LOCAL_FOLDR} ]
 		then
-	    	echo -e "\r${GOOD} ${MESSAGE}"
+	    	echo_good
 		else
-			echo -e "\r${FAIL} ${MESSAGE}"
+			echo_fail
 			exit_nochange
 		fi
 	
 	MESSAGE="Locating $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}"
-	echo -en "${STAT} ${MESSAGE}"
+	echo_stat
 		if [ -d $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} ]
 		then
-	    	echo -e "\r${GOOD} ${MESSAGE}"
+	    	echo_good
 		else
-			echo -e "\r${FAIL} ${MESSAGE}"
+			echo_fail
 			exit_nochange
 		fi
 }
@@ -333,12 +345,12 @@ function validate_gs_folders {
 ## Validate PH Folders
 function validate_ph_folders {
 	MESSAGE="Locating ${PIHOLE_DIR}"
-	echo -en "${STAT} ${MESSAGE}"
+	echo_stat
 		if [ -d ${PIHOLE_DIR} ]
 		then
-	    	echo -e "\r${GOOD} ${MESSAGE}"
+	    	echo_good
 		else
-			echo -e "\r${FAIL} ${MESSAGE}"
+			echo_fail
 			exit_nochange
 		fi
 }
@@ -373,7 +385,7 @@ function validate_os_sshpass {
 	echo_info
 	
 	MESSAGE="Testing SSH Connection"
-	echo -en "${STAT} ${MESSAGE}"
+	echo_stat
 		timeout 5 ${SSHPASSWORD} ssh -p ${SSH_PORT} -i '$HOME/${SSH_PKIF}' -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
 			error_validate
 }
@@ -381,33 +393,36 @@ function validate_os_sshpass {
 ## Error Validation
 function error_validate {
 	if [ "$?" != "0" ]; then
-	    echo -e "\r${FAIL} ${MESSAGE}"
+	    echo_fail
 	    exit 1
 	else
-		echo -e "\r${GOOD} ${MESSAGE}"
+		echo_good
 	fi
 }
 
 ## Validate Sync Required
 function md5_compare {
-	echo -e "${INFO} Comparing ${GRAVITY_FI} Changes"
+	MESSAGE="Comparing ${GRAVITY_FI} Changes"
+	echo_info
 	
 	MESSAGE="Analyzing Remote ${GRAVITY_FI}"
-	echo -en "${STAT} ${MESSAGE}"
+	echo_stat
 	primaryMD5=$(${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${GRAVITY_FI}")
 		error_validate
 	
 	MESSAGE="Analyzing Local ${GRAVITY_FI}"
-	echo -en "${STAT} ${MESSAGE}"
+	echo_stat
 	secondMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI})
 		error_validate
 	
 	if [ "$primaryMD5" == "$secondMD5" ]
 	then
-		echo -e "${INFO} No Differences in ${GRAVITY_FI}"
+		MESSAGE="No Differences in ${GRAVITY_FI}"
+		echo_info
 		exit_nochange
 	else
-		echo -e "${INFO} Changes Detected in ${GRAVITY_FI}"
+		MESSAGE="Changes Detected in ${GRAVITY_FI}"
+		echo_info
 	fi
 }
 
@@ -415,25 +430,25 @@ function md5_compare {
 ## Generate New Configuration
 function config_generate {
 	MESSAGE="Creating ${CONFIG_FILE} from Template"
-	echo -en "${STAT} ${MESSAGE}"
+	echo_stat
 	cp $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}.example $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 	error_validate
 	
-	MESSAGE="Enter IP or DNS of primary Pi-hole server: "
-	echo -en "${NEED} ${MESSAGE}"
+	MESSAGE="Enter IP or DNS of primary Pi-hole server"
+	echo_need
 	read INPUT_REMOTE_HOST
 	
 	MESSAGE="Enter SSH user with SUDO rights on primary Pi-hole server: "
-	echo -en "${NEED} ${MESSAGE}"
+	echo_need
 	read INPUT_REMOTE_USER
 	
 	MESSAGE="Saving Host to ${CONFIG_FILE}"
-	echo -en "${STAT} ${MESSAGE}"
+	echo_stat
 	sed -i "/REMOTE_HOST='192.168.1.10'/c\REMOTE_HOST='${INPUT_REMOTE_HOST}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 	error_validate
 	
 	MESSAGE="Saving User to ${CONFIG_FILE}"
-	echo -en "${STAT} ${MESSAGE}"
+	echo_stat
 	sed -i "/REMOTE_USER='pi'/c\REMOTE_USER='${INPUT_REMOTE_USER}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 	error_validate
 
@@ -443,16 +458,16 @@ function config_generate {
 		echo_info
 		
 		MESSAGE="Do you want to configure password based SSH authentication?"
-		echo -e "${WARN} ${MESSAGE}"
+		echo_warn
 		MESSAGE="Your password will be stored clear-text in the ${CONFIG_FILE}!"
-		echo -e "${WARN} ${MESSAGE}"
+		echo_warn
 
-		MESSAGE="Leave blank to use (preferred) SSH Key-Pair Authentication: "
-		echo -en "${NEED} ${MESSAGE}"
+		MESSAGE="Leave blank to use (preferred) SSH Key-Pair Authentication"
+		echo_need
 		read INPUT_REMOTE_PASS
 				
 		MESSAGE="Saving Password to ${CONFIG_FILE}"
-		echo -en "${STAT} ${MESSAGE}"
+		echo_stat
 		sed -i "/REMOTE_PASS=''/c\REMOTE_PASS='${INPUT_REMOTE_PASS}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 		error_validate
 		
@@ -475,7 +490,7 @@ function config_generate {
 			echo_info
 			
 			MESSAGE="Accept All Defaults"
-			echo -e "${WARN} ${MESSAGE}"
+			echo_warn
 			
 			MESSAGE="Complete Key-Pair Creation"
 			echo -e "${NEED} ${MESSAGE}"
@@ -489,7 +504,7 @@ function config_generate {
 	fi
 	
 	MESSAGE="Importing New ${CONFIG_FILE}"
-	echo -en "${STAT} ${MESSAGE}"
+	echo_stat
 	source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 	error_validate
 	
@@ -523,20 +538,20 @@ function config_generate {
 function config_delete {
 	source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 	MESSAGE="Configuration File Exists"
-	echo -e "${WARN} ${MESSAGE}"
+	echo_warn
 	
 	echo -e "========================================================"
 	cat $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 	echo -e "========================================================"
 	
 	MESSAGE="Are you sure you want to erase this configuration?"
-	echo -e "${WARN} ${MESSAGE}"
+	echo_warn
 	
 	select yn in "Yes" "No"; do
 		case $yn in
 		Yes )
 			MESSAGE="Erasing Existing Configuration"
-			echo -en "${STAT} ${MESSAGE}"
+			echo_stat
 			rm -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 				error_validate
 			
@@ -553,7 +568,8 @@ function config_delete {
 # Exit Codes
 ## No Changes Made
 function exit_nochange {
-	echo -e "${INFO} ${PROGRAM} ${TASKTYPE} Aborting"
+	MESSAGE="${PROGRAM} ${TASKTYPE} Aborting"
+	echo_info
 	exit 0
 }
 
@@ -593,14 +609,15 @@ function list_gs_arguments {
 
 # Output Version
 function show_version {
-	echo -e "${INFO} ${PROGRAM} ${VERSION}"
+	MESSAGE="${PROGRAM} ${VERSION}"
+	echo_info
 }
 
 # Task Stack
 ## Automate Task
 function task_automate {
 	TASKTYPE='AUTOMATE'
-	echo -e "\r${GOOD} ${MESSAGE}"
+	echo_good
 
 	import_gs
 
@@ -628,8 +645,8 @@ function task_automate {
 	MESSAGE="12 = Every 05 Minutes"
 	echo -e "++++++ ${MESSAGE}"
 	
-	MESSAGE="Input Automation Frequency: "
-	echo -en "${NEED} ${MESSAGE}"
+	MESSAGE="Input Automation Frequency"
+	echo_need
 	read INPUT_AUTO_FREQ
 
 	if [ $INPUT_AUTO_FREQ == 1 ]
@@ -654,7 +671,7 @@ function task_automate {
 	fi
 
 	MESSAGE="Saving to Crontab"
-		echo -en "${STAT} ${MESSAGE}"
+	echo_stat
 		(crontab -l 2>/dev/null; echo "*/${AUTO_FREQ} * * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/${GS_FILENAME} pull > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
 			error_validate
 
@@ -698,19 +715,23 @@ function echo_need {
 SCRIPT_START=$SECONDS
 	
 	MESSAGE="Evaluating Script Arguments"
-	echo -en "${STAT} ${MESSAGE}"
+	echo_stat
 
 case $# in
 	
 	0)
-		echo -e "\r${FAIL} ${MESSAGE}"
+		echo_fail
 			list_gs_arguments
 	;;
 	
 	1)
    		case $1 in
    	 		pull)
-				echo -e "\r${GOOD} ${MESSAGE}"
+				TASKTYPE='PULL'
+				echo_good
+
+				MESSAGE="${TASKTYPE} Requested"
+				echo_info
 				
 				import_gs
 				
@@ -725,11 +746,16 @@ case $# in
  			;;
 
 			push)	
-				echo -e "\r${GOOD} ${MESSAGE}"
+				TASKTYPE='PUSH'
+				echo_good
+
+				MESSAGE="${TASKTYPE} Requested"
+				echo_info
 				
 				import_gs
 
-				echo -e "${INFO} Validating Folder Configuration"
+				MESSAGE="Validating Folder Configuration"
+				echo_info
 					validate_gs_folders
 					validate_ph_folders
 					validate_os_sshpass
@@ -740,47 +766,59 @@ case $# in
 	
 			version)
 				TASKTYPE='VERSION'
-				echo -e "\r${GOOD} ${MESSAGE}"
+				echo_good
+
+				MESSAGE="${TASKTYPE} Requested"
+				echo_info
 
 				show_version
 				exit_nochange
 			;;
 	
 			update)
-				# TASKTYPE='UPDATE'
-				echo -e "\r${GOOD} ${MESSAGE}"
+				TASKTYPE='UPDATE'
+				echo_good
 				
-				echo -e "${INFO} Update Requested"
-					update_gs
+				MESSAGE="${TASKTYPE} Requested"
+				echo_info
+				
+				update_gs
 				exit_nochange
 			;;
 			
 			beta)
-				# TASKTYPE='BETA'
-				echo -e "\r${GOOD} ${MESSAGE}"
+				TASKTYPE='BETA'
+				echo_good
+
+				MESSAGE="${TASKTYPE} Requested"
+				echo_info
 				
-				echo -e "${INFO} Beta Update Requested"
-					beta_gs
+				beta_gs
 				exit_nochange
 			;;
 	
 			logs)
 				TASKTYPE='LOGS'
+				echo_good
 				
-				echo -e "\r${GOOD} ${MESSAGE}"
-				
-				MESSAGE="Logs Requested"
+				MESSAGE="${TASKTYPE} Requested"
 				echo_info
-					logs_gs
+
+				logs_gs
 			;;
 			
 			compare)
 				TASKTYPE='COMPARE'
+				echo_good
+
+				MESSAGE="${TASKTYPE} Requested"
+				echo_info
 				
-				echo -e "\r${GOOD} ${MESSAGE}"
-					import_gs
+				import_gs
 				
-				echo -e "${INFO} Validating Folder Configuration"
+				MESSAGE="Validating OS Configuration"
+				echo_info
+
 					validate_gs_folders
 					validate_ph_folders
 					validate_os_sshpass
@@ -790,15 +828,20 @@ case $# in
 			
 			cron)
 				TASKTYPE='CRON'
-				echo -e "\r${GOOD} ${MESSAGE}"
+				echo_good
+
+				MESSAGE="${TASKTYPE} Requested"
+				echo_info
 				
 				show_crontab
 			;;
 			
 			config)
 				TASKTYPE='CONFIGURE'
-				echo -e "\r${GOOD} ${MESSAGE}"
-				echo -e "${INFO} Entering ${TASKTYPE} Mode"
+				echo_good
+
+				MESSAGE="${TASKTYPE} Requested"
+				echo_info
 				
 				if [ -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE} ]
 				then		
@@ -821,14 +864,14 @@ case $# in
 			;;	
 
 			*)
-				echo -e "\r${FAIL} ${MESSAGE}"
+				echo_fail
         			list_gs_arguments
 			;;
 		esac
 	;;
 	
 	*)
-		echo -e "\r${FAIL} ${MESSAGE}"
+		echo_fail
 			list_gs_arguments
 	;;
 esac
