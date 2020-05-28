@@ -16,6 +16,7 @@ VERSION='1.5.0'
 # GS Folder/File Locations
 LOCAL_FOLDR='gravity-sync' 			# must exist in running user home folder
 CONFIG_FILE='gravity-sync.conf' 	# must exist with primary host/user configured
+GS_FILENAME='gravity-sync.sh'		# must exist because it's this script
 BACKUP_FOLD='backup' 				# must exist as subdirectory in LOCAL_FOLDR
 
 # Logging Folder/File Locations
@@ -600,7 +601,7 @@ function task_automate {
 
 	import_gs
 
-	CRON_CHECK=$(crontab -l | grep -q "$0"  && echo '1' || echo '0')
+	CRON_CHECK=$(crontab -l | grep -q "${GS_FILENAME}"  && echo '1' || echo '0')
 	if [ ${CRON_CHECK} == 1 ]
 	then
 		MESSAGE="Automation Task Already Exists"
@@ -651,7 +652,7 @@ function task_automate {
 
 	MESSAGE="Saving to Crontab"
 		echo -en "${STAT} ${MESSAGE}"
-		(crontab -l 2>/dev/null; echo "*/${AUTO_FREQ} * * * * ${BASH_PATH} $0 pull > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
+		(crontab -l 2>/dev/null; echo "*/${AUTO_FREQ} * * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/${GS_FILENAME} pull > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
 			error_validate
 
 	exit_withchange
@@ -704,7 +705,7 @@ case $# in
 			version)
 				TASKTYPE='VERSION'
 				echo -e "\r${GOOD} ${MESSAGE}"
-				
+
 				show_version
 				exit_nochange
 			;;
