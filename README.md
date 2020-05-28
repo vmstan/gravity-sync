@@ -209,6 +209,8 @@ If you'd like to see the log of what was run the last crontab, you can view that
 ./gravity-sync.sh cron
 ```
 
+Keep in mind if your cron task has never run, you will not see any valid output from this command.
+
 ## Troubleshooting
 If you are just straight up unable to run the `gravity-sync.sh` file, make sure it's marked as an executable by Linux.
 

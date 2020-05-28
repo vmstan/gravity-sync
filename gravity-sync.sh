@@ -297,7 +297,7 @@ function show_crontab {
 		fi
 	else
 		echo -e "\r${FAIL} ${MESSAGE}"
-		echo -e "${INFO} ${LOG_PATH}/${CRONJOB_LOG} cannot be located"
+		echo -e "${INFO} ${LOG_PATH}/${CRONJOB_LOG} not yet created"
 			exit_nochange
 	fi
 }
