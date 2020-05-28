@@ -496,7 +496,7 @@ function config_generate {
 			MESSAGE="Registering Key-Pair on ${REMOTE_HOST}"
 			echo -e "${INFO} ${MESSAGE}"
 			
-			MESSAGE="Enter ${REMOTE_USER}@${REMOTE_HOST} Password"
+			MESSAGE="Enter ${REMOTE_USER}@${REMOTE_HOST} Password Below"
 			echo -e "${NEED} ${MESSAGE}"
 			
 			echo -e "========================================================"
@@ -648,7 +648,7 @@ function task_automate {
 
 	MESSAGE="Saving to Crontab"
 		echo -en "${STAT} ${MESSAGE}"
-		(crontab -l 2>/dev/null; echo "*/${AUTO_FREQ} * * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/$0 pull > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
+		(crontab -l 2>/dev/null; echo "*/${AUTO_FREQ} * * * * ${BASH_PATH} $0 pull > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
 			error_validate
 
 	MESSAGE="${PROGRAM} Execution Automated"
