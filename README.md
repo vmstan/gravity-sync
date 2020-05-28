@@ -17,7 +17,7 @@ The designation of primary and secondary is purely at your discretion and depend
 
 Additionally, some things to consider:
 
-- Gravity Sync has been tested with Ubuntu and Rasbian. It will likely work on other distros but they have not been tested. Please let me know if you have any issues.
+- Gravity Sync is regularly tested during development with Ubuntu and Raspberry Pi OS (previously, Raspbian). As Gravity Sync is just an (admittedly) long bash script, it will likely work on other Linux distributions that have the `bash` shell installed. But please file an Issue if you're unable to run it on another platform.
 - Gravity Sync has not been tested with Docker container deployments of Pi-hole, and is not expected to work there without major modifications. You will need Pi-hole setup with a "traditional" install directly in the base operating system.
 
 ## Installation
@@ -40,7 +40,6 @@ Proceed to the Configuration section.
 So a life on the wildside of file sync isn't for you? That's fine.
 
 Download the latest release from [GitHub](https://github.com/vmstan/gravity-sync/releases) and extract the files to your *secondary* PH server.
-
 
 ```
 cd ~

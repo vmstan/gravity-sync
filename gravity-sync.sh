@@ -595,8 +595,9 @@ function task_automate {
 
 	import_gs
 
-	
+	(crontab -l 2>/dev/null; echo "*/30 * * * * /bin/bash $HOME/${LOCAL_FOLDR}/gravity-sync.sh pull > ${LOG_PATH}/${CRONJOB_LOG} -with args") | crontab -
 
+	exit_withchange
 }	
 
 # SCRIPT EXECUTION ###########################
