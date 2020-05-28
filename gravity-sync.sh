@@ -605,6 +605,8 @@ function task_automate {
 	then
 		MESSAGE="Automation Task Already Exists"
 		echo -e "${INFO} ${MESSAGE}"
+		MESSAGE="Use 'crontab -e' to manually remove/edit"
+		echo -e "${INFO} ${MESSAGE}"
 		exit_nochange
 	fi
 
