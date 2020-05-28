@@ -126,13 +126,13 @@ Gravity Sync will validate that the `sshpass` utility is installed on your syste
 Save. Keep calm, carry on.
 
 ## Execution
-Now test the script. You can run a comparison between the two which will be non-distruptive and see if everything has been configured correctly.
+Now, test Gravity Sync. You can run a comparison between primary and secondary databases, which will be non-distruptive, and see if everything has been configured correctly.
 
 ```bash
 ./gravity-sync.sh compare
 ```
 
-Assuming Gravity Sync runs successfully, it'll indicate if there are changes pending between the two databases. If not, I suggest making a subtle change to a whitelist/blacklist on your primary PH, such as changing a description field or disabling a whitelist item, and then running `./gravity-sync.sh compare` again to validate your installation is working correctly.
+Assuming Gravity Sync runs successfully, it will indicate if there are changes pending between the two databases. If not, make a subtle change to a whitelist/blacklist on your primary PH, such as changing a description field or disabling a whitelist item, and then running `./gravity-sync.sh compare` again to validate your installation is working correctly.
 
 ### The Pull Function
 
@@ -142,7 +142,7 @@ The Gravity Sync Pull, is the standard method of sync operation, and will not pr
 ./gravity-sync.sh pull
 ```
 
-If the execution completes, you will now have overwritten your running gravity.db on the secondary PH after creating a copy of the running database (`gravity.db.backup`) in the `backup` subfolder located with your script. Gravity Sync will also keep a copy of the last sync'd gravity.db from the master, in the `backup` folder identified as `gravity.db.pull` for future use. 
+If the execution completes, you will now have overwritten your running gravity.db on the secondary PH after creating a copy of the running database (`gravity.db.backup`) in the `backup` subfolder located with your script. Gravity Sync will also keep a copy of the last sync'd gravity.db from the primary (in the `backup` folder identified as `gravity.db.pull`) for future use. 
 
 Finally, a file called `gravity-sync.log` will be created in the `gravity-sync` folder along side the script with the date the script was last executed appended to the bottom.
 
@@ -225,3 +225,5 @@ chmod +x gravity-sync.sh
 - If you'd like to know what version of the script you have running by running `./gravity-sync.sh version` 
 - If the update script fails, make sure you did your original deployment via `git clone` and not a manual install. 
 - If it doesn't kick off, you can manually execute a `git pull` while in the `gravity-sync` directory. 
+
+If all else fails, delete the entire `gravity-sync` folder from your system and re-deploy. This will have no impact on your replicated databases. 

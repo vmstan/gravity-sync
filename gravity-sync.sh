@@ -73,12 +73,12 @@ function import_gs {
 			error_validate
 			
 		MESSAGE="Using ${REMOTE_USER}@${REMOTE_HOST}"
-		echo -e "${INFO} ${MESSAGE}"
+		echo_info
 	else
 		echo -e "\r${FAIL} ${MESSAGE}"
 		
 		MESSAGE="${CONFIG_FILE} Missing"
-		echo -e "${INFO} ${MESSAGE}"
+		echo_info
 
 		TASKTYPE='CONFIG'
 		config_generate
@@ -93,7 +93,7 @@ function update_gs {
 	# logs_export 	# dumps log prior to execution because script stops after successful pull
 	
 	MESSAGE="Requires GitHub Installation" 
-	echo -e "${INFO} ${MESSAGE}"
+	echo_info
 		git reset --hard
 		git pull
 	exit
@@ -105,7 +105,7 @@ function beta_gs {
 	# logs_export 	# dumps log prior to execution because script stops after successful pull
 	
 	MESSAGE="Requires GitHub Installation" 
-	echo -e "${INFO} ${MESSAGE}"
+	echo_info
 		git reset --hard
 		git fetch origin
 		git pull origin development
@@ -117,10 +117,13 @@ function beta_gs {
 function pull_gs {
 	TASKTYPE='PULL'
 	
-	echo -e "${INFO} ${TASKTYPE} Requested"
+	MESSAGE="${TASKTYPE} Requested"
+	echo_info
+
 	md5_compare
 	
-	echo -e "${INFO} ${TASKTYPE} Commencing"
+	MESSAGE="${TASKTYPE} Starting"
+	echo_info
 	
 	MESSAGE="Backing Up ${GRAVITY_FI} on $HOSTNAME"
 	echo -en "${STAT} ${MESSAGE}"
@@ -176,7 +179,7 @@ function pull_gs {
 		fi
 		
 	MESSAGE="Inverting Tachyon Pulse"
-	echo -e "${INFO} ${MESSAGE}"
+	echo_info
 		sleep 1	
 	
 	MESSAGE="Updating FTLDNS Configuration"
@@ -226,7 +229,7 @@ function push_gs {
 				error_validate	
 	
 			MESSAGE="Contacting Borg Collective"
-			echo -e "${INFO} ${MESSAGE}"
+			echo_info
 				sleep 1	
 	
 			MESSAGE="Updating FTLDNS Configuration"
@@ -343,7 +346,7 @@ function validate_ph_folders {
 ## Validate SSHPASS
 function validate_os_sshpass {
 	MESSAGE="Checking SSH Configuration"
-    echo -e "${INFO} ${MESSAGE}"
+    echo_info
 	
 	if hash sshpass 2>/dev/null
     then
@@ -367,7 +370,7 @@ function validate_os_sshpass {
 		MESSAGE="Using SSH Key-Pair Authentication"
     fi
 	
-	echo -e "${INFO} ${MESSAGE}"
+	echo_info
 	
 	MESSAGE="Testing SSH Connection"
 	echo -en "${STAT} ${MESSAGE}"
@@ -437,7 +440,7 @@ function config_generate {
 	if hash sshpass 2>/dev/null
 	then
 		MESSAGE="SSHPASS Utility Detected"
-		echo -e "${INFO} ${MESSAGE}"
+		echo_info
 		
 		MESSAGE="Do you want to configure password based SSH authentication?"
 		echo -e "${WARN} ${MESSAGE}"
@@ -455,10 +458,10 @@ function config_generate {
 		
 	else
 		MESSAGE="SSHPASS Not Installed"
-		echo -e "${INFO} ${MESSAGE}"
+		echo_info
 		
 		MESSAGE="Defaulting to SSH Key-Pair Authentication"
-		echo -e "${INFO} ${MESSAGE}"
+		echo_info
 	fi
 	
 	if [ -z $INPUT_REMOTE_PASS ]
@@ -466,10 +469,10 @@ function config_generate {
 		if [ -f $HOME/${SSH_PKIF} ]
 		then
 			MESSAGE="Using Existing ~/${SSH_PKIF}"
-			echo -e "${INFO} ${MESSAGE}"
+			echo_info
 		else
 			MESSAGE="Generating ~/${SSH_PKIF}"
-			echo -e "${INFO} ${MESSAGE}"
+			echo_info
 			
 			MESSAGE="Accept All Defaults"
 			echo -e "${WARN} ${MESSAGE}"
@@ -495,7 +498,7 @@ function config_generate {
 		if [ -f $HOME/${SSH_PKIF} ]
 		then
 			MESSAGE="Registering Key-Pair on ${REMOTE_HOST}"
-			echo -e "${INFO} ${MESSAGE}"
+			echo_info
 			
 			MESSAGE="Enter ${REMOTE_USER}@${REMOTE_HOST} Password Below"
 			echo -e "${NEED} ${MESSAGE}"
@@ -558,7 +561,7 @@ function exit_nochange {
 function exit_withchange {
 	SCRIPT_END=$SECONDS
 	MESSAGE="${PROGRAM} ${TASKTYPE} Completed in $((SCRIPT_END-SCRIPT_START)) seconds"
-	echo -e "${INFO} ${MESSAGE}"
+	echo_info
 	exit 0
 }
 
@@ -605,14 +608,14 @@ function task_automate {
 	if [ ${CRON_CHECK} == 1 ]
 	then
 		MESSAGE="Automation Task Already Exists"
-		echo -e "${INFO} ${MESSAGE}"
+		echo_info
 		MESSAGE="Use 'crontab -e' to manually remove/edit"
-		echo -e "${INFO} ${MESSAGE}"
+		echo_info
 		exit_nochange
 	fi
 
 	MESSAGE="Set Automation Frequency Per Hour"
-	echo -e "${INFO} ${MESSAGE}"
+	echo_info
 
 	MESSAGE="1  = Every 60 Minutes"
 	echo -e "++++++ ${MESSAGE}"
@@ -658,6 +661,39 @@ function task_automate {
 	exit_withchange
 }	
 
+# Echo Stack
+## Informative
+function echo_info {
+	echo -e "${INFO} ${MESSAGE}"
+}
+
+## Warning
+function echo_warn {
+	echo -e "${WARN} ${MESSAGE}"
+}
+
+## Executing
+function echo_stat {
+	echo -en "${STAT} ${MESSAGE}"
+} 
+
+## Success
+function echo_good {
+	echo -e "\r${GOOD} ${MESSAGE}"
+}
+
+## Failure
+function echo_fail {
+	echo -e "\r${FAIL} ${MESSAGE}"
+}
+
+## Request
+function echo_need {
+	echo -en "${NEED} ${MESSAGE}: "
+}
+
+
+
 # SCRIPT EXECUTION ###########################
 SCRIPT_START=$SECONDS
 	
@@ -679,7 +715,7 @@ case $# in
 				import_gs
 				
 				MESSAGE="Validating Folder Configuration"
-				echo -e "${INFO} ${MESSAGE}"
+				echo_info
 					validate_gs_folders
 					validate_ph_folders
 					validate_os_sshpass
@@ -734,7 +770,7 @@ case $# in
 				echo -e "\r${GOOD} ${MESSAGE}"
 				
 				MESSAGE="Logs Requested"
-				echo -e "${INFO} ${MESSAGE}"
+				echo_info
 					logs_gs
 			;;
 			
@@ -770,7 +806,7 @@ case $# in
 
 				else
 					MESSAGE="${CONFIG_FILE} Missing"
-					echo -e "${INFO} ${MESSAGE}"
+					echo_info
 					
 					config_generate
 				fi
