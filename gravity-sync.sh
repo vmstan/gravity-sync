@@ -646,6 +646,7 @@ function task_automate {
 	else
 		MESSAGE="Invalid Input"
 		echo -e "${FAIL} ${MESSAGE}"
+		exit_nochange
 	fi
 
 	MESSAGE="Saving to Crontab"
