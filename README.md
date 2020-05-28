@@ -44,7 +44,7 @@ Download the latest release from [GitHub](https://github.com/vmstan/gravity-sync
 
 ```bash
 cd ~
-wget https://github.com/vmstan/gravity-sync/archive/v1.5.0zip
+wget https://github.com/vmstan/gravity-sync/archive/v1.5.0.zip
 unzip v1.5.0.zip
 mv ~/gravity-sync-1.5.0 ~/gravity-sync
 cd gravity-sync
