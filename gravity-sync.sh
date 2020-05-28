@@ -192,55 +192,54 @@ function pull_gs {
 function push_gs {
 	md5_compare
 	
-	MESSAGE="Are you sure you want to overwrite ${GRAVITY_DB} on ${REMOTE_HOST}?"
-	echo_warn
-	select yn in "Yes" "No"; do
-		case $yn in
-		Yes )
-			
-			MESSAGE="Backing Up ${GRAVITY_FI} from ${REMOTE_HOST}"
-			echo_stat
-				${SSHPASSWORD} rsync -e "ssh -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push >/dev/null 2>&1
-				error_validate
+	MESSAGE="Enter FIRE-PHOTON-TORPEDOS at this prompt to confirm"
+	echo_need
+
+	read INPUT_TORPEDOS
+
+	if [ "${INPUT_TORPEDOS}" != "FIRE-PHOTON-TORPEDOS" ]
+	then
+		MESSAGE="${TASKTYPE} Aborted"
+		echo_info
+		exit_nochange
+	fi
+
+	MESSAGE="Backing Up ${GRAVITY_FI} from ${REMOTE_HOST}"
+	echo_stat
+		${SSHPASSWORD} rsync -e "ssh -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push >/dev/null 2>&1
+		error_validate
+
+	MESSAGE="Pushing ${GRAVITY_FI} to ${REMOTE_HOST}"
+	echo_stat
+		${SSHPASSWORD} rsync --rsync-path="sudo rsync" -e "ssh -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+		error_validate
+
+	MESSAGE="Setting Permissions on ${GRAVITY_FI}"
+	echo_stat	
+		${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
+		error_validate
+
+	MESSAGE="Setting Ownership on ${GRAVITY_FI}"
+	echo_stat	
+		${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
+		error_validate	
+
+	MESSAGE="Contacting Borg Collective"
+	echo_info
+		sleep 1	
+
+	MESSAGE="Updating FTLDNS Configuration"
+	echo_stat
+		${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${PIHOLE_BIN} restartdns reloadlists" >/dev/null 2>&1
+		error_validate
 	
-			MESSAGE="Pushing ${GRAVITY_FI} to ${REMOTE_HOST}"
-			echo_stat
-				${SSHPASSWORD} rsync --rsync-path="sudo rsync" -e "ssh -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
-				error_validate
+	MESSAGE="Reloading FTLDNS Services"
+	echo_stat	
+		${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${PIHOLE_BIN} restartdns" >/dev/null 2>&1
+		error_validate
 	
-			MESSAGE="Setting Permissions on ${GRAVITY_FI}"
-			echo_stat	
-				${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
-				error_validate
-		
-			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
-			echo_stat	
-				${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
-				error_validate	
-	
-			MESSAGE="Contacting Borg Collective"
-			echo_info
-				sleep 1	
-	
-			MESSAGE="Updating FTLDNS Configuration"
-			echo_stat
-				${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${PIHOLE_BIN} restartdns reloadlists" >/dev/null 2>&1
-				error_validate
-			
-			MESSAGE="Reloading FTLDNS Services"
-			echo_stat	
-				${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${PIHOLE_BIN} restartdns" >/dev/null 2>&1
-				error_validate
-			
-			logs_export
-			exit_withchange
-		;;
-		
-		No )
-			exit_nochange
-		;;
-		esac
-	done
+	logs_export
+	exit_withchange
 }
 
 function yank_gs {
@@ -258,7 +257,7 @@ function yank_gs {
 		echo_info
 		exit_nochange
 	fi
-	
+
 	MESSAGE="Restoring ${GRAVITY_FI} on $HOSTNAME"
 	echo_stat	
 		sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.backup ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
