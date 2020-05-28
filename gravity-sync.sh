@@ -2,7 +2,7 @@
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.4.4'
+VERSION='1.5.0'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -415,12 +415,12 @@ function config_generate {
 	cp $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}.example $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 	error_validate
 	
-	MESSAGE="Enter IP or DNS of primary Pi-hole server"
-	echo -e "${NEED} ${MESSAGE}"
+	MESSAGE="Enter IP or DNS of primary Pi-hole server: "
+	echo -en "${NEED} ${MESSAGE}"
 	read INPUT_REMOTE_HOST
 	
-	MESSAGE="Enter SSH user with SUDO rights on primary Pi-hole server"
-	echo -e "${NEED} ${MESSAGE}"
+	MESSAGE="Enter SSH user with SUDO rights on primary Pi-hole server: "
+	echo -en "${NEED} ${MESSAGE}"
 	read INPUT_REMOTE_USER
 	
 	MESSAGE="Saving Host to ${CONFIG_FILE}"
@@ -442,9 +442,9 @@ function config_generate {
 		echo -e "${WARN} ${MESSAGE}"
 		MESSAGE="Your password will be stored clear-text in the ${CONFIG_FILE}!"
 		echo -e "${WARN} ${MESSAGE}"
-		MESSAGE="Leave blank to use (preferred) SSH Key-Pair Authentication:"
-		
-		echo -e "${NEED} ${MESSAGE}"
+
+		MESSAGE="Leave blank to use (preferred) SSH Key-Pair Authentication: "
+		echo -en "${NEED} ${MESSAGE}"
 		read INPUT_REMOTE_PASS
 				
 		MESSAGE="Saving Password to ${CONFIG_FILE}"
@@ -556,7 +556,8 @@ function exit_nochange {
 ## Changes Made
 function exit_withchange {
 	SCRIPT_END=$SECONDS
-	echo -e "${INFO} ${PROGRAM} ${TASKTYPE} Completed in $((SCRIPT_END-SCRIPT_START)) seconds"
+	MESSAGE="${PROGRAM} ${TASKTYPE} Completed in $((SCRIPT_END-SCRIPT_START)) seconds"
+	echo -e "${INFO} ${MESSAGE}"
 	exit 0
 }
 
@@ -567,6 +568,7 @@ function list_gs_arguments {
 	echo -e ""
 	echo -e "Setup Options:"
 	echo -e " ${YELLOW}config${NC}		Create a new ${CONFIG_FILE} file"
+	echo -e " ${YELLOW}automate${NC}	Add scheduled task to run sync"
 	echo -e ""
 	echo -e "Replication Options:"
 	echo -e " ${YELLOW}pull${NC}		Sync the ${GRAVITY_FI} database on primary PH to this server"
@@ -597,6 +599,14 @@ function task_automate {
 	echo -e "\r${GOOD} ${MESSAGE}"
 
 	import_gs
+
+	CRON_CHECK=$(crontab -l | grep -q "$0"  && echo '1' || echo '0')
+	if [ ${CRON_CHECK} == 1 ]
+	then
+		MESSAGE="Automation Task Already Exists"
+		echo -e "${INFO} ${MESSAGE}"
+		exit_nochange
+	fi
 
 	MESSAGE="Set Automation Frequency Per Hour"
 	echo -e "${INFO} ${MESSAGE}"
