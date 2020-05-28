@@ -621,7 +621,7 @@ function task_automate {
 	echo -e "++++++ ${MESSAGE}"
 	MESSAGE="6  = Every 10 Minutes"
 	echo -e "++++++ ${MESSAGE}"
-	MESSAGE="12 = Every 5 Minutes"
+	MESSAGE="12 = Every 05 Minutes"
 	echo -e "++++++ ${MESSAGE}"
 	
 	MESSAGE="Input Automation Frequency: "
