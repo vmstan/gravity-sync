@@ -834,7 +834,7 @@ case $# in
 				exit
 			;;
 
-			push)	
+			yank)	
 				TASKTYPE='YANK'
 				echo_good
 
