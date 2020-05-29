@@ -480,28 +480,34 @@ function md5_compare {
 		HASHMARK=$((HASHMARK+1))
 	fi
 
-	MESSAGE="Comparing ${CUSTOM_DNS} Changes"
-	echo_info
-	
-	MESSAGE="Analyzing Remote ${CUSTOM_DNS}"
-	echo_stat
-	primaryCLMD5=$(${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${CUSTOM_DNS}")
-		error_validate
-	
-	MESSAGE="Analyzing Local ${CUSTOM_DNS}"
-	echo_stat
-	secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS})
-		error_validate
-	
-	if [ "$primaryCLMD5" == "$secondCLMD5" ]
+	if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
 	then
-		MESSAGE="No Differences in ${CUSTOM_DNS}"
+		MESSAGE="Comparing ${CUSTOM_DNS} Changes"
 		echo_info
-		HASHMARK=$((HASHMARK+0))
+		
+		MESSAGE="Analyzing Remote ${CUSTOM_DNS}"
+		echo_stat
+		primaryCLMD5=$(${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${CUSTOM_DNS}")
+			error_validate
+		
+		MESSAGE="Analyzing Local ${CUSTOM_DNS}"
+		echo_stat
+		secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS})
+			error_validate
+		
+		if [ "$primaryCLMD5" == "$secondCLMD5" ]
+		then
+			MESSAGE="No Differences in ${CUSTOM_DNS}"
+			echo_info
+			HASHMARK=$((HASHMARK+0))
+		else
+			MESSAGE="Changes Detected in ${CUSTOM_DNS}"
+			echo_info
+			HASHMARK=$((HASHMARK+1))
+		fi
 	else
-		MESSAGE="Changes Detected in ${CUSTOM_DNS}"
+		MESSAGE="No Local ${CUSTOM_DNS} Detected"
 		echo_info
-		HASHMARK=$((HASHMARK+1))
 	fi
 
 	if [ "$HASHMARK" != "0" ]
