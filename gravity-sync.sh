@@ -192,17 +192,7 @@ function pull_gs {
 function push_gs {
 	md5_compare
 	
-	MESSAGE="Enter FIRE PHOTON TORPEDOS at this prompt to confirm"
-	echo_need
-
-	read INPUT_TORPEDOS
-
-	if [ "${INPUT_TORPEDOS}" != "FIRE PHOTON TORPEDOS" ]
-	then
-		MESSAGE="${TASKTYPE} Aborted"
-		echo_info
-		exit_nochange
-	fi
+	intent_validate
 
 	MESSAGE="Backing Up ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo_stat
@@ -246,17 +236,7 @@ function restore_gs {
 	MESSAGE="This will restore ${GRAVITY_FI} on $HOSTNAME with the previous version!"
 	echo_warn
 
-	MESSAGE="Enter FIRE ALL PHASERS at this prompt to confirm"
-	echo_need
-
-	read INPUT_PHASER
-
-	if [ "${INPUT_PHASER}" != "FIRE ALL PHASERS" ]
-	then
-		MESSAGE="${TASKTYPE} Aborted"
-		echo_info
-		exit_nochange
-	fi
+	intent_validate
 
 	MESSAGE="Restoring ${GRAVITY_FI} on $HOSTNAME"
 	echo_stat	
@@ -494,6 +474,36 @@ function md5_compare {
 	fi
 }
 
+## Validate Intent
+function intent_validate {
+	PHASER=$(( ( RANDOM % 4 )  + 1 ))
+	if [ "$PHASER" = "1" ]
+	then
+		INTENT="FIRE PHOTON TORPEDOS"
+	elif [ "$PHASER" = "2" ]
+	then
+		INTENT="FIRE ALL PHASERS"
+	elif [ "$PHASER" = "3" ]
+	then
+		INTENT="EJECT THE WARPCORE"
+	elif [ "$PHASER" = "4" ]
+	then
+		INTENT="ENGAGE TRACTOR BEAM"
+	fi
+	
+	MESSAGE="Enter ${INTENT} at this prompt to confirm"
+	echo_need
+
+	read INPUT_INTENT
+
+	if [ "${INPUT_INTENT}" != "${INTENT}" ]
+	then
+		MESSAGE="${TASKTYPE} Aborted"
+		echo_info
+		exit_nochange
+	fi
+}
+
 # Configuration Management
 ## Generate New Configuration
 function config_generate {
@@ -615,23 +625,14 @@ function config_delete {
 	MESSAGE="Are you sure you want to erase this configuration?"
 	echo_warn
 
-	MESSAGE="Enter EJECT THE WARPCORE at this prompt to confirm"
-	echo_need
+	intent_validate
 
-	read INPUT_WARPCORE
+	MESSAGE="Erasing Existing Configuration"
+	echo_stat
+	rm -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+		error_validate
 
-	if [ "${INPUT_WARPCORE}" != "EJECT THE WARPCORE" ]
-	then
-		MESSAGE="${TASKTYPE} Aborted"
-		echo_info
-		exit_nochange
-	else
-		MESSAGE="Erasing Existing Configuration"
-		echo_stat
-		rm -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
-			error_validate
-		config_generate
-	fi
+	config_generate
 }
 
 # Exit Codes
