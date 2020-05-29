@@ -886,6 +886,10 @@ function list_gs_arguments {
 function show_version {
 	MESSAGE="${PROGRAM} ${VERSION}"
 	echo_info
+
+	GITVERSION=$(curl https://raw.githubusercontent.com/vmstan/gravity-sync/development/VERSION)
+	MESSAGE="Latest Version: ${GITVERSION}"
+	echo_info
 }
 
 # Task Stack
