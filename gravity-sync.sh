@@ -284,7 +284,7 @@ function restore_gs {
 				error_validate
 		fi
 		
-	MESSAGE="Evacuating Turbolifts"
+	MESSAGE="Evacuating Saucer Section"
 	echo_info
 		sleep 1	
 	
