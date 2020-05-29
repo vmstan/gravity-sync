@@ -177,7 +177,7 @@ function pull_gs {
 
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
-		if [ $REMOTE_CUSTOM_DNS == "1" ]
+		if [ "$REMOTE_CUSTOM_DNS" == "1" ]
 		then
 			MESSAGE="Backing Up ${CUSTOM_DNS} on $HOSTNAME"
 			echo_stat
@@ -280,7 +280,7 @@ function push_gs {
 
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
-		if [ $REMOTE_CUSTOM_DNS == "1" ]
+		if [ "$REMOTE_CUSTOM_DNS" == "1" ]
 		then
 			MESSAGE="Backing Up ${CUSTOM_DNS} from ${REMOTE_HOST}"
 			echo_stat
@@ -374,7 +374,7 @@ function restore_gs {
 
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
-		if [ $REMOTE_CUSTOM_DNS == "1" ]
+		if [ "$REMOTE_CUSTOM_DNS" == "1" ]
 		then
 			MESSAGE="Restoring ${CUSTOM_DNS} on $HOSTNAME"
 			echo_stat
