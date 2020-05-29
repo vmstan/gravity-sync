@@ -319,6 +319,7 @@ function push_gs {
 	
 	logs_export
 	exit_withchange
+	
 }
 
 function restore_gs {
