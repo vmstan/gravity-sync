@@ -2,7 +2,27 @@
 
 ## 1.7
 
+**Features**
+
+- Gravity Sync will now manage the custom.list file that contains the "Local DNS Records" function within the Pi-hole interface.
+- If you do not want this feature enabled it can be bypassed by adding a SKIP_CUSTOM='1' to your .conf file. 
+- Sync will be trigged during a pull operation if there are changes to either file.
+
+**Known Issues**
+
+- No new Star Trek references.
+
 ## 1.6
+
+**Features**
+
+- New ./gravity-sync restore function will bring a previous version of the gravity.db back from the dead.
+- Changes way that GS prompts for data input and how confirmation prompts are handled.
+- Adds ability to override verification of push, restore or config reset, see .example file for details.
+- Five new Star Trek references.
+
+**Bug Fixes**
+- New functions add consistency in status output.
 
 ## 1.5
 
@@ -29,6 +49,8 @@
 
 ## 1.1
 
+Moved from Gist.
+
 ### 1.1.6
 ### 1.1.5
 ### 1.1.4
@@ -37,7 +59,7 @@
 
 ## 1.0
 
-Initial release, to [vmstan.com](https://vmstan.com/gravity-sync)
+Initial release, to Andrew, internal Slack and eventually [vmstan.com](https://vmstan.com/gravity-sync)
 
 ```
 echo 'Copying gravity.db from HA primary'
