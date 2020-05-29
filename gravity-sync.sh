@@ -887,10 +887,10 @@ function show_version {
 	MESSAGE="${PROGRAM} by @vmstan"
 	echo_info
 	
-	MESSAGE="Current Version: ${VERSION}"
+	MESSAGE="Running Version: ${VERSION}"
 	echo_info
 
-	GITVERSION=$(curl -s https://raw.githubusercontent.com/vmstan/gravity-sync/development/VERSION)
+	GITVERSION=$(curl -s https://raw.githubusercontent.com/vmstan/gravity-sync/master/VERSION)
 	MESSAGE="Latest Version: ${GITVERSION}"
 	echo_info
 }
