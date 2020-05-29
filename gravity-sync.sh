@@ -884,10 +884,13 @@ function list_gs_arguments {
 
 # Output Version
 function show_version {
-	MESSAGE="${PROGRAM} ${VERSION}"
+	MESSAGE="${PROGRAM} by @vmstan"
+	echo_info
+	
+	MESSAGE="Current Version: ${VERSION}"
 	echo_info
 
-	GITVERSION=$(curl https://raw.githubusercontent.com/vmstan/gravity-sync/development/VERSION)
+	GITVERSION=$(curl -s https://raw.githubusercontent.com/vmstan/gravity-sync/development/VERSION)
 	MESSAGE="Latest Version: ${GITVERSION}"
 	echo_info
 }
