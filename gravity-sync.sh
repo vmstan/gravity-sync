@@ -2,7 +2,7 @@
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.5.0'
+VERSION='1.6.0'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -23,6 +23,9 @@ BACKUP_FOLD='backup' 				# must exist as subdirectory in LOCAL_FOLDR
 LOG_PATH="$HOME/${LOCAL_FOLDR}"		# replace in gravity-sync.conf to overwrite
 SYNCING_LOG='gravity-sync.log' 		# replace in gravity-sync.conf to overwrite
 CRONJOB_LOG='gravity-sync.cron' 	# replace in gravity-sync.conf to overwrite
+
+# Interaction Customization
+VERIFY_PASS='0'						# replace in gravity-sync.conf to overwrite
 
 # PH Folder/File Locations
 PIHOLE_DIR='/etc/pihole' 			# default PH data directory
@@ -476,31 +479,37 @@ function md5_compare {
 
 ## Validate Intent
 function intent_validate {
-	PHASER=$(( ( RANDOM % 4 )  + 1 ))
-	if [ "$PHASER" = "1" ]
+	if [ "$VERIFY_PASS" == "0" ]
 	then
-		INTENT="FIRE PHOTON TORPEDOS"
-	elif [ "$PHASER" = "2" ]
-	then
-		INTENT="FIRE ALL PHASERS"
-	elif [ "$PHASER" = "3" ]
-	then
-		INTENT="EJECT THE WARPCORE"
-	elif [ "$PHASER" = "4" ]
-	then
-		INTENT="ENGAGE TRACTOR BEAM"
-	fi
-	
-	MESSAGE="Enter ${INTENT} at this prompt to confirm"
-	echo_need
+		PHASER=$((( RANDOM % 4 ) + 1 ))
+		if [ "$PHASER" = "1" ]
+		then
+			INTENT="FIRE PHOTON TORPEDOS"
+		elif [ "$PHASER" = "2" ]
+		then
+			INTENT="FIRE ALL PHASERS"
+		elif [ "$PHASER" = "3" ]
+		then
+			INTENT="EJECT THE WARPCORE"
+		elif [ "$PHASER" = "4" ]
+		then
+			INTENT="ENGAGE TRACTOR BEAM"
+		fi
+		
+		MESSAGE="Enter ${INTENT} at this prompt to confirm"
+		echo_need
 
-	read INPUT_INTENT
+		read INPUT_INTENT
 
-	if [ "${INPUT_INTENT}" != "${INTENT}" ]
-	then
-		MESSAGE="${TASKTYPE} Aborted"
-		echo_info
-		exit_nochange
+		if [ "${INPUT_INTENT}" != "${INTENT}" ]
+		then
+			MESSAGE="${TASKTYPE} Aborted"
+			echo_info
+			exit_nochange
+		fi
+	else
+		MESSAGE="Verification Bypassed"
+		echo_warn
 	fi
 }
 
