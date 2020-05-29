@@ -26,6 +26,7 @@ CRONJOB_LOG='gravity-sync.cron' 	# replace in gravity-sync.conf to overwrite
 
 # Interaction Customization
 VERIFY_PASS='0'						# replace in gravity-sync.conf to overwrite
+SKIP_CUSTOM='0'
 
 # Pi-hole Folder/File Locations
 PIHOLE_DIR='/etc/pihole' 			# default Pi-hole data directory
