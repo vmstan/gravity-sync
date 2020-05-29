@@ -6,9 +6,9 @@ That's Gravity Sync.
 
 ![Pull execution](https://user-images.githubusercontent.com/3002053/82915078-e870a180-9f35-11ea-8b36-271a02acdeaa.gif)
 
-At it's core, Gravity Sync is maybe a handful of core bash commands, that uses rsync to reach out to a remote host, copy the running `gravity.db` file that contains the Pi-hole blocklist, and then replaces the copy on the local system. What Gravity Sync provides is an easy way to keep this happening in the background. Ideally you set it and forget it. In the long term, it would be awesome if the Pi-hole team made this entire script unncessary.
+At it's core, Gravity Sync is maybe a handful of core bash commands, that uses rsync to reach out to a remote host, copy the running `gravity.db` and `custom.list` files that contains the Pi-hole blocklist, as well as the `custom.list` file that contains local DNS enteries, and then replaces the copy on the local system. What Gravity Sync provides is an easy way to keep this happening in the background. Ideally you set it and forget it. In the long term, it would be awesome if the Pi-hole team made this entire script unncessary.
 
-Gravity Sync will **not** overwrite device specific settings such as local network configuration, admin/API passwords/keys, local hostfiles, upstream DNS resolvers, etc. It will also **not** keep DHCP settings or device leases synchronized. 
+Gravity Sync will **not** overwrite device specific settings such as device network configuration, admin/API passwords/keys, upstream DNS resolvers, etc. It will also **not** keep DHCP settings or device leases synchronized. 
 
 ## Prerequisites
 Gravity Sync **requires** Pi-hole 5.0 or higher.
@@ -45,9 +45,9 @@ Download the latest release from [GitHub](https://github.com/vmstan/gravity-sync
 
 ```bash
 cd ~
-wget https://github.com/vmstan/gravity-sync/archive/v1.6.0zip
-unzip v1.6.0.zip
-mv ~/gravity-sync-1.6.0 ~/gravity-sync
+wget https://github.com/vmstan/gravity-sync/archive/v1.7.0.zip
+unzip v1.7.0.zip
+mv ~/gravity-sync-1.7.0 ~/gravity-sync
 cd gravity-sync
 ```
 
@@ -96,7 +96,7 @@ Gravity Sync uses SSH to run commands on the primary Pi-hole, and sync the two s
 #### Key-Pair Authentication
 This is the preferred option, as it's more reliable and less dependant on third party plugins.
 
-You'll need to generate an SSH key for your secondary Pi-hole user and copy it to your primary Pi-hole. This will allow you to connect to and copy the gravity.db file without needing a password each time. When generating the SSH key, accept all the defaults and do not put a passphrase on your key file.
+You'll need to generate an SSH key for your secondary Pi-hole user and copy it to your primary Pi-hole. This will allow you to connect to and copy the necessary files without needing a password each time. When generating the SSH key, accept all the defaults and do not put a passphrase on your key file.
 
 *Note: If you already have this setup on your systems for other purposes, you can skip this step.*
 
@@ -143,7 +143,7 @@ The Gravity Sync Pull, is the standard method of sync operation, and will not pr
 ./gravity-sync.sh pull
 ```
 
-If the execution completes, you will now have overwritten your running gravity.db on the secondary Pi-hole after creating a copy of the running database (`gravity.db.backup`) in the `backup` subfolder located with your script. Gravity Sync will also keep a copy of the last sync'd gravity.db from the primary (in the `backup` folder identified as `gravity.db.pull`) for future use. 
+If the execution completes, you will now have overwritten your running `gravity.db` and `custom.list` on the secondary Pi-hole after creating a copy of the running files (with `.backup` appended) in the `backup` subfolder located with your script. Gravity Sync will also keep a copy of the last sync'd files from the primary (in the `backup` folder appended with `.pull`) for future use. 
 
 Finally, a file called `gravity-sync.log` will be created in the `gravity-sync` folder along side the script with the date the script was last executed appended to the bottom.
 
@@ -156,7 +156,7 @@ Gravity Sync includes the ability to `push` from the secondary Pi-hole back to t
 ./gravity-sync.sh push
 ```
 
-Before executing, this will make a copy of the remote database under `backup/gravity.db.push` then sync the local configuration to the primary Pi-hole.
+Before executing, this will make a copy of the remote database under `backup/gravity.db.push` and `backup/custom.list.push` then sync the local configuration to the primary Pi-hole.
 
 This function purposefuly asks for user interaction to avoid being accidentally automated.
 
@@ -167,7 +167,7 @@ Graviy Sync can also `restore` the database on the secondary Pi-hole in the even
 ./gravity-sync.sh restore
 ```
 
-This will copy your last `gravity.db.backup` to the running copy on the secondary Pi-hole.
+This will copy your last `gravity.db.backup` and  `custom.list.backup` to the running copy on the secondary Pi-hole.
 
 This function purposefuly asks for user interaction to avoid being accidentally automated.
 
