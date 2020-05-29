@@ -28,4 +28,5 @@ REMOTE_PASS=''
 # CRONJOB_LOG=''
 
 # VERIFY_PASS=''        # 0=Verify 1=Bypass
-# SKIP_CUSTOM=''		# 0=Syncit 1=Skip
+# SKIP_CUSTOM=''		# 0=SyncIt 1=SkipIt
+# DATE_OUTPUT=''        $ 0=NoShow 1=ShowIt (na)
