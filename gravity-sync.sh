@@ -174,63 +174,65 @@ function pull_gs {
 				sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 				error_validate
 		fi
-		
-	if [ $REMOTE_CUSTOM_DNS == "1" ]
-	then
-		MESSAGE="Backing Up ${CUSTOM_DNS} on $HOSTNAME"
-		echo_stat
-			cp ${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.backup >/dev/null 2>&1
-			error_validate
-		
-		MESSAGE="Pulling ${CUSTOM_DNS} from ${REMOTE_HOST}"
-		echo_stat
-			${SSHPASSWORD} rsync -e "ssh -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull >/dev/null 2>&1
-			error_validate
-			
-		MESSAGE="Replacing ${CUSTOM_DNS} on $HOSTNAME"
-		echo_stat	
-			sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
-			error_validate
-		
-		MESSAGE="Validating Ownership on ${CUSTOM_DNS}"
-		echo_stat
-			
-			CUSTOMLS_OWN=$(ls -ld ${PIHOLE_DIR}/${CUSTOM_DNS} | awk '{print $3 $4}')
-			if [ $CUSTOMLS_OWN == "rootroot" ]
-			then
-				echo_good
-			else
-				echo_fail
-				
-				MESSAGE="Attempting to Compensate"
-				echo_info
-				
-				MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
-				echo_stat	
-					sudo chown root:root ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
-					error_validate
-			fi
-			
-		MESSAGE="Validating Permissions on ${CUSTOM_DNS}"
-		echo_stat
-		
-			GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | awk '{print $1}')
-			if [ $CUSTOMLS_RWE = "-rw-r--r--" ]
-			then
-				echo_good
-			else
-				echo_fail
-					
-				MESSAGE="Attempting to Compensate"
-				echo_info
-			
-				MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
-				echo_stat
-					sudo chmod 644 ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
-					error_validate
-			fi
-	fi
 
+	if [ "$SKIP_CUSTOM" != '1' ]
+	then	
+		if [ $REMOTE_CUSTOM_DNS == "1" ]
+		then
+			MESSAGE="Backing Up ${CUSTOM_DNS} on $HOSTNAME"
+			echo_stat
+				cp ${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.backup >/dev/null 2>&1
+				error_validate
+			
+			MESSAGE="Pulling ${CUSTOM_DNS} from ${REMOTE_HOST}"
+			echo_stat
+				${SSHPASSWORD} rsync -e "ssh -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull >/dev/null 2>&1
+				error_validate
+				
+			MESSAGE="Replacing ${CUSTOM_DNS} on $HOSTNAME"
+			echo_stat	
+				sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+				error_validate
+			
+			MESSAGE="Validating Ownership on ${CUSTOM_DNS}"
+			echo_stat
+				
+				CUSTOMLS_OWN=$(ls -ld ${PIHOLE_DIR}/${CUSTOM_DNS} | awk '{print $3 $4}')
+				if [ $CUSTOMLS_OWN == "rootroot" ]
+				then
+					echo_good
+				else
+					echo_fail
+					
+					MESSAGE="Attempting to Compensate"
+					echo_info
+					
+					MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
+					echo_stat	
+						sudo chown root:root ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+						error_validate
+				fi
+				
+			MESSAGE="Validating Permissions on ${CUSTOM_DNS}"
+			echo_stat
+			
+				GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | awk '{print $1}')
+				if [ $CUSTOMLS_RWE = "-rw-r--r--" ]
+				then
+					echo_good
+				else
+					echo_fail
+						
+					MESSAGE="Attempting to Compensate"
+					echo_info
+				
+					MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
+					echo_stat
+						sudo chmod 644 ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+						error_validate
+				fi
+		fi
+	fi
 
 	MESSAGE="Inverting Tachyon Pulse"
 	echo_info
@@ -538,42 +540,45 @@ function md5_compare {
 		HASHMARK=$((HASHMARK+1))
 	fi
 
-	if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
+	if [ "$SKIP_CUSTOM" != '1' ]
 	then
-		MESSAGE="Comparing ${CUSTOM_DNS} Changes"
-		echo_info
-		
-		if ${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${PIHOLE_DIR}/${CUSTOM_DNS}
+		if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
 		then
-			REMOTE_CUSTOM_DNS="1"
-			MESSAGE="Analyzing Remote ${CUSTOM_DNS}"
-			echo_stat
-
-			primaryCLMD5=$(${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${CUSTOM_DNS}")
-				error_validate
+			MESSAGE="Comparing ${CUSTOM_DNS} Changes"
+			echo_info
 			
-			MESSAGE="Analyzing Local ${CUSTOM_DNS}"
-			echo_stat
-			secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS})
-				error_validate
-			
-			if [ "$primaryCLMD5" == "$secondCLMD5" ]
+			if ${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${PIHOLE_DIR}/${CUSTOM_DNS}
 			then
-				MESSAGE="No Differences in ${CUSTOM_DNS}"
-				echo_info
-				HASHMARK=$((HASHMARK+0))
+				REMOTE_CUSTOM_DNS="1"
+				MESSAGE="Analyzing Remote ${CUSTOM_DNS}"
+				echo_stat
+
+				primaryCLMD5=$(${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${CUSTOM_DNS}")
+					error_validate
+				
+				MESSAGE="Analyzing Local ${CUSTOM_DNS}"
+				echo_stat
+				secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS})
+					error_validate
+				
+				if [ "$primaryCLMD5" == "$secondCLMD5" ]
+				then
+					MESSAGE="No Differences in ${CUSTOM_DNS}"
+					echo_info
+					HASHMARK=$((HASHMARK+0))
+				else
+					MESSAGE="Changes Detected in ${CUSTOM_DNS}"
+					echo_info
+					HASHMARK=$((HASHMARK+1))
+				fi
 			else
-				MESSAGE="Changes Detected in ${CUSTOM_DNS}"
+				MESSAGE="No Remote ${CUSTOM_DNS} Detected"
 				echo_info
-				HASHMARK=$((HASHMARK+1))
 			fi
 		else
-			MESSAGE="No Remote ${CUSTOM_DNS} Detected"
+			MESSAGE="No Local ${CUSTOM_DNS} Detected"
 			echo_info
 		fi
-	else
-		MESSAGE="No Local ${CUSTOM_DNS} Detected"
-		echo_info
 	fi
 
 	if [ "$HASHMARK" != "0" ]

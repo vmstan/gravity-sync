@@ -27,5 +27,5 @@ REMOTE_PASS=''
 # SYNCING_LOG=''
 # CRONJOB_LOG=''
 
-# VERIFY_PASS=''    # 0=Verify 1=Bypass
+# VERIFY_PASS=''        # 0=Verify 1=Bypass
 # SKIP_CUSTOM=''		# 0=Syncit 1=Skip
