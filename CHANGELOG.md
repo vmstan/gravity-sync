@@ -11,6 +11,10 @@
 
 - No new Star Trek references.
 
+### 1.7.1
+- There is a changelog file now. I'm mentioning it in the changelog file. So meta.
+- `./gravity-sync.sh version` will alert for new versions.
+
 ## 1.6
 **Features**
 
