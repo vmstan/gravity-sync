@@ -20,6 +20,7 @@ The designation of primary and secondary is purely at your discretion and depend
 Additionally, some things to consider:
 
 - Gravity Sync is regularly tested during development with Ubuntu and Raspberry Pi OS (previously, Raspbian). As Gravity Sync is just an (admittedly) long bash script, it will likely work on other Linux distributions that have the `bash` shell installed. But please file an Issue if you're unable to run it on another platform.
+- Gravity Sync uses SUDO to elevate permissions for itself during execution. You will need to make sure that you have passwordless SUDO enabled for the accounts on both the primary and secondary Pi-hole that will be performing the work. Most of the pre-built images available for the Raspberry Pi already have this configured, but if you have your Pi-hole running in a virtual machine, you may need to adjust this manually. [This tutorial](https://linuxize.com/post/how-to-run-sudo-command-without-password/) may be helpful in this respect.
 - Gravity Sync has not been tested with Docker container deployments of Pi-hole, and is not expected to work there without major modifications. You will need Pi-hole setup with a "traditional" install directly in the base operating system.
 
 ## Installation
