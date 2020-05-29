@@ -174,6 +174,63 @@ function pull_gs {
 				error_validate
 		fi
 		
+	if [ $REMOTE_CUSTOM_DNS == "1" ]
+	then
+		MESSAGE="Backing Up ${CUSTOM_DNS} on $HOSTNAME"
+		echo_stat
+			cp ${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.backup >/dev/null 2>&1
+			error_validate
+		
+		MESSAGE="Pulling ${CUSTOM_DNS} from ${REMOTE_HOST}"
+		echo_stat
+			${SSHPASSWORD} rsync -e "ssh -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull >/dev/null 2>&1
+			error_validate
+			
+		MESSAGE="Replacing ${CUSTOM_DNS} on $HOSTNAME"
+		echo_stat	
+			sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+			error_validate
+		
+		MESSAGE="Validating Ownership on ${CUSTOM_DNS}"
+		echo_stat
+			
+			CUSTOMLS_OWN=$(ls -ld ${PIHOLE_DIR}/${CUSTOM_DNS} | awk '{print $3 $4}')
+			if [ $CUSTOMLS_OWN == "rootroot" ]
+			then
+				echo_good
+			else
+				echo_fail
+				
+				MESSAGE="Attempting to Compensate"
+				echo_info
+				
+				MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
+				echo_stat	
+					sudo chown root:root ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+					error_validate
+			fi
+			
+		MESSAGE="Validating Permissions on ${CUSTOM_DNS}"
+		echo_stat
+		
+			GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | awk '{print $1}')
+			if [ $CUSTOMLS_RWE = "-rw-r--r--" ]
+			then
+				echo_good
+			else
+				echo_fail
+					
+				MESSAGE="Attempting to Compensate"
+				echo_info
+			
+				MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
+				echo_stat
+					sudo chmod 644 ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+					error_validate
+			fi
+	fi
+
+
 	MESSAGE="Inverting Tachyon Pulse"
 	echo_info
 		sleep 1	
@@ -487,6 +544,7 @@ function md5_compare {
 		
 		if ${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${PIHOLE_DIR}/${CUSTOM_DNS}
 		then
+			REMOTE_CUSTOM_DNS="1"
 			MESSAGE="Analyzing Remote ${CUSTOM_DNS}"
 			echo_stat
 
