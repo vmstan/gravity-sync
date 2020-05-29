@@ -30,6 +30,7 @@ VERIFY_PASS='0'						# replace in gravity-sync.conf to overwrite
 # Pi-hole Folder/File Locations
 PIHOLE_DIR='/etc/pihole' 			# default Pi-hole data directory
 GRAVITY_FI='gravity.db' 			# default Pi-hole database file
+CUSTOM_DNS='custom.list'			# default Pi-hole local DNS lookups
 PIHOLE_BIN='/usr/local/bin/pihole' 	# default Pi-hole binary directory
 
 # OS Settings
@@ -456,24 +457,62 @@ function md5_compare {
 	MESSAGE="Comparing ${GRAVITY_FI} Changes"
 	echo_info
 	
+	HASHMARK='0'
+
 	MESSAGE="Analyzing Remote ${GRAVITY_FI}"
 	echo_stat
-	primaryMD5=$(${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${GRAVITY_FI}")
+	primaryDBMD5=$(${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${GRAVITY_FI}")
 		error_validate
 	
 	MESSAGE="Analyzing Local ${GRAVITY_FI}"
 	echo_stat
-	secondMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI})
+	secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI})
 		error_validate
 	
-	if [ "$primaryMD5" == "$secondMD5" ]
+	if [ "$primaryDBMD5" == "$secondDBMD5" ]
 	then
 		MESSAGE="No Differences in ${GRAVITY_FI}"
 		echo_info
-		exit_nochange
+		HASHMARK=$((HASHMARK+0))
 	else
 		MESSAGE="Changes Detected in ${GRAVITY_FI}"
 		echo_info
+		HASHMARK=$((HASHMARK+1))
+	fi
+
+	MESSAGE="Comparing ${CUSTOM_DNS} Changes"
+	echo_info
+	
+	MESSAGE="Analyzing Remote ${CUSTOM_DNS}"
+	echo_stat
+	primaryCLMD5=$(${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${CUSTOM_DNS}")
+		error_validate
+	
+	MESSAGE="Analyzing Local ${CUSTOM_DNS}"
+	echo_stat
+	secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS})
+		error_validate
+	
+	if [ "$primaryCLMD5" == "$secondCLMD5" ]
+	then
+		MESSAGE="No Differences in ${CUSTOM_DNS}"
+		echo_info
+		HASHMARK=$((HASHMARK+0))
+	else
+		MESSAGE="Changes Detected in ${CUSTOM_DNS}"
+		echo_info
+		HASHMARK=$((HASHMARK+1))
+	fi
+
+	if [ "$HASHMARK" != "0" ]
+	then
+		MESSAGE="Replication Required"
+		echo_info
+		HASHMARK=$((HASHMARK+0))
+	else
+		MESSAGE="No Replication Required"
+		echo_info
+			exit_nochange
 	fi
 }
 
