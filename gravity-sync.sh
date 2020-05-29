@@ -300,7 +300,8 @@ function push_gs {
 			MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
 			echo_stat	
 				${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chown root:root ${PIHOLE_DIR}/${CUSTOM_DNS}" >/dev/null 2>&1
-				error_validate	
+				error_validate
+		fi	
 	fi
 
 	MESSAGE="Contacting Borg Collective"
@@ -319,7 +320,7 @@ function push_gs {
 	
 	logs_export
 	exit_withchange
-	
+
 }
 
 function restore_gs {
