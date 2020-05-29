@@ -278,6 +278,31 @@ function push_gs {
 		${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
 		error_validate	
 
+	if [ "$SKIP_CUSTOM" != '1' ]
+	then	
+		if [ $REMOTE_CUSTOM_DNS == "1" ]
+		then
+			MESSAGE="Backing Up ${CUSTOM_DNS} from ${REMOTE_HOST}"
+			echo_stat
+				${SSHPASSWORD} rsync -e "ssh -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.push >/dev/null 2>&1
+				error_validate
+
+			MESSAGE="Pushing ${CUSTOM_DNS} to ${REMOTE_HOST}"
+			echo_stat
+				${SSHPASSWORD} rsync --rsync-path="sudo rsync" -e "ssh -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${PIHOLE_DIR}/${CUSTOM_DNS} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+				error_validate
+
+			MESSAGE="Setting Permissions on ${CUSTOM_DNS}"
+			echo_stat	
+				${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 664 ${PIHOLE_DIR}/${CUSTOM_DNS}" >/dev/null 2>&1
+				error_validate
+
+			MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
+			echo_stat	
+				${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${CUSTOM_DNS}" >/dev/null 2>&1
+				error_validate	
+	fi
+
 	MESSAGE="Contacting Borg Collective"
 	echo_info
 		sleep 1	
