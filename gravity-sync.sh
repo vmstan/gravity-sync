@@ -216,7 +216,7 @@ function pull_gs {
 			MESSAGE="Validating Permissions on ${CUSTOM_DNS}"
 			echo_stat
 			
-				GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | awk '{print $1}')
+				CUSTOMLS_RWE=$(namei -m ${PIHOLE_DIR}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | awk '{print $1}')
 				if [ $CUSTOMLS_RWE = "-rw-r--r--" ]
 				then
 					echo_good
