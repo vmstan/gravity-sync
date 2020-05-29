@@ -294,12 +294,12 @@ function push_gs {
 
 			MESSAGE="Setting Permissions on ${CUSTOM_DNS}"
 			echo_stat	
-				${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 664 ${PIHOLE_DIR}/${CUSTOM_DNS}" >/dev/null 2>&1
+				${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 644 ${PIHOLE_DIR}/${CUSTOM_DNS}" >/dev/null 2>&1
 				error_validate
 
 			MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
 			echo_stat	
-				${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${CUSTOM_DNS}" >/dev/null 2>&1
+				${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chown root:root ${PIHOLE_DIR}/${CUSTOM_DNS}" >/dev/null 2>&1
 				error_validate	
 	fi
 
@@ -369,7 +369,56 @@ function restore_gs {
 				sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 				error_validate
 		fi
-		
+
+	if [ "$SKIP_CUSTOM" != '1' ]
+	then	
+		if [ $REMOTE_CUSTOM_DNS == "1" ]
+		then
+			MESSAGE="Restoring ${CUSTOM_DNS} on $HOSTNAME"
+			echo_stat
+				cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.backup ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+				error_validate
+				
+			MESSAGE="Validating Ownership on ${CUSTOM_DNS}"
+			echo_stat
+				
+				CUSTOMLS_OWN=$(ls -ld ${PIHOLE_DIR}/${CUSTOM_DNS} | awk '{print $3 $4}')
+				if [ $CUSTOMLS_OWN == "rootroot" ]
+				then
+					echo_good
+				else
+					echo_fail
+					
+					MESSAGE="Attempting to Compensate"
+					echo_info
+					
+					MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
+					echo_stat	
+						sudo chown root:root ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+						error_validate
+				fi
+				
+			MESSAGE="Validating Permissions on ${CUSTOM_DNS}"
+			echo_stat
+			
+				CUSTOMLS_RWE=$(namei -m ${PIHOLE_DIR}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | awk '{print $1}')
+				if [ $CUSTOMLS_RWE == "-rw-r--r--" ]
+				then
+					echo_good
+				else
+					echo_fail
+						
+					MESSAGE="Attempting to Compensate"
+					echo_info
+				
+					MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
+					echo_stat
+						sudo chmod 644 ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+						error_validate
+				fi
+		fi
+	fi
+
 	MESSAGE="Evacuating Saucer Section"
 	echo_info
 		sleep 1	
@@ -410,6 +459,8 @@ function logs_gs {
 		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PULL
 	echo -e "Recent Complete ${YELLOW}PUSH${NC} Executions"
 		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PUSH
+	echo -e "Recent Complete ${YELLOW}RESTORE${NC} Executions"
+		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep RESTORE
 	echo -e "========================================================"
 
 	exit_nochange
