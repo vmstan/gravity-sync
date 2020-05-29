@@ -217,7 +217,7 @@ function pull_gs {
 			echo_stat
 			
 				CUSTOMLS_RWE=$(namei -m ${PIHOLE_DIR}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | awk '{print $1}')
-				if [ $CUSTOMLS_RWE = "-rw-r--r--" ]
+				if [ $CUSTOMLS_RWE == "-rw-r--r--" ]
 				then
 					echo_good
 				else
