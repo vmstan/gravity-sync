@@ -27,10 +27,10 @@ CRONJOB_LOG='gravity-sync.cron' 	# replace in gravity-sync.conf to overwrite
 # Interaction Customization
 VERIFY_PASS='0'						# replace in gravity-sync.conf to overwrite
 
-# PH Folder/File Locations
-PIHOLE_DIR='/etc/pihole' 			# default PH data directory
-GRAVITY_FI='gravity.db' 			# default PH database file
-PIHOLE_BIN='/usr/local/bin/pihole' 	# default PH binary directory
+# Pi-hole Folder/File Locations
+PIHOLE_DIR='/etc/pihole' 			# default Pi-hole data directory
+GRAVITY_FI='gravity.db' 			# default Pi-hole database file
+PIHOLE_BIN='/usr/local/bin/pihole' 	# default Pi-hole binary directory
 
 # OS Settings
 BASH_PATH='/bin/bash'				# default OS bash path
@@ -393,7 +393,7 @@ function validate_gs_folders {
 		fi
 }
 
-## Validate PH Folders
+## Validate Pi-hole Folders
 function validate_ph_folders {
 	MESSAGE="Locating ${PIHOLE_DIR}"
 	echo_stat
@@ -670,8 +670,8 @@ function list_gs_arguments {
 	echo -e " ${YELLOW}automate${NC}	Add scheduled task to run sync"
 	echo -e ""
 	echo -e "Replication Options:"
-	echo -e " ${YELLOW}pull${NC}		Sync the ${GRAVITY_FI} database on primary PH to this server"
-	echo -e " ${YELLOW}push${NC}		Force any changes made on this server back to the primary PH"
+	echo -e " ${YELLOW}pull${NC}		Sync the ${GRAVITY_FI} database on primary Pi-hole to this server"
+	echo -e " ${YELLOW}push${NC}		Force any changes made on this server back to the primary Pi-hole"
 	echo -e " ${YELLOW}restore${NC}	Restore ${GRAVITY_FI} on this server from previous copy"
 	echo -e " ${YELLOW}compare${NC}	Just check for differences between primary and secondary"
 	echo -e ""

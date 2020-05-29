@@ -1,6 +1,6 @@
 # Gravity Sync
 ## Background
-What is better than a [Pi-hole](https://github.com/pi-hole/pi-hole) blocking ads via DNS on your network? That's right, Two Pi-hole! But if you have more than one Pi-hole (PH) in your network you'll want a simple way to keep the list configurations identical between the two.
+What is better than a [Pi-hole](https://github.com/pi-hole/pi-hole) blocking ads via DNS on your network? That's right, Two Pi-hole! But if you have more than one Pi-hole in your network you'll want a simple way to keep the list configurations identical between the two.
 
 That's Gravity Sync.
 
@@ -13,7 +13,7 @@ Gravity Sync will **not** overwrite device specific settings such as local netwo
 ## Prerequisites
 Gravity Sync **requires** Pi-hole 5.0 or higher.
 
-You will need to designate one Pi-Hole as primary and one as secondary. This is where you'll make all your configuration changes through the Web UI, doing things such as; manual whitelisting, adding blocklists, device/group management, and other list settings. Gravity Sync will pull the configuration of the primary PH to the secondary. It will also bring over the downloaded blocklist files after a `pihole -g` update on the primary, so you do not need to reach out to all your blocklist hosts for updates after syncing.
+You will need to designate one Pi-Hole as primary and one as secondary. This is where you'll make all your configuration changes through the Web UI, doing things such as; manual whitelisting, adding blocklists, device/group management, and other list settings. Gravity Sync will pull the configuration of the primary Pi-hole to the secondary. It will also bring over the downloaded blocklist files after a `pihole -g` update on the primary, so you do not need to reach out to all your blocklist hosts for updates after syncing.
 
 The designation of primary and secondary is purely at your discretion and depends on your desired use case.
 
@@ -44,9 +44,9 @@ Download the latest release from [GitHub](https://github.com/vmstan/gravity-sync
 
 ```bash
 cd ~
-wget https://github.com/vmstan/gravity-sync/archive/v1.5.0zip
-unzip v1.5.0.zip
-mv ~/gravity-sync-1.5.0 ~/gravity-sync
+wget https://github.com/vmstan/gravity-sync/archive/v1.6.0zip
+unzip v1.6.0.zip
+mv ~/gravity-sync-1.6.0 ~/gravity-sync
 cd gravity-sync
 ```
 
@@ -95,7 +95,7 @@ Gravity Sync uses SSH to run commands on the primary Pi-hole, and sync the two s
 #### Key-Pair Authentication
 This is the preferred option, as it's more reliable and less dependant on third party plugins.
 
-You'll need to generate an SSH key for your secondary PH user and copy it to your primary PH. This will allow you to connect to and copy the gravity.db file without needing a password each time. When generating the SSH key, accept all the defaults and do not put a passphrase on your key file.
+You'll need to generate an SSH key for your secondary Pi-hole user and copy it to your primary Pi-hole. This will allow you to connect to and copy the gravity.db file without needing a password each time. When generating the SSH key, accept all the defaults and do not put a passphrase on your key file.
 
 *Note: If you already have this setup on your systems for other purposes, you can skip this step.*
 
@@ -104,12 +104,12 @@ ssh-keygen -t rsa
 ssh-copy-id -i ~/.ssh/id_rsa.pub REMOTE_USER@REMOTE_HOST
 ```
 
-Subsitute REMOTE_USER for the account on the primary PH with sudo permissions, and REMOTE_HOST for the IP or DNS name of the PH you have designated as the primary. 
+Subsitute REMOTE_USER for the account on the primary Pi-hole with sudo permissions, and REMOTE_HOST for the IP or DNS name of the Pi-hole you have designated as the primary. 
 
 Make sure to leave the `REMOTE_PASS` variable set to nothing in `gravity-sync.conf` if you want to use key-pair authentication.
 
 #### Password Authentication
-This is the non-preferred option, as it depends on an non-standard utility called `sshpass` which must be installed on your secondary PH. Install it using your package manager of choice. The example below is for Raspberry Pi OS (previously Raspbian) or Ubuntu.
+This is the non-preferred option, as it depends on an non-standard utility called `sshpass` which must be installed on your secondary Pi-hole. Install it using your package manager of choice. The example below is for Raspberry Pi OS (previously Raspbian) or Ubuntu.
 
 ```bash
 sudo apt install sshpass
@@ -132,7 +132,7 @@ Now, test Gravity Sync. You can run a comparison between primary and secondary d
 ./gravity-sync.sh compare
 ```
 
-Assuming Gravity Sync runs successfully, it will indicate if there are changes pending between the two databases. If not, make a subtle change to a whitelist/blacklist on your primary PH, such as changing a description field or disabling a whitelist item, and then running `./gravity-sync.sh compare` again to validate your installation is working correctly.
+Assuming Gravity Sync runs successfully, it will indicate if there are changes pending between the two databases. If not, make a subtle change to a whitelist/blacklist on your primary Pi-hole, such as changing a description field or disabling a whitelist item, and then running `./gravity-sync.sh compare` again to validate your installation is working correctly.
 
 ### The Pull Function
 
@@ -142,20 +142,31 @@ The Gravity Sync Pull, is the standard method of sync operation, and will not pr
 ./gravity-sync.sh pull
 ```
 
-If the execution completes, you will now have overwritten your running gravity.db on the secondary PH after creating a copy of the running database (`gravity.db.backup`) in the `backup` subfolder located with your script. Gravity Sync will also keep a copy of the last sync'd gravity.db from the primary (in the `backup` folder identified as `gravity.db.pull`) for future use. 
+If the execution completes, you will now have overwritten your running gravity.db on the secondary Pi-hole after creating a copy of the running database (`gravity.db.backup`) in the `backup` subfolder located with your script. Gravity Sync will also keep a copy of the last sync'd gravity.db from the primary (in the `backup` folder identified as `gravity.db.pull`) for future use. 
 
 Finally, a file called `gravity-sync.log` will be created in the `gravity-sync` folder along side the script with the date the script was last executed appended to the bottom.
 
 You can check for successful pull attempts by running: `./gravity-sync.sh logs`
 
 ### The Push Function
-Gravity Sync includes the ability to `push` from the secondary PH back to the primary. This would be useful in a situation where your primary PH is down for an extended period of time, and you have made list changes on the secondary PH that you want to force back to the primary, when it comes online.
+Gravity Sync includes the ability to `push` from the secondary Pi-hole back to the primary. This would be useful in a situation where your primary Pi-hole is down for an extended period of time, and you have made list changes on the secondary Pi-hole that you want to force back to the primary, when it comes online.
 
 ```bash
 ./gravity-sync.sh push
 ```
 
-Before executing, this will make a copy of the remote database under `backup/gravity.db.push` then sync the local configuration to the primary PH.
+Before executing, this will make a copy of the remote database under `backup/gravity.db.push` then sync the local configuration to the primary Pi-hole.
+
+This function purposefuly asks for user interaction to avoid being accidentally automated.
+
+### The Restore Function
+Graviy Sync can also `restore` the database on the secondary Pi-hole in the event you've overwritten it accidentally. This might happen in the above scenario where you've had your primary Pi-hole down for an extended period, made changes to the secondary, but perhaps didn't get a chance to perform a `push` of the changes back to the primary, before your automated sync ran.
+
+```bash
+./gravity-sync.sh restore
+```
+
+This will copy your last `gravity.db.backup` to the running copy on the secondary Pi-hole.
 
 This function purposefuly asks for user interaction to avoid being accidentally automated.
 
