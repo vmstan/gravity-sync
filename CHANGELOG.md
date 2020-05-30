@@ -11,9 +11,11 @@
 **Known Issues**
 - No new Star Trek references.
 
-#### 1.7.1
-- There is a changelog file now. I'm mentioning it in the changelog file. So meta.
-- `./gravity-sync.sh version` will check for and alert you for new versions.
+#### 1.7.4
+- Changelog polarity reversed.
+
+#### 1.7.3
+- Cleaning up output of argument listing
 
 #### 1.7.2
 This update changes the way that beta/development updates are applied. To continue receving the development branch, create an empty file in the `gravity-sync` folder called `dev` and afterwards the standard `./gravity-sync.sh update` function will apply the correct updates.
@@ -27,8 +29,9 @@ Delete the `dev` file and update again to revert back to the stable/master branc
 **Deprecation**
 - Removes `beta` function for applying development branch updates.
 
-#### 1.7.3
-- Cleaning up output of argument listing
+#### 1.7.1
+- There is a changelog file now. I'm mentioning it in the changelog file. So meta.
+- `./gravity-sync.sh version` will check for and alert you for new versions.
 
 ## 1.6
 ### The Restorative Release
@@ -64,14 +67,14 @@ Delete the `dev` file and update again to revert back to the stable/master branc
 - All new and exciting code comments.
 - No new Star Trek references.
 
-#### 1.4.1
-- Adds variables for custom log locations to `gravity-sync.conf`, see `.example` file for listing.
+#### 1.4.3
+- Bug fixes around not properly utilizing custom SSH keyfile.
 
 #### 1.4.2
 - Will prompt to create new `gravity-sync.conf` file when run without an existing configuration.
 
-#### 1.4.3
-- Bug fixes around not properly utilizing custom SSH keyfile.
+#### 1.4.1
+- Adds variables for custom log locations to `gravity-sync.conf`, see `.example` file for listing.
 
 ## 1.3
 ### The Comparison Release
@@ -83,21 +86,22 @@ Delete the `dev` file and update again to revert back to the stable/master branc
 - Additional debugging options such as checking last cronjob output via `./gravity-sync.sh cron` if configured.
 - Much more consistency in how running commands are processed in interactive mode.
 
+#### 1.3.4
+- Moves backup of local database before initiating remote pull.
+- Validates file ownership and permissions before attempting to rewrite.
+- Added two Star Trek references.
+
+#### 1.3.3
+- Corrected Pihole bin path issue that cause automated sync not to reload services.
+
+#### 1.3.2
+- MUCH cleaner output, same great features.
+
 #### 1.3.1
 - Changes [GOOD] to [DONE] in execution output.
 - Better validation of initial SSH connection.
 - Support for password based authentication using SSHPASS.
 
-#### 1.3.2
-- MUCH cleaner output, same great features.
-
-#### 1.3.3
-- Corrected Pihole bin path issue that cause automated sync not to reload services.
-
-#### 1.3.4
-- Moves backup of local database before initiating remote pull.
-- Validates file ownership and permissions before attempting to rewrite.
-- Added two Star Trek references.
 
 ## 1.2
 ### The Functional Release
@@ -105,23 +109,23 @@ Delete the `dev` file and update again to revert back to the stable/master branc
 - Does not look for permission to update when run.
 - Cleanup and expand comments.
 
-#### 1.2.1
-- Improved logging functions.
+#### 1.2.5
+- Push function now does a backup, on the secondary PH, of the primary database, before pushing.
 
-#### 1.2.2
-- Different style for status updates.
+#### 1.2.4
+- Changes `~` to `$HOME`.
+- Fixes bug that prevented sync from working when run via crontab.
 
 #### 1.2.3
 - Uses a dedicated backup folder for `.backup` and `.last` files.
 - Copies db instead of moving to rename and then replacing to be more reliable.
 - Even cleaner label status.
 
-#### 1.2.4
-- Changes `~` to `$HOME`.
-- Fixes bug that prevented sync from working when run via crontab.
+#### 1.2.2
+- Different style for status updates.
 
-#### 1.2.5
-- Push function now does a backup, on the secondary PH, of the primary database, before pushing.
+#### 1.2.1
+- Improved logging functions.
 
 ## 1.1
 ### The Pushy Release
@@ -129,22 +133,22 @@ Delete the `dev` file and update again to revert back to the stable/master branc
 - Seperated main purpose of script into `pull` argument.
 - Allow process to reverse back using `push` argument.
 
-#### 1.1.2
-- First release since move from being just a Gist.
-- Just relearning how to use GitHub, minor bug fixes.
+#### 1.1.6
+- Code easier to read with proper tabs.
 
-#### 1.1.3
-- Now includes example an configuration file.
+#### 1.1.5
+- Added ability to view logs with `./gravity-sync.sh logs`.
 
 #### 1.1.4
 - Added update script.
 - Added version check.
 
-#### 1.1.5
-- Added ability to view logs with `./gravity-sync.sh logs`.
+#### 1.1.3
+- Now includes example an configuration file.
 
-#### 1.1.6
-- Code easier to read with proper tabs.
+#### 1.1.2
+- First release since move from being just a Gist.
+- Just relearning how to use GitHub, minor bug fixes.
 
 ## 1.0
 ### The Initial Release
