@@ -63,9 +63,11 @@ Delete the `dev` file and update again to revert back to the stable/master branc
 
 #### 1.4.1
 - Adds variables for custom log locations to `gravity-sync.conf`, see `.example` file for listing.
-### 1.4.2
+
+#### 1.4.2
 - Will prompt to create new `gravity-sync.conf` file when run without an existing configuration.
-### 1.4.3
+
+#### 1.4.3
 - Bug fixes around not properly utilizing custom SSH keyfile.
 
 ## 1.3
