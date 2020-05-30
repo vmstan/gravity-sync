@@ -4,24 +4,33 @@
 ### The Andrew Release
 
 **Features**
-
 - Gravity Sync will now manage the `custom.list` file that contains the "Local DNS Records" function within the Pi-hole interface.
 - If you do not want this feature enabled it can be bypassed by adding a `SKIP_CUSTOM='1'` to your .conf file. 
 - Sync will be trigged during a pull operation if there are changes to either file.
 
 **Known Issues**
-
 - No new Star Trek references.
 
 #### 1.7.1
 - There is a changelog file now. I'm mentioning it in the changelog file. So meta.
 - `./gravity-sync.sh version` will check for and alert you for new versions.
 
+#### 1.7.2
+This update changes the way that beta/development updates are applied. To continue receving the development branch, create an empty file in the `gravity-sync` folder called `dev` and afterwards the standard `./gravity-sync.sh update` function will apply the correct updates.
+```
+cd gravity-sync
+touch dev
+./gravity-sync.sh update
+```
+Delete the `dev` file and update again to revert back to the stable/master branch.
+
+**Deprecation**
+- Removes `beta` function for applying development branch updates.
+
 ## 1.6
 ### The Restorative Release
 
 **Features**
-
 - New `./gravity-sync.sh restore` function will bring a previous version of the `gravity.db` back from the dead.
 - Changes way that GS prompts for data input and how confirmation prompts are handled.
 - Adds ability to override verification of push, restore or config reset, see `.example` file for details.
@@ -34,7 +43,6 @@
 ### The Automated Release
 
 **Features**
-
 - You can now easily deploy the task automation via crontab by running `./gravity-sync.sh automate` which will simply ask how often you'd like to run the script per hour, and then create the entry for you.
 - If you've already configured an entry for this manually with a prior version, the script should detect this and ask that you manually remove it or edit it via crontab -e. I'm hesitant to delete existing entries here, as it could potentially remove something unrelated to Gravity Sync.
 
