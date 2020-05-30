@@ -882,20 +882,26 @@ function list_gs_arguments {
 	exit_nochange
 }
 
-# Output Version
+# Version Control
+## Show Version
 function show_version {
 	MESSAGE="${PROGRAM} by @vmstan"
 	echo_info
 	
-	MESSAGE="Running Version: ${VERSION}"
+	MESSAGE="Running Version: ${GREEN}${VERSION}${NC}"
 	echo_info
 
 	GITVERSION=$(curl -sf https://raw.githubusercontent.com/vmstan/gravity-sync/development/VERSION)
 	if [ -z "$GITVERSION" ]
 	then
-		MESSAGE="Latest Version: Unknown"
+		MESSAGE="Latest Version: ${RED}Unknown${NC}"
 	else
-		MESSAGE="Latest Version: ${GITVERSION}"
+		if [ "$GITVERSION" != "$VERSION" ]
+		then
+		MESSAGE="Upgrade Available: ${PURPLE}${GITVERSION}${NC}"
+		else
+		MESSAGE="Latest Version: ${GREEN}${GITVERSION}${NC}"
+		fi
 	fi
 	echo_info
 }
