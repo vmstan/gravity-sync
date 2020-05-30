@@ -905,7 +905,7 @@ function show_version {
 	MESSAGE="Running Version: ${GREEN}${VERSION}${NC}"
 	echo_info
 
-	GITVERSION=$(curl -sf https://raw.githubusercontent.com/vmstan/gravity-sync/development/VERSION)
+	GITVERSION=$(curl -sf https://raw.githubusercontent.com/vmstan/gravity-sync/master/VERSION)
 	if [ -z "$GITVERSION" ]
 	then
 		MESSAGE="Latest Version: ${RED}Unknown${NC}"
