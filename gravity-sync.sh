@@ -2,7 +2,7 @@
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.7.0'
+VERSION='1.7.1'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -57,6 +57,7 @@ CYAN='\033[0;96m'
 YELLOW='\033[0;93m'
 PURPLE='\033[0;95m'
 BLUE='\033[0;94m'
+BOLD='\033[1m'
 NC='\033[0m'
 
 # Message Codes
@@ -882,10 +883,33 @@ function list_gs_arguments {
 	exit_nochange
 }
 
-# Output Version
+# Version Control
+## Show Version
 function show_version {
-	MESSAGE="${PROGRAM} ${VERSION}"
+	echo -e "========================================================"
+	MESSAGE="${BOLD}${PROGRAM}${NC} by ${CYAN}@vmstan${NC}"
 	echo_info
+
+	MESSAGE="${BLUE}https://github.com/vmstan/gravity-sync${NC}"
+	echo_info
+	
+	MESSAGE="Running Version: ${GREEN}${VERSION}${NC}"
+	echo_info
+
+	GITVERSION=$(curl -sf https://raw.githubusercontent.com/vmstan/gravity-sync/development/VERSION)
+	if [ -z "$GITVERSION" ]
+	then
+		MESSAGE="Latest Version: ${RED}Unknown${NC}"
+	else
+		if [ "$GITVERSION" != "$VERSION" ]
+		then
+		MESSAGE="Upgrade Available: ${YELLOW}${GITVERSION}${NC}"
+		else
+		MESSAGE="Latest Version: ${GREEN}${GITVERSION}${NC}"
+		fi
+	fi
+	echo_info
+	echo -e "========================================================"
 }
 
 # Task Stack
