@@ -1113,16 +1113,28 @@ case $# in
 				exit_nochange
 			;;
 			
-			# beta)
-			# 	TASKTYPE='BETA'
-			#	echo_good
-
-			#	MESSAGE="${TASKTYPE} Requested"
-			#	echo_info
+			dev)
+				TASKTYPE='DEV'
+				echo_good
 				
-			#	beta_gs
-			#	exit_nochange
-			# ;;
+				if [ -f $HOME/${LOCAL_FOLDR}/dev ]
+				then
+					MESSAGE="Enabling ${TASKTYPE}"
+					echo_stat
+					touch $HOME/${LOCAL_FOLDR}/dev
+						error_validate
+				else
+					MESSAGE="Disabling ${TASKTYPE}"
+					echo_stat
+					rm -f $HOME/${LOCAL_FOLDR}/dev
+						error_validate
+				fi
+				
+				MESSAGE="Please run ${YELLOW}update${NC}"
+				echo_info
+				
+				exit_withchange
+			;;
 	
 			logs)
 				TASKTYPE='LOGS'
