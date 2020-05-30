@@ -32,8 +32,8 @@ Delete the `dev` file and update again to revert back to the stable/master branc
 
 **Features**
 - New `./gravity-sync.sh restore` function will bring a previous version of the `gravity.db` back from the dead.
-- Changes way that GS prompts for data input and how confirmation prompts are handled.
-- Adds ability to override verification of push, restore or config reset, see `.example` file for details.
+- Changes the way that Gravity Sync prompts for data input and how confirmation prompts are handled.
+- Adds ability to override verification of 'push', 'restore' or 'config' reset, see `.example` file for details.
 - Five new Star Trek references.
 
 **Bug Fixes**
@@ -48,7 +48,7 @@ Delete the `dev` file and update again to revert back to the stable/master branc
 
 **Bug Fixes**
 
-- Changes method for pulling development branch updates via the beta function.
+- Changes the method for pulling development branch updates via the 'beta' function.
 - Cleanup of various exit commands.
 
 ## 1.4
@@ -72,12 +72,12 @@ Delete the `dev` file and update again to revert back to the stable/master branc
 
 ## 1.3
 ### The Comparison Release
-1.3 should be called 2.0, but I'll resist that temptation -- so many new enhancements!
+1.3 should be called 2.0, but I'll resist that temptation -- but there are so many new enhancements!
 
 **Features**
 - Gravity Sync will now compare remote and local databases and only replicate if it detects a difference.
 - Verifies most commands complete before continuing each step to fail more gracefully.
-- Additional debugging options such as checking last cronjob output, if configured.
+- Additional debugging options such as checking last cronjob output via `./gravity-sync.sh cron` if configured.
 - Much more consistency in how running commands are processed in interactive mode.
 
 #### 1.3.1
