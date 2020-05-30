@@ -2,7 +2,7 @@
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.7.2'
+VERSION='1.7.3'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -871,15 +871,15 @@ function list_gs_arguments {
 	echo -e ""
 	echo -e "Setup Options:"
 	echo -e " ${YELLOW}config${NC}		Create a new ${CONFIG_FILE} file"
-	echo -e " ${YELLOW}automate${NC}	Add scheduled task to run sync"
-	echo -e " ${YELLOW}update${NC}		Use GitHub to update this script to the latest version"
-	echo -e " ${YELLOW}version${NC}	Display your version of ${PROGRAM}"
+	echo -e " ${YELLOW}automate${NC}	Add a scheduled pull task to crontab"
+	echo -e " ${YELLOW}update${NC}		Update ${PROGRAM} to the latest version"
+	echo -e " ${YELLOW}version${NC}	Display installed version of ${PROGRAM}"
 	echo -e ""
 	echo -e "Replication Options:"
-	echo -e " ${YELLOW}pull${NC}		Sync the ${GRAVITY_FI} database on primary Pi-hole to this server"
-	echo -e " ${YELLOW}push${NC}		Force any changes made on this server back to the primary Pi-hole"
-	echo -e " ${YELLOW}restore${NC}	Restore ${GRAVITY_FI} on this server from previous copy"
-	echo -e " ${YELLOW}compare${NC}	Just check for differences between primary and secondary"
+	echo -e " ${YELLOW}pull${NC}		Sync remote ${GRAVITY_FI} to this server"
+	echo -e " ${YELLOW}push${NC}		Force changes made on this server back"
+	echo -e " ${YELLOW}restore${NC}	Restore ${GRAVITY_FI} on this server"
+	echo -e " ${YELLOW}compare${NC}	Just check for differences"
 	echo -e ""
 #	echo -e "Update Options:"
 #	echo -e " ${YELLOW}update${NC}		Use GitHub to update this script to the latest version"

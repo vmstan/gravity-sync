@@ -27,6 +27,9 @@ Delete the `dev` file and update again to revert back to the stable/master branc
 **Deprecation**
 - Removes `beta` function for applying development branch updates.
 
+#### 1.7.3
+- Cleaning up output of argument listing
+
 ## 1.6
 ### The Restorative Release
 
@@ -157,4 +160,4 @@ echo 'Reloading configuration of HA secondary FTLDNS from new gravity.db'
 pihole restartdns reload-lists
 ```
 
-For real, that's it. 6 lines, could provably be done with less.
+For real, that's it. 6 lines, and could probably have be done with less.
