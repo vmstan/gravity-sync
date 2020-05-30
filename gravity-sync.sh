@@ -1119,14 +1119,14 @@ case $# in
 				
 				if [ -f $HOME/${LOCAL_FOLDR}/dev ]
 				then
-					MESSAGE="Enabling ${TASKTYPE}"
-					echo_stat
-					touch $HOME/${LOCAL_FOLDR}/dev
-						error_validate
-				else
 					MESSAGE="Disabling ${TASKTYPE}"
 					echo_stat
 					rm -f $HOME/${LOCAL_FOLDR}/dev
+						error_validate
+				else
+					MESSAGE="Enabling ${TASKTYPE}"
+					echo_stat
+					touch $HOME/${LOCAL_FOLDR}/dev
 						error_validate
 				fi
 				
