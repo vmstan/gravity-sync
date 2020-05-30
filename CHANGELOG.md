@@ -32,8 +32,8 @@ Delete the `dev` file and update again to revert back to the stable/master branc
 
 **Features**
 - New `./gravity-sync.sh restore` function will bring a previous version of the `gravity.db` back from the dead.
-- Changes way that GS prompts for data input and how confirmation prompts are handled.
-- Adds ability to override verification of push, restore or config reset, see `.example` file for details.
+- Changes the way that Gravity Sync prompts for data input and how confirmation prompts are handled.
+- Adds ability to override verification of 'push', 'restore' or 'config' reset, see `.example` file for details.
 - Five new Star Trek references.
 
 **Bug Fixes**
@@ -48,7 +48,7 @@ Delete the `dev` file and update again to revert back to the stable/master branc
 
 **Bug Fixes**
 
-- Changes method for pulling development branch updates via the beta function.
+- Changes the method for pulling development branch updates via the 'beta' function.
 - Cleanup of various exit commands.
 
 ## 1.4
@@ -63,19 +63,21 @@ Delete the `dev` file and update again to revert back to the stable/master branc
 
 #### 1.4.1
 - Adds variables for custom log locations to `gravity-sync.conf`, see `.example` file for listing.
-### 1.4.2
+
+#### 1.4.2
 - Will prompt to create new `gravity-sync.conf` file when run without an existing configuration.
-### 1.4.3
+
+#### 1.4.3
 - Bug fixes around not properly utilizing custom SSH keyfile.
 
 ## 1.3
 ### The Comparison Release
-1.3 should be called 2.0, but I'll resist that temptation -- so many new enhancements!
+1.3 should be called 2.0, but I'll resist that temptation -- but there are so many new enhancements!
 
 **Features**
 - Gravity Sync will now compare remote and local databases and only replicate if it detects a difference.
 - Verifies most commands complete before continuing each step to fail more gracefully.
-- Additional debugging options such as checking last cronjob output, if configured.
+- Additional debugging options such as checking last cronjob output via `./gravity-sync.sh cron` if configured.
 - Much more consistency in how running commands are processed in interactive mode.
 
 #### 1.3.1
@@ -142,7 +144,7 @@ Delete the `dev` file and update again to revert back to the stable/master branc
 - Code easier to read with proper tabs.
 
 ## 1.0
-### The Initial Release**
+### The Initial Release
 
 No version control, variables or anything fancy. It only worked if everything was exactly perfect.
 
@@ -150,10 +152,9 @@ No version control, variables or anything fancy. It only worked if everything wa
 echo 'Copying gravity.db from HA primary'
 rsync -e 'ssh -p 22' ubuntu@192.168.7.5:/etc/pihole/gravity.db /home/pi/gravity-sync
 echo 'Replacing gravity.db on HA secondary'
-sudo cp /home/pi/gravity-sync/gravity.db /etc/pihole/ echo 'Reloading configuration of HA secondary FTLDNS from new gravity.db'
+sudo cp /home/pi/gravity-sync/gravity.db /etc/pihole/ 
+echo 'Reloading configuration of HA secondary FTLDNS from new gravity.db'
 pihole restartdns reload-lists
-echo 'Cleaning up things'
-mv /home/pi/gravity-sync/gravity.db /home/pi/gravity- sync/gravity.db.last
 ```
 
-For real, that's it. 7 lines.
+For real, that's it. 6 lines, could provably be done with less.
