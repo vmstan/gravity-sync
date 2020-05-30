@@ -22,7 +22,7 @@
 
 **Features**
 
-- New `./gravity-sync restore` function will bring a previous version of the `gravity.db` back from the dead.
+- New `./gravity-sync.sh restore` function will bring a previous version of the `gravity.db` back from the dead.
 - Changes way that GS prompts for data input and how confirmation prompts are handled.
 - Adds ability to override verification of push, restore or config reset, see `.example` file for details.
 - Five new Star Trek references.
