@@ -99,25 +99,33 @@ function update_gs {
 	TASKTYPE='UPDATE'
 	# logs_export 	# dumps log prior to execution because script stops after successful pull
 	
+	if [ -f "dev" ]
+	then
+		BRANCH='development'
+	else
+		BRANCH='master'
+	fi
+
 	MESSAGE="Requires GitHub Installation" 
 	echo_info
-		git reset --hard
-		git pull
+		git fetch --all
+		git reset --hard origin/${BRANCH}
 	exit
 }
 
 ## Developer Branch
-function beta_gs {
-	TASKTYPE='BETA'
-	# logs_export 	# dumps log prior to execution because script stops after successful pull
-	
-	MESSAGE="Requires GitHub Installation" 
-	echo_info
-		git reset --hard
-		git fetch origin
-		git pull origin development
-	exit
-}
+# function beta_gs {
+#	TASKTYPE='BETA'
+#	# logs_export 	# dumps log prior to execution because script stops after successful pull
+#	
+#	MESSAGE="Requires GitHub Installation" 
+#	echo_info
+#		git fetch --all
+#		git reset --hard origin/development
+#		# git fetch origin
+#		# git pull origin development
+#	exit
+# }
 
 # Gravity Core Functions
 ## Pull Function
@@ -864,6 +872,8 @@ function list_gs_arguments {
 	echo -e "Setup Options:"
 	echo -e " ${YELLOW}config${NC}		Create a new ${CONFIG_FILE} file"
 	echo -e " ${YELLOW}automate${NC}	Add scheduled task to run sync"
+	echo -e " ${YELLOW}update${NC}		Use GitHub to update this script to the latest version"
+	echo -e " ${YELLOW}version${NC}	Display your version of ${PROGRAM}"
 	echo -e ""
 	echo -e "Replication Options:"
 	echo -e " ${YELLOW}pull${NC}		Sync the ${GRAVITY_FI} database on primary Pi-hole to this server"
@@ -871,12 +881,11 @@ function list_gs_arguments {
 	echo -e " ${YELLOW}restore${NC}	Restore ${GRAVITY_FI} on this server from previous copy"
 	echo -e " ${YELLOW}compare${NC}	Just check for differences between primary and secondary"
 	echo -e ""
-	echo -e "Update Options:"
-	echo -e " ${YELLOW}update${NC}		Use GitHub to update this script to the latest version"
-	echo -e " ${YELLOW}beta${NC}		Use GitHub to update this script to the latest beta version"
-	echo -e ""
+#	echo -e "Update Options:"
+#	echo -e " ${YELLOW}update${NC}		Use GitHub to update this script to the latest version"
+#	echo -e " ${YELLOW}beta${NC}		Use GitHub to update this script to the latest beta version"
+#	echo -e ""
 	echo -e "Debug Options:"
-	echo -e " ${YELLOW}version${NC}	Display your version of ${PROGRAM}"
 	echo -e " ${YELLOW}logs${NC}		Show recent successful replication jobs"
 	echo -e " ${YELLOW}cron${NC}		Display output of last crontab execution"
 	echo -e ""
@@ -1104,16 +1113,16 @@ case $# in
 				exit_nochange
 			;;
 			
-			beta)
-				TASKTYPE='BETA'
-				echo_good
+			# beta)
+			# 	TASKTYPE='BETA'
+			#	echo_good
 
-				MESSAGE="${TASKTYPE} Requested"
-				echo_info
+			#	MESSAGE="${TASKTYPE} Requested"
+			#	echo_info
 				
-				beta_gs
-				exit_nochange
-			;;
+			#	beta_gs
+			#	exit_nochange
+			# ;;
 	
 			logs)
 				TASKTYPE='LOGS'
