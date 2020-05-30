@@ -57,6 +57,7 @@ CYAN='\033[0;96m'
 YELLOW='\033[0;93m'
 PURPLE='\033[0;95m'
 BLUE='\033[0;94m'
+BOLD='\033[1m'
 NC='\033[0m'
 
 # Message Codes
@@ -886,7 +887,7 @@ function list_gs_arguments {
 ## Show Version
 function show_version {
 	echo -e "========================================================"
-	MESSAGE="${PROGRAM} by ${CYAN}@vmstan${NC}"
+	MESSAGE="${BOLD}${PROGRAM}${NC} by ${CYAN}@vmstan${NC}"
 	echo_info
 
 	MESSAGE="${BLUE}https://github.com/vmstan/gravity-sync${NC}"
