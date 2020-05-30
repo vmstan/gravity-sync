@@ -885,6 +885,7 @@ function list_gs_arguments {
 # Version Control
 ## Show Version
 function show_version {
+	echo -e "========================================================"
 	MESSAGE="${PROGRAM} by ${CYAN}@vmstan${NC}"
 	echo_info
 
@@ -901,12 +902,13 @@ function show_version {
 	else
 		if [ "$GITVERSION" != "$VERSION" ]
 		then
-		MESSAGE="Upgrade Available: ${PURPLE}${GITVERSION}${NC}"
+		MESSAGE="Upgrade Available: ${YELLOW}${GITVERSION}${NC}"
 		else
 		MESSAGE="Latest Version: ${GREEN}${GITVERSION}${NC}"
 		fi
 	fi
 	echo_info
+	echo -e "========================================================"
 }
 
 # Task Stack
