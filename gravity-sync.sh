@@ -890,8 +890,13 @@ function show_version {
 	MESSAGE="Running Version: ${VERSION}"
 	echo_info
 
-	GITVERSION=$(curl -s https://raw.githubusercontent.com/vmstan/gravity-sync/master/VERSION)
-	MESSAGE="Latest Version: ${GITVERSION}"
+	GITVERSION=$(curl -sf https://raw.githubusercontent.com/vmstan/gravity-sync/master/VERSION)
+	if [ -z "$GITVERSION" ]
+	then
+		MESSAGE="Latest Version: Unable to Check"
+	else
+		MESSAGE="Latest Version: ${GITVERSION}"
+	fi
 	echo_info
 }
 
