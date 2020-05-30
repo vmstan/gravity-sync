@@ -885,7 +885,10 @@ function list_gs_arguments {
 # Version Control
 ## Show Version
 function show_version {
-	MESSAGE="${PROGRAM} by @vmstan"
+	MESSAGE="${PROGRAM} by ${CYAN}@vmstan${NC}"
+	echo_info
+
+	MESSAGE="${BLUE}https://github.com/vmstan/gravity-sync${NC}"
 	echo_info
 	
 	MESSAGE="Running Version: ${GREEN}${VERSION}${NC}"
