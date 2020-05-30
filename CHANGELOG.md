@@ -15,7 +15,7 @@
 
 #### 1.7.1
 - There is a changelog file now. I'm mentioning it in the changelog file. So meta.
-- `./gravity-sync.sh version` will alert for new versions.
+- `./gravity-sync.sh version` will check for and alert you for new versions.
 
 ## 1.6
 ### The Restorative Release
