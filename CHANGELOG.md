@@ -12,7 +12,9 @@
 - No new Star Trek references.
 
 #### 1.7.4
-- Changelog polarity reversed.
+- Changelog polarity reversed after heated discussions with marketing team.
+- Improved method to activate development branch updates, as added in 1.7.2. 
+- `./gravity-sync.sh dev` will now toggle dev flag on/off. No `touch` required, although it still works that way under the covers.
 
 #### 1.7.3
 - Cleaning up output of argument listing

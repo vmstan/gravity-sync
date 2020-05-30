@@ -2,7 +2,7 @@
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.7.3'
+VERSION='1.7.4'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -1130,7 +1130,7 @@ case $# in
 						error_validate
 				fi
 				
-				MESSAGE="Please run ${YELLOW}update${NC}"
+				MESSAGE="Please run ${YELLOW}update${NC} to apply changes"
 				echo_info
 				
 				exit_withchange
