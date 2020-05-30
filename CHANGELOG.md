@@ -142,7 +142,7 @@ Delete the `dev` file and update again to revert back to the stable/master branc
 - Code easier to read with proper tabs.
 
 ## 1.0
-### The Initial Release**
+### The Initial Release
 
 No version control, variables or anything fancy. It only worked if everything was exactly perfect.
 
@@ -150,10 +150,9 @@ No version control, variables or anything fancy. It only worked if everything wa
 echo 'Copying gravity.db from HA primary'
 rsync -e 'ssh -p 22' ubuntu@192.168.7.5:/etc/pihole/gravity.db /home/pi/gravity-sync
 echo 'Replacing gravity.db on HA secondary'
-sudo cp /home/pi/gravity-sync/gravity.db /etc/pihole/ echo 'Reloading configuration of HA secondary FTLDNS from new gravity.db'
+sudo cp /home/pi/gravity-sync/gravity.db /etc/pihole/ 
+echo 'Reloading configuration of HA secondary FTLDNS from new gravity.db'
 pihole restartdns reload-lists
-echo 'Cleaning up things'
-mv /home/pi/gravity-sync/gravity.db /home/pi/gravity- sync/gravity.db.last
 ```
 
-For real, that's it. 7 lines.
+For real, that's it. 6 lines, could provably be done with less.
