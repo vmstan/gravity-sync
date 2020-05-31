@@ -81,7 +81,7 @@ function import_gs {
 			
 		MESSAGE="Using ${REMOTE_USER}@${REMOTE_HOST}"
 		echo_info
-		
+
 		detect_ssh
 	else
 		echo_fail
@@ -853,11 +853,10 @@ function detect_sshkeygen {
 			echo_info
 			KEYGEN_COMMAND="dropbearkey -t rsa -f"
 
+		else
 			MESSAGE="No Alternatives Located"
 			echo_info
 				exit_nochange
-		else
-			
 		fi	
 	fi
 }
