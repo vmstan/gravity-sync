@@ -61,12 +61,12 @@ BOLD='\033[1m'
 NC='\033[0m'
 
 # Message Codes
-FAIL="[${RED}FAIL${NC}]"
-WARN="[${PURPLE}WARN${NC}]"
-GOOD="[${GREEN}DONE${NC}]"
-STAT="[${CYAN}EXEC${NC}]"
-INFO="[${YELLOW}INFO${NC}]"
-NEED="[${BLUE}NEED${NC}]"
+FAIL="[ ${RED}FAIL${NC} ]"
+WARN="[ ${PURPLE}WARN${NC} ]"
+GOOD="[ ${GREEN} OK ${NC} ]"
+STAT="[ ${CYAN}EXEC${NC} ]"
+INFO="[ ${YELLOW}INFO${NC} ]"
+NEED="[ ${BLUE}NEED${NC} ]"
 
 # FUNCTION DEFINITIONS #######################
 
