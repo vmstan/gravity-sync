@@ -16,7 +16,8 @@
 - `./gravity-sync.sh dev` performs better error handling.
 - Slightly less verbose in some places to make up for being more verbose in others.
 - [DONE] has become [ OK ] in output.
-- Tighten up verbage of some status messages.
+- [INFO] header is now yellow all the way across.
+- Tightens up verbage of some status messages.
 - Detects absence of ssh client command on host OS (DietPi)
 - Detects absence of rsync client command on host OS (DietPi)
 - Detects absence of ssh-keygen on host OS and will use dropbearkey as an alternative (DietPi)
