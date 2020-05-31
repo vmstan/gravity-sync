@@ -873,6 +873,7 @@ function distro_check {
 		PKG_MANAGER="apt-get"
 		PKG_INSTALL="${PKG_MANAGER} --yes --no-install-recommends install"
 	elif is_command rpm
+	then
 		if is_command dnf
 		then
 			PKG_MANAGER="dnf"
