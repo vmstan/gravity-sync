@@ -1121,12 +1121,10 @@ function echo_need {
 	echo -en "${NEED} ${MESSAGE}: "
 }
 
-
-
 # SCRIPT EXECUTION ###########################
 SCRIPT_START=$SECONDS
 
-	MESSAGE="${PROGRAM} Starting"
+	MESSAGE="${BOLD}${PROGRAM}${NC} Executing"
 	echo_info
 	
 	MESSAGE="Evaluating Arguments"
