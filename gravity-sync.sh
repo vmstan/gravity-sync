@@ -723,7 +723,7 @@ function md5_compare {
 		echo_info
 		HASHMARK=$((HASHMARK+0))
 	else
-		MESSAGE="${GRAVITY_FI} ${YELLOW}Differenced${NC}"
+		MESSAGE="${GRAVITY_FI} Differenced"
 		echo_info
 		HASHMARK=$((HASHMARK+1))
 	fi
@@ -755,7 +755,7 @@ function md5_compare {
 					echo_info
 					HASHMARK=$((HASHMARK+0))
 				else
-					MESSAGE="${CUSTOM_DNS} ${YELLOW}Differenced${NC}"
+					MESSAGE="${CUSTOM_DNS} Differenced"
 					echo_info
 					HASHMARK=$((HASHMARK+1))
 				fi
@@ -771,7 +771,7 @@ function md5_compare {
 
 	if [ "$HASHMARK" != "0" ]
 	then
-		MESSAGE="${YELLOW}Replication Necessary${NC}"
+		MESSAGE="Replication Necessary"
 		echo_info
 		HASHMARK=$((HASHMARK+0))
 	else
@@ -1017,7 +1017,7 @@ function show_version {
 	else
 		if [ "$GITVERSION" != "$VERSION" ]
 		then
-		MESSAGE="Upgrade Available: ${YELLOW}${GITVERSION}${NC}"
+		MESSAGE="Upgrade Available: ${PURPLE}${GITVERSION}${NC}"
 		else
 		MESSAGE="Latest Version: ${GREEN}${GITVERSION}${NC}"
 		fi
@@ -1235,7 +1235,7 @@ case $# in
 						error_validate
 				fi
 				
-				MESSAGE="Please run ${YELLOW}update${NC} to apply changes"
+				MESSAGE="Run UPDATE to apply changes"
 				echo_info
 				
 				exit_withchange
