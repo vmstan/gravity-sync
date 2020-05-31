@@ -719,11 +719,11 @@ function md5_compare {
 	
 	if [ "$primaryDBMD5" == "$secondDBMD5" ]
 	then
-		MESSAGE="${GRAVITY_FI} Up-to-Date"
+		MESSAGE="${GRAVITY_FI} Identical"
 		echo_info
 		HASHMARK=$((HASHMARK+0))
 	else
-		MESSAGE="${GRAVITY_FI} Ready to Replicate"
+		MESSAGE="${GRAVITY_FI} ${YELLOW}Ready${NC}"
 		echo_info
 		HASHMARK=$((HASHMARK+1))
 	fi
@@ -751,11 +751,11 @@ function md5_compare {
 				
 				if [ "$primaryCLMD5" == "$secondCLMD5" ]
 				then
-					MESSAGE="${CUSTOM_DNS} Up-to-Date"
+					MESSAGE="${CUSTOM_DNS} Identical"
 					echo_info
 					HASHMARK=$((HASHMARK+0))
 				else
-					MESSAGE="${CUSTOM_DNS} Ready to Replicate"
+					MESSAGE="${CUSTOM_DNS} ${YELLOW}Ready${NC}"
 					echo_info
 					HASHMARK=$((HASHMARK+1))
 				fi
@@ -1216,7 +1216,6 @@ case $# in
 				echo_info
 				
 				update_gs
-				exit_nochange
 			;;
 			
 			dev)
