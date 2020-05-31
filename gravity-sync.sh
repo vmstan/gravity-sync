@@ -121,6 +121,8 @@ function update_gs {
 		echo_stat
 		git fetch --all >/dev/null 2>&1
 			error_validate
+		MESSAGE="Applying Update"
+		echo_stat
 		git reset --hard origin/${BRANCH} >/dev/null 2>&1
 			error_validate
 	fi 
