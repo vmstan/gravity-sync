@@ -956,7 +956,7 @@ function config_delete {
 # Exit Codes
 ## No Changes Made
 function exit_nochange {
-	MESSAGE="${BOLD}${PROGRAM}${NC} ${TASKTYPE} Aborting"
+	MESSAGE="${PROGRAM} ${TASKTYPE} Aborting"
 	echo_info
 	exit 0
 }
@@ -964,7 +964,7 @@ function exit_nochange {
 ## Changes Made
 function exit_withchange {
 	SCRIPT_END=$SECONDS
-	MESSAGE="${BOLD}${PROGRAM}${NC} ${TASKTYPE} Completed in $((SCRIPT_END-SCRIPT_START)) seconds"
+	MESSAGE="${PROGRAM} ${TASKTYPE} Completed in $((SCRIPT_END-SCRIPT_START)) seconds"
 	echo_info
 	exit 0
 }
@@ -1125,7 +1125,7 @@ function echo_need {
 # SCRIPT EXECUTION ###########################
 SCRIPT_START=$SECONDS
 
-	MESSAGE="${BOLD}${PROGRAM}${NC} Executing"
+	MESSAGE="${PROGRAM} Executing"
 	echo_info
 	
 	MESSAGE="Evaluating Arguments"
