@@ -902,6 +902,20 @@ function detect_ssh {
 
 		exit_nochange
 	fi
+
+	MESSAGE="Checking for RSYNC Client on $hostname"
+	echo_stat
+
+	if hash rsync 2>/dev/null
+	then
+		echo_good
+	else
+		echo_fail
+		MESSAGE="${PROGRAM} requires RSYNC be installed"
+		echo_info
+
+		exit_nochange
+	fi
 }
 
 ## Delete Existing Configuration
