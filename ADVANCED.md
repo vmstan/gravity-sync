@@ -73,6 +73,56 @@ Gravity Sync will validate that the `sshpass` utility is installed on your syste
 
 Save. Keep calm, carry on.
 
+### Hidden Figures
+There are a series of advanced configuration options that you may need to change to better adapt Gravity Sync to your environment. They are referenced at the end of the `gravity-sync.conf` file. It is suggested that you make any necessary variable changes to this file, as they will superceed the ones located in the core script. If you want to revert back to the Gravity Sync default for any of these settings, just apply a `#` to the beginning of the line to comment it out.
+
+#### SSH_PORT=''
+Gravity Sync is configured by default to use the standard SSH port (22) but if you need to change this, such as if you're traversing a NAT/firewall for a multi-site deployment, to use a non-standard port.
+
+Default setting in Gravity Sync is 22.
+
+#### SSH_PKIF=''
+Gravity Sync is configured by default to use the `.ssh/id_rsa` keyfile that is generated using the `ssh-keygen` command. If you have an existing keyfile stored somewhere else that you'd like to use, you can configure that here. The keyfile will still need to be in the users $HOME directory. 
+
+At this time Gravity Sync does not support passphrases in RSA keyfiles. If you have a passphrase applied to your standard `.ssh/id_rsa` either remove it, or generate a new file and specify that key for use only by Gravity Sync.
+
+Default setting for Gravity Sync is `.ssh/id_rsa`
+
+#### LOG_PATH=''
+Gravity Sync will place logs in the same folder as the script (identified as .cron and .log) but if you'd like to place these in a another location, you can do that by identifying the full path to the directory. (ex: `/full/path/to/logs`)
+
+Default setting for Gravity Sync is `$HOME/${LOCAL_FOLDR}`
+
+#### SYNCING_LOG=''
+Gravity Sync will write a timestamp for any completed pull, push or restore job to this file. If you want to change the name of this file, you will also need to adjust the LOG_PATH variable above, otherwise your file will be remove during `update` operations.
+
+Default setting for Gravity Sync is `gravity-sync.log`
+
+#### CRONJOB_LOG=''
+Gravity Sync will log the execution history of the previous automation task via Cron to this file. If you want to change the name of this file, you will also need to adjust the LOG_PATH variable above, otherwise your file will be remove during `update` operations.
+
+This will have an impact to both the `./gravity-sync.sh automate` function and the `./gravity-sync.sh cron` functions. If you need to change this after running the automate function, either modify your crontab manually or delete the entry and re-run the automate function.
+
+Default setting for Gravity Sync is `gravity-sync.cron`
+
+#### VERIFY_PASS=''
+Gravity Sync will prompt to verify user interactivity during push, restore, or config operations (that overwrite an existing configuration) with the intention that it prevents someone from accidentally automating in the wrong direction or overwriting data intentionally. If you'd like to automate a push function, or just don't like to be asked twice to do something distructive, then you can opt-out.
+
+Default setting in Gravity Sync is 0, change to 1 to bypass this check.
+
+#### SKIP_CUSTOM=''	
+Starting in v1.7.0, Gravity Sync manages the `custom.list` file that contains the "Local DNS Records" function within the Pi-hole interface. If you do not want to sync this setting, perhaps if you're doing a mutli-site deployment with differing local DNS settings, then you can opt-out of this sync.
+
+Default setting in Gravity Sync is 0, change to 1 to exempt `custom.list` from replication.
+
+#### DATE_OUTPUT=''        
+*This feature has not been fully implemented, but the intent is to provide the ability to add timestamped output to each status indicator in the script output (ex: [2020-05-28 19:46:54] [EXEC] $MESSAGE).*
+
+Default setting in Gravity Sync is 0, change to 1 to print timestamped output.
+
+#### BASH_PATH=''
+If you need to adjust the path to bash that is identified for automated execution via Crontab, you can do that here. This will only have an impact if changed before generating the crontab via the `./gravity-sync.sh automate` function. If you need to change this after the fact, either modify your crontab manually or delete the entry and re-run the automate function.
+
 ## Updates
 If you manually installed Gravity Sync via .zip or .tar.gz you will need to download and overwrite the `gravity-sync.sh` file with a newer version. If you've chosen this path, I won't lay out exactly what you'll need to do every time, but you should at least review the contents of the script bundle (specifically the example configuration file) to make sure there are no new additional files or required settings. 
 
@@ -88,6 +138,8 @@ touch dev
 ./gravity-sync.sh update
 ```
 Delete the `dev` file and update again to revert back to the stable/master branch.
+
+This method for implementation is decidedly different than the configuration flags in the .conf file, as explained above, to make it easier to identify development systems.
 
 ## Automation
 There are many automation methods available to run scripts on a regular basis of a Linux system. The one built into all of them is cron, but if you'd like to utilize something different then the principles are still the same.
