@@ -658,12 +658,12 @@ function detect_ssh {
 		echo_good
 	else
 		echo_fail
-		MESSAGE="${PROGRAM} requires SSH be installed"
+		MESSAGE="Attempting to Compensate"
 		echo_info
 
 		distro_check
 
-		MESSAGE="Installing SSH"
+		MESSAGE="Installing SSH on $HOSTNAME"
 		echo_stat
 		${PKG_INSTALL} ssh >/dev/null 2>&1
 			error_validate
@@ -677,12 +677,12 @@ function detect_ssh {
 		echo_good
 	else
 		echo_fail
-		MESSAGE="${PROGRAM} requires RSYNC be installed"
+		MESSAGE="RSYNC is Required"
 		echo_info
 
 		distro_check
 
-		MESSAGE="Installing RSYNC"
+		MESSAGE="Attempting to Compensate"
 		echo_stat
 		${PKG_INSTALL} rsync >/dev/null 2>&1
 			error_validate
@@ -955,7 +955,7 @@ function config_delete {
 # Exit Codes
 ## No Changes Made
 function exit_nochange {
-	MESSAGE="${PROGRAM} ${TASKTYPE} Aborting"
+	MESSAGE="${BOLD}${PROGRAM}${NC} ${TASKTYPE} Aborting"
 	echo_info
 	exit 0
 }
@@ -963,7 +963,7 @@ function exit_nochange {
 ## Changes Made
 function exit_withchange {
 	SCRIPT_END=$SECONDS
-	MESSAGE="${PROGRAM} ${TASKTYPE} Completed in $((SCRIPT_END-SCRIPT_START)) seconds"
+	MESSAGE="${BOLD}${PROGRAM}${NC} ${TASKTYPE} Completed in $((SCRIPT_END-SCRIPT_START)) seconds"
 	echo_info
 	exit 0
 }
