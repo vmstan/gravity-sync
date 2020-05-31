@@ -109,7 +109,7 @@ function update_gs {
 	fi
 
 	GIT_CHECK=$(git status | awk '{print $1}')
-	if [ $GIT_CHECK == "fatal:" ]
+	if [ "$GIT_CHECK" == "fatal:" ]
 	then
 		MESSAGE="Requires GitHub Installation" 
 		echo_warn
