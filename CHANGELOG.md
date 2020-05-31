@@ -11,6 +11,12 @@
 **Known Issues**
 - No new Star Trek references.
 
+#### 1.7.5
+- No code changes!
+- Primary README now only reflect "The Easy Way" to install and configure Gravity Sync
+- "The Less Easy Way" are now part of [ADVANCED.md](https://github.com/vmstan/gravity-sync/blob/master/ADVANCED.md)
+- All advanced configuration options are outlined in [ADVANCED.md](https://github.com/vmstan/gravity-sync/blob/master/ADVANCED.md)
+
 #### 1.7.4
 - `./gravity-sync.sh dev` will now toggle dev flag on/off. No `touch` required, although it still works that way under the covers. Improvement of methods added in 1.7.2.
 - `./gravity-sync.sh update` performs better error handling.

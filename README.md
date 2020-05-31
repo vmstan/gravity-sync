@@ -6,26 +6,26 @@ That's Gravity Sync.
 
 ![Pull execution](https://user-images.githubusercontent.com/3002053/82915078-e870a180-9f35-11ea-8b36-271a02acdeaa.gif)
 
-At it's core, Gravity Sync is maybe a handful of core bash commands, that uses rsync to reach out to a remote host, copy the running `gravity.db` and `custom.list` files that contains the Pi-hole blocklist, as well as the `custom.list` file that contains local DNS enteries, and then replaces the copy on the local system. What Gravity Sync provides is an easy way to keep this happening in the background. Ideally you set it and forget it. In the long term, it would be awesome if the Pi-hole team made this entire script unncessary.
+At it's core, Gravity Sync is maybe a handful of core bash commands, that uses rsync to reach out to a remote host, copy the running `gravity.db` file that contains the Pi-hole blocklist, as well as the `custom.list` file that contains local DNS enteries, and then replaces the copy on the local system. What Gravity Sync provides is an easy way to keep this happening in the background. Ideally you set it and forget it and in the long term, it would be awesome if the Pi-hole team made this entire script unncessary.
 
 Gravity Sync will **not** overwrite device specific settings such as device network configuration, admin/API passwords/keys, upstream DNS resolvers, etc. It will also **not** keep DHCP settings or device leases synchronized. 
 
 ## Prerequisites
-Gravity Sync **requires** Pi-hole 5.0 or higher.
+### System Requirements
+Gravity Sync **requires** Pi-hole 5.0 or higher be already installed on your server.
+- Gravity Sync is regularly tested during development with on any of the Linux distrobutions that Pi-hole is [certified to run on](https://docs.pi-hole.net/main/prerequesites/#supported-operating-systems). As Gravity Sync is just an (admittedly) long bash script, it will likely work on other Linux distributions that have the the necessary components.
+- Gravity Sync uses the `SUDO` command to elevate permissions for itself, on both Pi-hole systems, during execution. You will need to make sure that you have passwordless SUDO enabled for the accounts on both the primary and secondary Pi-hole that will be performing the work. Most of the pre-built images available for the Raspberry Pi already have this configured, but if you have your Pi-hole running in a virtual machine built from a generic ISO, you may need to [adjust this manually](https://linuxize.com/post/how-to-run-sudo-command-without-password/).
+- Gravity Sync has not been tested with Docker deployments of Pi-hole, and is not expected to work there without major modifications. You will need Pi-hole setup with a "traditional" install directly in the base operating system. There are likely other methods of sharing the `gravity.db` file between multiple Docker instances that are better suited to a container environment.
+- Gravity Sync leverages SSH and RSYNC to do the leavy lifting between your Pi-hole nodes. If you're using a ultra-lightweight Pi distrbution (such as DietPi) make sure you have OpenSSH setup as your SSH client/server and not an alternative (such as Dropbear) which may act differently than OpenSSH.
 
-You will need to designate one Pi-Hole as primary and one as secondary. This is where you'll make all your configuration changes through the Web UI, doing things such as; manual whitelisting, adding blocklists, device/group management, and other list settings. Gravity Sync will pull the configuration of the primary Pi-hole to the secondary. It will also bring over the downloaded blocklist files after a `pihole -g` update on the primary, so you do not need to reach out to all your blocklist hosts for updates after syncing.
+### Pi-hole Architecture
+You will need to designate one Pi-Hole as primary and at least one as secondary. The primary Pi-hole is where you'll make all your configuration changes through the Web UI, doing things such as; manual whitelisting, adding blocklists, device/group management, configuring custom/local network DNS, and other changing other list settings. The secondary Pi-hole(s) are where you will install and configure Gravity Sync.
 
-The designation of primary and secondary is purely at your discretion and depends on your desired use case.
+Gravity Sync will pull the `gravity.db` and `custom.list` files of the primary Pi-hole to the secondary. It will also bring over the downloaded blocklist files after a `pihole -g` command is run to update blocklists on the primary, so you do not need to reach out to all your blocklist hosts for updates after syncing on the secondary.
 
-Additionally, some things to consider:
-
-- Gravity Sync is regularly tested during development with Ubuntu and Raspberry Pi OS (previously, Raspbian). As Gravity Sync is just an (admittedly) long bash script, it will likely work on other Linux distributions that have the `bash` shell installed. But please file an Issue if you're unable to run it on another platform.
-- Gravity Sync uses SUDO to elevate permissions for itself during execution. You will need to make sure that you have passwordless SUDO enabled for the accounts on both the primary and secondary Pi-hole that will be performing the work. Most of the pre-built images available for the Raspberry Pi already have this configured, but if you have your Pi-hole running in a virtual machine, you may need to adjust this manually. [This tutorial](https://linuxize.com/post/how-to-run-sudo-command-without-password/) may be helpful in this respect.
-- Gravity Sync has not been tested with Docker container deployments of Pi-hole, and is not expected to work there without major modifications. You will need Pi-hole setup with a "traditional" install directly in the base operating system.
+The designation of primary and secondary is purely at your discretion. The doesn't matter if you're using an HA process like keepalived to present a single DNS IP address to clients, or handing out two DNS resolvers via DHCP. Generally it is expected that the two (or more) Pi-hole(s) will be at the same phyiscal location, or at least on the same internal networks. It should also be possible to to replicate to a secondary Pi-hole across networks, either over a VPN or open-Internet, with the approprate firewall/NAT configuration.
 
 ## Installation
-### The Easy Way
-
 Login to your *secondary* Pi-hole, and run:
 
 ```bash
@@ -36,26 +36,8 @@ You will now have a folder called `gravity-sync` in your home directory. Everyth
 
 Proceed to the Configuration section.
 
-### The Less Easy Way
-Don't trust `git` to install your software, or just like doing things by hand? That's fine. 
-
-*Keep in mind that installing via this method means you won't be able to use Gravity Sync's built-in update mechanism.*
-
-Download the latest release from [GitHub](https://github.com/vmstan/gravity-sync/releases) and extract the files to your *secondary* Pi-hole server.
-
-```bash
-cd ~
-wget https://github.com/vmstan/gravity-sync/archive/v1.7.4.zip
-unzip v1.7.4.zip -d gravity-sync
-cd gravity-sync
-```
-
-Please note the script **must** be run from a folder in your user home directory (ex: /home/USER/gravity-sync) -- I wouldn't suggest deviating from the gravity-sync folder name. If you do you'll need to also change the configuration settings defined in the `gravity-sync.sh` script, which can be a little tedious to do everytime you upgrade the script.
-
 ## Configuration
-After you install Gravity Sync to your server (reguardless of the option you selected above) you will need to create a configuration file called `gravity-sync.conf` in the same folder as the script. 
-
-### The Easy Way
+After you install Gravity Sync to your server you will need to create a configuration file called `gravity-sync.conf` in the same folder as the script. 
 
 ```bash
 ./gravity-sync.sh config
@@ -69,61 +51,6 @@ This will guide you through the process of:
 - Testing your authentication method
 
 After you've completed your configuration, proceed to the Execution phase.
-
-### The Less Easy Way
-There will be a file called `gravity-sync.conf.example` that you can use as the basis for your own `gravity-sync.conf` file. Make a copy of the example file and modify it with your site specific settings.
-
-```bash
-cp gravity-sync.conf.example gravity-sync.conf
-vi gravity-sync.conf
-```
-
-*Note: If you don't like VI or don't have VIM on your system, use NANO, or if you don't like any of those subsitute for your text editor of choice. I'm not here to start a war.*
-
-Make sure you've set the REMOTE_HOST and REMOTE_USER variables with the IP (or DNS name) and user account to authenticate to the primary Pi. This account will need to have sudo permissions on the remote system.
-
-```bash
-REMOTE_HOST='192.168.1.10'
-REMOTE_USER='pi'
-```
-
-*Do not set the `REMOTE_PASS` variable until you've read the next section on SSH.*
-
-### SSH Configuration
-Gravity Sync uses SSH to run commands on the primary Pi-hole, and sync the two systems by performing file copies. There are two methods available for authenticating with SSH.
-
-#### Key-Pair Authentication
-This is the preferred option, as it's more reliable and less dependant on third party plugins.
-
-You'll need to generate an SSH key for your secondary Pi-hole user and copy it to your primary Pi-hole. This will allow you to connect to and copy the necessary files without needing a password each time. When generating the SSH key, accept all the defaults and do not put a passphrase on your key file.
-
-*Note: If you already have this setup on your systems for other purposes, you can skip this step.*
-
-```bash
-ssh-keygen -t rsa
-ssh-copy-id -i ~/.ssh/id_rsa.pub REMOTE_USER@REMOTE_HOST
-```
-
-Subsitute REMOTE_USER for the account on the primary Pi-hole with sudo permissions, and REMOTE_HOST for the IP or DNS name of the Pi-hole you have designated as the primary. 
-
-Make sure to leave the `REMOTE_PASS` variable set to nothing in `gravity-sync.conf` if you want to use key-pair authentication.
-
-#### Password Authentication
-This is the non-preferred option, as it depends on an non-standard utility called `sshpass` which must be installed on your secondary Pi-hole. Install it using your package manager of choice. The example below is for Raspberry Pi OS (previously Raspbian) or Ubuntu.
-
-```bash
-sudo apt install sshpass
-```
-
-Then enter your password in the `gravity-sync.conf` file you configured above.
-
-```bash
-REMOTE_PASS='password'
-```
-
-Gravity Sync will validate that the `sshpass` utility is installed on your system and failback to attempting key-pair authentication if it's not detected.
-
-Save. Keep calm, carry on.
 
 ## Execution
 Now, test Gravity Sync. You can run a comparison between primary and secondary databases, which will be non-distruptive, and see if everything has been configured correctly.
@@ -171,29 +98,18 @@ This will copy your last `gravity.db.backup` and  `custom.list.backup` to the ru
 This function purposefuly asks for user interaction to avoid being accidentally automated.
 
 ## Updates
-### The Easy Way
-If you installed via **The Easy Way**, you can run the built-in updater to get the latest version of all the files.
+You can run the built-in updater to get the latest version of all the files.
 
 ```bash
 ./gravity-sync.sh update
 ```
 
-Your copy of the `gravity-sync.conf` file, logs and backups should not be be impacted by this update, as they are specifically ignored.
-
-### The Less Easy Way
-
-You will need to download and overwrite the `gravity-sync.sh` file with a newer version. If you've chosen this path, I won't lay out exactly what you'll need to do every time, but you should at least review the contents of the script bundle (specifically the example configuration file) to make sure there are no new additional files or required settings. 
-
-### Either Way
-The main goal of Gravity Sync is to be simple to execute and maintain, so any additional requirements should also be called out when it's executed. After updating, be sure to manually run a `./gravity-sync.sh compare` or `./gravity-sync.sh pull` to validate things are still working as expected. 
+Your copy of the `gravity-sync.conf` file, logs and backups should not be be impacted by this update, as they are specifically ignored. The main goal of Gravity Sync is to be simple to execute and maintain, so any additional requirements should also be called out when it's executed. After updating, be sure to manually run a `./gravity-sync.sh compare` or `./gravity-sync.sh pull` to validate things are still working as expected. 
 
 You can run a `./gravity-sync.sh config` at any time to generate a new configuration file if you're concerned that you're missing something.
 
 ## Automation
 Automation of sync is accomplished by adding an execution of the script to the user's crontab file. As Gravity Sync won't make any changes if it doesn't detect a difference to sync, then the impact should be minor to your systems.
-
-### The Easy Way
-Just run the built in `automate` function:
 
 ```bash
 ./gravity-sync.sh automate
@@ -201,20 +117,7 @@ Just run the built in `automate` function:
 
 Select the frequency per hour that you'd like to sync (once, twice, quadrice, etc) and that's it.
 
-### The Less Easy Way
-If you prefer to still use cron but modify your settings by hand, using the entry below will cause the entry to run at the top and bottom of every hour (1:00 PM, 1:30 PM, 2:00 PM, etc) but you are free to dial this back or be more agressive if you feel the need.
-
-```bash
-crontab -e
-*/30 * * * * /bin/bash /home/USER/gravity-sync/gravity-sync.sh pull > /home/USER/gravity-sync/gravity-sync.cron
-```
-
-### Either Way
-You can verify your cron entry by running `crontab -l` and see it listed at the bottom of the file. If you used the built in automation function and decide to change your frequency, you'll need to run `crontab -e` and adjust this by hand, or delete the entire line in the crontab file and then re-run the `./gravity-sync automate` function.
-
-Now, make another small adjustment to your primary settings and wait until annointed time to see if your changes have been synchronized. If so, profit! If not, start from the beginning.
-
-From this point forward any blocklist changes you make to the primary will reflect on the secondary within the frequency you select.
+Now, make another small adjustment to your primary settings and wait until annointed time to see if your changes have been synchronized. If so, profit! If not, start from the beginning. From this point forward any blocklist changes you make to the primary will reflect on the secondary within the frequency you select.
 
 If you'd like to see the log of what was run the last crontab, you can view that output by running:
 
@@ -224,23 +127,8 @@ If you'd like to see the log of what was run the last crontab, you can view that
 
 Keep in mind if your cron task has never run, you will not see any valid output from this command.
 
-## Troubleshooting
-If you are just straight up unable to run the `gravity-sync.sh` file, make sure it's marked as an executable by Linux.
+### Adjusting Automation
+You can verify your cron entry by running `crontab -l` and see it listed at the bottom of the file. If you decide to remove or change your frequency, you'll need to run `crontab -e` and adjust this by hand. If you're unsure of how to adjust the timers by hand, just delete the entire line in the crontab file and then re-run the `./gravity-sync automate` function.
 
-```bash
-chmod +x gravity-sync.sh
-```
-
-If you are getting errors about missing SSH or RSYNC when you run your first `compare` or `pull` operation, and you're using an ultra-lightweight distro like DietPi, make sure they are installed on the base operating system.
-
-```bash
-sudo apt-get install rsync
-```
-
-- If your script prompts for a password on the remote system, make sure that your user account is setup not to require passwords in the sudoers file.
-- If you use a non-standard SSH port to connect to your primary Pi-hole, you can add `SSH_PORT='123'` to the bottom of your `gravity-sync.conf` file. (Subsitute 123 for your non-standard port.) This will overwrite the `SSH_PORT=22` at the top of the script as it is imported later in the execution. 
-- If you'd like to know what version of the script you have running by running `./gravity-sync.sh version` 
-- If the update script fails, make sure you did your original deployment via `git clone` and not a manual install. 
-- If it doesn't kick off, you can manually execute a `git pull` while in the `gravity-sync` directory. 
-
-If all else fails, delete the entire `gravity-sync` folder from your system and re-deploy. This will have no impact on your replicated databases. 
+## Advanced Installation
+Please review the [Advanced Installation](https://github.com/vmstan/gravity-sync/blob/master/ADVANCED.md) guide for assistance.

@@ -20,6 +20,7 @@ REMOTE_PASS=''
 
 # Uncomment and set for auxillary control
 # Overrides gravity-sync.sh defaults
+# See ADVANCED.md for more information
 
 # SSH_PORT=''
 # SSH_PKIF=''
@@ -27,6 +28,6 @@ REMOTE_PASS=''
 # SYNCING_LOG=''
 # CRONJOB_LOG=''
 
-# VERIFY_PASS=''        # 0=Verify 1=Bypass
-# SKIP_CUSTOM=''		# 0=SyncIt 1=SkipIt
-# DATE_OUTPUT=''        $ 0=NoShow 1=ShowIt (na)
+# VERIFY_PASS=''
+# SKIP_CUSTOM=''
+# DATE_OUTPUT=''
