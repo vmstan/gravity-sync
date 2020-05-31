@@ -13,14 +13,15 @@
 
 #### 1.7.4
 - `./gravity-sync.sh dev` will now toggle dev flag on/off. No `touch` required, although it still works that way under the covers. Improvement of methods added in 1.7.2.
-- `./gravity-sync.sh dev` performs better error handling.
+- `./gravity-sync.sh update` performs better error handling.
 - Slightly less verbose in some places to make up for being more verbose in others.
 - [DONE] has become [ OK ] in output.
 - [INFO] header is now yellow all the way across.
-- Tightens up verbage of some status messages.
-- Detects absence of ssh client command on host OS (DietPi)
-- Detects absence of rsync client command on host OS (DietPi)
-- Detects absence of ssh-keygen on host OS and will use dropbearkey as an alternative (DietPi)
+- Tightens up verbage of status messages.
+- Fixes `custom.list` not being processed by `./gravity-sync.sh restore` function.
+- Detects absence of `ssh` client command on host OS (DietPi)
+- Detects absence of `rsync` client command on host OS (DietPi)
+- Detects absence of `ssh-keygen` utility on host OS and will use dropbearkey as an alternative (DietPi)
 - Changelog polarity reversed after heated discussions with marketing team.
 
 #### 1.7.3
