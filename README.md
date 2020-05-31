@@ -45,8 +45,8 @@ Download the latest release from [GitHub](https://github.com/vmstan/gravity-sync
 
 ```bash
 cd ~
-wget https://github.com/vmstan/gravity-sync/archive/v1.7.3.zip
-unzip v1.7.3.zip -d gravity-sync
+wget https://github.com/vmstan/gravity-sync/archive/v1.7.4.zip
+unzip v1.7.4.zip -d gravity-sync
 cd gravity-sync
 ```
 
@@ -229,6 +229,12 @@ If you are just straight up unable to run the `gravity-sync.sh` file, make sure 
 
 ```bash
 chmod +x gravity-sync.sh
+```
+
+If you are getting errors about missing SSH or RSYNC when you run your first `compare` or `pull` operation, and you're using an ultra-lightweight distro like DietPi, make sure they are installed on the base operating system.
+
+```bash
+sudo apt-get install rsync
 ```
 
 - If your script prompts for a password on the remote system, make sure that your user account is setup not to require passwords in the sudoers file.

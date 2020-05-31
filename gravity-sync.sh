@@ -2,7 +2,7 @@
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.7.3'
+VERSION='1.7.4'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -61,12 +61,12 @@ BOLD='\033[1m'
 NC='\033[0m'
 
 # Message Codes
-FAIL="[${RED}FAIL${NC}]"
-WARN="[${PURPLE}WARN${NC}]"
-GOOD="[${GREEN}DONE${NC}]"
-STAT="[${CYAN}EXEC${NC}]"
-INFO="[${YELLOW}INFO${NC}]"
-NEED="[${BLUE}NEED${NC}]"
+FAIL="[ ${RED}FAIL${NC} ]"
+WARN="[ ${PURPLE}WARN${NC} ]"
+GOOD="[ ${GREEN} OK ${NC} ]"
+STAT="[ ${CYAN}EXEC${NC} ]"
+INFO="[ ${YELLOW}INFO${NC} ]"
+NEED="[ ${BLUE}NEED${NC} ]"
 
 # FUNCTION DEFINITIONS #######################
 
@@ -79,8 +79,10 @@ function import_gs {
 	    source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 			error_validate
 			
-		MESSAGE="Using ${REMOTE_USER}@${REMOTE_HOST}"
+		MESSAGE="Targeting ${REMOTE_USER}@${REMOTE_HOST}"
 		echo_info
+
+		detect_ssh
 	else
 		echo_fail
 		
@@ -99,33 +101,34 @@ function update_gs {
 	TASKTYPE='UPDATE'
 	# logs_export 	# dumps log prior to execution because script stops after successful pull
 	
-	if [ -f "dev" ]
+	if [ -f "$HOME/${LOCAL_FOLDR}/dev" ]
 	then
 		BRANCH='development'
 	else
 		BRANCH='master'
 	fi
 
-	MESSAGE="Requires GitHub Installation" 
-	echo_info
-		git fetch --all
-		git reset --hard origin/${BRANCH}
-	exit
+	GIT_CHECK=$(git status | awk '{print $1}')
+	if [ "$GIT_CHECK" == "fatal:" ]
+	then
+		MESSAGE="Requires GitHub Installation" 
+		echo_warn
+		exit_nochange
+	else
+		# MESSAGE="This might break..." 
+		# echo_warn
+		MESSAGE="Updating Cache"
+		echo_stat
+		git fetch --all >/dev/null 2>&1
+			error_validate
+		MESSAGE="Applying Update"
+		echo_stat
+		git reset --hard origin/${BRANCH} >/dev/null 2>&1
+			error_validate
+	fi 
+		
+	exit_withchange
 }
-
-## Developer Branch
-# function beta_gs {
-#	TASKTYPE='BETA'
-#	# logs_export 	# dumps log prior to execution because script stops after successful pull
-#	
-#	MESSAGE="Requires GitHub Installation" 
-#	echo_info
-#		git fetch --all
-#		git reset --hard origin/development
-#		# git fetch origin
-#		# git pull origin development
-#	exit
-# }
 
 # Gravity Core Functions
 ## Pull Function
@@ -384,11 +387,11 @@ function restore_gs {
 
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
-		if [ "$REMOTE_CUSTOM_DNS" == "1" ]
+		if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.backup ]
 		then
 			MESSAGE="Restoring ${CUSTOM_DNS} on $HOSTNAME"
 			echo_stat
-				cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.backup ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+				sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.backup ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
 				error_validate
 				
 			MESSAGE="Validating Ownership on ${CUSTOM_DNS}"
@@ -521,7 +524,7 @@ function show_crontab {
 # Validate Functions
 ## Validate GS Folders
 function validate_gs_folders {
-	MESSAGE="Locating $HOME/${LOCAL_FOLDR}"
+	MESSAGE="Validating $HOSTNAME:$HOME/${LOCAL_FOLDR}"
 	echo_stat
 		if [ -d $HOME/${LOCAL_FOLDR} ]
 		then
@@ -531,7 +534,7 @@ function validate_gs_folders {
 			exit_nochange
 		fi
 	
-	MESSAGE="Locating $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}"
+	MESSAGE="Validating $HOSTNAME:$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}"
 	echo_stat
 		if [ -d $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} ]
 		then
@@ -544,7 +547,7 @@ function validate_gs_folders {
 
 ## Validate Pi-hole Folders
 function validate_ph_folders {
-	MESSAGE="Locating ${PIHOLE_DIR}"
+	MESSAGE="Validating $HOSTNAME:${PIHOLE_DIR}"
 	echo_stat
 		if [ -d ${PIHOLE_DIR} ]
 		then
@@ -557,8 +560,8 @@ function validate_ph_folders {
 
 ## Validate SSHPASS
 function validate_os_sshpass {
-	MESSAGE="Checking SSH Configuration"
-    echo_info
+	# MESSAGE="Checking SSH Configuration"
+    # echo_info
 	
 	if hash sshpass 2>/dev/null
     then
@@ -584,10 +587,107 @@ function validate_os_sshpass {
 	
 	echo_info
 	
-	MESSAGE="Testing SSH Connection"
+	MESSAGE="Validating SSH Connection to ${REMOTE_HOST}"
 	echo_stat
 		timeout 5 ${SSHPASSWORD} ssh -p ${SSH_PORT} -i '$HOME/${SSH_PKIF}' -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
 			error_validate
+}
+
+
+## Detect SSH-KEYGEN
+function detect_sshkeygen {
+	MESSAGE="Validating SSH-KEYGEN install on $HOSTNAME"
+		echo_stat
+	
+	if hash ssh-keygen >/dev/null 2>&1
+	then
+		echo_good
+	else
+		echo_fail
+		MESSAGE="SSH-KEYGEN is Required"
+		echo_info
+		MESSAGE="Attempting to Compensate"
+		echo_info
+
+		if hash dropbearkey >/dev/null 2>&1
+		then
+			MESSAGE="Using DROPBEARKEY Instead"
+			echo_info
+			KEYGEN_COMMAND="dropbearkey -t rsa -f"
+
+		else
+			MESSAGE="No Alternatives Located"
+			echo_info
+				exit_nochange
+		fi	
+	fi
+}
+
+## Detect Package Manager
+function distro_check { 
+	if hash apt-get 2>/dev/null
+	then
+		PKG_INSTALL="sudo apt-get --yes --no-install-recommends --quiet install"
+	elif hash rpm 2>/dev/null
+	then
+		if hash dnf 2>/dev/null
+		then
+			PKG_MANAGER="dnf"
+		elif hash yum 2>/dev/null
+		then
+			PKG_MANAGER="yum"
+		else
+			MESSAGE="Unable to find OS Package Manager"
+			echo_info
+			exit_nochange
+		fi
+		PKG_INSTALL="sudo ${PKG_MANAGER} install -y"
+	else
+		MESSAGE="Unable to find OS Package Manager"
+		echo_info
+		exit_nochange
+	fi
+}
+
+## Detect SSH & RSYNC
+function detect_ssh {
+	MESSAGE="Validating SSH Client on $HOSTNAME"
+	echo_stat
+
+	if hash ssh 2>/dev/null
+	then
+		echo_good
+	else
+		echo_fail
+		MESSAGE="Attempting to Compensate"
+		echo_info
+
+		distro_check
+
+		MESSAGE="Installing SSH on $HOSTNAME"
+		echo_stat
+		${PKG_INSTALL} ssh >/dev/null 2>&1
+			error_validate
+	fi
+
+	MESSAGE="Validating RSYNC Client on $HOSTNAME"
+	echo_stat
+
+	if hash rsync 2>/dev/null
+	then
+		echo_good
+	else
+		echo_fail
+		MESSAGE="RSYNC is Required"
+		echo_info
+
+		distro_check
+
+		MESSAGE="Attempting to Compensate"
+		echo_stat
+		${PKG_INSTALL} rsync >/dev/null 2>&1
+			error_validate
+	fi
 }
 
 ## Error Validation
@@ -602,28 +702,28 @@ function error_validate {
 
 ## Validate Sync Required
 function md5_compare {
-	MESSAGE="Comparing ${GRAVITY_FI} Changes"
-	echo_info
+	# MESSAGE="Comparing ${GRAVITY_FI} Changes"
+	# echo_info
 	
 	HASHMARK='0'
 
-	MESSAGE="Analyzing Remote ${GRAVITY_FI}"
+	MESSAGE="Analyzing ${REMOTE_HOST} ${GRAVITY_FI}"
 	echo_stat
 	primaryDBMD5=$(${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${GRAVITY_FI}")
 		error_validate
 	
-	MESSAGE="Analyzing Local ${GRAVITY_FI}"
+	MESSAGE="Analyzing $HOSTNAME ${GRAVITY_FI}"
 	echo_stat
 	secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI})
 		error_validate
 	
 	if [ "$primaryDBMD5" == "$secondDBMD5" ]
 	then
-		MESSAGE="No Differences in ${GRAVITY_FI}"
+		MESSAGE="${GRAVITY_FI} Identical"
 		echo_info
 		HASHMARK=$((HASHMARK+0))
 	else
-		MESSAGE="Changes Detected in ${GRAVITY_FI}"
+		MESSAGE="${GRAVITY_FI} Differenced"
 		echo_info
 		HASHMARK=$((HASHMARK+1))
 	fi
@@ -632,50 +732,50 @@ function md5_compare {
 	then
 		if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
 		then
-			MESSAGE="Comparing ${CUSTOM_DNS} Changes"
-			echo_info
+			# MESSAGE="Comparing ${CUSTOM_DNS} Changes"
+			# echo_info
 			
 			if ${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${PIHOLE_DIR}/${CUSTOM_DNS}
 			then
 				REMOTE_CUSTOM_DNS="1"
-				MESSAGE="Analyzing Remote ${CUSTOM_DNS}"
+				MESSAGE="Analyzing ${REMOTE_HOST} ${CUSTOM_DNS}"
 				echo_stat
 
 				primaryCLMD5=$(${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${CUSTOM_DNS}")
 					error_validate
 				
-				MESSAGE="Analyzing Local ${CUSTOM_DNS}"
+				MESSAGE="Analyzing $HOSTNAME ${CUSTOM_DNS}"
 				echo_stat
 				secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS})
 					error_validate
 				
 				if [ "$primaryCLMD5" == "$secondCLMD5" ]
 				then
-					MESSAGE="No Differences in ${CUSTOM_DNS}"
+					MESSAGE="${CUSTOM_DNS} Identical"
 					echo_info
 					HASHMARK=$((HASHMARK+0))
 				else
-					MESSAGE="Changes Detected in ${CUSTOM_DNS}"
+					MESSAGE="${CUSTOM_DNS} Differenced"
 					echo_info
 					HASHMARK=$((HASHMARK+1))
 				fi
 			else
-				MESSAGE="No Remote ${CUSTOM_DNS} Detected"
+				MESSAGE="No ${CUSTOM_DNS} Detected on ${REMOTE_HOST}"
 				echo_info
 			fi
 		else
-			MESSAGE="No Local ${CUSTOM_DNS} Detected"
+			MESSAGE="No ${CUSTOM_DNS} Detected on $HOSTNAME"
 			echo_info
 		fi
 	fi
 
 	if [ "$HASHMARK" != "0" ]
 	then
-		MESSAGE="Replication Suggested"
+		MESSAGE="Replication Necessary"
 		echo_info
 		HASHMARK=$((HASHMARK+0))
 	else
-		MESSAGE="No Replication Required"
+		MESSAGE="Replication Unncessary"
 		echo_info
 			exit_nochange
 	fi
@@ -720,6 +820,8 @@ function intent_validate {
 # Configuration Management
 ## Generate New Configuration
 function config_generate {
+	detect_ssh
+	
 	MESSAGE="Creating ${CONFIG_FILE} from Template"
 	echo_stat
 	cp $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}.example $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
@@ -769,7 +871,7 @@ function config_generate {
 		MESSAGE="Defaulting to SSH Key-Pair Authentication"
 		echo_info
 	fi
-	
+
 	if [ -z $INPUT_REMOTE_PASS ]
 	then
 		if [ -f $HOME/${SSH_PKIF} ]
@@ -777,6 +879,9 @@ function config_generate {
 			MESSAGE="Using Existing ~/${SSH_PKIF}"
 			echo_info
 		else
+			KEYGEN_COMMAND="ssh-keygen -t rsa -f"
+			detect_sshkeygen
+						
 			MESSAGE="Generating ~/${SSH_PKIF}"
 			echo_info
 			
@@ -788,7 +893,7 @@ function config_generate {
 			
 			echo -e "========================================================"
 			echo -e "========================================================"
-			ssh-keygen -t rsa
+			${KEYGEN_COMMAND} $HOME/${SSH_PKIF}
 			echo -e "========================================================"
 			echo -e "========================================================"
 		fi
@@ -912,7 +1017,7 @@ function show_version {
 	else
 		if [ "$GITVERSION" != "$VERSION" ]
 		then
-		MESSAGE="Upgrade Available: ${YELLOW}${GITVERSION}${NC}"
+		MESSAGE="Upgrade Available: ${PURPLE}${GITVERSION}${NC}"
 		else
 		MESSAGE="Latest Version: ${GREEN}${GITVERSION}${NC}"
 		fi
@@ -989,7 +1094,7 @@ function task_automate {
 # Echo Stack
 ## Informative
 function echo_info {
-	echo -e "${INFO} ${MESSAGE}"
+	echo -e "${INFO} ${YELLOW}${MESSAGE}${NC}"
 }
 
 ## Warning
@@ -1017,12 +1122,13 @@ function echo_need {
 	echo -en "${NEED} ${MESSAGE}: "
 }
 
-
-
 # SCRIPT EXECUTION ###########################
 SCRIPT_START=$SECONDS
+
+	MESSAGE="${PROGRAM} Executing"
+	echo_info
 	
-	MESSAGE="Evaluating Script Arguments"
+	MESSAGE="Evaluating Arguments"
 	echo_stat
 
 case $# in
@@ -1043,8 +1149,8 @@ case $# in
 				
 				import_gs
 				
-				MESSAGE="Validating Folder Configuration"
-				echo_info
+				# MESSAGE="Validating Folder Configuration"
+				# echo_info
 					validate_gs_folders
 					validate_ph_folders
 					validate_os_sshpass
@@ -1062,8 +1168,8 @@ case $# in
 				
 				import_gs
 
-				MESSAGE="Validating Folder Configuration"
-				echo_info
+				# MESSAGE="Validating Folder Configuration"
+				# echo_info
 					validate_gs_folders
 					validate_ph_folders
 					validate_os_sshpass
@@ -1081,8 +1187,8 @@ case $# in
 				
 				import_gs
 
-				MESSAGE="Validating Folder Configuration"
-				echo_info
+				# MESSAGE="Validating Folder Configuration"
+				# echo_info
 					validate_gs_folders
 					validate_ph_folders
 					# validate_os_sshpass
@@ -1110,19 +1216,30 @@ case $# in
 				echo_info
 				
 				update_gs
-				exit_nochange
 			;;
 			
-			# beta)
-			# 	TASKTYPE='BETA'
-			#	echo_good
-
-			#	MESSAGE="${TASKTYPE} Requested"
-			#	echo_info
+			dev)
+				TASKTYPE='DEV'
+				echo_good
 				
-			#	beta_gs
-			#	exit_nochange
-			# ;;
+				if [ -f $HOME/${LOCAL_FOLDR}/dev ]
+				then
+					MESSAGE="Disabling ${TASKTYPE}"
+					echo_stat
+					rm -f $HOME/${LOCAL_FOLDR}/dev
+						error_validate
+				else
+					MESSAGE="Enabling ${TASKTYPE}"
+					echo_stat
+					touch $HOME/${LOCAL_FOLDR}/dev
+						error_validate
+				fi
+				
+				MESSAGE="Run UPDATE to apply changes"
+				echo_info
+				
+				exit_withchange
+			;;
 	
 			logs)
 				TASKTYPE='LOGS'
@@ -1143,8 +1260,8 @@ case $# in
 				
 				import_gs
 				
-				MESSAGE="Validating OS Configuration"
-				echo_info
+				# MESSAGE="Validating OS Configuration"
+				# echo_info
 
 					validate_gs_folders
 					validate_ph_folders
