@@ -115,6 +115,7 @@ function update_gs {
 		echo_warn
 		exit_nochange
 	elif [ $GIT_CHECK == "HEAD" ]
+	then
 		git fetch --all
 		git reset --hard origin/${BRANCH}
 	else
