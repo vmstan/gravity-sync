@@ -114,15 +114,15 @@ function update_gs {
 		MESSAGE="Requires GitHub Installation" 
 		echo_warn
 		exit_nochange
-	elif [ $GIT_CHECK == "HEAD" ]
-	then
-		git fetch --all
-		git reset --hard origin/${BRANCH}
 	else
 		MESSAGE="This might break..." 
 		echo_warn
-		git fetch --all
-		git reset --hard origin/${BRANCH}
+		MESSAGE="Updating Cache"
+		echo_stat
+		git fetch --all >/dev/null 2>&1
+			error_validate
+		git reset --hard origin/${BRANCH} >/dev/null 2>&1
+			error_validate
 	fi 
 		
 	exit

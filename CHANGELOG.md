@@ -12,7 +12,8 @@
 - No new Star Trek references.
 
 #### 1.7.4
-- (**Featureish**) `./gravity-sync.sh dev` will now toggle dev flag on/off. No `touch` required, although it still works that way under the covers. Improvement of methods added in 1.7.2.
+- `./gravity-sync.sh dev` will now toggle dev flag on/off. No `touch` required, although it still works that way under the covers. Improvement of methods added in 1.7.2.
+- `./gravity-sync.sh dev` performs better error handling.
 - Slightly less verbose in some places to make up for being more verbose in others.
 - [DONE] has become [ OK ] in output.
 - Tighten up verbage of some status messages.
