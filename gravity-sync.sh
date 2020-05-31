@@ -72,7 +72,7 @@ NEED="[${BLUE}NEED${NC}]"
 
 # Import Settings
 function import_gs {
-		MESSAGE="Importing ${CONFIG_FILE} Settings"
+	MESSAGE="Importing ${CONFIG_FILE} Settings"
 	echo -en "${STAT} $MESSAGE"
 	if [ -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE} ]
 	then
@@ -627,7 +627,7 @@ function distro_check {
 	if hash apt-get 2>/dev/null
 	then
 		PKG_MANAGER="apt-get"
-		PKG_INSTALL="sudo ${PKG_MANAGER} --yes --no-install-recommends install"
+		PKG_INSTALL="sudo ${PKG_MANAGER} --yes --no-install-recommends --quiet install"
 	elif hash rpm 2>/dev/null
 	then
 		if hash dnf 2>/dev/null
