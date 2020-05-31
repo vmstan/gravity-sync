@@ -108,10 +108,22 @@ function update_gs {
 		BRANCH='master'
 	fi
 
-	MESSAGE="Requires GitHub Installation" 
-	echo_info
+	GIT_CHECK=$(git status | awk '{print $1}')
+	if [ $GIT_CHECK == "fatal:" ]
+	then
+		MESSAGE="Requires GitHub Installation" 
+		echo_warn
+		exit_nochange
+	elif [ $GIT_CHECK == "HEAD" ]
 		git fetch --all
 		git reset --hard origin/${BRANCH}
+	else
+		MESSAGE="This might break..." 
+		echo_warn
+		git fetch --all
+		git reset --hard origin/${BRANCH}
+	fi 
+		
 	exit
 }
 
