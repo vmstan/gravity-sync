@@ -624,15 +624,15 @@ function detect_sshkeygen {
 
 ## Detect Package Manager
 function distro_check { 
-	if hash apt-get
+	if hash apt-get 2>/dev/null
 	then
 		PKG_INSTALL="sudo apt-get --yes --no-install-recommends --quiet install"
-	elif hash rpm
+	elif hash rpm 2>/dev/null
 	then
-		if hash dnf
+		if hash dnf 2>/dev/null
 		then
 			PKG_MANAGER="dnf"
-		elif hash yum
+		elif hash yum 2>/dev/null
 		then
 			PKG_MANAGER="yum"
 		else
@@ -653,7 +653,7 @@ function detect_ssh {
 	MESSAGE="Checking for SSH Client on $HOSTNAME"
 	echo_stat
 
-	if hash ssh
+	if hash ssh 2>/dev/null
 	then
 		echo_good
 	else
@@ -672,7 +672,7 @@ function detect_ssh {
 	MESSAGE="Checking for RSYNC Client on $HOSTNAME"
 	echo_stat
 
-	if hash rsync
+	if hash rsync 2>/dev/null
 	then
 		echo_good
 	else
