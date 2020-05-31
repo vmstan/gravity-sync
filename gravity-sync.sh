@@ -723,7 +723,7 @@ function md5_compare {
 		echo_info
 		HASHMARK=$((HASHMARK+0))
 	else
-		MESSAGE="${GRAVITY_FI} ${YELLOW}Ready${NC}"
+		MESSAGE="${GRAVITY_FI} ${YELLOW}Differenced${NC}"
 		echo_info
 		HASHMARK=$((HASHMARK+1))
 	fi
@@ -755,7 +755,7 @@ function md5_compare {
 					echo_info
 					HASHMARK=$((HASHMARK+0))
 				else
-					MESSAGE="${CUSTOM_DNS} ${YELLOW}Ready${NC}"
+					MESSAGE="${CUSTOM_DNS} ${YELLOW}Differenced${NC}"
 					echo_info
 					HASHMARK=$((HASHMARK+1))
 				fi
@@ -771,11 +771,11 @@ function md5_compare {
 
 	if [ "$HASHMARK" != "0" ]
 	then
-		MESSAGE="${YELLOW}Replication Required${NC}"
+		MESSAGE="${YELLOW}Replication Necessary${NC}"
 		echo_info
 		HASHMARK=$((HASHMARK+0))
 	else
-		MESSAGE="No Replication Required"
+		MESSAGE="Replication Unncessary"
 		echo_info
 			exit_nochange
 	fi
