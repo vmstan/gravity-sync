@@ -231,6 +231,12 @@ If you are just straight up unable to run the `gravity-sync.sh` file, make sure 
 chmod +x gravity-sync.sh
 ```
 
+If you are getting errors about missing SSH or RSYNC when you run your first `compare` or `pull` operation, and you're using an ultra-lightweight distro like DietPi, make sure they are installed on the base operating system.
+
+```bash
+sudo apt-get install rsync
+```
+
 - If your script prompts for a password on the remote system, make sure that your user account is setup not to require passwords in the sudoers file.
 - If you use a non-standard SSH port to connect to your primary Pi-hole, you can add `SSH_PORT='123'` to the bottom of your `gravity-sync.conf` file. (Subsitute 123 for your non-standard port.) This will overwrite the `SSH_PORT=22` at the top of the script as it is imported later in the execution. 
 - If you'd like to know what version of the script you have running by running `./gravity-sync.sh version` 

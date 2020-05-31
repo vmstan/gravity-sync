@@ -889,7 +889,7 @@ function distro_check {
 }
 
 function detect_ssh {
-	MESSAGE="Checking for SSH Client on $hostname"
+	MESSAGE="Checking for SSH Client on $HOSTNAME"
 	echo_stat
 
 	if hash ssh 2>/dev/null
@@ -903,7 +903,7 @@ function detect_ssh {
 		exit_nochange
 	fi
 
-	MESSAGE="Checking for RSYNC Client on $hostname"
+	MESSAGE="Checking for RSYNC Client on $HOSTNAME"
 	echo_stat
 
 	if hash rsync 2>/dev/null
