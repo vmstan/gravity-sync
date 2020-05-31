@@ -79,7 +79,7 @@ function import_gs {
 	    source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 			error_validate
 			
-		MESSAGE="Using ${REMOTE_USER}@${REMOTE_HOST}"
+		MESSAGE="Targeting ${REMOTE_USER}@${REMOTE_HOST}"
 		echo_info
 
 		detect_ssh
@@ -592,6 +592,100 @@ function validate_os_sshpass {
 			error_validate
 }
 
+
+## Detect SSH-KEYGEN
+function detect_sshkeygen {
+	MESSAGE="Checking for SSH-KEYGEN"
+		echo_stat
+	
+	if hash ssh-keygen 2>/dev/null
+	then
+		echo_good
+	else
+		echo_fail
+		MESSAGE="SSH-KEYGEN is Required"
+		echo_info
+		MESSAGE="Attempting to Compensate"
+		echo_info
+
+		if hash dropbearkey 2>/dev/null
+		then
+			MESSAGE="Using DROPBEARKEY Instead"
+			echo_info
+			KEYGEN_COMMAND="dropbearkey -t rsa -f"
+
+		else
+			MESSAGE="No Alternatives Located"
+			echo_info
+				exit_nochange
+		fi	
+	fi
+}
+
+## Detect Package Manager
+function distro_check { 
+	if hash apt-get 2>/dev/null
+	then
+		PKG_MANAGER="apt-get"
+		PKG_INSTALL="sudo ${PKG_MANAGER} --yes --no-install-recommends install"
+	elif hash rpm 2>/dev/null
+	then
+		if hash dnf 2>/dev/null
+		then
+			PKG_MANAGER="dnf"
+		elif hash yum 2>/dev/null
+		then
+			PKG_MANAGER="yum"
+		else
+			MESSAGE="Unable to find OS Package Manager"
+			echo_info
+			exit_nochange
+		fi
+		PKG_INSTALL="sudo ${PKG_MANAGER} install -y"
+	else
+		MESSAGE="Unable to find OS Package Manager"
+		echo_info
+		exit_nochange
+	fi
+}
+
+## Detect SSH & RSYNC
+function detect_ssh {
+	MESSAGE="Checking for SSH Client on $HOSTNAME"
+	echo_stat
+
+	if hash ssh 2>/dev/null
+	then
+		echo_good
+	else
+		echo_fail
+		MESSAGE="${PROGRAM} requires SSH be installed"
+		echo_info
+
+		MESSAGE="Installing SSH"
+		echo_stat
+		${PKG_INSTALL} ssh 2>/dev/null
+			error_validate
+	fi
+
+	MESSAGE="Checking for RSYNC Client on $HOSTNAME"
+	echo_stat
+
+	if hash rsync 2>/dev/null
+	then
+		echo_good
+	else
+		echo_fail
+		MESSAGE="${PROGRAM} requires RSYNC be installed"
+		echo_info
+
+		MESSAGE="Installing RSYNC"
+		echo_stat
+		${PKG_INSTALL} rsync 2>/dev/null
+			error_validate
+	fi
+}
+
 ## Error Validation
 function error_validate {
 	if [ "$?" != "0" ]; then
@@ -830,92 +924,6 @@ function config_generate {
 	validate_os_sshpass
 	
 	exit_withchange
-}
-
-## Detect SSH-KEYGEN
-function detect_sshkeygen {
-	MESSAGE="Checking for SSH-KEYGEN"
-		echo_stat
-	
-	if hash ssh-keygen 2>/dev/null
-	then
-		echo_good
-	else
-		echo_fail
-		MESSAGE="SSH-KEYGEN is Required"
-		echo_info
-		MESSAGE="Attempting to Compensate"
-		echo_info
-
-		if hash dropbearkey 2>/dev/null
-		then
-			MESSAGE="Using DROPBEARKEY Instead"
-			echo_info
-			KEYGEN_COMMAND="dropbearkey -t rsa -f"
-
-		else
-			MESSAGE="No Alternatives Located"
-			echo_info
-				exit_nochange
-		fi	
-	fi
-}
-
-## Detect Package Manager
-function distro_check { 
-	if hash apt-get 2>/dev/null
-	then
-		PKG_MANAGER="apt-get"
-		PKG_INSTALL="sudo ${PKG_MANAGER} --yes --no-install-recommends install"
-	elif hash rpm 2>/dev/null
-	then
-		if hash dnf 2>/dev/null
-		then
-			PKG_MANAGER="dnf"
-		elif hash yum 2>/dev/null
-		then
-			PKG_MANAGER="yum"
-		else
-			MESSAGE="Unable to find OS Package Manager"
-			echo_info
-			exit_nochange
-		fi
-		PKG_INSTALL="sudo ${PKG_MANAGER} install -y"
-	else
-		MESSAGE="Unable to find OS Package Manager"
-		echo_info
-		exit_nochange
-	fi
-}
-
-function detect_ssh {
-	MESSAGE="Checking for SSH Client on $HOSTNAME"
-	echo_stat
-
-	if hash ssh 2>/dev/null
-	then
-		echo_good
-	else
-		echo_fail
-		MESSAGE="${PROGRAM} requires SSH be installed"
-		echo_info
-
-		exit_nochange
-	fi
-
-	MESSAGE="Checking for RSYNC Client on $HOSTNAME"
-	echo_stat
-
-	if hash rsync 2>/dev/null
-	then
-		echo_good
-	else
-		echo_fail
-		MESSAGE="${PROGRAM} requires RSYNC be installed"
-		echo_info
-
-		exit_nochange
-	fi
 }
 
 ## Delete Existing Configuration
