@@ -871,7 +871,7 @@ function distro_check {
 	if hash apt-get 2>/dev/null
 	then
 		PKG_MANAGER="apt-get"
-		PKG_INSTALL="${PKG_MANAGER} --yes --no-install-recommends install"
+		PKG_INSTALL="sudo ${PKG_MANAGER} --yes --no-install-recommends install"
 	elif hash rpm 2>/dev/null
 	then
 		if hash dnf 2>/dev/null
@@ -885,7 +885,7 @@ function distro_check {
 			echo_info
 			exit_nochange
 		fi
-		PKG_INSTALL="${PKG_MANAGER} install -y"
+		PKG_INSTALL="sudo ${PKG_MANAGER} install -y"
 	else
 		MESSAGE="Unable to find OS Package Manager"
 		echo_info
