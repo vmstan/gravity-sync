@@ -1094,7 +1094,7 @@ function task_automate {
 # Echo Stack
 ## Informative
 function echo_info {
-	echo -e "${INFO} ${MESSAGE}"
+	echo -e "${INFO} ${YELLOW}${MESSAGE}${NC}"
 }
 
 ## Warning
