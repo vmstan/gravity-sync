@@ -661,6 +661,8 @@ function detect_ssh {
 		MESSAGE="${PROGRAM} requires SSH be installed"
 		echo_info
 
+		distro_check
+
 		MESSAGE="Installing SSH"
 		echo_stat
 		${PKG_INSTALL} ssh >/dev/null 2>&1
@@ -677,6 +679,8 @@ function detect_ssh {
 		echo_fail
 		MESSAGE="${PROGRAM} requires RSYNC be installed"
 		echo_info
+
+		distro_check
 
 		MESSAGE="Installing RSYNC"
 		echo_stat
