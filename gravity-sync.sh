@@ -72,7 +72,7 @@ NEED="[${BLUE}NEED${NC}]"
 
 # Import Settings
 function import_gs {
-	MESSAGE="Importing ${CONFIG_FILE} Settings"
+		MESSAGE="Importing ${CONFIG_FILE} Settings"
 	echo -en "${STAT} $MESSAGE"
 	if [ -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE} ]
 	then
@@ -81,6 +81,8 @@ function import_gs {
 			
 		MESSAGE="Using ${REMOTE_USER}@${REMOTE_HOST}"
 		echo_info
+		
+		detect_ssh
 	else
 		echo_fail
 		
