@@ -130,20 +130,6 @@ function update_gs {
 	exit
 }
 
-## Developer Branch
-# function beta_gs {
-#	TASKTYPE='BETA'
-#	# logs_export 	# dumps log prior to execution because script stops after successful pull
-#	
-#	MESSAGE="Requires GitHub Installation" 
-#	echo_info
-#		git fetch --all
-#		git reset --hard origin/development
-#		# git fetch origin
-#		# git pull origin development
-#	exit
-# }
-
 # Gravity Core Functions
 ## Pull Function
 function pull_gs {
