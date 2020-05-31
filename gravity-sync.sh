@@ -523,7 +523,7 @@ function show_crontab {
 # Validate Functions
 ## Validate GS Folders
 function validate_gs_folders {
-	MESSAGE="Locating $HOME/${LOCAL_FOLDR}"
+	MESSAGE="Validating $HOSTNAME:$HOME/${LOCAL_FOLDR}"
 	echo_stat
 		if [ -d $HOME/${LOCAL_FOLDR} ]
 		then
@@ -533,7 +533,7 @@ function validate_gs_folders {
 			exit_nochange
 		fi
 	
-	MESSAGE="Locating $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}"
+	MESSAGE="Validating $HOSTNAME:$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}"
 	echo_stat
 		if [ -d $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} ]
 		then
@@ -546,7 +546,7 @@ function validate_gs_folders {
 
 ## Validate Pi-hole Folders
 function validate_ph_folders {
-	MESSAGE="Locating ${PIHOLE_DIR}"
+	MESSAGE="Validating $HOSTNAME:${PIHOLE_DIR}"
 	echo_stat
 		if [ -d ${PIHOLE_DIR} ]
 		then
@@ -586,7 +586,7 @@ function validate_os_sshpass {
 	
 	echo_info
 	
-	MESSAGE="Testing SSH Connection"
+	MESSAGE="Validating SSH Connection to ${REMOTE_HOST}"
 	echo_stat
 		timeout 5 ${SSHPASSWORD} ssh -p ${SSH_PORT} -i '$HOME/${SSH_PKIF}' -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
 			error_validate
@@ -595,7 +595,7 @@ function validate_os_sshpass {
 
 ## Detect SSH-KEYGEN
 function detect_sshkeygen {
-	MESSAGE="Checking for SSH-KEYGEN"
+	MESSAGE="Validating SSH-KEYGEN install on $HOSTNAME"
 		echo_stat
 	
 	if hash ssh-keygen >/dev/null 2>&1
@@ -650,7 +650,7 @@ function distro_check {
 
 ## Detect SSH & RSYNC
 function detect_ssh {
-	MESSAGE="Checking for SSH Client on $HOSTNAME"
+	MESSAGE="Validating SSH Client on $HOSTNAME"
 	echo_stat
 
 	if hash ssh 2>/dev/null
@@ -669,7 +669,7 @@ function detect_ssh {
 			error_validate
 	fi
 
-	MESSAGE="Checking for RSYNC Client on $HOSTNAME"
+	MESSAGE="Validating RSYNC Client on $HOSTNAME"
 	echo_stat
 
 	if hash rsync 2>/dev/null
@@ -706,23 +706,23 @@ function md5_compare {
 	
 	HASHMARK='0'
 
-	MESSAGE="Analyzing Remote ${GRAVITY_FI}"
+	MESSAGE="Analyzing ${REMOTE_HOST} ${GRAVITY_FI}"
 	echo_stat
 	primaryDBMD5=$(${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${GRAVITY_FI}")
 		error_validate
 	
-	MESSAGE="Analyzing Local ${GRAVITY_FI}"
+	MESSAGE="Analyzing $HOSTNAME ${GRAVITY_FI}"
 	echo_stat
 	secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI})
 		error_validate
 	
 	if [ "$primaryDBMD5" == "$secondDBMD5" ]
 	then
-		MESSAGE="No Differences in ${GRAVITY_FI}"
+		MESSAGE="${GRAVITY_FI} Up-to-Date"
 		echo_info
 		HASHMARK=$((HASHMARK+0))
 	else
-		MESSAGE="Changes Detected in ${GRAVITY_FI}"
+		MESSAGE="${GRAVITY_FI} Ready to Replicate"
 		echo_info
 		HASHMARK=$((HASHMARK+1))
 	fi
@@ -737,33 +737,33 @@ function md5_compare {
 			if ${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${PIHOLE_DIR}/${CUSTOM_DNS}
 			then
 				REMOTE_CUSTOM_DNS="1"
-				MESSAGE="Analyzing Remote ${CUSTOM_DNS}"
+				MESSAGE="Analyzing ${REMOTE_HOST} ${CUSTOM_DNS}"
 				echo_stat
 
 				primaryCLMD5=$(${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${CUSTOM_DNS}")
 					error_validate
 				
-				MESSAGE="Analyzing Local ${CUSTOM_DNS}"
+				MESSAGE="Analyzing $HOSTNAME ${CUSTOM_DNS}"
 				echo_stat
 				secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS})
 					error_validate
 				
 				if [ "$primaryCLMD5" == "$secondCLMD5" ]
 				then
-					MESSAGE="No Differences in ${CUSTOM_DNS}"
+					MESSAGE="${CUSTOM_DNS} Up-to-Date"
 					echo_info
 					HASHMARK=$((HASHMARK+0))
 				else
-					MESSAGE="Changes Detected in ${CUSTOM_DNS}"
+					MESSAGE="${CUSTOM_DNS} Ready to Replicate"
 					echo_info
 					HASHMARK=$((HASHMARK+1))
 				fi
 			else
-				MESSAGE="No Remote ${CUSTOM_DNS} Detected"
+				MESSAGE="No ${CUSTOM_DNS} Detected on ${REMOTE_HOST}"
 				echo_info
 			fi
 		else
-			MESSAGE="No Local ${CUSTOM_DNS} Detected"
+			MESSAGE="No ${CUSTOM_DNS} Detected on $HOSTNAME"
 			echo_info
 		fi
 	fi
@@ -1186,8 +1186,8 @@ case $# in
 				
 				import_gs
 
-				MESSAGE="Validating Folder Configuration"
-				echo_info
+				# MESSAGE="Validating Folder Configuration"
+				# echo_info
 					validate_gs_folders
 					validate_ph_folders
 					# validate_os_sshpass
@@ -1260,8 +1260,8 @@ case $# in
 				
 				import_gs
 				
-				MESSAGE="Validating OS Configuration"
-				echo_info
+				# MESSAGE="Validating OS Configuration"
+				# echo_info
 
 					validate_gs_folders
 					validate_ph_folders
