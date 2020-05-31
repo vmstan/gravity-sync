@@ -559,8 +559,8 @@ function validate_ph_folders {
 
 ## Validate SSHPASS
 function validate_os_sshpass {
-	MESSAGE="Checking SSH Configuration"
-    echo_info
+	# MESSAGE="Checking SSH Configuration"
+    # echo_info
 	
 	if hash sshpass 2>/dev/null
     then
@@ -701,8 +701,8 @@ function error_validate {
 
 ## Validate Sync Required
 function md5_compare {
-	MESSAGE="Comparing ${GRAVITY_FI} Changes"
-	echo_info
+	# MESSAGE="Comparing ${GRAVITY_FI} Changes"
+	# echo_info
 	
 	HASHMARK='0'
 
@@ -731,8 +731,8 @@ function md5_compare {
 	then
 		if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
 		then
-			MESSAGE="Comparing ${CUSTOM_DNS} Changes"
-			echo_info
+			# MESSAGE="Comparing ${CUSTOM_DNS} Changes"
+			# echo_info
 			
 			if ${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${PIHOLE_DIR}/${CUSTOM_DNS}
 			then
@@ -770,7 +770,7 @@ function md5_compare {
 
 	if [ "$HASHMARK" != "0" ]
 	then
-		MESSAGE="Replication Suggested"
+		MESSAGE="${YELLOW}Replication Required${NC}"
 		echo_info
 		HASHMARK=$((HASHMARK+0))
 	else
@@ -1125,8 +1125,11 @@ function echo_need {
 
 # SCRIPT EXECUTION ###########################
 SCRIPT_START=$SECONDS
+
+	MESSAGE="${PROGRAM} Starting"
+	echo_info
 	
-	MESSAGE="Evaluating Script Arguments"
+	MESSAGE="Evaluating Arguments"
 	echo_stat
 
 case $# in
@@ -1147,8 +1150,8 @@ case $# in
 				
 				import_gs
 				
-				MESSAGE="Validating Folder Configuration"
-				echo_info
+				# MESSAGE="Validating Folder Configuration"
+				# echo_info
 					validate_gs_folders
 					validate_ph_folders
 					validate_os_sshpass
@@ -1166,8 +1169,8 @@ case $# in
 				
 				import_gs
 
-				MESSAGE="Validating Folder Configuration"
-				echo_info
+				# MESSAGE="Validating Folder Configuration"
+				# echo_info
 					validate_gs_folders
 					validate_ph_folders
 					validate_os_sshpass
