@@ -15,7 +15,8 @@
 - Changelog polarity reversed after heated discussions with marketing team.
 - Improved method to activate development branch updates, as added in 1.7.2. 
 - `./gravity-sync.sh dev` will now toggle dev flag on/off. No `touch` required, although it still works that way under the covers.
-- Detects absence of ssh-keygen on host OS and prompts to install (DietPi)
+- Detects absence of ssh client command on host OS (DietPi)
+- Detects absence of ssh-keygen on host OS and will use dropbearkey as an alternative (DietPi)
 
 #### 1.7.3
 - Cleaning up output of argument listing

@@ -720,6 +720,8 @@ function intent_validate {
 # Configuration Management
 ## Generate New Configuration
 function config_generate {
+	detect_ssh
+	
 	MESSAGE="Creating ${CONFIG_FILE} from Template"
 	echo_stat
 	cp $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}.example $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
@@ -849,19 +851,11 @@ function detect_sshkeygen {
 			echo_info
 			KEYGEN_COMMAND="dropbearkey -t rsa -f"
 
-			MESSAGE="Installing SSH"
-			echo_stat
-				distro_check
-		
-			${PKG_INSTALL} ssh
-				error_validate
+			MESSAGE="No Alternatives Located"
+			echo_info
+				exit_nochange
 		else
-			MESSAGE="Installing SSH-KEYGEN"
-			echo_stat
-				distro_check
-		
-			${PKG_INSTALL} ssh-keygen
-				error_validate
+			
 		fi	
 	fi
 }
@@ -889,6 +883,22 @@ function distro_check {
 	else
 		MESSAGE="Unable to find OS Package Manager"
 		echo_info
+		exit_nochange
+	fi
+}
+
+function detect_ssh {
+	MESSAGE="Checking for SSH Client on $hostname"
+	echo_stat
+
+	if hash ssh 2>/dev/null
+	then
+		echo_good
+	else
+		echo_fail
+		MESSAGE="${PROGRAM} requires SSH be installed"
+		echo_info
+
 		exit_nochange
 	fi
 }
