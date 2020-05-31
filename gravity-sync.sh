@@ -115,7 +115,7 @@ function update_gs {
 		echo_warn
 		exit_nochange
 	else
-		MESSAGE="This might break..." 
+		# MESSAGE="This might break..." 
 		echo_warn
 		MESSAGE="Updating Cache"
 		echo_stat
