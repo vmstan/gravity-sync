@@ -843,7 +843,7 @@ function detect_sshkeygen {
 		MESSAGE="Attempting to Compensate"
 		echo_info
 
-		if is_command dropbearkey
+		if hash dropbearkey 2>/dev/null
 		then
 			MESSAGE="Using DROPBEARKEY Instead"
 			echo_info
@@ -868,16 +868,16 @@ function detect_sshkeygen {
 
 ## Detect Package Manager
 function distro_check { 
-	if is_command apt-get
+	if hash apt-get 2>/dev/null
 	then
 		PKG_MANAGER="apt-get"
 		PKG_INSTALL="${PKG_MANAGER} --yes --no-install-recommends install"
-	elif is_command rpm
+	elif hash rpm 2>/dev/null
 	then
-		if is_command dnf
+		if hash dnf 2>/dev/null
 		then
 			PKG_MANAGER="dnf"
-		elif is_command yum
+		elif hash yum 2>/dev/null
 		then
 			PKG_MANAGER="yum"
 		else
