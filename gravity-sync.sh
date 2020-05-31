@@ -387,7 +387,7 @@ function restore_gs {
 
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
-		if [ "$REMOTE_CUSTOM_DNS" == "1" ]
+		if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.backup ]
 		then
 			MESSAGE="Restoring ${CUSTOM_DNS} on $HOSTNAME"
 			echo_stat
