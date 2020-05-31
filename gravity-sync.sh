@@ -99,7 +99,7 @@ function update_gs {
 	TASKTYPE='UPDATE'
 	# logs_export 	# dumps log prior to execution because script stops after successful pull
 	
-	if [ -f "dev" ]
+	if [ -f "$HOME/${LOCAL_FOLDR}/dev" ]
 	then
 		BRANCH='development'
 	else
@@ -769,7 +769,7 @@ function config_generate {
 		MESSAGE="Defaulting to SSH Key-Pair Authentication"
 		echo_info
 	fi
-	
+
 	if [ -z $INPUT_REMOTE_PASS ]
 	then
 		if [ -f $HOME/${SSH_PKIF} ]
@@ -777,6 +777,9 @@ function config_generate {
 			MESSAGE="Using Existing ~/${SSH_PKIF}"
 			echo_info
 		else
+			KEYGEN_COMMAND="ssh-keygen -t rsa -f"
+			detect_sshkeygen
+						
 			MESSAGE="Generating ~/${SSH_PKIF}"
 			echo_info
 			
@@ -788,7 +791,7 @@ function config_generate {
 			
 			echo -e "========================================================"
 			echo -e "========================================================"
-			ssh-keygen -t rsa
+			${KEYGEN_COMMAND} $HOME/${SSH_PKIF}
 			echo -e "========================================================"
 			echo -e "========================================================"
 		fi
@@ -823,6 +826,69 @@ function config_generate {
 	validate_os_sshpass
 	
 	exit_withchange
+}
+
+## Detect SSH-KEYGEN
+function detect_sshkeygen {
+	MESSAGE="Checking for SSH-KEYGEN"
+		echo_stat
+	
+	if hash ssh-keygen 2>/dev/null
+	then
+		echo_good
+	else
+		echo_fail
+		MESSAGE="SSH-KEYGEN is Required"
+		echo_info
+		MESSAGE="Attempting to Compensate"
+		echo_info
+
+		if is_command dropbearkey
+		then
+			MESSAGE="Using DROPBEARKEY Instead"
+			echo_info
+			KEYGEN_COMMAND="dropbearkey -t rsa -f"
+
+			MESSAGE="Installing SSH"
+			echo_stat
+				distro_check
+		
+			${PKG_INSTALL} ssh
+				error_validate
+		else
+			MESSAGE="Installing SSH-KEYGEN"
+			echo_stat
+				distro_check
+		
+			${PKG_INSTALL} ssh-keygen
+				error_validate
+		fi	
+	fi
+}
+
+## Detect Package Manager
+function distro_check { 
+	if is_command apt-get
+	then
+		PKG_MANAGER="apt-get"
+		PKG_INSTALL="${PKG_MANAGER} --yes --no-install-recommends install"
+	elif is_command rpm
+		if is_command dnf
+		then
+			PKG_MANAGER="dnf"
+		elif is_command yum
+			PKG_MANAGER="yum"
+		else
+			MESSAGE="Unable to find OS Package Manager"
+			echo_info
+			exit_nochange
+		fi
+		PKG_INSTALL="${PKG_MANAGER} install -y"
+	else
+		MESSAGE="Unable to find OS Package Manager"
+		echo_info
+		exit_nochange
+	fi
 }
 
 ## Delete Existing Configuration
