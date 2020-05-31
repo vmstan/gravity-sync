@@ -598,7 +598,7 @@ function detect_sshkeygen {
 	MESSAGE="Checking for SSH-KEYGEN"
 		echo_stat
 	
-	if hash ssh-keygen 2>/dev/null
+	if hash ssh-keygen >/dev/null 2>&1
 	then
 		echo_good
 	else
@@ -608,7 +608,7 @@ function detect_sshkeygen {
 		MESSAGE="Attempting to Compensate"
 		echo_info
 
-		if hash dropbearkey 2>/dev/null
+		if hash dropbearkey >/dev/null 2>&1
 		then
 			MESSAGE="Using DROPBEARKEY Instead"
 			echo_info
@@ -624,16 +624,15 @@ function detect_sshkeygen {
 
 ## Detect Package Manager
 function distro_check { 
-	if hash apt-get 2>/dev/null
+	if hash apt-get
 	then
-		PKG_MANAGER="apt-get"
-		PKG_INSTALL="sudo ${PKG_MANAGER} --yes --no-install-recommends --quiet install"
-	elif hash rpm 2>/dev/null
+		PKG_INSTALL="sudo apt-get --yes --no-install-recommends --quiet install"
+	elif hash rpm
 	then
-		if hash dnf 2>/dev/null
+		if hash dnf
 		then
 			PKG_MANAGER="dnf"
-		elif hash yum 2>/dev/null
+		elif hash yum
 		then
 			PKG_MANAGER="yum"
 		else
@@ -654,7 +653,7 @@ function detect_ssh {
 	MESSAGE="Checking for SSH Client on $HOSTNAME"
 	echo_stat
 
-	if hash ssh 2>/dev/null
+	if hash ssh
 	then
 		echo_good
 	else
@@ -664,14 +663,14 @@ function detect_ssh {
 
 		MESSAGE="Installing SSH"
 		echo_stat
-		${PKG_INSTALL} ssh 2>/dev/null
+		${PKG_INSTALL} ssh >/dev/null 2>&1
 			error_validate
 	fi
 
 	MESSAGE="Checking for RSYNC Client on $HOSTNAME"
 	echo_stat
 
-	if hash rsync 2>/dev/null
+	if hash rsync
 	then
 		echo_good
 	else
@@ -681,7 +680,7 @@ function detect_ssh {
 
 		MESSAGE="Installing RSYNC"
 		echo_stat
-		${PKG_INSTALL} rsync 2>/dev/null
+		${PKG_INSTALL} rsync >/dev/null 2>&1
 			error_validate
 	fi
 }
