@@ -877,6 +877,7 @@ function distro_check {
 		then
 			PKG_MANAGER="dnf"
 		elif is_command yum
+		then
 			PKG_MANAGER="yum"
 		else
 			MESSAGE="Unable to find OS Package Manager"
