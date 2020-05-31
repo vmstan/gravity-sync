@@ -116,7 +116,7 @@ function update_gs {
 		exit_nochange
 	else
 		# MESSAGE="This might break..." 
-		echo_warn
+		# echo_warn
 		MESSAGE="Updating Cache"
 		echo_stat
 		git fetch --all >/dev/null 2>&1
