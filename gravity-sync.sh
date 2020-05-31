@@ -127,7 +127,7 @@ function update_gs {
 			error_validate
 	fi 
 		
-	exit
+	exit_withchange
 }
 
 # Gravity Core Functions
