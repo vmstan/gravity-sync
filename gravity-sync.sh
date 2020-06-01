@@ -595,7 +595,7 @@ function validate_os_sshpass {
 			error_validate
 		elif hash dbclient 2>/dev/null
 		then
-			if [ "$SSH_CMD" = "dbclient" ]; then echo ''; fi;
+			# if [ "$SSH_CMD" = "dbclient" ]; then echo ''; fi;
 		timeout 5 ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i '$HOME/${SSH_PKIF}' ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
 			error_validate
 		fi
