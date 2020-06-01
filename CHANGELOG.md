@@ -12,9 +12,10 @@
 - No new Star Trek references.
 
 #### 1.7.6
-- Detects `dbclient` install as alternative to OpenSSH Client. (DietPi)
-- Attempts to install OpenSSH Client if not found, and Dropbear is not alternative. (DietPi)
-- Fix bug with `dropbearkey` not finding .ssh folder
+- Detects `dbclient` install as alternative to OpenSSH Client.
+- Attempts to install OpenSSH Client if not found, and Dropbear is not alternative.
+- Fix bug with `dropbearkey` not finding .ssh folder.
+- Numerous fixes to accomidate DietPi in general.
 
 #### 1.7.5
 - No code changes!

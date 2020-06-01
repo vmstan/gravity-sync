@@ -640,6 +640,7 @@ function detect_sshkeygen {
 function distro_check { 
 	if hash apt-get 2>/dev/null
 	then
+		PKG_MANAGER="apt-get"
 		PKG_INSTALL="sudo apt-get --yes --no-install-recommends --quiet install"
 	elif hash rpm 2>/dev/null
 	then
