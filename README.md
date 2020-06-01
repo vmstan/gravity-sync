@@ -86,6 +86,8 @@ Before executing, this will make a copy of the remote database under `backup/gra
 
 This function purposefuly asks for user interaction to avoid being accidentally automated.
 
+- If your script prompts for a password on the remote system, make sure that your remote user account is setup not to require passwords in the sudoers file.
+
 ### The Restore Function
 Graviy Sync can also `restore` the database on the secondary Pi-hole in the event you've overwritten it accidentally. This might happen in the above scenario where you've had your primary Pi-hole down for an extended period, made changes to the secondary, but perhaps didn't get a chance to perform a `push` of the changes back to the primary, before your automated sync ran.
 
@@ -98,7 +100,13 @@ This will copy your last `gravity.db.backup` and  `custom.list.backup` to the ru
 This function purposefuly asks for user interaction to avoid being accidentally automated.
 
 ## Updates
-You can run the built-in updater to get the latest version of all the files.
+If you'd like to know what version of the script you have running the built in version checker. It will notify you if there are updates available.
+
+ ```
+ ./gravity-sync.sh version
+ ``` 
+
+You can then run the built-in updater to get the latest version of all the files. Both the `version` and `update` commands reach out to GitHub, so outbound access to github.com is required.
 
 ```bash
 ./gravity-sync.sh update
@@ -107,6 +115,8 @@ You can run the built-in updater to get the latest version of all the files.
 Your copy of the `gravity-sync.conf` file, logs and backups should not be be impacted by this update, as they are specifically ignored. The main goal of Gravity Sync is to be simple to execute and maintain, so any additional requirements should also be called out when it's executed. After updating, be sure to manually run a `./gravity-sync.sh compare` or `./gravity-sync.sh pull` to validate things are still working as expected. 
 
 You can run a `./gravity-sync.sh config` at any time to generate a new configuration file if you're concerned that you're missing something.
+
+- If the update script fails, make sure you did your original deployment via `git clone` and not a manual install. Refer to [ADVANCED.md](https://github.com/vmstan/gravity-sync/blob/master/ADVANCED.md) for more details.
 
 ## Automation
 Automation of sync is accomplished by adding an execution of the script to the user's crontab file. As Gravity Sync won't make any changes if it doesn't detect a difference to sync, then the impact should be minor to your systems.

@@ -123,6 +123,14 @@ Default setting in Gravity Sync is 0, change to 1 to print timestamped output.
 #### `BASH_PATH=''`
 If you need to adjust the path to bash that is identified for automated execution via Crontab, you can do that here. This will only have an impact if changed before generating the crontab via the `./gravity-sync.sh automate` function. If you need to change this after the fact, either modify your crontab manually or delete the entry and re-run the automate function.
 
+## Execution
+If you are just straight up unable to run the `gravity-sync.sh` file, make sure it's marked as an executable by Linux.
+
+```bash
+chmod +x gravity-sync.sh
+```
+
+
 ## Updates
 If you manually installed Gravity Sync via .zip or .tar.gz you will need to download and overwrite the `gravity-sync.sh` file with a newer version. If you've chosen this path, I won't lay out exactly what you'll need to do every time, but you should at least review the contents of the script bundle (specifically the example configuration file) to make sure there are no new additional files or required settings. 
 
@@ -162,18 +170,7 @@ crontab -e
 ```
 
 ## Troubleshooting
-If you are just straight up unable to run the `gravity-sync.sh` file, make sure it's marked as an executable by Linux.
-
-```bash
-chmod +x gravity-sync.sh
-```
-
-If you are getting errors about missing SSH or RSYNC when you run your first `compare` or `pull` operation, and you're using an ultra-lightweight distro like DietPi, make sure they are installed on the base operating system.
-
-- If your script prompts for a password on the remote system, make sure that your user account is setup not to require passwords in the sudoers file.
-- If you use a non-standard SSH port to connect to your primary Pi-hole, you can add `SSH_PORT='123'` to the bottom of your `gravity-sync.conf` file. (Subsitute 123 for your non-standard port.) This will overwrite the `SSH_PORT=22` at the top of the script as it is imported later in the execution. 
-- If you'd like to know what version of the script you have running by running `./gravity-sync.sh version` 
-- If the update script fails, make sure you did your original deployment via `git clone` and not a manual install. 
+ 
 - If it doesn't kick off, you can manually execute a `git pull` while in the `gravity-sync` directory. 
 
 If all else fails, delete the entire `gravity-sync` folder from your system and re-deploy. This will have no impact on your replicated databases. 

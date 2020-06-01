@@ -2,7 +2,7 @@
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.7.5'
+VERSION='1.7.6'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -142,7 +142,7 @@ function pull_gs {
 	
 	MESSAGE="Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo_stat
-		${SSHPASSWORD} rsync -e "ssh -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull >/dev/null 2>&1
+		${SSHPASSWORD} rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull >/dev/null 2>&1
 		error_validate
 		
 	MESSAGE="Replacing ${GRAVITY_FI} on $HOSTNAME"
@@ -199,7 +199,7 @@ function pull_gs {
 			
 			MESSAGE="Pulling ${CUSTOM_DNS} from ${REMOTE_HOST}"
 			echo_stat
-				${SSHPASSWORD} rsync -e "ssh -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull >/dev/null 2>&1
+				${SSHPASSWORD} rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull >/dev/null 2>&1
 				error_validate
 				
 			MESSAGE="Replacing ${CUSTOM_DNS} on $HOSTNAME"
@@ -273,22 +273,22 @@ function push_gs {
 
 	MESSAGE="Backing Up ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo_stat
-		${SSHPASSWORD} rsync -e "ssh -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push >/dev/null 2>&1
+		${SSHPASSWORD} rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push >/dev/null 2>&1
 		error_validate
 
 	MESSAGE="Pushing ${GRAVITY_FI} to ${REMOTE_HOST}"
 	echo_stat
-		${SSHPASSWORD} rsync --rsync-path="sudo rsync" -e "ssh -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+		${SSHPASSWORD} rsync --rsync-path="sudo rsync" -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 		error_validate
 
 	MESSAGE="Setting Permissions on ${GRAVITY_FI}"
 	echo_stat	
-		${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
+		${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
 		error_validate
 
 	MESSAGE="Setting Ownership on ${GRAVITY_FI}"
 	echo_stat	
-		${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
+		${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
 		error_validate	
 
 	if [ "$SKIP_CUSTOM" != '1' ]
@@ -297,22 +297,22 @@ function push_gs {
 		then
 			MESSAGE="Backing Up ${CUSTOM_DNS} from ${REMOTE_HOST}"
 			echo_stat
-				${SSHPASSWORD} rsync -e "ssh -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.push >/dev/null 2>&1
+				${SSHPASSWORD} rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.push >/dev/null 2>&1
 				error_validate
 
 			MESSAGE="Pushing ${CUSTOM_DNS} to ${REMOTE_HOST}"
 			echo_stat
-				${SSHPASSWORD} rsync --rsync-path="sudo rsync" -e "ssh -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${PIHOLE_DIR}/${CUSTOM_DNS} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+				${SSHPASSWORD} rsync --rsync-path="sudo rsync" -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${PIHOLE_DIR}/${CUSTOM_DNS} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
 				error_validate
 
 			MESSAGE="Setting Permissions on ${CUSTOM_DNS}"
 			echo_stat	
-				${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 644 ${PIHOLE_DIR}/${CUSTOM_DNS}" >/dev/null 2>&1
+				${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 644 ${PIHOLE_DIR}/${CUSTOM_DNS}" >/dev/null 2>&1
 				error_validate
 
 			MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
 			echo_stat	
-				${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chown root:root ${PIHOLE_DIR}/${CUSTOM_DNS}" >/dev/null 2>&1
+				${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chown root:root ${PIHOLE_DIR}/${CUSTOM_DNS}" >/dev/null 2>&1
 				error_validate
 		fi	
 	fi
@@ -323,12 +323,12 @@ function push_gs {
 
 	MESSAGE="Updating FTLDNS Configuration"
 	echo_stat
-		${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${PIHOLE_BIN} restartdns reloadlists" >/dev/null 2>&1
+		${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${PIHOLE_BIN} restartdns reloadlists" >/dev/null 2>&1
 		error_validate
 	
 	MESSAGE="Reloading FTLDNS Services"
 	echo_stat	
-		${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${PIHOLE_BIN} restartdns" >/dev/null 2>&1
+		${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${PIHOLE_BIN} restartdns" >/dev/null 2>&1
 		error_validate
 	
 	logs_export
@@ -589,7 +589,7 @@ function validate_os_sshpass {
 	
 	MESSAGE="Validating SSH Connection to ${REMOTE_HOST}"
 	echo_stat
-		timeout 5 ${SSHPASSWORD} ssh -p ${SSH_PORT} -i '$HOME/${SSH_PKIF}' -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
+		timeout 5 ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i '$HOME/${SSH_PKIF}' -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
 			error_validate
 }
 
@@ -651,23 +651,27 @@ function distro_check {
 
 ## Detect SSH & RSYNC
 function detect_ssh {
-	MESSAGE="Validating SSH Client on $HOSTNAME"
+	MESSAGE="Validating SSH Command on $HOSTNAME"
 	echo_stat
 
 	if hash ssh 2>/dev/null
 	then
 		echo_good
+		SSH_CMD='ssh'
 	else
 		echo_fail
 		MESSAGE="Attempting to Compensate"
 		echo_info
-
-		distro_check
-
-		MESSAGE="Installing SSH on $HOSTNAME"
-		echo_stat
-		${PKG_INSTALL} ssh >/dev/null 2>&1
-			error_validate
+		if hash dbclient > 2>/dev/null
+		then
+			SSH_CMD='dbclient'
+			MESSAGE="Using Dropbear Instead"
+			echo_info
+		else
+			MESSAGE="No Alternative Detected"
+			echo_info
+			exit_nochange
+		fi
 	fi
 
 	MESSAGE="Validating RSYNC Client on $HOSTNAME"
@@ -709,7 +713,7 @@ function md5_compare {
 
 	MESSAGE="Analyzing ${REMOTE_HOST} ${GRAVITY_FI}"
 	echo_stat
-	primaryDBMD5=$(${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${GRAVITY_FI}")
+	primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${GRAVITY_FI}")
 		error_validate
 	
 	MESSAGE="Analyzing $HOSTNAME ${GRAVITY_FI}"
@@ -735,13 +739,13 @@ function md5_compare {
 			# MESSAGE="Comparing ${CUSTOM_DNS} Changes"
 			# echo_info
 			
-			if ${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${PIHOLE_DIR}/${CUSTOM_DNS}
+			if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${PIHOLE_DIR}/${CUSTOM_DNS}
 			then
 				REMOTE_CUSTOM_DNS="1"
 				MESSAGE="Analyzing ${REMOTE_HOST} ${CUSTOM_DNS}"
 				echo_stat
 
-				primaryCLMD5=$(${SSHPASSWORD} ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${CUSTOM_DNS}")
+				primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${CUSTOM_DNS}")
 					error_validate
 				
 				MESSAGE="Analyzing $HOSTNAME ${CUSTOM_DNS}"
