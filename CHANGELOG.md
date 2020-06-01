@@ -14,6 +14,7 @@
 #### 1.7.6
 - Detects `dbclient` install as alternative to OpenSSH Client. (DietPi)
 - Attempts to install OpenSSH Client if not found, and Dropbear is not alternative. (DietPi)
+- Fix bug with `dropbearkey` not finding .ssh folder
 
 #### 1.7.5
 - No code changes!
@@ -31,7 +32,7 @@
 - Fixes `custom.list` not being processed by `./gravity-sync.sh restore` function.
 - Detects absence of `ssh` client command on host OS (DietPi)
 - Detects absence of `rsync` client command on host OS (DietPi)
-- Detects absence of `ssh-keygen` utility on host OS and will use dropbearkey as an alternative (DietPi)
+- Detects absence of `ssh-keygen` utility on host OS and will use `dropbearkey` as an alternative (DietPi)
 - Changelog polarity reversed after heated discussions with marketing team.
 
 #### 1.7.3
