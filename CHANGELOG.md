@@ -11,6 +11,10 @@
 **Known Issues**
 - No new Star Trek references.
 
+#### 1.7.6
+- Detects `dbclient` install as alternative to OpenSSH Client. (DietPi)
+- Attempts to install OpenSSH Client if not found, and Dropbear is not alternative. (DietPi)
+
 #### 1.7.5
 - No code changes!
 - Primary README now only reflect "The Easy Way" to install and configure Gravity Sync

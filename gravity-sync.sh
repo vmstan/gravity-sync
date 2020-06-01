@@ -662,7 +662,7 @@ function detect_ssh {
 		echo_fail
 		MESSAGE="Attempting to Compensate"
 		echo_info
-		if hash dbclient > 2>/dev/null
+		if hash dbclient 2>/dev/null
 		then
 			SSH_CMD='dbclient'
 			MESSAGE="Using Dropbear Instead"
