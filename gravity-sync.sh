@@ -781,6 +781,12 @@ function md5_compare {
 				echo_info
 			fi
 		else
+			if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${PIHOLE_DIR}/${CUSTOM_DNS}
+			then
+				REMOTE_CUSTOM_DNS="1"
+				MESSAGE="${REMOTE_HOST} has ${CUSTOM_DNS}"
+				echo_info
+			fi	
 			MESSAGE="No ${CUSTOM_DNS} Detected on $HOSTNAME"
 			echo_info
 		fi
