@@ -618,7 +618,7 @@ function detect_sshkeygen {
 					KEYGEN_COMMAND="dropbearkey -t rsa -f"
 				else
 					mkdir $HOME/.ssh >/dev/null 2>&1
-					KEYGEN_COMMAND="dropbearkey -t rsa -f $HOME/${SSH_PKIF} | grep "^rsa" > $HOME/${SSH_PKIF}.pub "
+					KEYGEN_COMMAND="dropbearkey -t ecdsa -f $HOME/${SSH_PKIF} | grep "^ecdsa" > $HOME/${SSH_PKIF}.pub "
 				fi
 		else
 			MESSAGE="No Alternatives Located"
