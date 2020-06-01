@@ -936,6 +936,7 @@ function config_generate {
 			then
 				dropbearkey -t ecdsa -f $HOME/${SSH_PKIF} | grep "^ecdsa" > $HOME/${SSH_PKIF}.pub 
 				cat $HOME/${SSH_PKIF}.pub | dbclient ${REMOTE_USER}@${REMOTE_HOST} 'cat - >> .ssh/authorized_keys'
+			fi
 			echo -e "========================================================"
 			echo -e "========================================================"
 		else
