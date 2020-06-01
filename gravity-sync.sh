@@ -596,7 +596,7 @@ function validate_os_sshpass {
 		elif hash dbclient 2>/dev/null
 		then
 			# if [ "$SSH_CMD" = "dbclient" ]; then echo ''; fi;
-		timeout 5 ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i '$HOME/${SSH_PKIF}' ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
+		timeout 5 ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
 			error_validate
 		fi
 }
@@ -664,17 +664,17 @@ function distro_check {
 
 ## Detect SSH & RSYNC
 function detect_ssh {
-	MESSAGE="Validating SSH Command on $HOSTNAME"
+	MESSAGE="Validating SSH on $HOSTNAME"
 	echo_stat
 
 	if hash ssh 2>/dev/null
 	then
-		MESSAGE="Validating SSH Command on $HOSTNAME (OpenSSH)"
+		MESSAGE="Validating SSH on $HOSTNAME (OpenSSH)"
 		echo_good
 		SSH_CMD='ssh'
 	elif hash dbclient 2>/dev/null
 	then
-		MESSAGE="Validating SSH Command on $HOSTNAME (Dropbear)"
+		MESSAGE="Validating SSH on $HOSTNAME (Dropbear)"
 		echo_good
 		SSH_CMD='dbclient'
 	else
@@ -689,7 +689,7 @@ function detect_ssh {
 			error_validate
 	fi
 
-	MESSAGE="Validating RSYNC Client on $HOSTNAME"
+	MESSAGE="Validating RSYNC on $HOSTNAME"
 	echo_stat
 
 	if hash rsync 2>/dev/null
