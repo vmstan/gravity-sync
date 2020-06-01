@@ -618,7 +618,7 @@ function detect_sshkeygen {
 					KEYGEN_COMMAND="dropbearkey -t rsa -f"
 				else
 					mkdir $HOME/.ssh >/dev/null 2>&1
-					KEYGEN_COMMAND="dropbearkey -t ecdsa -f $HOME/${SSH_PKIF} | grep "^ecdsa" > $HOME/${SSH_PKIF}.pub "
+					KEYGEN_COMMAND="dropbearkey -t rsa -f $HOME/${SSH_PKIF}"
 				fi
 		else
 			MESSAGE="No Alternatives Located"
@@ -934,6 +934,7 @@ function config_generate {
 				ssh-copy-id -f -i $HOME/${SSH_PKIF}.pub ${REMOTE_USER}@${REMOTE_HOST}
 			elif hash dbclient 2>/dev/null
 			then
+				dropbearkey -y -f $HOME/${SSH_PKIF} | grep "^ssh-rsa " > $HOME/${SSH_PKIF}
 				cat $HOME/${SSH_PKIF}.pub | dbclient ${REMOTE_USER}@${REMOTE_HOST} 'cat - >> .ssh/authorized_keys'
 			fi
 			echo -e "========================================================"
