@@ -733,7 +733,7 @@ function md5_compare {
 	MESSAGE="Analyzing ${REMOTE_HOST} ${GRAVITY_FI}"
 	echo_stat
 	# if [ "$SSH_CMD" = "dbclient" ]; then echo ''; fi;
-	primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${GRAVITY_FI}")
+	primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${GRAVITY_FI}") >/dev/null 2>&1
 		error_validate
 	
 	MESSAGE="Analyzing $HOSTNAME ${GRAVITY_FI}"
@@ -765,7 +765,7 @@ function md5_compare {
 				MESSAGE="Analyzing ${REMOTE_HOST} ${CUSTOM_DNS}"
 				echo_stat
 
-				primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${CUSTOM_DNS}")
+				primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${CUSTOM_DNS}") >/dev/null 2>&1
 					error_validate
 				
 				MESSAGE="Analyzing $HOSTNAME ${CUSTOM_DNS}"
