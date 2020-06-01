@@ -613,8 +613,13 @@ function detect_sshkeygen {
 		then
 			MESSAGE="Using DROPBEARKEY Instead"
 			echo_info
-			KEYGEN_COMMAND="dropbearkey -t rsa -f"
-
+				if [ -d $HOME/.ssh ]
+				then
+					KEYGEN_COMMAND="dropbearkey -t rsa -f"
+				else
+					mkdir $HOME/.ssh >/dev/null 2>&1
+					KEYGEN_COMMAND="dropbearkey -t rsa -f"
+				fi
 		else
 			MESSAGE="No Alternatives Located"
 			echo_info
