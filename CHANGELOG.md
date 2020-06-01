@@ -17,6 +17,7 @@
 - Fix bug with `dropbearkey` not finding .ssh folder.
 - Numerous fixes to accomidate DietPi in general.
 - Fixes issue where `compare` function would show changes where actually none existed.
+- [WARN] header is now purple all the way across, consistent with [INFO] as of 1.7.4.
 
 #### 1.7.5
 - No code changes!

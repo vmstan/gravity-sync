@@ -725,9 +725,6 @@ function error_validate {
 
 ## Validate Sync Required
 function md5_compare {
-	# MESSAGE="Comparing ${GRAVITY_FI} Changes"
-	# echo_info
-	
 	HASHMARK='0'
 
 	MESSAGE="Analyzing ${REMOTE_HOST} ${GRAVITY_FI}"
@@ -747,7 +744,7 @@ function md5_compare {
 		HASHMARK=$((HASHMARK+0))
 	else
 		MESSAGE="${GRAVITY_FI} Differenced"
-		echo_info
+		echo_warn
 		HASHMARK=$((HASHMARK+1))
 	fi
 
@@ -776,7 +773,7 @@ function md5_compare {
 					HASHMARK=$((HASHMARK+0))
 				else
 					MESSAGE="${CUSTOM_DNS} Differenced"
-					echo_info
+					echo_warn
 					HASHMARK=$((HASHMARK+1))
 				fi
 			else
@@ -791,11 +788,11 @@ function md5_compare {
 
 	if [ "$HASHMARK" != "0" ]
 	then
-		MESSAGE="Replication Necessary"
-		echo_info
+		MESSAGE="Replication Required"
+		echo_warn
 		HASHMARK=$((HASHMARK+0))
 	else
-		MESSAGE="Replication Unncessary"
+		MESSAGE="No Changes to Replicate"
 		echo_info
 			exit_nochange
 	fi
@@ -1126,7 +1123,7 @@ function echo_info {
 
 ## Warning
 function echo_warn {
-	echo -e "${WARN} ${MESSAGE}"
+	echo -e "${WARN} ${PURPLE}${MESSAGE}${NC}"
 }
 
 ## Executing
