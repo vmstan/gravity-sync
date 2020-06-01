@@ -668,9 +668,10 @@ function detect_ssh {
 			MESSAGE="Using Dropbear Instead"
 			echo_info
 		else
-			MESSAGE="No Alternative Detected"
-			echo_info
-			exit_nochange
+			MESSAGE="Installing SSH Client with ${PKG_MANAGER}"
+			echo_stat
+			${PKG_INSTALL} ssh-client >/dev/null 2>&1
+				error_validate
 		fi
 	fi
 
@@ -688,6 +689,9 @@ function detect_ssh {
 		distro_check
 
 		MESSAGE="Attempting to Compensate"
+		echo_info
+
+		MESSAGE="Installing RSYNC with ${PKG_MANAGER}"
 		echo_stat
 		${PKG_INSTALL} rsync >/dev/null 2>&1
 			error_validate
