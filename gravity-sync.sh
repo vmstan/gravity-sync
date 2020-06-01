@@ -589,8 +589,15 @@ function validate_os_sshpass {
 	
 	MESSAGE="Validating SSH Connection to ${REMOTE_HOST}"
 	echo_stat
+		if hash ssh 2>/dev/null
+		then
 		timeout 5 ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i '$HOME/${SSH_PKIF}' -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
 			error_validate
+		elif hash dbclient ssh 2>/dev/null
+		then
+		timeout 5 ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i '$HOME/${SSH_PKIF}' ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
+			error_validate
+		fi
 }
 
 
