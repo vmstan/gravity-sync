@@ -732,13 +732,12 @@ function md5_compare {
 
 	MESSAGE="Analyzing ${REMOTE_HOST} ${GRAVITY_FI}"
 	echo_stat
-	# if [ "$SSH_CMD" = "dbclient" ]; then echo ''; fi;
-	primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1) 
+	primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${GRAVITY_FI}" | sed 's/\s.*$//') 
 		error_validate
 	
 	MESSAGE="Analyzing $HOSTNAME ${GRAVITY_FI}"
 	echo_stat
-	secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI})
+	secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI} | sed 's/\s.*$//')
 		error_validate
 	
 	if [ "$primaryDBMD5" == "$secondDBMD5" ]
@@ -756,21 +755,18 @@ function md5_compare {
 	then
 		if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
 		then
-			# MESSAGE="Comparing ${CUSTOM_DNS} Changes"
-			# echo_info
-			
 			if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${PIHOLE_DIR}/${CUSTOM_DNS}
 			then
 				REMOTE_CUSTOM_DNS="1"
 				MESSAGE="Analyzing ${REMOTE_HOST} ${CUSTOM_DNS}"
 				echo_stat
 
-				primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${CUSTOM_DNS}" >/dev/null 2>&1) 
+				primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//'") 
 					error_validate
 				
 				MESSAGE="Analyzing $HOSTNAME ${CUSTOM_DNS}"
 				echo_stat
-				secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS})
+				secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//')
 					error_validate
 				
 				if [ "$primaryCLMD5" == "$secondCLMD5" ]

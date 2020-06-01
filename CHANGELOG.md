@@ -16,6 +16,7 @@
 - Attempts to install OpenSSH Client if not found, and Dropbear is not alternative.
 - Fix bug with `dropbearkey` not finding .ssh folder.
 - Numerous fixes to accomidate DietPi in general.
+- Fixes issue where `compare` function would show changes where actually none existed.
 
 #### 1.7.5
 - No code changes!
