@@ -932,7 +932,7 @@ function config_generate {
 			if hash ssh-copy-id 2>/dev/null
 			then
 				ssh-copy-id -f -i $HOME/${SSH_PKIF}.pub ${REMOTE_USER}@${REMOTE_HOST}
-			elseif hash dropbearkey 2>/dev/null
+			elif hash dropbearkey 2>/dev/null
 			then
 				dropbearkey -t ecdsa -f $HOME/${SSH_PKIF} | grep "^ecdsa" > $HOME/${SSH_PKIF}.pub 
 				cat $HOME/${SSH_PKIF}.pub | dbclient ${REMOTE_USER}@${REMOTE_HOST} 'cat - >> .ssh/authorized_keys'
