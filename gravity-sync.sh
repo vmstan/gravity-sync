@@ -593,8 +593,9 @@ function validate_os_sshpass {
 		then
 		timeout 5 ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i '$HOME/${SSH_PKIF}' -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
 			error_validate
-		elif hash dbclient ssh 2>/dev/null
+		elif hash dbclient 2>/dev/null
 		then
+			if [ "$SSH_CMD" = "dbclient" ]; then; echo ''; fi
 		timeout 5 ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i '$HOME/${SSH_PKIF}' ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
 			error_validate
 		fi
@@ -729,6 +730,7 @@ function md5_compare {
 
 	MESSAGE="Analyzing ${REMOTE_HOST} ${GRAVITY_FI}"
 	echo_stat
+	if [ "$SSH_CMD" = "dbclient" ]; then; echo ''; fi
 	primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${GRAVITY_FI}")
 		error_validate
 	
