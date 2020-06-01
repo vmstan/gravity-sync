@@ -76,7 +76,7 @@ Save. Keep calm, carry on.
 ### Hidden Figures
 There are a series of advanced configuration options that you may need to change to better adapt Gravity Sync to your environment. They are referenced at the end of the `gravity-sync.conf` file. It is suggested that you make any necessary variable changes to this file, as they will superceed the ones located in the core script. If you want to revert back to the Gravity Sync default for any of these settings, just apply a `#` to the beginning of the line to comment it out.
 
-#### SSH_PORT=''
+#### `SSH_PORT=''`
 Gravity Sync is configured by default to use the standard SSH port (22) but if you need to change this, such as if you're traversing a NAT/firewall for a multi-site deployment, to use a non-standard port.
 
 Default setting in Gravity Sync is 22.
