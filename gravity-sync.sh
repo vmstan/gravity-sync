@@ -688,7 +688,6 @@ function detect_ssh {
 		
 		${PKG_INSTALL} ssh-client >/dev/null 2>&1
 			error_validate
-		fi
 	fi
 
 	MESSAGE="Validating RSYNC Client on $HOSTNAME"
