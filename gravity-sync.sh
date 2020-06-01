@@ -250,7 +250,7 @@ function pull_gs {
 		fi
 	fi
 
-	MESSAGE="Inverting Tachyon Pulse"
+	MESSAGE="Isolating Regeneration Pathways"
 	echo_info
 		sleep 1	
 	
@@ -320,7 +320,7 @@ function push_gs {
 		fi	
 	fi
 
-	MESSAGE="Contacting Borg Collective"
+	MESSAGE="Inverting Tachyon Pulse"
 	echo_info
 		sleep 1	
 

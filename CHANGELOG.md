@@ -19,6 +19,7 @@
 - Fixes issue where `compare` function would show changes where actually none existed.
 - [WARN] header is now purple all the way across, consistent with [INFO] as of 1.7.4.
 - Fixes issue where `custom.list` would only pull if the file already existed on the secondary Pi-hole.
+- One new Star Trek reference.
 
 #### 1.7.5
 - No code changes!
