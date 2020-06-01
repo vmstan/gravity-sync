@@ -192,10 +192,13 @@ function pull_gs {
 	then	
 		if [ "$REMOTE_CUSTOM_DNS" == "1" ]
 		then
+			if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
+			then
 			MESSAGE="Backing Up ${CUSTOM_DNS} on $HOSTNAME"
 			echo_stat
 				cp ${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.backup >/dev/null 2>&1
 				error_validate
+			fi
 			
 			MESSAGE="Pulling ${CUSTOM_DNS} from ${REMOTE_HOST}"
 			echo_stat
