@@ -678,7 +678,6 @@ function detect_ssh {
 		echo_good
 		SSH_CMD='dbclient'
 	else
-	then
 		echo_fail
 		
 		MESSAGE="Attempting to Compensate"
