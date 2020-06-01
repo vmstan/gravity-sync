@@ -669,22 +669,24 @@ function detect_ssh {
 
 	if hash ssh 2>/dev/null
 	then
+		MESSAGE="Validating SSH Command on $HOSTNAME (OpenSSH)"
 		echo_good
 		SSH_CMD='ssh'
+	elif hash dbclient 2>/dev/null
+	then
+		MESSAGE="Validating SSH Command on $HOSTNAME (Dropbear)"
+		echo_good
+		SSH_CMD='dbclient'
 	else
 		echo_fail
+		
 		MESSAGE="Attempting to Compensate"
 		echo_info
-		if hash dbclient 2>/dev/null
-		then
-			SSH_CMD='dbclient'
-			MESSAGE="Using Dropbear Instead"
-			echo_info
-		else
-			MESSAGE="Installing SSH Client with ${PKG_MANAGER}"
-			echo_stat
-			${PKG_INSTALL} ssh-client >/dev/null 2>&1
-				error_validate
+		MESSAGE="Installing SSH Client with ${PKG_MANAGER}"
+		echo_stat
+		
+		${PKG_INSTALL} ssh-client >/dev/null 2>&1
+			error_validate
 		fi
 	fi
 
