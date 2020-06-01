@@ -11,6 +11,16 @@
 **Known Issues**
 - No new Star Trek references.
 
+#### 1.7.6
+- Detects `dbclient` install as alternative to OpenSSH Client.
+- Attempts to install OpenSSH Client if not found, and Dropbear is not alternative.
+- Fix bug with `dropbearkey` not finding .ssh folder.
+- Numerous fixes to accomidate DietPi in general.
+- Fixes issue where `compare` function would show changes where actually none existed.
+- [WARN] header is now purple all the way across, consistent with [INFO] as of 1.7.4.
+- Fixes issue where `custom.list` would only pull if the file already existed on the secondary Pi-hole.
+- One new Star Trek reference.
+
 #### 1.7.5
 - No code changes!
 - Primary README now only reflect "The Easy Way" to install and configure Gravity Sync
@@ -27,7 +37,7 @@
 - Fixes `custom.list` not being processed by `./gravity-sync.sh restore` function.
 - Detects absence of `ssh` client command on host OS (DietPi)
 - Detects absence of `rsync` client command on host OS (DietPi)
-- Detects absence of `ssh-keygen` utility on host OS and will use dropbearkey as an alternative (DietPi)
+- Detects absence of `ssh-keygen` utility on host OS and will use `dropbearkey` as an alternative (DietPi)
 - Changelog polarity reversed after heated discussions with marketing team.
 
 #### 1.7.3
