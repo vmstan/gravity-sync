@@ -1157,6 +1157,7 @@ function task_configure {
 	fi
 }
 
+## Devmode Task
 function task_devmode {
 	TASKTYPE='DEV'
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
@@ -1179,6 +1180,76 @@ function task_devmode {
 	echo_info
 	
 	exit_withchange
+}
+
+## Update Task
+function task_update {
+	TASKTYPE='UPDATE'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+				
+	#MESSAGE="${TASKTYPE} Requested"
+	#echo_info
+	
+	update_gs
+}
+
+## Version Task
+function task_version {
+	TASKTYPE='VERSION'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+
+	#MESSAGE="${TASKTYPE} Requested"
+	#echo_info
+
+	show_version
+	exit_nochange
+}
+
+## Logs Task
+function task_logs {
+	TASKTYPE='LOGS'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+	
+	#MESSAGE="${TASKTYPE} Requested"
+	#echo_info
+
+	logs_gs
+}
+
+## Compare Task
+function task_compare {
+	TASKTYPE='COMPARE'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+
+	#MESSAGE="${TASKTYPE} Requested"
+	#echo_info
+	
+	import_gs
+	
+	# MESSAGE="Validating OS Configuration"
+	# echo_info
+
+		validate_gs_folders
+		validate_ph_folders
+		validate_os_sshpass
+		
+	md5_compare
+}
+
+## Cron Task
+function task_cron {
+	TASKTYPE='CRON'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+
+	#MESSAGE="${TASKTYPE} Requested"
+	#echo_info
+	
+	show_crontab
 }
 
 # Echo Stack
@@ -1291,26 +1362,15 @@ case $# in
 			;;
 	
 			version)
-				TASKTYPE='VERSION'
-				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
-				echo_good
-
-				#MESSAGE="${TASKTYPE} Requested"
-				#echo_info
-
-				show_version
-				exit_nochange
+				task_version
 			;;
 	
 			update)
-				TASKTYPE='UPDATE'
-				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
-				echo_good
-				
-				#MESSAGE="${TASKTYPE} Requested"
-				#echo_info
-				
-				update_gs
+				task_update
+			;;
+
+			upgrade)
+				task_update
 			;;
 			
 			dev)
@@ -1326,45 +1386,15 @@ case $# in
 			;;
 	
 			logs)
-				TASKTYPE='LOGS'
-				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
-				echo_good
-				
-				#MESSAGE="${TASKTYPE} Requested"
-				#echo_info
-
-				logs_gs
+				task_logs
 			;;
 			
 			compare)
-				TASKTYPE='COMPARE'
-				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
-				echo_good
-
-				#MESSAGE="${TASKTYPE} Requested"
-				#echo_info
-				
-				import_gs
-				
-				# MESSAGE="Validating OS Configuration"
-				# echo_info
-
-					validate_gs_folders
-					validate_ph_folders
-					validate_os_sshpass
-					
-				md5_compare
+				task_compare
 			;;
 			
 			cron)
-				TASKTYPE='CRON'
-				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
-				echo_good
-
-				#MESSAGE="${TASKTYPE} Requested"
-				#echo_info
-				
-				show_crontab
+				task_cron
 			;;
 			
 			config)
