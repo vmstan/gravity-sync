@@ -13,13 +13,14 @@
 
 #### 1.7.7
 - `config` function will attempt to ping remote host to validate network connection, can by bypassed by adding `PING_AVOID='1'` to your `gravity-sync.conf` file.
-- Changes some [INFO] messages to [WARN] where approprate
-- Adds aliases for more GS functions
-- Shows current version on each script execution
-- Adds time output to Aborting message (exit without change)
-- Checks for existance of Pi-hole binaries during validation
-- Less chatty about each step of configuration validation if it completes
-- Less chatty about replication validation if it's not necessary
+- Changes some [INFO] messages to [WARN] where approprate.
+- Adds aliases for more Gravity Sync functions.
+- Shows current version on each script execution.
+- Adds time output to Aborting message (exit without change.)
+- Checks for existance of Pi-hole binaries during validation.
+- Less chatty about each step of configuration validation if it completes.
+- Less chatty about replication validation if it's not necessary.
+- When applying `update` in DEV mode, the Git branch used will be shown.
 
 #### 1.7.6
 - Detects `dbclient` install as alternative to OpenSSH Client.
