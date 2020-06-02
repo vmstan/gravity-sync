@@ -580,21 +580,24 @@ function validate_os_sshpass {
 			MESSAGE="Using SSH Key-Pair Authentication"
 		else
 			timeout 5 ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
-			if [ "$?" != "0" ]; then
+			if [ "$?" != "0" ]
+			then
 				SSHPASSWORD="sshpass -p ${REMOTE_PASS}"
 				MESSAGE="Using SSH Password Authentication"
+				echo_warn
 			else
 		        SSHPASSWORD=''
 				MESSAGE="Using SSH Key-Pair Authentication"
+				echo_info
 			fi
 			
 		fi
     else
         SSHPASSWORD=''
 		MESSAGE="Using SSH Key-Pair Authentication"
+		echo_info
     fi
 	
-	echo_info
 	
 	MESSAGE="Validating SSH Connection to ${REMOTE_HOST}"
 	echo_stat
@@ -604,7 +607,6 @@ function validate_os_sshpass {
 			error_validate
 		elif hash dbclient 2>/dev/null
 		then
-			# if [ "$SSH_CMD" = "dbclient" ]; then echo ''; fi;
 		timeout 5 ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
 			error_validate
 		fi
@@ -674,17 +676,17 @@ function distro_check {
 
 ## Detect SSH & RSYNC
 function detect_ssh {
-	MESSAGE="Validating SSH on $HOSTNAME"
+	MESSAGE="Validating SSH Client on $HOSTNAME"
 	echo_stat
 
 	if hash ssh 2>/dev/null
 	then
-		MESSAGE="Validating SSH on $HOSTNAME (OpenSSH)"
+		MESSAGE="${MESSAGE} (OpenSSH)"
 		echo_good
 		SSH_CMD='ssh'
 	elif hash dbclient 2>/dev/null
 	then
-		MESSAGE="Validating SSH on $HOSTNAME (Dropbear)"
+		MESSAGE="${MESSAGE} (Dropbear)"
 		echo_good
 		SSH_CMD='dbclient'
 	else
@@ -699,7 +701,7 @@ function detect_ssh {
 			error_validate
 	fi
 
-	MESSAGE="Validating RSYNC on $HOSTNAME"
+	MESSAGE="Validating RSYNC Installed on $HOSTNAME"
 	echo_stat
 
 	if hash rsync 2>/dev/null
@@ -748,11 +750,11 @@ function md5_compare {
 	
 	if [ "$primaryDBMD5" == "$secondDBMD5" ]
 	then
-		MESSAGE="${GRAVITY_FI} Identical"
-		echo_info
+		# MESSAGE="Identical ${GRAVITY_FI} Detected"
+		# echo_info
 		HASHMARK=$((HASHMARK+0))
 	else
-		MESSAGE="${GRAVITY_FI} Differenced"
+		MESSAGE="Differenced ${GRAVITY_FI} Detected"
 		echo_warn
 		HASHMARK=$((HASHMARK+1))
 	fi
@@ -777,11 +779,11 @@ function md5_compare {
 				
 				if [ "$primaryCLMD5" == "$secondCLMD5" ]
 				then
-					MESSAGE="${CUSTOM_DNS} Identical"
-					echo_info
+					# MESSAGE="${CUSTOM_DNS} Identical"
+					# echo_info
 					HASHMARK=$((HASHMARK+0))
 				else
-					MESSAGE="${CUSTOM_DNS} Differenced"
+					MESSAGE="Differenced ${CUSTOM_DNS} Detected"
 					echo_warn
 					HASHMARK=$((HASHMARK+1))
 				fi
@@ -807,7 +809,7 @@ function md5_compare {
 		echo_warn
 		HASHMARK=$((HASHMARK+0))
 	else
-		MESSAGE="No Changes to Replicate"
+		MESSAGE="No Replication Required"
 		echo_info
 			exit_nochange
 	fi
