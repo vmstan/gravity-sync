@@ -473,10 +473,10 @@ function restore_gs {
 ## Core Logging
 ### Write Logs Out
 function logs_export {
-	MESSAGE="Logging Timestamps to ${SYNCING_LOG}"
-	echo_info
-
-	echo -e $(date) "[${TASKTYPE}]" >> ${LOG_PATH}/${SYNCING_LOG}
+	MESSAGE="Logging Successful ${TASKTYPE}"
+	echo_stat
+		echo -e $(date) "[${TASKTYPE}]" >> ${LOG_PATH}/${SYNCING_LOG}
+		error_validate
 }
 
 ### Output Sync Logs

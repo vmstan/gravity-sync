@@ -22,6 +22,7 @@
 - Less chatty about replication validation if it's not necessary.
 - Less chatty about file validation if no changes are required.
 - When applying `update` in DEV mode, the Git branch used will be shown.
+- Validates log export operation
 
 #### 1.7.6
 - Detects `dbclient` install as alternative to OpenSSH Client.
