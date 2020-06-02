@@ -872,7 +872,7 @@ function config_generate {
 	cp $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}.example $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 	error_validate
 	
-	MESSAGE="Enter IP or DNS of primary Pi-hole server"
+	MESSAGE="IP or DNS of primary Pi-hole"
 	echo_need
 	read INPUT_REMOTE_HOST
 
@@ -887,7 +887,7 @@ function config_generate {
 		echo_warn
 	fi
 	
-	MESSAGE="Enter SSH user with SUDO rights on primary Pi-hole server"
+	MESSAGE="SSH User with SUDO rights"
 	echo_need
 	read INPUT_REMOTE_USER
 	
@@ -904,28 +904,31 @@ function config_generate {
 	if hash sshpass 2>/dev/null
 	then
 		MESSAGE="SSHPASS Utility Detected"
-		echo_info
-		
-		MESSAGE="Do you want to configure password based SSH authentication?"
 		echo_warn
-		MESSAGE="Your password will be stored clear-text in the ${CONFIG_FILE}!"
-		echo_warn
+			if hash ssh 2>/dev/null
+				MESSAGE="Before proceeding reference ${BLUE}https://github.com/vmstan/gravity-sync/blob/master/ADVANCED.md#ssh-configuration${NC}"
+				echo_info
 
-		MESSAGE="Leave blank to use (preferred) SSH Key-Pair Authentication"
-		echo_need
-		read INPUT_REMOTE_PASS
+				MESSAGE="Leave blank to use SSH Key-Pair"
+				echo_warn
 				
-		MESSAGE="Saving Password to ${CONFIG_FILE}"
-		echo_stat
-		sed -i "/REMOTE_PASS=''/c\REMOTE_PASS='${INPUT_REMOTE_PASS}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
-		error_validate
-		
+				MESSAGE="SSH User Password"
+				echo_need
+				read INPUT_REMOTE_PASS
+				
+				MESSAGE="Saving Password to ${CONFIG_FILE}"
+				echo_stat
+				sed -i "/REMOTE_PASS=''/c\REMOTE_PASS='${INPUT_REMOTE_PASS}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+					error_validate
+			elif hash dbclient 2>/dev/null
+				MESSAGE="Dropbear SSH Detected"
+				echo_warn
+				MESSAGE="Skipping Password Setup"
+				echo_info
+			fi	
 	else
-		MESSAGE="SSHPASS Not Installed"
-		echo_info
-		
-		MESSAGE="Defaulting to SSH Key-Pair Authentication"
-		echo_info
+	#	MESSAGE="Defaulting to SSH Key-Pair Authentication"
+	#	echo_info
 	fi
 
 	if [ -z $INPUT_REMOTE_PASS ]
