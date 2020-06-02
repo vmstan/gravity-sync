@@ -610,7 +610,6 @@ function validate_os_sshpass {
 		echo_info
     fi
 	
-	
 	MESSAGE="Validating Connection to ${REMOTE_HOST}"
 	echo_stat
 		if hash ssh 2>/dev/null
@@ -907,7 +906,10 @@ function config_generate {
 		echo_warn
 			if hash ssh 2>/dev/null
 			then
-				MESSAGE="Before proceeding reference ${BLUE}https://github.com/vmstan/gravity-sync/blob/master/ADVANCED.md#ssh-configuration${NC}"
+				MESSAGE="Please Reference Documentation"
+				echo_info
+
+				MESSAGE="${BLUE}https://github.com/vmstan/gravity-sync/blob/master/ADVANCED.md#ssh-configuration${NC}"
 				echo_info
 
 				MESSAGE="Leave password blank to use key-pair! (reccomended)"
