@@ -531,24 +531,19 @@ function show_crontab {
 function validate_gs_folders {
 	MESSAGE="Validating ${PROGRAM} Folders on $HOSTNAME"
 	echo_stat
-		if [ -d $HOME/${LOCAL_FOLDR} ]
+		if [ ! -d $HOME/${LOCAL_FOLDR} ]
 		then
-	    	
-		else
 			MESSAGE="Unable to Find $HOME/${LOCAL_FOLDR}"
 			echo_fail
 			exit_nochange
 		fi
 	
-		if [ -d $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} ]
+		if [ ! -d $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} ]
 		then
-	    	
-		else
 			MESSAGE="Unable to Find $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}"
 			echo_fail
 			exit_nochange
 		fi
-	
 	echo_good
 }
 
@@ -556,24 +551,19 @@ function validate_gs_folders {
 function validate_ph_folders {
 	MESSAGE="Validating Pi-hole Configuration on $HOSTNAME"
 	echo_stat
-		if [ -f ${PIHOLE_BIN} ]
+		if [ ! -f ${PIHOLE_BIN} ]
 		then
-	    	
-		else
 			MESSAGE="Unable to Validate Pi-Hole is Installed"
 			echo_fail
 			exit_nochange
 		fi
 
-		if [ -d ${PIHOLE_DIR} ]
+		if [ ! -d ${PIHOLE_DIR} ]
 		then
-
-		else
 			MESSAGE="Unable to Validate Pi-Hole Configuration Directory"
 			echo_fail
 			exit_nochange
 		fi
-	
 	echo_good
 }
 
