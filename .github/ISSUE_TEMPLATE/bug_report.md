@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-**Describe the bug**
+**Describe the Issue**
 A clear and concise description of what the bug is.
 
 **Screenshots**
@@ -21,5 +21,5 @@ If applicable, add screenshots to help explain your problem.
  - Gravity Sync Version: [e.g. 1.7.6]
  - Pi-hole Versions: [e.g. v5.0]
 
-**Additional context**
+**Additional Context**
 Add any other context about the problem here. If you have any advanced flags set in your `gravity-sync.conf` please list them here.

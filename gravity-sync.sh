@@ -28,6 +28,7 @@ CRONJOB_LOG='gravity-sync.cron' 	# replace in gravity-sync.conf to overwrite
 VERIFY_PASS='0'						# replace in gravity-sync.conf to overwrite
 SKIP_CUSTOM='0'						# replace in gravity-sync.conf to overwrite
 DATE_OUTPUT='0'						# replace in gravity-sync.conf to overwrite
+PING_AVOID='0'						# replace in gravity-sync.conf to overwrite
 
 # Pi-hole Folder/File Locations
 PIHOLE_DIR='/etc/pihole' 			# default Pi-hole data directory
@@ -702,7 +703,7 @@ function detect_ssh {
 	else
 		echo_fail
 		MESSAGE="RSYNC is Required"
-		echo_info
+		echo_warn
 
 		distro_check
 
@@ -856,6 +857,18 @@ function config_generate {
 	MESSAGE="Enter IP or DNS of primary Pi-hole server"
 	echo_need
 	read INPUT_REMOTE_HOST
+
+	if [ "${PING_AVOID}" != "1" ]
+		MESSAGE="Testing Network Connection (PING)"
+		echo_stat
+		ping -c 3 ${INPUT_REMOTE_HOST}
+			if [ "$?" != "127" ]
+			then
+				echo_fail
+			else
+				echo_good
+			fi
+	fi
 	
 	MESSAGE="Enter SSH user with SUDO rights on primary Pi-hole server"
 	echo_need
@@ -1323,10 +1336,9 @@ case $# in
 				if [ -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE} ]
 				then		
 					config_delete
-
 				else
-					MESSAGE="${CONFIG_FILE} Missing"
-					echo_info
+					MESSAGE="No Active ${CONFIG_FILE}"
+					echo_warn
 					
 					config_generate
 				fi
