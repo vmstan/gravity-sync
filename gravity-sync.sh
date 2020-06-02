@@ -605,7 +605,7 @@ function validate_os_sshpass {
 					MESSAGE="Using SSH Password Authentication"
 					echo_warn
 				else
-					MESSAGE="Valid Key-Pair Detected ${NC}(${RED}Password Override${NC})"
+					MESSAGE="Valid Key-Pair Detected ${NC}(${RED}Password Ignored${NC})"
 					echo_info
 				fi
 			fi
@@ -619,8 +619,14 @@ function validate_os_sshpass {
 	echo_stat
 		if hash ssh 2>/dev/null
 		then
-		timeout 5 ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
-			error_validate
+			if [ -z "$SSHPASSWORD" ]
+			then
+				timeout 5 ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
+				error_validate
+			else
+				timeout 5 ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
+				error_validate
+			fi
 		elif hash dbclient 2>/dev/null
 		then
 		timeout 5 ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
