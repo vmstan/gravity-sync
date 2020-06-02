@@ -906,6 +906,7 @@ function config_generate {
 		MESSAGE="SSHPASS Utility Detected"
 		echo_warn
 			if hash ssh 2>/dev/null
+			then
 				MESSAGE="Before proceeding reference ${BLUE}https://github.com/vmstan/gravity-sync/blob/master/ADVANCED.md#ssh-configuration${NC}"
 				echo_info
 
@@ -921,6 +922,7 @@ function config_generate {
 				sed -i "/REMOTE_PASS=''/c\REMOTE_PASS='${INPUT_REMOTE_PASS}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 					error_validate
 			elif hash dbclient 2>/dev/null
+			then
 				MESSAGE="Dropbear SSH Detected"
 				echo_warn
 				MESSAGE="Skipping Password Setup"
