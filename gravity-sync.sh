@@ -1075,6 +1075,7 @@ function show_version {
 ## Automate Task
 function task_automate {
 	TASKTYPE='AUTOMATE'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
 
 	import_gs
@@ -1136,6 +1137,50 @@ function task_automate {
 	exit_withchange
 }	
 
+## Configure Task
+function task_configure {				
+	TASKTYPE='CONFIGURE'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+
+	#MESSAGE="${TASKTYPE} Requested"
+	#echo_info
+	
+	if [ -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE} ]
+	then		
+		config_delete
+	else
+		MESSAGE="No Active ${CONFIG_FILE}"
+		echo_warn
+		
+		config_generate
+	fi
+}
+
+function task_devmode {
+	TASKTYPE='DEV'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+	
+	if [ -f $HOME/${LOCAL_FOLDR}/dev ]
+	then
+		MESSAGE="Disabling ${TASKTYPE}"
+		echo_stat
+		rm -f $HOME/${LOCAL_FOLDR}/dev
+			error_validate
+	else
+		MESSAGE="Enabling ${TASKTYPE}"
+		echo_stat
+		touch $HOME/${LOCAL_FOLDR}/dev
+			error_validate
+	fi
+	
+	MESSAGE="Run UPDATE to apply changes"
+	echo_info
+	
+	exit_withchange
+}
+
 # Echo Stack
 ## Informative
 function echo_info {
@@ -1170,7 +1215,7 @@ function echo_need {
 # SCRIPT EXECUTION ###########################
 SCRIPT_START=$SECONDS
 
-	MESSAGE="${PROGRAM} Executing"
+	MESSAGE="${PROGRAM} ${VERSION} Executing"
 	echo_info
 	
 	MESSAGE="Evaluating Arguments"
@@ -1207,10 +1252,11 @@ case $# in
 
 			push)	
 				TASKTYPE='PUSH'
+				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
 
-				MESSAGE="${TASKTYPE} Requested"
-				echo_info
+				#MESSAGE="${TASKTYPE} Requested"
+				#echo_info
 				
 				import_gs
 
@@ -1226,10 +1272,11 @@ case $# in
 
 			restore)	
 				TASKTYPE='RESTORE'
+				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
 
-				MESSAGE="${TASKTYPE} Requested"
-				echo_info
+				#MESSAGE="${TASKTYPE} Requested"
+				#echo_info
 				
 				import_gs
 
@@ -1245,10 +1292,11 @@ case $# in
 	
 			version)
 				TASKTYPE='VERSION'
+				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
 
-				MESSAGE="${TASKTYPE} Requested"
-				echo_info
+				#MESSAGE="${TASKTYPE} Requested"
+				#echo_info
 
 				show_version
 				exit_nochange
@@ -1256,53 +1304,45 @@ case $# in
 	
 			update)
 				TASKTYPE='UPDATE'
+				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
 				
-				MESSAGE="${TASKTYPE} Requested"
-				echo_info
+				#MESSAGE="${TASKTYPE} Requested"
+				#echo_info
 				
 				update_gs
 			;;
 			
 			dev)
-				TASKTYPE='DEV'
-				echo_good
-				
-				if [ -f $HOME/${LOCAL_FOLDR}/dev ]
-				then
-					MESSAGE="Disabling ${TASKTYPE}"
-					echo_stat
-					rm -f $HOME/${LOCAL_FOLDR}/dev
-						error_validate
-				else
-					MESSAGE="Enabling ${TASKTYPE}"
-					echo_stat
-					touch $HOME/${LOCAL_FOLDR}/dev
-						error_validate
-				fi
-				
-				MESSAGE="Run UPDATE to apply changes"
-				echo_info
-				
-				exit_withchange
+				task_devmode
+			;;
+
+			devmode)
+				task_devmode
+			;;
+
+			development)
+				task_devmode
 			;;
 	
 			logs)
 				TASKTYPE='LOGS'
+				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
 				
-				MESSAGE="${TASKTYPE} Requested"
-				echo_info
+				#MESSAGE="${TASKTYPE} Requested"
+				#echo_info
 
 				logs_gs
 			;;
 			
 			compare)
 				TASKTYPE='COMPARE'
+				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
 
-				MESSAGE="${TASKTYPE} Requested"
-				echo_info
+				#MESSAGE="${TASKTYPE} Requested"
+				#echo_info
 				
 				import_gs
 				
@@ -1318,30 +1358,21 @@ case $# in
 			
 			cron)
 				TASKTYPE='CRON'
+				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
 
-				MESSAGE="${TASKTYPE} Requested"
-				echo_info
+				#MESSAGE="${TASKTYPE} Requested"
+				#echo_info
 				
 				show_crontab
 			;;
 			
 			config)
-				TASKTYPE='CONFIGURE'
-				echo_good
+				task_configure
+			;;
 
-				MESSAGE="${TASKTYPE} Requested"
-				echo_info
-				
-				if [ -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE} ]
-				then		
-					config_delete
-				else
-					MESSAGE="No Active ${CONFIG_FILE}"
-					echo_warn
-					
-					config_generate
-				fi
+			configure)
+				task_configure
 			;;
 
 			auto)
