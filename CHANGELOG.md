@@ -18,6 +18,7 @@
 - Shows current version on each script execution
 - Adds time output to Aborting message (exit without change)
 - Checks for existance of Pi-hole binaries during validation
+- Less chatty about each step of configuration validation if it completes
 
 #### 1.7.6
 - Detects `dbclient` install as alternative to OpenSSH Client.
