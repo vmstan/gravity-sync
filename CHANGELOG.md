@@ -17,6 +17,7 @@
 - Adds aliases for more Gravity Sync functions.
 - Shows current version on each script execution.
 - Adds time output to Aborting message (exit without change.)
+- Includes parsing of functions in time calculation.
 - Checks for existance of Pi-hole binaries during validation.
 - Less chatty about each step of configuration validation if it completes.
 - Less chatty about replication validation if it's not necessary.
