@@ -862,16 +862,11 @@ function config_generate {
 	then
 		MESSAGE="Testing Network Connection (PING)"
 		echo_stat
-		ping -c 3 ${INPUT_REMOTE_HOST}
-			if [ "$?" != "127" ]
-			then
-				echo_fail
-			else
-				echo_good
-			fi
+		ping -c 3 ${INPUT_REMOTE_HOST} 2>/dev/null
+			error_validate
 	else
 		MESSAGE="Bypassing Network Testing (PING)"
-		echo_info
+		echo_warn
 	fi
 	
 	MESSAGE="Enter SSH user with SUDO rights on primary Pi-hole server"
