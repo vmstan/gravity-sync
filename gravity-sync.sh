@@ -845,7 +845,7 @@ function intent_validate {
 			INTENT="ENGAGE TRACTOR BEAM"
 		fi
 		
-		MESSAGE="Enter ${INTENT} at this prompt to confirm"
+		MESSAGE="Type ${INTENT} to Confirm"
 		echo_need
 
 		read INPUT_INTENT
@@ -872,7 +872,7 @@ function config_generate {
 	cp $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}.example $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 	error_validate
 	
-	MESSAGE="IP or DNS of primary Pi-hole"
+	MESSAGE="IP or DNS of Primary Pi-hole"
 	echo_need
 	read INPUT_REMOTE_HOST
 
@@ -909,7 +909,7 @@ function config_generate {
 				MESSAGE="Before proceeding reference ${BLUE}https://github.com/vmstan/gravity-sync/blob/master/ADVANCED.md#ssh-configuration${NC}"
 				echo_info
 
-				MESSAGE="Leave blank to use SSH Key-Pair"
+				MESSAGE="Leave password blank to use key-pair! (reccomended)"
 				echo_warn
 				
 				MESSAGE="SSH User Password"
