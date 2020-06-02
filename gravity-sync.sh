@@ -112,7 +112,7 @@ function update_gs {
 
 	if [ "$BRANCH" = "development" ]
 	then
-		MESSAGE="Pulling from origin/development"
+		MESSAGE="Pulling from origin/${BRANCH}"
 		echo_info
 	fi
 
