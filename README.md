@@ -62,7 +62,6 @@ Now, test Gravity Sync. You can run a comparison between primary and secondary d
 Assuming Gravity Sync runs successfully, it will indicate if there are changes pending between the two databases. If not, make a subtle change to a whitelist/blacklist on your primary Pi-hole, such as changing a description field or disabling a whitelist item, and then running `./gravity-sync.sh compare` again to validate your installation is working correctly.
 
 ### The Pull Function
-
 The Gravity Sync Pull, is the standard method of sync operation, and will not prompt for user input after execution. It will perform some checks to help insure success and then stop before making changes if it detects an issue. It will also perform the same `compare` function outlined above, and if there are no changes pending, it will exit without making an attempt to copy data.
 
 ```bash
