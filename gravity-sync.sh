@@ -928,7 +928,7 @@ function config_generate {
 				MESSAGE="Skipping Password Setup"
 				echo_info
 			fi	
-	else
+	# else
 	#	MESSAGE="Defaulting to SSH Key-Pair Authentication"
 	#	echo_info
 	fi

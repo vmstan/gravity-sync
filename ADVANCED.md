@@ -138,7 +138,6 @@ If you are just straight up unable to run the `gravity-sync.sh` file, make sure 
 chmod +x gravity-sync.sh
 ```
 
-
 ## Updates
 If you manually installed Gravity Sync via .zip or .tar.gz you will need to download and overwrite the `gravity-sync.sh` file with a newer version. If you've chosen this path, I won't lay out exactly what you'll need to do every time, but you should at least review the contents of the script bundle (specifically the example configuration file) to make sure there are no new additional files or required settings. 
 
