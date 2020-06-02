@@ -20,6 +20,7 @@
 - Checks for existance of Pi-hole binaries during validation.
 - Less chatty about each step of configuration validation if it completes.
 - Less chatty about replication validation if it's not necessary.
+- Less chatty about file validation if no changes are required.
 - When applying `update` in DEV mode, the Git branch used will be shown.
 
 #### 1.7.6

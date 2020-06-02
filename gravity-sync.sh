@@ -158,43 +158,46 @@ function pull_gs {
 		sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 		error_validate
 	
-	MESSAGE="Validating Ownership on ${GRAVITY_FI}"
+	MESSAGE="Validating Settings of ${GRAVITY_FI}"
 	echo_stat
 		
 		GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk '{print $3 $4}')
-		if [ $GRAVDB_OWN == "piholepihole" ]
+		if [ $GRAVDB_OWN != "piholepihole" ]
 		then
-			echo_good
-		else
+			MESSAGE="Validating Ownership on ${GRAVITY_FI}"
 			echo_fail
 			
 			MESSAGE="Attempting to Compensate"
-			echo_info
+			echo_warn
 			
 			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
 			echo_stat	
 				sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 				error_validate
+
+			MESSAGE="Continuing Validation of ${GRAVITY_FI}"
+			echo_stat
 		fi
 		
-	MESSAGE="Validating Permissions on ${GRAVITY_FI}"
-	echo_stat
-	
 		GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | awk '{print $1}')
-		if [ $GRAVDB_RWE = "-rw-rw-r--" ]
+		if [ $GRAVDB_RWE != "-rw-rw-r--" ]
 		then
-			echo_good
-		else
+			MESSAGE="Validating Permissions on ${GRAVITY_FI}"
 			echo_fail
 				
 			MESSAGE="Attempting to Compensate"
-			echo_info
+			echo_warn
 		
-			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
+			MESSAGE="Setting Permissions on ${GRAVITY_FI}"
 			echo_stat
 				sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 				error_validate
+
+			MESSAGE="Continuing Validation of ${GRAVITY_FI}"
+			echo_stat
 		fi
+
+	echo_good
 
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
@@ -218,43 +221,46 @@ function pull_gs {
 				sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
 				error_validate
 			
-			MESSAGE="Validating Ownership on ${CUSTOM_DNS}"
+			MESSAGE="Validating Settings on ${CUSTOM_DNS}"
 			echo_stat
 				
 				CUSTOMLS_OWN=$(ls -ld ${PIHOLE_DIR}/${CUSTOM_DNS} | awk '{print $3 $4}')
-				if [ $CUSTOMLS_OWN == "rootroot" ]
+				if [ $CUSTOMLS_OWN != "rootroot" ]
 				then
-					echo_good
-				else
+					MESSAGE="Validating Ownership on ${CUSTOM_DNS}"
 					echo_fail
 					
 					MESSAGE="Attempting to Compensate"
-					echo_info
+					echo_warn
 					
 					MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
 					echo_stat	
 						sudo chown root:root ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
 						error_validate
+
+					MESSAGE="Continuing Validation of ${GRAVITY_FI}"
+					echo_stat
 				fi
-				
-			MESSAGE="Validating Permissions on ${CUSTOM_DNS}"
-			echo_stat
 			
 				CUSTOMLS_RWE=$(namei -m ${PIHOLE_DIR}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | awk '{print $1}')
-				if [ $CUSTOMLS_RWE == "-rw-r--r--" ]
+				if [ $CUSTOMLS_RWE != "-rw-r--r--" ]
 				then
-					echo_good
-				else
+					MESSAGE="Validating Permissions on ${CUSTOM_DNS}"
 					echo_fail
 						
 					MESSAGE="Attempting to Compensate"
-					echo_info
+					echo_warn
 				
 					MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
 					echo_stat
 						sudo chmod 644 ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
 						error_validate
+					
+					MESSAGE="Continuing Validation of ${GRAVITY_FI}"
+					echo_stat
 				fi
+
+			echo_good
 		fi
 	fi
 
@@ -369,7 +375,7 @@ function restore_gs {
 			echo_fail
 			
 			MESSAGE="Attempting to Compensate"
-			echo_info
+			echo_warn
 			
 			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
 			echo_stat	
@@ -388,7 +394,7 @@ function restore_gs {
 			echo_fail
 				
 			MESSAGE="Attempting to Compensate"
-			echo_info
+			echo_warn
 		
 			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
 			echo_stat
@@ -416,7 +422,7 @@ function restore_gs {
 					echo_fail
 					
 					MESSAGE="Attempting to Compensate"
-					echo_info
+					echo_warn
 					
 					MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
 					echo_stat	
@@ -435,7 +441,7 @@ function restore_gs {
 					echo_fail
 						
 					MESSAGE="Attempting to Compensate"
-					echo_info
+					echo_warn
 				
 					MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
 					echo_stat
@@ -631,7 +637,7 @@ function detect_sshkeygen {
 		MESSAGE="SSH-KEYGEN is Required"
 		echo_info
 		MESSAGE="Attempting to Compensate"
-		echo_info
+		echo_warn
 
 		if hash dropbearkey >/dev/null 2>&1
 		then
@@ -698,7 +704,7 @@ function detect_ssh {
 		echo_fail
 		
 		MESSAGE="Attempting to Compensate"
-		echo_info
+		echo_warn
 		MESSAGE="Installing SSH Client with ${PKG_MANAGER}"
 		echo_stat
 		
@@ -720,7 +726,7 @@ function detect_ssh {
 		distro_check
 
 		MESSAGE="Attempting to Compensate"
-		echo_info
+		echo_warn
 
 		MESSAGE="Installing RSYNC with ${PKG_MANAGER}"
 		echo_stat
