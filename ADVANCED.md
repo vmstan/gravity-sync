@@ -2,6 +2,9 @@
 ## Advanced Configuration
 The purpose of this guide is to break out the manual install instructions, and any advanced configuration flags, into a seperate document to limit confusion from the primary README. It is expected that users have read and are familiar with the process and concepts outlined in the primary README.
 
+## Prerequisites
+- If you're installing Gravity Sync on a system running Fedora or CentOS, make sure that you are not just using the built in root account and have a dedicated user in the Administrator group. You'll also need SELinux disabled to install Pi-hole.
+
 ## Installation
 If you don't trust `git` to install your software, or just like doing things by hand, that's fine. 
 

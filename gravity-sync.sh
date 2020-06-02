@@ -320,7 +320,7 @@ function push_gs {
 		fi	
 	fi
 
-	MESSAGE="Inverting Tachyon Pulse"
+	MESSAGE="Inverting Tachyon Pulses"
 	echo_info
 		sleep 1	
 
