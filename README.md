@@ -89,7 +89,7 @@ This function purposefuly asks for user interaction to avoid being accidentally 
 - If your script prompts for a password on the remote system, make sure that your remote user account is setup not to require passwords in the sudoers file.
 
 ### The Restore Function
-Graviy Sync can also `restore` the database on the secondary Pi-hole in the event you've overwritten it accidentally. This might happen in the above scenario where you've had your primary Pi-hole down for an extended period, made changes to the secondary, but perhaps didn't get a chance to perform a `push` of the changes back to the primary, before your automated sync ran.
+Gravity Sync can also `restore` the database on the secondary Pi-hole in the event you've overwritten it accidentally. This might happen in the above scenario where you've had your primary Pi-hole down for an extended period, made changes to the secondary, but perhaps didn't get a chance to perform a `push` of the changes back to the primary, before your automated sync ran.
 
 ```bash
 ./gravity-sync.sh restore
