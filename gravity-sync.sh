@@ -583,27 +583,32 @@ function validate_ph_folders {
 function validate_os_sshpass {
 	# MESSAGE="Checking SSH Configuration"
     # echo_info
-	
+
+	SSHPASSWORD=''
+
 	if hash sshpass 2>/dev/null
     then
-		if test -z "$REMOTE_PASS"
-		then
-			SSHPASSWORD=''
-			MESSAGE="Using SSH Key-Pair Authentication"
-		else
-			timeout 5 ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
-			if [ "$?" != "0" ]
+		MESSAGE="SSHPASS Utility Detected"
+		echo_warn
+			if [ -z "$REMOTE_PASS" ]
 			then
-				SSHPASSWORD="sshpass -p ${REMOTE_PASS}"
-				MESSAGE="Using SSH Password Authentication"
-				echo_warn
-			else
-		        SSHPASSWORD=''
 				MESSAGE="Using SSH Key-Pair Authentication"
 				echo_info
+			else
+				MESSAGE="Testing Authentication Options"
+				echo_info
+
+				timeout 5 ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
+				if [ "$?" != "0" ]
+				then
+					SSHPASSWORD="sshpass -p ${REMOTE_PASS}"
+					MESSAGE="Using SSH Password Authentication"
+					echo_warn
+				else
+					MESSAGE="${RED}Password Override${NC} - Valid Key-Pair Detected"
+					echo_info
+				fi
 			fi
-			
-		fi
     else
         SSHPASSWORD=''
 		MESSAGE="Using SSH Key-Pair Authentication"
@@ -995,6 +1000,9 @@ function config_generate {
 		fi
 	fi
 	
+	MESSAGE="Testing Configuration"
+	echo_info
+
 	validate_os_sshpass
 	
 	exit_withchange
