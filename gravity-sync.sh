@@ -605,7 +605,7 @@ function validate_os_sshpass {
 					MESSAGE="Using SSH Password Authentication"
 					echo_warn
 				else
-					MESSAGE="${RED}Password Override${NC} - Valid Key-Pair Detected"
+					MESSAGE="Valid Key-Pair Detected ${NC}(${RED}Password Override${NC})"
 					echo_info
 				fi
 			fi
