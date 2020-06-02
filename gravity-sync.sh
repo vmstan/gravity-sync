@@ -1,4 +1,5 @@
 #!/bin/bash
+SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
@@ -1284,7 +1285,6 @@ function echo_need {
 }
 
 # SCRIPT EXECUTION ###########################
-SCRIPT_START=$SECONDS
 
 	MESSAGE="${PROGRAM} ${VERSION} Executing"
 	echo_info
