@@ -1253,6 +1253,11 @@ function task_cron {
 	show_crontab
 }
 
+function task_invalid {
+	echo_fail
+	list_gs_arguments
+}
+
 # Echo Stack
 ## Informative
 function echo_info {
@@ -1295,8 +1300,7 @@ function echo_need {
 case $# in
 	
 	0)
-		echo_fail
-			list_gs_arguments
+		task_invalid
 	;;
 	
 	1)
@@ -1414,14 +1418,12 @@ case $# in
 			;;	
 
 			*)
-				echo_fail
-        			list_gs_arguments
+				task_invalid
 			;;
 		esac
 	;;
 	
 	*)
-		echo_fail
-			list_gs_arguments
+		task_invalid
 	;;
 esac
