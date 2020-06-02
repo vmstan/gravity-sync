@@ -862,7 +862,7 @@ function config_generate {
 	then
 		MESSAGE="Testing Network Connection (PING)"
 		echo_stat
-		ping -c 3 ${INPUT_REMOTE_HOST} 2>/dev/null
+		ping -c 3 ${INPUT_REMOTE_HOST} >/dev/null 2>&1
 			error_validate
 	else
 		MESSAGE="Bypassing Network Testing (PING)"
