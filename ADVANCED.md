@@ -2,6 +2,9 @@
 ## Advanced Configuration
 The purpose of this guide is to break out the manual install instructions, and any advanced configuration flags, into a seperate document to limit confusion from the primary README. It is expected that users have read and are familiar with the process and concepts outlined in the primary README.
 
+## Prerequisites
+- If you're installing Gravity Sync on a system running Fedora or CentOS, make sure that you are not just using the built in root account and have a dedicated user in the Administrator group. You'll also need SELinux disabled to install Pi-hole.
+
 ## Installation
 If you don't trust `git` to install your software, or just like doing things by hand, that's fine. 
 
@@ -11,8 +14,8 @@ Download the latest release from [GitHub](https://github.com/vmstan/gravity-sync
 
 ```bash
 cd ~
-wget https://github.com/vmstan/gravity-sync/archive/v1.7.6.zip
-unzip v1.7.6.zip -d gravity-sync
+wget https://github.com/vmstan/gravity-sync/archive/v1.7.7.zip
+unzip v1.7.7.zip -d gravity-sync
 cd gravity-sync
 ```
 
@@ -86,24 +89,24 @@ Gravity Sync is configured by default to use the `.ssh/id_rsa` keyfile that is g
 
 At this time Gravity Sync does not support passphrases in RSA keyfiles. If you have a passphrase applied to your standard `.ssh/id_rsa` either remove it, or generate a new file and specify that key for use only by Gravity Sync.
 
-Default setting for Gravity Sync is `.ssh/id_rsa`
+Default setting in Gravity Sync is `.ssh/id_rsa`
 
 #### `LOG_PATH=''`
 Gravity Sync will place logs in the same folder as the script (identified as .cron and .log) but if you'd like to place these in a another location, you can do that by identifying the full path to the directory. (ex: `/full/path/to/logs`)
 
-Default setting for Gravity Sync is `$HOME/${LOCAL_FOLDR}`
+Default setting in Gravity Sync is `$HOME/${LOCAL_FOLDR}`
 
 #### `SYNCING_LOG=''`
 Gravity Sync will write a timestamp for any completed pull, push or restore job to this file. If you want to change the name of this file, you will also need to adjust the LOG_PATH variable above, otherwise your file will be remove during `update` operations.
 
-Default setting for Gravity Sync is `gravity-sync.log`
+Default setting in Gravity Sync is `gravity-sync.log`
 
 #### `CRONJOB_LOG=''`
 Gravity Sync will log the execution history of the previous automation task via Cron to this file. If you want to change the name of this file, you will also need to adjust the LOG_PATH variable above, otherwise your file will be remove during `update` operations.
 
 This will have an impact to both the `./gravity-sync.sh automate` function and the `./gravity-sync.sh cron` functions. If you need to change this after running the automate function, either modify your crontab manually or delete the entry and re-run the automate function.
 
-Default setting for Gravity Sync is `gravity-sync.cron`
+Default setting in Gravity Sync is `gravity-sync.cron`
 
 #### `VERIFY_PASS=''`
 Gravity Sync will prompt to verify user interactivity during push, restore, or config operations (that overwrite an existing configuration) with the intention that it prevents someone from accidentally automating in the wrong direction or overwriting data intentionally. If you'd like to automate a push function, or just don't like to be asked twice to do something distructive, then you can opt-out.
@@ -122,6 +125,11 @@ Default setting in Gravity Sync is 0, change to 1 to print timestamped output.
 
 #### `BASH_PATH=''`
 If you need to adjust the path to bash that is identified for automated execution via Crontab, you can do that here. This will only have an impact if changed before generating the crontab via the `./gravity-sync.sh automate` function. If you need to change this after the fact, either modify your crontab manually or delete the entry and re-run the automate function.
+
+#### `PING_AVOID=''`
+The `./gravity-sync.sh config` function will attempt to ping the remote host to validate it has a valid network connection. If there is a firewall between your hosts preventing ping replies, or you otherwise wish to skip this step, it can by bypassed here.
+
+Default setting in Gravity Sync is 0, change to 1 to skip this network test.
 
 ## Execution
 If you are just straight up unable to run the `gravity-sync.sh` file, make sure it's marked as an executable by Linux.

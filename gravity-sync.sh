@@ -1,8 +1,9 @@
 #!/bin/bash
+SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.7.6'
+VERSION='1.7.7'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -28,6 +29,7 @@ CRONJOB_LOG='gravity-sync.cron' 	# replace in gravity-sync.conf to overwrite
 VERIFY_PASS='0'						# replace in gravity-sync.conf to overwrite
 SKIP_CUSTOM='0'						# replace in gravity-sync.conf to overwrite
 DATE_OUTPUT='0'						# replace in gravity-sync.conf to overwrite
+PING_AVOID='0'						# replace in gravity-sync.conf to overwrite
 
 # Pi-hole Folder/File Locations
 PIHOLE_DIR='/etc/pihole' 			# default Pi-hole data directory
@@ -108,6 +110,12 @@ function update_gs {
 		BRANCH='master'
 	fi
 
+	if [ "$BRANCH" = "development" ]
+	then
+		MESSAGE="Pulling from origin/${BRANCH}"
+		echo_info
+	fi
+
 	GIT_CHECK=$(git status | awk '{print $1}')
 	if [ "$GIT_CHECK" == "fatal:" ]
 	then
@@ -150,43 +158,46 @@ function pull_gs {
 		sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 		error_validate
 	
-	MESSAGE="Validating Ownership on ${GRAVITY_FI}"
+	MESSAGE="Validating Settings of ${GRAVITY_FI}"
 	echo_stat
 		
 		GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk '{print $3 $4}')
-		if [ $GRAVDB_OWN == "piholepihole" ]
+		if [ $GRAVDB_OWN != "piholepihole" ]
 		then
-			echo_good
-		else
+			MESSAGE="Validating Ownership on ${GRAVITY_FI}"
 			echo_fail
 			
 			MESSAGE="Attempting to Compensate"
-			echo_info
+			echo_warn
 			
 			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
 			echo_stat	
 				sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 				error_validate
+
+			MESSAGE="Continuing Validation of ${GRAVITY_FI}"
+			echo_stat
 		fi
 		
-	MESSAGE="Validating Permissions on ${GRAVITY_FI}"
-	echo_stat
-	
 		GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | awk '{print $1}')
-		if [ $GRAVDB_RWE = "-rw-rw-r--" ]
+		if [ $GRAVDB_RWE != "-rw-rw-r--" ]
 		then
-			echo_good
-		else
+			MESSAGE="Validating Permissions on ${GRAVITY_FI}"
 			echo_fail
 				
 			MESSAGE="Attempting to Compensate"
-			echo_info
+			echo_warn
 		
-			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
+			MESSAGE="Setting Permissions on ${GRAVITY_FI}"
 			echo_stat
 				sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 				error_validate
+
+			MESSAGE="Continuing Validation of ${GRAVITY_FI}"
+			echo_stat
 		fi
+
+	echo_good
 
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
@@ -210,43 +221,46 @@ function pull_gs {
 				sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
 				error_validate
 			
-			MESSAGE="Validating Ownership on ${CUSTOM_DNS}"
+			MESSAGE="Validating Settings on ${CUSTOM_DNS}"
 			echo_stat
 				
 				CUSTOMLS_OWN=$(ls -ld ${PIHOLE_DIR}/${CUSTOM_DNS} | awk '{print $3 $4}')
-				if [ $CUSTOMLS_OWN == "rootroot" ]
+				if [ $CUSTOMLS_OWN != "rootroot" ]
 				then
-					echo_good
-				else
+					MESSAGE="Validating Ownership on ${CUSTOM_DNS}"
 					echo_fail
 					
 					MESSAGE="Attempting to Compensate"
-					echo_info
+					echo_warn
 					
 					MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
 					echo_stat	
 						sudo chown root:root ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
 						error_validate
+
+					MESSAGE="Continuing Validation of ${GRAVITY_FI}"
+					echo_stat
 				fi
-				
-			MESSAGE="Validating Permissions on ${CUSTOM_DNS}"
-			echo_stat
 			
 				CUSTOMLS_RWE=$(namei -m ${PIHOLE_DIR}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | awk '{print $1}')
-				if [ $CUSTOMLS_RWE == "-rw-r--r--" ]
+				if [ $CUSTOMLS_RWE != "-rw-r--r--" ]
 				then
-					echo_good
-				else
+					MESSAGE="Validating Permissions on ${CUSTOM_DNS}"
 					echo_fail
 						
 					MESSAGE="Attempting to Compensate"
-					echo_info
+					echo_warn
 				
 					MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
 					echo_stat
 						sudo chmod 644 ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
 						error_validate
+					
+					MESSAGE="Continuing Validation of ${GRAVITY_FI}"
+					echo_stat
 				fi
+
+			echo_good
 		fi
 	fi
 
@@ -320,7 +334,7 @@ function push_gs {
 		fi	
 	fi
 
-	MESSAGE="Inverting Tachyon Pulse"
+	MESSAGE="Inverting Tachyon Pulses"
 	echo_info
 		sleep 1	
 
@@ -361,7 +375,7 @@ function restore_gs {
 			echo_fail
 			
 			MESSAGE="Attempting to Compensate"
-			echo_info
+			echo_warn
 			
 			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
 			echo_stat	
@@ -380,7 +394,7 @@ function restore_gs {
 			echo_fail
 				
 			MESSAGE="Attempting to Compensate"
-			echo_info
+			echo_warn
 		
 			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
 			echo_stat
@@ -408,7 +422,7 @@ function restore_gs {
 					echo_fail
 					
 					MESSAGE="Attempting to Compensate"
-					echo_info
+					echo_warn
 					
 					MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
 					echo_stat	
@@ -427,7 +441,7 @@ function restore_gs {
 					echo_fail
 						
 					MESSAGE="Attempting to Compensate"
-					echo_info
+					echo_warn
 				
 					MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
 					echo_stat
@@ -459,10 +473,10 @@ function restore_gs {
 ## Core Logging
 ### Write Logs Out
 function logs_export {
-	MESSAGE="Logging Timestamps to ${SYNCING_LOG}"
-	echo_info
-
-	echo -e $(date) "[${TASKTYPE}]" >> ${LOG_PATH}/${SYNCING_LOG}
+	MESSAGE="Logging Successful ${TASKTYPE}"
+	echo_stat
+		echo -e $(date) "[${TASKTYPE}]" >> ${LOG_PATH}/${SYNCING_LOG}
+		error_validate
 }
 
 ### Output Sync Logs
@@ -527,38 +541,42 @@ function show_crontab {
 # Validate Functions
 ## Validate GS Folders
 function validate_gs_folders {
-	MESSAGE="Validating $HOSTNAME:$HOME/${LOCAL_FOLDR}"
+	MESSAGE="Validating ${PROGRAM} Folders on $HOSTNAME"
 	echo_stat
-		if [ -d $HOME/${LOCAL_FOLDR} ]
+		if [ ! -d $HOME/${LOCAL_FOLDR} ]
 		then
-	    	echo_good
-		else
+			MESSAGE="Unable to Find $HOME/${LOCAL_FOLDR}"
 			echo_fail
 			exit_nochange
 		fi
 	
-	MESSAGE="Validating $HOSTNAME:$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}"
-	echo_stat
-		if [ -d $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} ]
+		if [ ! -d $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} ]
 		then
-	    	echo_good
-		else
+			MESSAGE="Unable to Find $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}"
 			echo_fail
 			exit_nochange
 		fi
+	echo_good
 }
 
 ## Validate Pi-hole Folders
 function validate_ph_folders {
-	MESSAGE="Validating $HOSTNAME:${PIHOLE_DIR}"
+	MESSAGE="Validating Pi-hole Configuration on $HOSTNAME"
 	echo_stat
-		if [ -d ${PIHOLE_DIR} ]
+		if [ ! -f ${PIHOLE_BIN} ]
 		then
-	    	echo_good
-		else
+			MESSAGE="Unable to Validate Pi-Hole is Installed"
 			echo_fail
 			exit_nochange
 		fi
+
+		if [ ! -d ${PIHOLE_DIR} ]
+		then
+			MESSAGE="Unable to Validate Pi-Hole Configuration Directory"
+			echo_fail
+			exit_nochange
+		fi
+	echo_good
 }
 
 ## Validate SSHPASS
@@ -574,23 +592,26 @@ function validate_os_sshpass {
 			MESSAGE="Using SSH Key-Pair Authentication"
 		else
 			timeout 5 ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
-			if [ "$?" != "0" ]; then
+			if [ "$?" != "0" ]
+			then
 				SSHPASSWORD="sshpass -p ${REMOTE_PASS}"
 				MESSAGE="Using SSH Password Authentication"
+				echo_warn
 			else
 		        SSHPASSWORD=''
 				MESSAGE="Using SSH Key-Pair Authentication"
+				echo_info
 			fi
 			
 		fi
     else
         SSHPASSWORD=''
 		MESSAGE="Using SSH Key-Pair Authentication"
+		echo_info
     fi
 	
-	echo_info
 	
-	MESSAGE="Validating SSH Connection to ${REMOTE_HOST}"
+	MESSAGE="Validating Connection to ${REMOTE_HOST}"
 	echo_stat
 		if hash ssh 2>/dev/null
 		then
@@ -598,12 +619,10 @@ function validate_os_sshpass {
 			error_validate
 		elif hash dbclient 2>/dev/null
 		then
-			# if [ "$SSH_CMD" = "dbclient" ]; then echo ''; fi;
 		timeout 5 ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
 			error_validate
 		fi
 }
-
 
 ## Detect SSH-KEYGEN
 function detect_sshkeygen {
@@ -618,7 +637,7 @@ function detect_sshkeygen {
 		MESSAGE="SSH-KEYGEN is Required"
 		echo_info
 		MESSAGE="Attempting to Compensate"
-		echo_info
+		echo_warn
 
 		if hash dropbearkey >/dev/null 2>&1
 		then
@@ -668,24 +687,24 @@ function distro_check {
 
 ## Detect SSH & RSYNC
 function detect_ssh {
-	MESSAGE="Validating SSH on $HOSTNAME"
+	MESSAGE="Validating SSH Client on $HOSTNAME"
 	echo_stat
 
 	if hash ssh 2>/dev/null
 	then
-		MESSAGE="Validating SSH on $HOSTNAME (OpenSSH)"
+		MESSAGE="${MESSAGE} (OpenSSH)"
 		echo_good
 		SSH_CMD='ssh'
 	elif hash dbclient 2>/dev/null
 	then
-		MESSAGE="Validating SSH on $HOSTNAME (Dropbear)"
+		MESSAGE="${MESSAGE} (Dropbear)"
 		echo_good
 		SSH_CMD='dbclient'
 	else
 		echo_fail
 		
 		MESSAGE="Attempting to Compensate"
-		echo_info
+		echo_warn
 		MESSAGE="Installing SSH Client with ${PKG_MANAGER}"
 		echo_stat
 		
@@ -693,7 +712,7 @@ function detect_ssh {
 			error_validate
 	fi
 
-	MESSAGE="Validating RSYNC on $HOSTNAME"
+	MESSAGE="Validating RSYNC Installed on $HOSTNAME"
 	echo_stat
 
 	if hash rsync 2>/dev/null
@@ -702,12 +721,12 @@ function detect_ssh {
 	else
 		echo_fail
 		MESSAGE="RSYNC is Required"
-		echo_info
+		echo_warn
 
 		distro_check
 
 		MESSAGE="Attempting to Compensate"
-		echo_info
+		echo_warn
 
 		MESSAGE="Installing RSYNC with ${PKG_MANAGER}"
 		echo_stat
@@ -730,23 +749,23 @@ function error_validate {
 function md5_compare {
 	HASHMARK='0'
 
-	MESSAGE="Analyzing ${REMOTE_HOST} ${GRAVITY_FI}"
+	MESSAGE="Analyzing ${GRAVITY_FI} on ${REMOTE_HOST}"
 	echo_stat
 	primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${GRAVITY_FI}" | sed 's/\s.*$//') 
 		error_validate
 	
-	MESSAGE="Analyzing $HOSTNAME ${GRAVITY_FI}"
+	MESSAGE="Analyzing ${GRAVITY_FI} on $HOSTNAME"
 	echo_stat
 	secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI} | sed 's/\s.*$//')
 		error_validate
 	
 	if [ "$primaryDBMD5" == "$secondDBMD5" ]
 	then
-		MESSAGE="${GRAVITY_FI} Identical"
-		echo_info
+		# MESSAGE="Identical ${GRAVITY_FI} Detected"
+		# echo_info
 		HASHMARK=$((HASHMARK+0))
 	else
-		MESSAGE="${GRAVITY_FI} Differenced"
+		MESSAGE="Differenced ${GRAVITY_FI} Detected"
 		echo_warn
 		HASHMARK=$((HASHMARK+1))
 	fi
@@ -758,24 +777,24 @@ function md5_compare {
 			if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${PIHOLE_DIR}/${CUSTOM_DNS}
 			then
 				REMOTE_CUSTOM_DNS="1"
-				MESSAGE="Analyzing ${REMOTE_HOST} ${CUSTOM_DNS}"
+				MESSAGE="Analyzing ${CUSTOM_DNS} on ${REMOTE_HOST}"
 				echo_stat
 
 				primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//'") 
 					error_validate
 				
-				MESSAGE="Analyzing $HOSTNAME ${CUSTOM_DNS}"
+				MESSAGE="Analyzing ${CUSTOM_DNS} on $HOSTNAME"
 				echo_stat
 				secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//')
 					error_validate
 				
 				if [ "$primaryCLMD5" == "$secondCLMD5" ]
 				then
-					MESSAGE="${CUSTOM_DNS} Identical"
-					echo_info
+					# MESSAGE="${CUSTOM_DNS} Identical"
+					# echo_info
 					HASHMARK=$((HASHMARK+0))
 				else
-					MESSAGE="${CUSTOM_DNS} Differenced"
+					MESSAGE="Differenced ${CUSTOM_DNS} Detected"
 					echo_warn
 					HASHMARK=$((HASHMARK+1))
 				fi
@@ -801,7 +820,7 @@ function md5_compare {
 		echo_warn
 		HASHMARK=$((HASHMARK+0))
 	else
-		MESSAGE="No Changes to Replicate"
+		MESSAGE="No Replication Required"
 		echo_info
 			exit_nochange
 	fi
@@ -856,6 +875,17 @@ function config_generate {
 	MESSAGE="Enter IP or DNS of primary Pi-hole server"
 	echo_need
 	read INPUT_REMOTE_HOST
+
+	if [ "${PING_AVOID}" != "1" ]
+	then
+		MESSAGE="Testing Network Connection (PING)"
+		echo_stat
+		ping -c 3 ${INPUT_REMOTE_HOST} >/dev/null 2>&1
+			error_validate
+	else
+		MESSAGE="Bypassing Network Testing (PING)"
+		echo_warn
+	fi
 	
 	MESSAGE="Enter SSH user with SUDO rights on primary Pi-hole server"
 	echo_need
@@ -989,7 +1019,8 @@ function config_delete {
 # Exit Codes
 ## No Changes Made
 function exit_nochange {
-	MESSAGE="${PROGRAM} ${TASKTYPE} Aborting"
+	SCRIPT_END=$SECONDS
+	MESSAGE="${PROGRAM} ${TASKTYPE} Aborting ($((SCRIPT_END-SCRIPT_START)) seconds)"
 	echo_info
 	exit 0
 }
@@ -997,7 +1028,7 @@ function exit_nochange {
 ## Changes Made
 function exit_withchange {
 	SCRIPT_END=$SECONDS
-	MESSAGE="${PROGRAM} ${TASKTYPE} Completed in $((SCRIPT_END-SCRIPT_START)) seconds"
+	MESSAGE="${PROGRAM} ${TASKTYPE} Completed ($((SCRIPT_END-SCRIPT_START)) seconds)"
 	echo_info
 	exit 0
 }
@@ -1063,6 +1094,7 @@ function show_version {
 ## Automate Task
 function task_automate {
 	TASKTYPE='AUTOMATE'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
 
 	import_gs
@@ -1124,6 +1156,126 @@ function task_automate {
 	exit_withchange
 }	
 
+## Configure Task
+function task_configure {				
+	TASKTYPE='CONFIGURE'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+
+	#MESSAGE="${TASKTYPE} Requested"
+	#echo_info
+	
+	if [ -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE} ]
+	then		
+		config_delete
+	else
+		MESSAGE="No Active ${CONFIG_FILE}"
+		echo_warn
+		
+		config_generate
+	fi
+}
+
+## Devmode Task
+function task_devmode {
+	TASKTYPE='DEV'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+	
+	if [ -f $HOME/${LOCAL_FOLDR}/dev ]
+	then
+		MESSAGE="Disabling ${TASKTYPE}"
+		echo_stat
+		rm -f $HOME/${LOCAL_FOLDR}/dev
+			error_validate
+	else
+		MESSAGE="Enabling ${TASKTYPE}"
+		echo_stat
+		touch $HOME/${LOCAL_FOLDR}/dev
+			error_validate
+	fi
+	
+	MESSAGE="Run UPDATE to apply changes"
+	echo_info
+	
+	exit_withchange
+}
+
+## Update Task
+function task_update {
+	TASKTYPE='UPDATE'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+				
+	#MESSAGE="${TASKTYPE} Requested"
+	#echo_info
+	
+	update_gs
+}
+
+## Version Task
+function task_version {
+	TASKTYPE='VERSION'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+
+	#MESSAGE="${TASKTYPE} Requested"
+	#echo_info
+
+	show_version
+	exit_nochange
+}
+
+## Logs Task
+function task_logs {
+	TASKTYPE='LOGS'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+	
+	#MESSAGE="${TASKTYPE} Requested"
+	#echo_info
+
+	logs_gs
+}
+
+## Compare Task
+function task_compare {
+	TASKTYPE='COMPARE'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+
+	#MESSAGE="${TASKTYPE} Requested"
+	#echo_info
+	
+	import_gs
+	
+	# MESSAGE="Validating OS Configuration"
+	# echo_info
+
+		validate_gs_folders
+		validate_ph_folders
+		validate_os_sshpass
+		
+	md5_compare
+}
+
+## Cron Task
+function task_cron {
+	TASKTYPE='CRON'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+
+	#MESSAGE="${TASKTYPE} Requested"
+	#echo_info
+	
+	show_crontab
+}
+
+function task_invalid {
+	echo_fail
+	list_gs_arguments
+}
+
 # Echo Stack
 ## Informative
 function echo_info {
@@ -1156,9 +1308,8 @@ function echo_need {
 }
 
 # SCRIPT EXECUTION ###########################
-SCRIPT_START=$SECONDS
 
-	MESSAGE="${PROGRAM} Executing"
+	MESSAGE="${PROGRAM} ${VERSION} Executing"
 	echo_info
 	
 	MESSAGE="Evaluating Arguments"
@@ -1167,18 +1318,18 @@ SCRIPT_START=$SECONDS
 case $# in
 	
 	0)
-		echo_fail
-			list_gs_arguments
+		task_invalid
 	;;
 	
 	1)
    		case $1 in
    	 		pull)
 				TASKTYPE='PULL'
+				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
 
-				MESSAGE="${TASKTYPE} Requested"
-				echo_info
+				#MESSAGE="${TASKTYPE} Requested"
+				#echo_info
 				
 				import_gs
 				
@@ -1194,10 +1345,11 @@ case $# in
 
 			push)	
 				TASKTYPE='PUSH'
+				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
 
-				MESSAGE="${TASKTYPE} Requested"
-				echo_info
+				#MESSAGE="${TASKTYPE} Requested"
+				#echo_info
 				
 				import_gs
 
@@ -1213,10 +1365,11 @@ case $# in
 
 			restore)	
 				TASKTYPE='RESTORE'
+				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
 
-				MESSAGE="${TASKTYPE} Requested"
-				echo_info
+				#MESSAGE="${TASKTYPE} Requested"
+				#echo_info
 				
 				import_gs
 
@@ -1231,105 +1384,47 @@ case $# in
 			;;
 	
 			version)
-				TASKTYPE='VERSION'
-				echo_good
-
-				MESSAGE="${TASKTYPE} Requested"
-				echo_info
-
-				show_version
-				exit_nochange
+				task_version
 			;;
 	
 			update)
-				TASKTYPE='UPDATE'
-				echo_good
-				
-				MESSAGE="${TASKTYPE} Requested"
-				echo_info
-				
-				update_gs
+				task_update
+			;;
+
+			upgrade)
+				task_update
 			;;
 			
 			dev)
-				TASKTYPE='DEV'
-				echo_good
-				
-				if [ -f $HOME/${LOCAL_FOLDR}/dev ]
-				then
-					MESSAGE="Disabling ${TASKTYPE}"
-					echo_stat
-					rm -f $HOME/${LOCAL_FOLDR}/dev
-						error_validate
-				else
-					MESSAGE="Enabling ${TASKTYPE}"
-					echo_stat
-					touch $HOME/${LOCAL_FOLDR}/dev
-						error_validate
-				fi
-				
-				MESSAGE="Run UPDATE to apply changes"
-				echo_info
-				
-				exit_withchange
+				task_devmode
+			;;
+
+			devmode)
+				task_devmode
+			;;
+
+			development)
+				task_devmode
 			;;
 	
 			logs)
-				TASKTYPE='LOGS'
-				echo_good
-				
-				MESSAGE="${TASKTYPE} Requested"
-				echo_info
-
-				logs_gs
+				task_logs
 			;;
 			
 			compare)
-				TASKTYPE='COMPARE'
-				echo_good
-
-				MESSAGE="${TASKTYPE} Requested"
-				echo_info
-				
-				import_gs
-				
-				# MESSAGE="Validating OS Configuration"
-				# echo_info
-
-					validate_gs_folders
-					validate_ph_folders
-					validate_os_sshpass
-					
-				md5_compare
+				task_compare
 			;;
 			
 			cron)
-				TASKTYPE='CRON'
-				echo_good
-
-				MESSAGE="${TASKTYPE} Requested"
-				echo_info
-				
-				show_crontab
+				task_cron
 			;;
 			
 			config)
-				TASKTYPE='CONFIGURE'
-				echo_good
+				task_configure
+			;;
 
-				MESSAGE="${TASKTYPE} Requested"
-				echo_info
-				
-				if [ -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE} ]
-				then		
-					config_delete
-
-				else
-					MESSAGE="${CONFIG_FILE} Missing"
-					echo_info
-					
-					config_generate
-				fi
+			configure)
+				task_configure
 			;;
 
 			auto)
@@ -1341,14 +1436,12 @@ case $# in
 			;;	
 
 			*)
-				echo_fail
-        			list_gs_arguments
+				task_invalid
 			;;
 		esac
 	;;
 	
 	*)
-		echo_fail
-			list_gs_arguments
+		task_invalid
 	;;
 esac
