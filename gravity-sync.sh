@@ -529,38 +529,52 @@ function show_crontab {
 # Validate Functions
 ## Validate GS Folders
 function validate_gs_folders {
-	MESSAGE="Validating $HOSTNAME:$HOME/${LOCAL_FOLDR}"
+	MESSAGE="Validating ${PROGRAM} Folders on $HOSTNAME"
 	echo_stat
 		if [ -d $HOME/${LOCAL_FOLDR} ]
 		then
-	    	echo_good
+	    	
 		else
+			MESSAGE="Unable to Find $HOME/${LOCAL_FOLDR}"
 			echo_fail
 			exit_nochange
 		fi
 	
-	MESSAGE="Validating $HOSTNAME:$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}"
-	echo_stat
 		if [ -d $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} ]
 		then
-	    	echo_good
+	    	
 		else
+			MESSAGE="Unable to Find $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}"
 			echo_fail
 			exit_nochange
 		fi
+	
+	echo_good
 }
 
 ## Validate Pi-hole Folders
 function validate_ph_folders {
-	MESSAGE="Validating $HOSTNAME:${PIHOLE_DIR}"
+	MESSAGE="Validating Pi-hole Configuration on $HOSTNAME"
 	echo_stat
-		if [ -d ${PIHOLE_DIR} ]
+		if [ -f ${PIHOLE_BIN} ]
 		then
-	    	echo_good
+	    	
 		else
+			MESSAGE="Unable to Validate Pi-Hole is Installed"
 			echo_fail
 			exit_nochange
 		fi
+
+		if [ -d ${PIHOLE_DIR} ]
+		then
+
+		else
+			MESSAGE="Unable to Validate Pi-Hole Configuration Directory"
+			echo_fail
+			exit_nochange
+		fi
+	
+	echo_good
 }
 
 ## Validate SSHPASS
@@ -1002,7 +1016,8 @@ function config_delete {
 # Exit Codes
 ## No Changes Made
 function exit_nochange {
-	MESSAGE="${PROGRAM} ${TASKTYPE} Aborting"
+	SCRIPT_END=$SECONDS
+	MESSAGE="${PROGRAM} ${TASKTYPE} Aborting ($((SCRIPT_END-SCRIPT_START)) seconds)"
 	echo_info
 	exit 0
 }
@@ -1010,7 +1025,7 @@ function exit_nochange {
 ## Changes Made
 function exit_withchange {
 	SCRIPT_END=$SECONDS
-	MESSAGE="${PROGRAM} ${TASKTYPE} Completed in $((SCRIPT_END-SCRIPT_START)) seconds"
+	MESSAGE="${PROGRAM} ${TASKTYPE} Completed ($((SCRIPT_END-SCRIPT_START)) seconds)"
 	echo_info
 	exit 0
 }

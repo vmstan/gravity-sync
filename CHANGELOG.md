@@ -16,6 +16,8 @@
 - Changes some [INFO] messages to [WARN] where approprate
 - Adds aliases for more GS functions
 - Shows current version on each script execution
+- Adds time output to Aborting message (exit without change)
+- Checks for existance of Pi-hole binaries during validation
 
 #### 1.7.6
 - Detects `dbclient` install as alternative to OpenSSH Client.
