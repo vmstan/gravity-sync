@@ -599,7 +599,7 @@ function validate_os_sshpass {
     fi
 	
 	
-	MESSAGE="Validating SSH Connection to ${REMOTE_HOST}"
+	MESSAGE="Validating Connection to ${REMOTE_HOST}"
 	echo_stat
 		if hash ssh 2>/dev/null
 		then
@@ -611,7 +611,6 @@ function validate_os_sshpass {
 			error_validate
 		fi
 }
-
 
 ## Detect SSH-KEYGEN
 function detect_sshkeygen {
@@ -738,12 +737,12 @@ function error_validate {
 function md5_compare {
 	HASHMARK='0'
 
-	MESSAGE="Analyzing ${REMOTE_HOST} ${GRAVITY_FI}"
+	MESSAGE="Analyzing ${GRAVITY_FI} on ${REMOTE_HOST}"
 	echo_stat
 	primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${GRAVITY_FI}" | sed 's/\s.*$//') 
 		error_validate
 	
-	MESSAGE="Analyzing $HOSTNAME ${GRAVITY_FI}"
+	MESSAGE="Analyzing ${GRAVITY_FI} on $HOSTNAME"
 	echo_stat
 	secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI} | sed 's/\s.*$//')
 		error_validate
@@ -766,13 +765,13 @@ function md5_compare {
 			if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${PIHOLE_DIR}/${CUSTOM_DNS}
 			then
 				REMOTE_CUSTOM_DNS="1"
-				MESSAGE="Analyzing ${REMOTE_HOST} ${CUSTOM_DNS}"
+				MESSAGE="Analyzing ${CUSTOM_DNS} on ${REMOTE_HOST}"
 				echo_stat
 
 				primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//'") 
 					error_validate
 				
-				MESSAGE="Analyzing $HOSTNAME ${CUSTOM_DNS}"
+				MESSAGE="Analyzing ${CUSTOM_DNS} on $HOSTNAME"
 				echo_stat
 				secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//')
 					error_validate

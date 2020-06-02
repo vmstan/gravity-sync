@@ -19,6 +19,7 @@
 - Adds time output to Aborting message (exit without change)
 - Checks for existance of Pi-hole binaries during validation
 - Less chatty about each step of configuration validation if it completes
+- Less chatty about replication validation if it's not necessary
 
 #### 1.7.6
 - Detects `dbclient` install as alternative to OpenSSH Client.
