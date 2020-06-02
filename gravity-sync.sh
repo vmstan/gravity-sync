@@ -2,7 +2,7 @@
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.7.6'
+VERSION='1.7.7'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -1187,10 +1187,11 @@ case $# in
    		case $1 in
    	 		pull)
 				TASKTYPE='PULL'
+				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
 
-				MESSAGE="${TASKTYPE} Requested"
-				echo_info
+				#MESSAGE="${TASKTYPE} Requested"
+				#echo_info
 				
 				import_gs
 				

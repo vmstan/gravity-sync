@@ -13,6 +13,7 @@
 
 #### 1.7.7
 - `config` function will attempt to ping remote host to validate network connection, can by bypassed by adding `PING_AVOID='1'` to your `gravity-sync.conf` file.
+- Changes some [INFO] messages to [WARN] where approprate
 
 #### 1.7.6
 - Detects `dbclient` install as alternative to OpenSSH Client.
