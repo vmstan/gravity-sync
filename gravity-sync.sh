@@ -859,6 +859,7 @@ function config_generate {
 	read INPUT_REMOTE_HOST
 
 	if [ "${PING_AVOID}" != "1" ]
+	then
 		MESSAGE="Testing Network Connection (PING)"
 		echo_stat
 		ping -c 3 ${INPUT_REMOTE_HOST}
@@ -868,6 +869,9 @@ function config_generate {
 			else
 				echo_good
 			fi
+	else
+		MESSAGE="Bypassing Network Testing (PING)"
+		echo_info
 	fi
 	
 	MESSAGE="Enter SSH user with SUDO rights on primary Pi-hole server"
