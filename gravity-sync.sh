@@ -106,8 +106,10 @@ function update_gs {
 	if [ -f "$HOME/${LOCAL_FOLDR}/dev" ]
 	then
 		BRANCH='development'
+		B_SHORT='DEV'
 	else
 		BRANCH='master'
+		B_SHORT=''
 	fi
 
 	GIT_CHECK=$(git status | awk '{print $1}')
@@ -123,7 +125,7 @@ function update_gs {
 		echo_stat
 		git fetch --all >/dev/null 2>&1
 			error_validate
-		MESSAGE="Applying Update"
+		MESSAGE="Applying Update ${B_SHORT}"
 		echo_stat
 		git reset --hard origin/${BRANCH} >/dev/null 2>&1
 			error_validate
