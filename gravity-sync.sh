@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.8.0'
+VERSION='1.8.1'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
