@@ -617,12 +617,12 @@ function validate_os_sshpass {
 	
 	MESSAGE="Validating Connection to ${REMOTE_HOST}"
 	echo_stat
-	
+
 	ssh_function
 
 	CMD_TIMEOUT='5'
 	CMD_REQUESTED="exit"
-	${SSH_SEND}
+	${SSH_SEND} >/dev/null 2>&1
 		error_validate
 
 		if hash ssh 2>/dev/null
