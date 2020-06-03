@@ -617,21 +617,45 @@ function validate_os_sshpass {
 	
 	MESSAGE="Validating Connection to ${REMOTE_HOST}"
 	echo_stat
+	
+	ssh_function
+
+	CMD_TIMEOUT='5'
+	CMD_REQUESTED="exit"
+	${SSH_SEND}
+		error_validate
+
 		if hash ssh 2>/dev/null
 		then
 			if [ -z "$SSHPASSWORD" ]
 			then
-				timeout 5 ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
-				error_validate
+				# timeout 5 ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
+				# error_validate
 			else
-				timeout 5 ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
-				error_validate
+				# timeout 5 ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
+				# error_validate
 			fi
 		elif hash dbclient 2>/dev/null
 		then
-		timeout 5 ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
-			error_validate
+			# timeout 5 ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
+			# error_validate
 		fi
+}
+
+## Determine SSH Pathways
+function ssh_function {
+	if hash ssh 2>/dev/null
+	then
+		if [ -z "$SSHPASSWORD" ]
+		then
+			SSH_SEND="timeout ${CMD_TIMEOUT} ${SSH_CMD} -p ${SSH_PORT} -i \"$HOME/${SSH_PKIF}\" -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} \"${CMD_REQUESTED}\""
+		else
+			SSH_SEND="timeout ${CMD_TIMEOUT} ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} \"${CMD_REQUESTED}\""
+		fi
+	elif hash dbclient 2>/dev/null
+	then
+	SSH_SEND="timeout ${CMD_TIMEOUT} ${SSH_CMD} -p ${SSH_PORT} -i \"$HOME/${SSH_PKIF}\" ${REMOTE_USER}@${REMOTE_HOST} \"${CMD_REQUESTED}\""
+	fi
 }
 
 ## Detect SSH-KEYGEN

@@ -1,5 +1,12 @@
 # The Changelog
 
+## 1.8  
+### The Logical Release
+
+- All of the SSH connection logic has been rewritten to be specific to client options between OpenSSH, OpenSSH w/ SSHPASS, and Dropbear.
+- Removes INFO that SSHPASS is not installed during config, if it's not needed. Redirects user to documentation.
+- Better error handling of configuration options.
+
 ## 1.7
 ### The Andrew Release
 
@@ -10,10 +17,6 @@
 
 **Known Issues**
 - No new Star Trek references.
-
-#### 1.7.8
-- Removes INFO that SSHPASS is not installed during config, if it's not needed. Redirects user to documentation.
-- Better error handling of configuration options.
 
 #### 1.7.7
 - `config` function will attempt to ping remote host to validate network connection, can by bypassed by adding `PING_AVOID='1'` to your `gravity-sync.conf` file.
