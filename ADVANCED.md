@@ -97,12 +97,12 @@ Gravity Sync will place logs in the same folder as the script (identified as .cr
 Default setting in Gravity Sync is `$HOME/${LOCAL_FOLDR}`
 
 #### `SYNCING_LOG=''`
-Gravity Sync will write a timestamp for any completed pull, push or restore job to this file. If you want to change the name of this file, you will also need to adjust the LOG_PATH variable above, otherwise your file will be remove during `update` operations.
+Gravity Sync will write a timestamp for any completed pull, push or restore job to this file. If you want to change the name of this file, you will also need to adjust the LOG_PATH variable above, otherwise your file will be remove during an `update` operations.
 
 Default setting in Gravity Sync is `gravity-sync.log`
 
 #### `CRONJOB_LOG=''`
-Gravity Sync will log the execution history of the previous automation task via Cron to this file. If you want to change the name of this file, you will also need to adjust the LOG_PATH variable above, otherwise your file will be remove during `update` operations.
+Gravity Sync will log the execution history of the previous automation task via Cron to this file. If you want to change the name of this file, you will also need to adjust the LOG_PATH variable above, otherwise your file will be remove during an `update` operations.
 
 This will have an impact to both the `./gravity-sync.sh automate` function and the `./gravity-sync.sh cron` functions. If you need to change this after running the automate function, either modify your crontab manually or delete the entry and re-run the automate function.
 
@@ -175,9 +175,3 @@ If you prefer to still use cron but modify your settings by hand, using the entr
 crontab -e
 */30 * * * * /bin/bash /home/USER/gravity-sync/gravity-sync.sh pull > /home/USER/gravity-sync/gravity-sync.cron
 ```
-
-## Troubleshooting
- 
-- If it doesn't kick off, you can manually execute a `git pull` while in the `gravity-sync` directory. 
-
-If all else fails, delete the entire `gravity-sync` folder from your system and re-deploy. This will have no impact on your replicated databases. 

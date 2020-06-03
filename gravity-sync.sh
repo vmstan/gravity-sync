@@ -150,8 +150,14 @@ function pull_gs {
 	
 	MESSAGE="Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo_stat
-		${SSHPASSWORD} rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull >/dev/null 2>&1
-		error_validate
+		RSYNC_SOURCE="${PIHOLE_DIR}/${GRAVITY_FI}"
+		RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull"
+			create_rsynccmd
+		${RSYNC_SEND} >/dev/null 2>&1
+			error_validate
+
+		#${SSHPASSWORD} rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull >/dev/null 2>&1
+		#error_validate
 		
 	MESSAGE="Replacing ${GRAVITY_FI} on $HOSTNAME"
 	echo_stat	
@@ -596,7 +602,7 @@ function validate_os_sshpass {
 				echo_info
 			else
 				MESSAGE="Testing Authentication Options"
-				echo_info
+				echo_stat
 
 				timeout 5 ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
 				if [ "$?" != "0" ]
@@ -620,30 +626,13 @@ function validate_os_sshpass {
 
 	CMD_TIMEOUT='5'
 	CMD_REQUESTED="exit"
-	ssh_function
-	#echo -en "${SSH_SEND}"
-	${SSH_SEND} #>/dev/null 2>&1
+		create_sshcmd
+	${SSH_SEND} >/dev/null 2>&1
 		error_validate
-
-	#	if hash ssh 2>/dev/null
-	#	then
-	#		if [ -z "$SSHPASSWORD" ]
-	#		then
-				# timeout 5 ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
-				# error_validate
-	#		else
-				# timeout 5 ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
-				# error_validate
-	#		fi
-	#	elif hash dbclient 2>/dev/null
-	#	then
-			# timeout 5 ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
-			# error_validate
-	#	fi
 }
 
 ## Determine SSH Pathways
-function ssh_function {
+function create_sshcmd {
 	if hash ssh 2>/dev/null
 	then
 		if [ -z "$SSHPASSWORD" ]
@@ -654,7 +643,23 @@ function ssh_function {
 		fi
 	elif hash dbclient 2>/dev/null
 	then
-	SSH_SEND="timeout --preserve-status ${CMD_TIMEOUT} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF} ${REMOTE_USER}@${REMOTE_HOST} \"${CMD_REQUESTED}\""
+		SSH_SEND="timeout --preserve-status ${CMD_TIMEOUT} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF} ${REMOTE_USER}@${REMOTE_HOST} \"${CMD_REQUESTED}\""
+	fi
+}
+
+## Determine SSH Pathways
+function create_rsynccmd {
+	if hash ssh 2>/dev/null
+	then
+		if [ -z "$SSHPASSWORD" ]
+		then
+			RSYNC_SEND="rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${RSYNC_SOURCE} ${RSYNC_TARGET}"
+		else
+			RSYNC_SEND="rsync -e "${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${RSYNC_SOURCE} ${RSYNC_TARGET}"
+		fi
+	elif hash dbclient 2>/dev/null
+	then
+		RSYNC_SEND="rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${RSYNC_SOURCE} ${RSYNC_TARGET}"
 	fi
 }
 
