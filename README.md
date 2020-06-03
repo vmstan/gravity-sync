@@ -4,8 +4,6 @@ What is better than a [Pi-hole](https://github.com/pi-hole/pi-hole) blocking ads
 
 That's Gravity Sync.
 
-![Pull execution](https://user-images.githubusercontent.com/3002053/82915078-e870a180-9f35-11ea-8b36-271a02acdeaa.gif)
-
 At it's core, Gravity Sync is maybe a handful of core bash commands, that uses rsync to reach out to a remote host, copy the running `gravity.db` file that contains the Pi-hole blocklist, as well as the `custom.list` file that contains local DNS enteries, and then replaces the copy on the local system. What Gravity Sync provides is an easy way to keep this happening in the background. Ideally you set it and forget it and in the long term, it would be awesome if the Pi-hole team made this entire script unncessary.
 
 Gravity Sync will **not** overwrite device specific settings such as device network configuration, admin/API passwords/keys, upstream DNS resolvers, etc. It will also **not** keep DHCP settings or device leases synchronized. 
