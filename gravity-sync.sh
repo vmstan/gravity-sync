@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.7.7'
+VERSION='1.8.0'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -93,7 +93,6 @@ function import_gs {
 
 		TASKTYPE='CONFIG'
 		config_generate
-		# echo -e "Please run ${YELLOW}$#${NC} again."
 	fi
 }
 
@@ -101,8 +100,7 @@ function import_gs {
 ## Master Branch
 function update_gs {
 	TASKTYPE='UPDATE'
-	# logs_export 	# dumps log prior to execution because script stops after successful pull
-	
+
 	if [ -f "$HOME/${LOCAL_FOLDR}/dev" ]
 	then
 		BRANCH='development'
@@ -123,8 +121,6 @@ function update_gs {
 		echo_warn
 		exit_nochange
 	else
-		# MESSAGE="This might break..." 
-		# echo_warn
 		MESSAGE="Updating Cache"
 		echo_stat
 		git fetch --all >/dev/null 2>&1
@@ -150,8 +146,10 @@ function pull_gs {
 	
 	MESSAGE="Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo_stat
-		${SSHPASSWORD} rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull >/dev/null 2>&1
-		error_validate
+		RSYNC_REPATH="rsync"
+		RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}"
+		RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull"
+			create_rsynccmd
 		
 	MESSAGE="Replacing ${GRAVITY_FI} on $HOSTNAME"
 	echo_stat	
@@ -162,7 +160,7 @@ function pull_gs {
 	echo_stat
 		
 		GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk '{print $3 $4}')
-		if [ $GRAVDB_OWN != "piholepihole" ]
+		if [ "$GRAVDB_OWN" != "piholepihole" ]
 		then
 			MESSAGE="Validating Ownership on ${GRAVITY_FI}"
 			echo_fail
@@ -180,7 +178,7 @@ function pull_gs {
 		fi
 		
 		GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | awk '{print $1}')
-		if [ $GRAVDB_RWE != "-rw-rw-r--" ]
+		if [ "$GRAVDB_RWE" != "-rw-rw-r--" ]
 		then
 			MESSAGE="Validating Permissions on ${GRAVITY_FI}"
 			echo_fail
@@ -213,8 +211,10 @@ function pull_gs {
 			
 			MESSAGE="Pulling ${CUSTOM_DNS} from ${REMOTE_HOST}"
 			echo_stat
-				${SSHPASSWORD} rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull >/dev/null 2>&1
-				error_validate
+				RSYNC_REPATH="rsync"
+				RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS}"
+				RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull"
+					create_rsynccmd
 				
 			MESSAGE="Replacing ${CUSTOM_DNS} on $HOSTNAME"
 			echo_stat	
@@ -225,7 +225,7 @@ function pull_gs {
 			echo_stat
 				
 				CUSTOMLS_OWN=$(ls -ld ${PIHOLE_DIR}/${CUSTOM_DNS} | awk '{print $3 $4}')
-				if [ $CUSTOMLS_OWN != "rootroot" ]
+				if [ "$CUSTOMLS_OWN" != "rootroot" ]
 				then
 					MESSAGE="Validating Ownership on ${CUSTOM_DNS}"
 					echo_fail
@@ -243,7 +243,7 @@ function pull_gs {
 				fi
 			
 				CUSTOMLS_RWE=$(namei -m ${PIHOLE_DIR}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | awk '{print $1}')
-				if [ $CUSTOMLS_RWE != "-rw-r--r--" ]
+				if [ "$CUSTOMLS_RWE" != "-rw-r--r--" ]
 				then
 					MESSAGE="Validating Permissions on ${CUSTOM_DNS}"
 					echo_fail
@@ -290,23 +290,29 @@ function push_gs {
 
 	MESSAGE="Backing Up ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo_stat
-		${SSHPASSWORD} rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push >/dev/null 2>&1
-		error_validate
+		RSYNC_REPATH="rsync"
+		RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}"
+		RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push"
+			create_rsynccmd
 
 	MESSAGE="Pushing ${GRAVITY_FI} to ${REMOTE_HOST}"
 	echo_stat
-		${SSHPASSWORD} rsync --rsync-path="sudo rsync" -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
-		error_validate
+		RSYNC_REPATH="sudo rsync"
+		RSYNC_SOURCE="${PIHOLE_DIR}/${GRAVITY_FI}"
+		RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}"
+			create_rsynccmd
 
 	MESSAGE="Setting Permissions on ${GRAVITY_FI}"
-	echo_stat	
-		${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
-		error_validate
+	echo_stat
+		CMD_TIMEOUT='15'
+		CMD_REQUESTED="sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI}"
+			create_sshcmd	
 
 	MESSAGE="Setting Ownership on ${GRAVITY_FI}"
-	echo_stat	
-		${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
-		error_validate	
+	echo_stat
+		CMD_TIMEOUT='15'
+		CMD_REQUESTED="sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}"
+			create_sshcmd
 
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
@@ -314,23 +320,29 @@ function push_gs {
 		then
 			MESSAGE="Backing Up ${CUSTOM_DNS} from ${REMOTE_HOST}"
 			echo_stat
-				${SSHPASSWORD} rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.push >/dev/null 2>&1
-				error_validate
+				RSYNC_REPATH="rsync"
+				RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS}"
+				RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.push"
+					create_rsynccmd
 
 			MESSAGE="Pushing ${CUSTOM_DNS} to ${REMOTE_HOST}"
 			echo_stat
-				${SSHPASSWORD} rsync --rsync-path="sudo rsync" -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${PIHOLE_DIR}/${CUSTOM_DNS} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
-				error_validate
+				RSYNC_REPATH="sudo rsync"
+				RSYNC_SOURCE="${PIHOLE_DIR}/${CUSTOM_DNS}"
+				RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS}"
+					create_rsynccmd
 
 			MESSAGE="Setting Permissions on ${CUSTOM_DNS}"
-			echo_stat	
-				${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 644 ${PIHOLE_DIR}/${CUSTOM_DNS}" >/dev/null 2>&1
-				error_validate
+			echo_stat
+				CMD_TIMEOUT='15'
+				CMD_REQUESTED="sudo chmod 644 ${PIHOLE_DIR}/${CUSTOM_DNS}"
+					create_sshcmd
 
 			MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
-			echo_stat	
-				${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chown root:root ${PIHOLE_DIR}/${CUSTOM_DNS}" >/dev/null 2>&1
-				error_validate
+			echo_stat
+				CMD_TIMEOUT='15'
+				CMD_REQUESTED="sudo chown root:root ${PIHOLE_DIR}/${CUSTOM_DNS}"
+					create_sshcmd	
 		fi	
 	fi
 
@@ -340,14 +352,16 @@ function push_gs {
 
 	MESSAGE="Updating FTLDNS Configuration"
 	echo_stat
-		${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${PIHOLE_BIN} restartdns reloadlists" >/dev/null 2>&1
-		error_validate
+		CMD_TIMEOUT='15'
+		CMD_REQUESTED="${PIHOLE_BIN} restartdns reloadlists"
+			create_sshcmd
 	
 	MESSAGE="Reloading FTLDNS Services"
-	echo_stat	
-		${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${PIHOLE_BIN} restartdns" >/dev/null 2>&1
-		error_validate
-	
+	echo_stat
+		CMD_TIMEOUT='15'
+		CMD_REQUESTED="${PIHOLE_BIN} restartdns"
+			create_sshcmd
+
 	logs_export
 	exit_withchange
 
@@ -368,7 +382,7 @@ function restore_gs {
 	echo_stat
 		
 		GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk '{print $3 $4}')
-		if [ $GRAVDB_OWN == "piholepihole" ]
+		if [ "$GRAVDB_OWN" == "piholepihole" ]
 		then
 			echo_good
 		else
@@ -387,7 +401,7 @@ function restore_gs {
 	echo_stat
 	
 		GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | awk '{print $1}')
-		if [ $GRAVDB_RWE = "-rw-rw-r--" ]
+		if [ "$GRAVDB_RWE" = "-rw-rw-r--" ]
 		then
 			echo_good
 		else
@@ -415,7 +429,7 @@ function restore_gs {
 			echo_stat
 				
 				CUSTOMLS_OWN=$(ls -ld ${PIHOLE_DIR}/${CUSTOM_DNS} | awk '{print $3 $4}')
-				if [ $CUSTOMLS_OWN == "rootroot" ]
+				if [ "$CUSTOMLS_OWN" == "rootroot" ]
 				then
 					echo_good
 				else
@@ -434,7 +448,7 @@ function restore_gs {
 			echo_stat
 			
 				CUSTOMLS_RWE=$(namei -m ${PIHOLE_DIR}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | awk '{print $1}')
-				if [ $CUSTOMLS_RWE == "-rw-r--r--" ]
+				if [ "$CUSTOMLS_RWE" == "-rw-r--r--" ]
 				then
 					echo_good
 				else
@@ -581,47 +595,82 @@ function validate_ph_folders {
 
 ## Validate SSHPASS
 function validate_os_sshpass {
-	# MESSAGE="Checking SSH Configuration"
-    # echo_info
-	
+	SSHPASSWORD=''
+
 	if hash sshpass 2>/dev/null
     then
-		if test -z "$REMOTE_PASS"
-		then
-			SSHPASSWORD=''
-			MESSAGE="Using SSH Key-Pair Authentication"
-		else
-			timeout 5 ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
-			if [ "$?" != "0" ]
+		MESSAGE="SSHPASS Utility Detected"
+		echo_warn
+			if [ -z "$REMOTE_PASS" ]
 			then
-				SSHPASSWORD="sshpass -p ${REMOTE_PASS}"
-				MESSAGE="Using SSH Password Authentication"
-				echo_warn
-			else
-		        SSHPASSWORD=''
 				MESSAGE="Using SSH Key-Pair Authentication"
 				echo_info
+			else
+				MESSAGE="Testing Authentication Options"
+				echo_stat
+
+				timeout 5 ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
+				if [ "$?" != "0" ]
+				then
+					SSHPASSWORD="sshpass -p ${REMOTE_PASS}"
+					MESSAGE="Using SSH Password Authentication"
+					echo_warn
+				else
+					MESSAGE="Valid Key-Pair Detected ${NC}(${RED}Password Ignored${NC})"
+					echo_info
+				fi
 			fi
-			
-		fi
     else
         SSHPASSWORD=''
 		MESSAGE="Using SSH Key-Pair Authentication"
 		echo_info
     fi
 	
-	
 	MESSAGE="Validating Connection to ${REMOTE_HOST}"
 	echo_stat
-		if hash ssh 2>/dev/null
+
+	CMD_TIMEOUT='5'
+	CMD_REQUESTED="exit"
+		create_sshcmd
+	
+}
+
+## Determine SSH Pathways
+function create_sshcmd {
+	if hash ssh 2>/dev/null
+	then
+		if [ -z "$SSHPASSWORD" ]
 		then
-		timeout 5 ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
-			error_validate
-		elif hash dbclient 2>/dev/null
-		then
-		timeout 5 ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
-			error_validate
+			timeout --preserve-status ${CMD_TIMEOUT} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} "${CMD_REQUESTED}"
+				error_validate
+		else
+			timeout --preserve-status ${CMD_TIMEOUT} ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} "${CMD_REQUESTED}"
+				error_validate
 		fi
+	elif hash dbclient 2>/dev/null
+	then
+		timeout --preserve-status ${CMD_TIMEOUT} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF} ${REMOTE_USER}@${REMOTE_HOST} "${CMD_REQUESTED}"
+			error_validate
+	fi
+}
+
+## Determine SSH Pathways
+function create_rsynccmd {
+	if hash ssh 2>/dev/null
+	then
+		if [ -z "$SSHPASSWORD" ]
+		then
+			rsync --rsync-path="${RSYNC_REPATH}" -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
+				error_validate		
+		else
+			rsync --rsync-path="${RSYNC_REPATH}" -e "${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
+				error_validate
+		fi
+	elif hash dbclient 2>/dev/null
+	then
+		rsync --rsync-path="${RSYNC_REPATH}" -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
+			error_validate
+	fi
 }
 
 ## Detect SSH-KEYGEN
@@ -643,18 +692,78 @@ function detect_sshkeygen {
 		then
 			MESSAGE="Using DROPBEARKEY Instead"
 			echo_info
-				if [ -d $HOME/.ssh ]
+				if [ ! -d $HOME/.ssh ]
 				then
-					KEYGEN_COMMAND="dropbearkey -t rsa -f"
-				else
 					mkdir $HOME/.ssh >/dev/null 2>&1
-					KEYGEN_COMMAND="dropbearkey -t rsa -f $HOME/${SSH_PKIF}"
 				fi
+			KEYGEN_COMMAND="dropbearkey -t rsa -f"
 		else
 			MESSAGE="No Alternatives Located"
 			echo_info
 				exit_nochange
 		fi	
+	fi
+}
+
+function generate_sshkey {
+	if [ -z $INPUT_REMOTE_PASS ]
+	then
+		if [ -f $HOME/${SSH_PKIF} ]
+		then
+			MESSAGE="Using Existing ~/${SSH_PKIF}"
+			echo_info
+		else
+			if hash ssh-keygen >/dev/null 2>&1
+			then
+				MESSAGE="Generating ~/${SSH_PKIF} (SSH-KEYGEN)"
+				echo_stat
+				
+				ssh-keygen -q -P "" -t rsa -f $HOME/${SSH_PKIF} >/dev/null 2>&1
+					error_validate
+
+			elif hash dropbearkey >/dev/null 2>&1
+			then
+				MESSAGE="Generating ~/${SSH_PKIF} (DROPBEARKEY)"
+				echo_stat
+					if [ ! -d $HOME/.ssh ]
+					then
+						mkdir $HOME/.ssh >/dev/null 2>&1
+					fi
+
+					dropbearkey -t rsa -f $HOME/${SSH_PKIF} >/dev/null 2>&1
+						error_validate
+			else
+				MESSAGE="No SSH Key Generator Located"
+				echo_warn
+					exit_nochange
+			fi	
+		fi
+	fi
+}
+
+function export_sshkey {
+	if [ -z $REMOTE_PASS ]
+	then
+		if [ -f $HOME/${SSH_PKIF} ]
+		then
+			MESSAGE="Registering Key-Pair on ${REMOTE_HOST}"
+			echo_info
+			
+			#MESSAGE="Enter ${REMOTE_USER}@${REMOTE_HOST} Password Below"
+			#echo -e "${NEED} ${MESSAGE}"
+
+			if hash ssh-copy-id 2>/dev/null
+			then
+				ssh-copy-id -f -p ${SSH_PORT} -i $HOME/${SSH_PKIF}.pub ${REMOTE_USER}@${REMOTE_HOST}
+			elif hash dbclient 2>/dev/null
+			then
+				dropbearkey -y -f $HOME/${SSH_PKIF} | grep "^ssh-rsa " > $HOME/${SSH_PKIF}.pub
+				cat $HOME/${SSH_PKIF}.pub | dbclient -p ${SSH_PORT} ${REMOTE_USER}@${REMOTE_HOST} 'cat - >> .ssh/authorized_keys'
+			fi
+		else
+		MESSAGE="Error Registering Key-Pair"
+		echo_warn
+		fi
 	fi
 }
 
@@ -761,8 +870,6 @@ function md5_compare {
 	
 	if [ "$primaryDBMD5" == "$secondDBMD5" ]
 	then
-		# MESSAGE="Identical ${GRAVITY_FI} Detected"
-		# echo_info
 		HASHMARK=$((HASHMARK+0))
 	else
 		MESSAGE="Differenced ${GRAVITY_FI} Detected"
@@ -845,7 +952,7 @@ function intent_validate {
 			INTENT="ENGAGE TRACTOR BEAM"
 		fi
 		
-		MESSAGE="Enter ${INTENT} at this prompt to confirm"
+		MESSAGE="Type ${INTENT} to Confirm"
 		echo_need
 
 		read INPUT_INTENT
@@ -872,7 +979,7 @@ function config_generate {
 	cp $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}.example $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 	error_validate
 	
-	MESSAGE="Enter IP or DNS of primary Pi-hole server"
+	MESSAGE="IP or DNS of Primary Pi-hole"
 	echo_need
 	read INPUT_REMOTE_HOST
 
@@ -887,7 +994,7 @@ function config_generate {
 		echo_warn
 	fi
 	
-	MESSAGE="Enter SSH user with SUDO rights on primary Pi-hole server"
+	MESSAGE="SSH User with SUDO rights"
 	echo_need
 	read INPUT_REMOTE_USER
 	
@@ -904,90 +1011,47 @@ function config_generate {
 	if hash sshpass 2>/dev/null
 	then
 		MESSAGE="SSHPASS Utility Detected"
-		echo_info
-		
-		MESSAGE="Do you want to configure password based SSH authentication?"
 		echo_warn
-		MESSAGE="Your password will be stored clear-text in the ${CONFIG_FILE}!"
-		echo_warn
+			if hash ssh 2>/dev/null
+			then
+				MESSAGE="Please Reference Documentation"
+				echo_info
 
-		MESSAGE="Leave blank to use (preferred) SSH Key-Pair Authentication"
-		echo_need
-		read INPUT_REMOTE_PASS
+				MESSAGE="${BLUE}https://github.com/vmstan/gravity-sync/blob/master/ADVANCED.md#ssh-configuration${NC}"
+				echo_info
+
+				MESSAGE="Leave password blank to use key-pair! (reccomended)"
+				echo_warn
 				
-		MESSAGE="Saving Password to ${CONFIG_FILE}"
-		echo_stat
-		sed -i "/REMOTE_PASS=''/c\REMOTE_PASS='${INPUT_REMOTE_PASS}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
-		error_validate
-		
-	else
-		MESSAGE="SSHPASS Not Installed"
-		echo_info
-		
-		MESSAGE="Defaulting to SSH Key-Pair Authentication"
-		echo_info
+				MESSAGE="SSH User Password"
+				echo_need
+				read INPUT_REMOTE_PASS
+				
+				MESSAGE="Saving Password to ${CONFIG_FILE}"
+				echo_stat
+				sed -i "/REMOTE_PASS=''/c\REMOTE_PASS='${INPUT_REMOTE_PASS}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+					error_validate
+			elif hash dbclient 2>/dev/null
+			then
+				MESSAGE="Dropbear SSH Detected"
+				echo_warn
+				MESSAGE="Skipping Password Setup"
+				echo_info
+			fi	
 	fi
 
-	if [ -z $INPUT_REMOTE_PASS ]
-	then
-		if [ -f $HOME/${SSH_PKIF} ]
-		then
-			MESSAGE="Using Existing ~/${SSH_PKIF}"
-			echo_info
-		else
-			KEYGEN_COMMAND="ssh-keygen -t rsa -f"
-			detect_sshkeygen
-						
-			MESSAGE="Generating ~/${SSH_PKIF}"
-			echo_info
-			
-			MESSAGE="Accept All Defaults"
-			echo_warn
-			
-			MESSAGE="Complete Key-Pair Creation"
-			echo -e "${NEED} ${MESSAGE}"
-			
-			echo -e "========================================================"
-			echo -e "========================================================"
-			${KEYGEN_COMMAND} $HOME/${SSH_PKIF}
-			echo -e "========================================================"
-			echo -e "========================================================"
-		fi
-	fi
+	generate_sshkey
 	
 	MESSAGE="Importing New ${CONFIG_FILE}"
 	echo_stat
 	source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 	error_validate
+
+	export_sshkey	
 	
-	if [ -z $REMOTE_PASS ]
-	then
-		if [ -f $HOME/${SSH_PKIF} ]
-		then
-			MESSAGE="Registering Key-Pair on ${REMOTE_HOST}"
-			echo_info
-			
-			MESSAGE="Enter ${REMOTE_USER}@${REMOTE_HOST} Password Below"
-			echo -e "${NEED} ${MESSAGE}"
-			
-			echo -e "========================================================"
-			echo -e "========================================================"
-			if hash ssh-copy-id 2>/dev/null
-			then
-				ssh-copy-id -f -i $HOME/${SSH_PKIF}.pub ${REMOTE_USER}@${REMOTE_HOST}
-			elif hash dbclient 2>/dev/null
-			then
-				dropbearkey -y -f $HOME/${SSH_PKIF} | grep "^ssh-rsa " > $HOME/${SSH_PKIF}.pub
-				cat $HOME/${SSH_PKIF}.pub | dbclient ${REMOTE_USER}@${REMOTE_HOST} 'cat - >> .ssh/authorized_keys'
-			fi
-			echo -e "========================================================"
-			echo -e "========================================================"
-		else
-		MESSAGE="Error Creating Key-Pair"
-		echo -e "${FAIL} ${MESSAGE}"
-		fi
-	fi
-	
+	MESSAGE="Testing Configuration"
+	echo_info
+
 	validate_os_sshpass
 	
 	exit_withchange
@@ -1050,10 +1114,6 @@ function list_gs_arguments {
 	echo -e " ${YELLOW}restore${NC}	Restore ${GRAVITY_FI} on this server"
 	echo -e " ${YELLOW}compare${NC}	Just check for differences"
 	echo -e ""
-#	echo -e "Update Options:"
-#	echo -e " ${YELLOW}update${NC}		Use GitHub to update this script to the latest version"
-#	echo -e " ${YELLOW}beta${NC}		Use GitHub to update this script to the latest beta version"
-#	echo -e ""
 	echo -e "Debug Options:"
 	echo -e " ${YELLOW}logs${NC}		Show recent successful replication jobs"
 	echo -e " ${YELLOW}cron${NC}		Display output of last crontab execution"
@@ -1161,9 +1221,6 @@ function task_configure {
 	TASKTYPE='CONFIGURE'
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
-
-	#MESSAGE="${TASKTYPE} Requested"
-	#echo_info
 	
 	if [ -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE} ]
 	then		
@@ -1206,9 +1263,6 @@ function task_update {
 	TASKTYPE='UPDATE'
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
-				
-	#MESSAGE="${TASKTYPE} Requested"
-	#echo_info
 	
 	update_gs
 }
@@ -1219,9 +1273,6 @@ function task_version {
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
 
-	#MESSAGE="${TASKTYPE} Requested"
-	#echo_info
-
 	show_version
 	exit_nochange
 }
@@ -1231,9 +1282,6 @@ function task_logs {
 	TASKTYPE='LOGS'
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
-	
-	#MESSAGE="${TASKTYPE} Requested"
-	#echo_info
 
 	logs_gs
 }
@@ -1243,18 +1291,11 @@ function task_compare {
 	TASKTYPE='COMPARE'
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
-
-	#MESSAGE="${TASKTYPE} Requested"
-	#echo_info
 	
 	import_gs
-	
-	# MESSAGE="Validating OS Configuration"
-	# echo_info
-
-		validate_gs_folders
-		validate_ph_folders
-		validate_os_sshpass
+	validate_gs_folders
+	validate_ph_folders
+	validate_os_sshpass
 		
 	md5_compare
 }
@@ -1264,9 +1305,6 @@ function task_cron {
 	TASKTYPE='CRON'
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
-
-	#MESSAGE="${TASKTYPE} Requested"
-	#echo_info
 	
 	show_crontab
 }
@@ -1327,17 +1365,11 @@ case $# in
 				TASKTYPE='PULL'
 				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
-
-				#MESSAGE="${TASKTYPE} Requested"
-				#echo_info
 				
 				import_gs
-				
-				# MESSAGE="Validating Folder Configuration"
-				# echo_info
-					validate_gs_folders
-					validate_ph_folders
-					validate_os_sshpass
+				validate_gs_folders
+				validate_ph_folders
+				validate_os_sshpass
 					
 				pull_gs
 				exit
@@ -1347,17 +1379,11 @@ case $# in
 				TASKTYPE='PUSH'
 				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
-
-				#MESSAGE="${TASKTYPE} Requested"
-				#echo_info
 				
 				import_gs
-
-				# MESSAGE="Validating Folder Configuration"
-				# echo_info
-					validate_gs_folders
-					validate_ph_folders
-					validate_os_sshpass
+				validate_gs_folders
+				validate_ph_folders
+				validate_os_sshpass
 					
 				push_gs
 				exit
@@ -1368,17 +1394,10 @@ case $# in
 				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
 
-				#MESSAGE="${TASKTYPE} Requested"
-				#echo_info
-				
 				import_gs
+				validate_gs_folders
+				validate_ph_folders
 
-				# MESSAGE="Validating Folder Configuration"
-				# echo_info
-					validate_gs_folders
-					validate_ph_folders
-					# validate_os_sshpass
-					
 				restore_gs
 				exit
 			;;

@@ -14,8 +14,8 @@ Download the latest release from [GitHub](https://github.com/vmstan/gravity-sync
 
 ```bash
 cd ~
-wget https://github.com/vmstan/gravity-sync/archive/v1.7.7.zip
-unzip v1.7.7.zip -d gravity-sync
+wget https://github.com/vmstan/gravity-sync/archive/v1.8.0.zip
+unzip v1.8.0.zip -d gravity-sync
 cd gravity-sync
 ```
 
@@ -97,12 +97,12 @@ Gravity Sync will place logs in the same folder as the script (identified as .cr
 Default setting in Gravity Sync is `$HOME/${LOCAL_FOLDR}`
 
 #### `SYNCING_LOG=''`
-Gravity Sync will write a timestamp for any completed pull, push or restore job to this file. If you want to change the name of this file, you will also need to adjust the LOG_PATH variable above, otherwise your file will be remove during `update` operations.
+Gravity Sync will write a timestamp for any completed pull, push or restore job to this file. If you want to change the name of this file, you will also need to adjust the LOG_PATH variable above, otherwise your file will be remove during an `update` operations.
 
 Default setting in Gravity Sync is `gravity-sync.log`
 
 #### `CRONJOB_LOG=''`
-Gravity Sync will log the execution history of the previous automation task via Cron to this file. If you want to change the name of this file, you will also need to adjust the LOG_PATH variable above, otherwise your file will be remove during `update` operations.
+Gravity Sync will log the execution history of the previous automation task via Cron to this file. If you want to change the name of this file, you will also need to adjust the LOG_PATH variable above, otherwise your file will be remove during an `update` operations.
 
 This will have an impact to both the `./gravity-sync.sh automate` function and the `./gravity-sync.sh cron` functions. If you need to change this after running the automate function, either modify your crontab manually or delete the entry and re-run the automate function.
 
@@ -137,7 +137,6 @@ If you are just straight up unable to run the `gravity-sync.sh` file, make sure 
 ```bash
 chmod +x gravity-sync.sh
 ```
-
 
 ## Updates
 If you manually installed Gravity Sync via .zip or .tar.gz you will need to download and overwrite the `gravity-sync.sh` file with a newer version. If you've chosen this path, I won't lay out exactly what you'll need to do every time, but you should at least review the contents of the script bundle (specifically the example configuration file) to make sure there are no new additional files or required settings. 
@@ -176,9 +175,3 @@ If you prefer to still use cron but modify your settings by hand, using the entr
 crontab -e
 */30 * * * * /bin/bash /home/USER/gravity-sync/gravity-sync.sh pull > /home/USER/gravity-sync/gravity-sync.cron
 ```
-
-## Troubleshooting
- 
-- If it doesn't kick off, you can manually execute a `git pull` while in the `gravity-sync` directory. 
-
-If all else fails, delete the entire `gravity-sync` folder from your system and re-deploy. This will have no impact on your replicated databases. 

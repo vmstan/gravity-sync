@@ -1,5 +1,16 @@
 # The Changelog
 
+## 1.8
+### The Logical Release
+**Features**
+There is nothing really sexy here, but a lot of changes under the covers to improve reliablity between different SSH client types. A lot of the logic and functions are more consistent and cleaner. In some cultures, fewer bugs and more reliablity are considered features. Much of this will continue through the 1.8.x line.
+
+- SSH/RSYNC connection logic rewritten to be specific to client options between OpenSSH, OpenSSH w/ SSHPASS, and Dropbear.
+- Key-pair generation functions rewritten to be specific to client options, also now works with no (or at least fewer) user prompts.
+- SSHPASS options should be more reliable if used, but removes messages that SSHPASS is not installed during setup, if it's not needed and Redirects user to documentation.
+- Adds custom port specification to ssh-copy-id and dropbearkey commands during configuration generation.
+- Generally better error handling of configuration options.
+
 ## 1.7
 ### The Andrew Release
 
@@ -23,7 +34,7 @@
 - Less chatty about replication validation if it's not necessary.
 - Less chatty about file validation if no changes are required.
 - When applying `update` in DEV mode, the Git branch used will be shown.
-- Validates log export operation
+- Validates log export operation.
 
 #### 1.7.6
 - Detects `dbclient` install as alternative to OpenSSH Client.
