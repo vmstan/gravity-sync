@@ -652,12 +652,15 @@ function create_rsynccmd {
 		if [ -z "$SSHPASSWORD" ]
 		then
 			rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${RSYNC_SOURCE} ${RSYNC_TARGET}
+				error_validate		
 		else
 			rsync -e "${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${RSYNC_SOURCE} ${RSYNC_TARGET}
+				error_validate
 		fi
 	elif hash dbclient 2>/dev/null
 	then
 		rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${RSYNC_SOURCE} ${RSYNC_TARGET}
+			error_validate
 	fi
 }
 
