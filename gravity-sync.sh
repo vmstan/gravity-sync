@@ -692,13 +692,11 @@ function detect_sshkeygen {
 		then
 			MESSAGE="Using DROPBEARKEY Instead"
 			echo_info
-				if [ -d $HOME/.ssh ]
+				if [ ! -d $HOME/.ssh ]
 				then
-					KEYGEN_COMMAND="dropbearkey -t rsa -f"
-				else
 					mkdir $HOME/.ssh >/dev/null 2>&1
-					KEYGEN_COMMAND="dropbearkey -t rsa -f $HOME/${SSH_PKIF}"
 				fi
+			KEYGEN_COMMAND="dropbearkey -t rsa -f"
 		else
 			MESSAGE="No Alternatives Located"
 			echo_info
@@ -987,7 +985,7 @@ function config_generate {
 			MESSAGE="Using Existing ~/${SSH_PKIF}"
 			echo_info
 		else
-			KEYGEN_COMMAND="ssh-keygen -q -N '' -t rsa -f"
+			KEYGEN_COMMAND="ssh-keygen -q -N \"\" -t rsa -f"
 			detect_sshkeygen
 						
 			MESSAGE="Generating ~/${SSH_PKIF}"
@@ -1026,7 +1024,7 @@ function config_generate {
 			echo -e "========================================================"
 			if hash ssh-copy-id 2>/dev/null
 			then
-				ssh-copy-id -f -i $HOME/${SSH_PKIF}.pub ${REMOTE_USER}@${REMOTE_HOST}
+				ssh-copy-id -f -p ${SSH_PORT} -i $HOME/${SSH_PKIF}.pub ${REMOTE_USER}@${REMOTE_HOST}
 			elif hash dbclient 2>/dev/null
 			then
 				dropbearkey -y -f $HOME/${SSH_PKIF} | grep "^ssh-rsa " > $HOME/${SSH_PKIF}.pub
