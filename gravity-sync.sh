@@ -153,7 +153,7 @@ function pull_gs {
 		RSYNC_SOURCE="${PIHOLE_DIR}/${GRAVITY_FI}"
 		RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull"
 			create_rsynccmd
-		${RSYNC_SEND} >/dev/null 2>&1
+		${RSYNC_SEND} # >/dev/null 2>&1
 			error_validate
 
 		#${SSHPASSWORD} rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull >/dev/null 2>&1
