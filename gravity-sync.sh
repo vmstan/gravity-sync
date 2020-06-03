@@ -1221,6 +1221,12 @@ function task_configure {
 	TASKTYPE='CONFIGURE'
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
+
+	MESSAGE="Escalation Ability Check"
+	echo_stat
+
+	timeout 2 sudo cat VERSION
+		error_validate
 	
 	if [ -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE} ]
 	then		
