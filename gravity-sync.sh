@@ -648,13 +648,13 @@ function ssh_function {
 	then
 		if [ -z "$SSHPASSWORD" ]
 		then
-			SSH_SEND="timeout --preserve-status ${CMD_TIMEOUT} ${SSH_CMD} -p ${SSH_PORT} -i '$HOME\/${SSH_PKIF}' -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} '${CMD_REQUESTED}'"
+			SSH_SEND="timeout --preserve-status ${CMD_TIMEOUT} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} '${CMD_REQUESTED}'"
 		else
 			SSH_SEND="timeout --preserve-status ${CMD_TIMEOUT} ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} '${CMD_REQUESTED}'"
 		fi
 	elif hash dbclient 2>/dev/null
 	then
-	SSH_SEND="timeout --preserve-status ${CMD_TIMEOUT} ${SSH_CMD} -p ${SSH_PORT} -i \"$HOME\/${SSH_PKIF}\" ${REMOTE_USER}@${REMOTE_HOST} \"${CMD_REQUESTED}\""
+	SSH_SEND="timeout --preserve-status ${CMD_TIMEOUT} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF} ${REMOTE_USER}@${REMOTE_HOST} \"${CMD_REQUESTED}\""
 	fi
 }
 
