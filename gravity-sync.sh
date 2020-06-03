@@ -160,7 +160,7 @@ function pull_gs {
 	echo_stat
 		
 		GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk '{print $3 $4}')
-		if [ $GRAVDB_OWN != "piholepihole" ]
+		if [ "$GRAVDB_OWN" != "piholepihole" ]
 		then
 			MESSAGE="Validating Ownership on ${GRAVITY_FI}"
 			echo_fail
@@ -178,7 +178,7 @@ function pull_gs {
 		fi
 		
 		GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | sed 's/\s.*$//')
-		if [ $GRAVDB_RWE != "-rw-rw-r--" ]
+		if [ "$GRAVDB_RWE" != "-rw-rw-r--" ]
 		then
 			MESSAGE="Validating Permissions on ${GRAVITY_FI}"
 			echo_fail
@@ -225,7 +225,7 @@ function pull_gs {
 			echo_stat
 				
 				CUSTOMLS_OWN=$(ls -ld ${PIHOLE_DIR}/${CUSTOM_DNS} | awk '{print $3 $4}')
-				if [ $CUSTOMLS_OWN != "rootroot" ]
+				if [ "$CUSTOMLS_OWN" != "rootroot" ]
 				then
 					MESSAGE="Validating Ownership on ${CUSTOM_DNS}"
 					echo_fail
@@ -243,7 +243,7 @@ function pull_gs {
 				fi
 			
 				CUSTOMLS_RWE=$(namei -m ${PIHOLE_DIR}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | sed 's/\s.*$//')
-				if [ $CUSTOMLS_RWE != "-rw-r--r--" ]
+				if [ "$CUSTOMLS_RWE" != "-rw-r--r--" ]
 				then
 					MESSAGE="Validating Permissions on ${CUSTOM_DNS}"
 					echo_fail
@@ -382,7 +382,7 @@ function restore_gs {
 	echo_stat
 		
 		GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk '{print $3 $4}')
-		if [ $GRAVDB_OWN == "piholepihole" ]
+		if [ "$GRAVDB_OWN" == "piholepihole" ]
 		then
 			echo_good
 		else
@@ -401,7 +401,7 @@ function restore_gs {
 	echo_stat
 	
 		GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | sed 's/\s.*$//')
-		if [ $GRAVDB_RWE = "-rw-rw-r--" ]
+		if [ "$GRAVDB_RWE" = "-rw-rw-r--" ]
 		then
 			echo_good
 		else
@@ -429,7 +429,7 @@ function restore_gs {
 			echo_stat
 				
 				CUSTOMLS_OWN=$(ls -ld ${PIHOLE_DIR}/${CUSTOM_DNS} | awk '{print $3 $4}')
-				if [ $CUSTOMLS_OWN == "rootroot" ]
+				if [ "$CUSTOMLS_OWN" == "rootroot" ]
 				then
 					echo_good
 				else
@@ -448,7 +448,7 @@ function restore_gs {
 			echo_stat
 			
 				CUSTOMLS_RWE=$(namei -m ${PIHOLE_DIR}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | sed 's/\s.*$//')
-				if [ $CUSTOMLS_RWE == "-rw-r--r--" ]
+				if [ "$CUSTOMLS_RWE" == "-rw-r--r--" ]
 				then
 					echo_good
 				else
