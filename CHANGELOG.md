@@ -3,7 +3,7 @@
 ## 1.8
 ### The Logical Release
 **Features**
-There is nothing really sexy here, but a lot of changes under the covers to improve reliablity between different SSH client types. A lot of the logic and functions are more consistent and cleaner. In some cultures, fewer bugs and more reliablity are considered features.
+There is nothing really sexy here, but a lot of changes under the covers to improve reliablity between different SSH client types. A lot of the logic and functions are more consistent and cleaner. In some cultures, fewer bugs and more reliablity are considered features. Much of this will continue through the 1.8.x line.
 
 - SSH/RSYNC connection logic rewritten to be specific to client options between OpenSSH, OpenSSH w/ SSHPASS, and Dropbear.
 - Key-pair generation functions rewritten to be specific to client options, also now works with no (or at least fewer) user prompts.
