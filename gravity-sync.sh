@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.7.7'
+VERSION='1.7.8'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -987,7 +987,7 @@ function config_generate {
 			MESSAGE="Using Existing ~/${SSH_PKIF}"
 			echo_info
 		else
-			KEYGEN_COMMAND="ssh-keygen -t rsa -f"
+			KEYGEN_COMMAND="ssh-keygen -t rsa -f -q -N ''"
 			detect_sshkeygen
 						
 			MESSAGE="Generating ~/${SSH_PKIF}"
@@ -1284,10 +1284,9 @@ function task_compare {
 	echo_good
 	
 	import_gs
-
-		validate_gs_folders
-		validate_ph_folders
-		validate_os_sshpass
+	validate_gs_folders
+	validate_ph_folders
+	validate_os_sshpass
 		
 	md5_compare
 }

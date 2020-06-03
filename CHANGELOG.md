@@ -12,7 +12,7 @@
 - No new Star Trek references.
 
 #### 1.7.8
-- SSH connection logic rewritten to be specific to client options between OpenSSH, OpenSSH w/ SSHPASS, and Dropbear.
+- SSH/RSYNC connection logic rewritten to be specific to client options between OpenSSH, OpenSSH w/ SSHPASS, and Dropbear.
 - Removes INFO that SSHPASS is not installed during config, if it's not needed. Redirects user to documentation.
 - Better error handling of configuration options.
 
