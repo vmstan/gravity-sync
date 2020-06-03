@@ -718,22 +718,20 @@ function generate_sshkey {
 				MESSAGE="Generating ~/${SSH_PKIF} (SSH-KEYGEN)"
 				echo_stat
 				
-				ssh-keygen -q -P "" -t rsa -f $HOME/${SSH_PKIF}
+				ssh-keygen -q -P "" -t rsa -f $HOME/${SSH_PKIF} >/dev/null 2>&1
 					error_validate
 
 			elif hash dropbearkey >/dev/null 2>&1
 			then
 				MESSAGE="Generating ~/${SSH_PKIF} (DROPBEARKEY)"
-				echo_info
+				echo_stat
 					if [ ! -d $HOME/.ssh ]
 					then
 						mkdir $HOME/.ssh >/dev/null 2>&1
 					fi
-					echo -e "========================================================"
-					echo -e "========================================================"
-					dropbearkey -t rsa -f $HOME/${SSH_PKIF}
-					echo -e "========================================================"
-					echo -e "========================================================"
+
+					dropbearkey -y -t rsa -f $HOME/${SSH_PKIF} >/dev/null 2>&1
+						error_validate
 			else
 				MESSAGE="No SSH Key Generator Located"
 				echo_warn
@@ -751,11 +749,9 @@ function export_sshkey {
 			MESSAGE="Registering Key-Pair on ${REMOTE_HOST}"
 			echo_info
 			
-			MESSAGE="Enter ${REMOTE_USER}@${REMOTE_HOST} Password Below"
-			echo -e "${NEED} ${MESSAGE}"
-			
-			echo -e "========================================================"
-			echo -e "========================================================"
+			#MESSAGE="Enter ${REMOTE_USER}@${REMOTE_HOST} Password Below"
+			#echo -e "${NEED} ${MESSAGE}"
+
 			if hash ssh-copy-id 2>/dev/null
 			then
 				ssh-copy-id -f -p ${SSH_PORT} -i $HOME/${SSH_PKIF}.pub ${REMOTE_USER}@${REMOTE_HOST}
@@ -764,11 +760,9 @@ function export_sshkey {
 				dropbearkey -y -f $HOME/${SSH_PKIF} | grep "^ssh-rsa " > $HOME/${SSH_PKIF}.pub
 				cat $HOME/${SSH_PKIF}.pub | dbclient ${REMOTE_USER}@${REMOTE_HOST} 'cat - >> .ssh/authorized_keys'
 			fi
-			echo -e "========================================================"
-			echo -e "========================================================"
 		else
-		MESSAGE="Error Creating Key-Pair"
-		echo -e "${FAIL} ${MESSAGE}"
+		MESSAGE="Error Registering Key-Pair"
+		echo_warn
 		fi
 	fi
 }
