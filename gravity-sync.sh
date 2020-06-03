@@ -987,7 +987,7 @@ function config_generate {
 			MESSAGE="Using Existing ~/${SSH_PKIF}"
 			echo_info
 		else
-			KEYGEN_COMMAND="ssh-keygen -t rsa -f -q -N ''"
+			KEYGEN_COMMAND="ssh-keygen -q -N '' -t rsa -f"
 			detect_sshkeygen
 						
 			MESSAGE="Generating ~/${SSH_PKIF}"
