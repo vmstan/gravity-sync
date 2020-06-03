@@ -1,5 +1,16 @@
 # The Changelog
 
+## 1.8
+### The Logical Release
+**Features**
+There is nothing really sexy here, but a lot of changes under the covers to improve reliablity between different SSH client types. A lot of the logic and functions are more consistent and cleaner. In some cultures, fewer bugs and more reliablity are considered features.
+
+- SSH/RSYNC connection logic rewritten to be specific to client options between OpenSSH, OpenSSH w/ SSHPASS, and Dropbear.
+- Key-pair generation functions rewritten to be specific to client options, also now works with no (or at least fewer) user prompts.
+- SSHPASS options should be more reliable if used, but removes messages that SSHPASS is not installed during setup, if it's not needed and Redirects user to documentation.
+- Adds custom port specification to ssh-copy-id and dropbearkey commands during configuration generation.
+- Generally better error handling of configuration options.
+
 ## 1.7
 ### The Andrew Release
 
@@ -10,13 +21,6 @@
 
 **Known Issues**
 - No new Star Trek references.
-
-#### 1.7.8
-- SSH/RSYNC connection logic rewritten to be specific to client options between OpenSSH, OpenSSH w/ SSHPASS, and Dropbear.
-- Removes INFO that SSHPASS is not installed during config, if it's not needed. Redirects user to documentation.
-- Better error handling of configuration options.
-- Adds custom port specification to ssh-copy-id and dropbearkey commands during configuration generation.
-- Key generation works with fewer no user prompts.
 
 #### 1.7.7
 - `config` function will attempt to ping remote host to validate network connection, can by bypassed by adding `PING_AVOID='1'` to your `gravity-sync.conf` file.

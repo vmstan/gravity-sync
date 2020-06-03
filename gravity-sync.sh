@@ -114,7 +114,7 @@ function update_gs {
 		echo_info
 	fi
 
-	GIT_CHECK=$(git status | awk '{print $1}')
+	GIT_CHECK=$(git status | sed 's/\s.*$//')
 	if [ "$GIT_CHECK" == "fatal:" ]
 	then
 		MESSAGE="Requires GitHub Installation" 
@@ -177,7 +177,7 @@ function pull_gs {
 			echo_stat
 		fi
 		
-		GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | awk '{print $1}')
+		GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | sed 's/\s.*$//')
 		if [ $GRAVDB_RWE != "-rw-rw-r--" ]
 		then
 			MESSAGE="Validating Permissions on ${GRAVITY_FI}"
@@ -242,7 +242,7 @@ function pull_gs {
 					echo_stat
 				fi
 			
-				CUSTOMLS_RWE=$(namei -m ${PIHOLE_DIR}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | awk '{print $1}')
+				CUSTOMLS_RWE=$(namei -m ${PIHOLE_DIR}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | sed 's/\s.*$//')
 				if [ $CUSTOMLS_RWE != "-rw-r--r--" ]
 				then
 					MESSAGE="Validating Permissions on ${CUSTOM_DNS}"
@@ -400,7 +400,7 @@ function restore_gs {
 	MESSAGE="Validating Permissions on ${GRAVITY_FI}"
 	echo_stat
 	
-		GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | awk '{print $1}')
+		GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | sed 's/\s.*$//')
 		if [ $GRAVDB_RWE = "-rw-rw-r--" ]
 		then
 			echo_good
@@ -447,7 +447,7 @@ function restore_gs {
 			MESSAGE="Validating Permissions on ${CUSTOM_DNS}"
 			echo_stat
 			
-				CUSTOMLS_RWE=$(namei -m ${PIHOLE_DIR}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | awk '{print $1}')
+				CUSTOMLS_RWE=$(namei -m ${PIHOLE_DIR}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | sed 's/\s.*$//')
 				if [ $CUSTOMLS_RWE == "-rw-r--r--" ]
 				then
 					echo_good
