@@ -1353,6 +1353,16 @@ function echo_need {
 	MESSAGE="Evaluating Arguments"
 	echo_stat
 
+	if [ ! "$EUID" -ne 0 ]
+  	then 
+		echo_fail
+	  	
+		MESSAGE="Root User Detected"
+		echo_warn
+		
+		exit_nochange
+	fi
+
 case $# in
 	
 	0)
