@@ -757,8 +757,8 @@ function export_sshkey {
 				ssh-copy-id -f -p ${SSH_PORT} -i $HOME/${SSH_PKIF}.pub ${REMOTE_USER}@${REMOTE_HOST}
 			elif hash dbclient 2>/dev/null
 			then
-				dropbearkey -y -f $HOME/${SSH_PKIF} | grep "^ssh-rsa " > $HOME/${SSH_PKIF}.pub
-				cat $HOME/${SSH_PKIF}.pub | dbclient ${REMOTE_USER}@${REMOTE_HOST} 'cat - >> .ssh/authorized_keys'
+				dropbearkey -f $HOME/${SSH_PKIF} | grep "^ssh-rsa " > $HOME/${SSH_PKIF}.pub
+				cat $HOME/${SSH_PKIF}.pub | dbclient -p ${SSH_PORT} -y ${REMOTE_USER}@${REMOTE_HOST} 'cat - >> .ssh/authorized_keys'
 			fi
 		else
 		MESSAGE="Error Registering Key-Pair"
