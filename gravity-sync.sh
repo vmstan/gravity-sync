@@ -150,7 +150,8 @@ function pull_gs {
 	
 	MESSAGE="Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo_stat
-		RSYNC_SOURCE="${PIHOLE_DIR}/${GRAVITY_FI}"
+		RSYNC_REPATH="rsync"
+		RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}"
 		RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull"
 			create_rsynccmd
 
@@ -217,8 +218,13 @@ function pull_gs {
 			
 			MESSAGE="Pulling ${CUSTOM_DNS} from ${REMOTE_HOST}"
 			echo_stat
-				${SSHPASSWORD} rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull >/dev/null 2>&1
-				error_validate
+				RSYNC_REPATH="rsync"
+				RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS}"
+				RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull"
+					create_rsynccmd
+
+				#${SSHPASSWORD} rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull >/dev/null 2>&1
+				#error_validate
 				
 			MESSAGE="Replacing ${CUSTOM_DNS} on $HOSTNAME"
 			echo_stat	
@@ -294,23 +300,41 @@ function push_gs {
 
 	MESSAGE="Backing Up ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo_stat
-		${SSHPASSWORD} rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push >/dev/null 2>&1
-		error_validate
+		RSYNC_REPATH="rsync"
+		RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}"
+		RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push"
+			create_rsynccmd
+
+		# ${SSHPASSWORD} rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push >/dev/null 2>&1
+		# error_validate
 
 	MESSAGE="Pushing ${GRAVITY_FI} to ${REMOTE_HOST}"
 	echo_stat
-		${SSHPASSWORD} rsync --rsync-path="sudo rsync" -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
-		error_validate
+		RSYNC_REPATH="sudo rsync"
+		RSYNC_SOURCE="${PIHOLE_DIR}/${GRAVITY_FI}"
+		RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}"
+			create_rsynccmd
+		
+		#${SSHPASSWORD} rsync --rsync-path="sudo rsync" -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+		#error_validate
 
 	MESSAGE="Setting Permissions on ${GRAVITY_FI}"
-	echo_stat	
-		${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
-		error_validate
+	echo_stat
+		CMD_TIMEOUT='15'
+		CMD_REQUESTED="sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI}"
+			create_sshcmd	
+		
+		#${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
+		#error_validate
 
 	MESSAGE="Setting Ownership on ${GRAVITY_FI}"
-	echo_stat	
-		${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
-		error_validate	
+	echo_stat
+		CMD_TIMEOUT='15'
+		CMD_REQUESTED="sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}"
+			create_sshcmd
+
+		# ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
+		# error_validate	
 
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
@@ -318,23 +342,41 @@ function push_gs {
 		then
 			MESSAGE="Backing Up ${CUSTOM_DNS} from ${REMOTE_HOST}"
 			echo_stat
-				${SSHPASSWORD} rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.push >/dev/null 2>&1
-				error_validate
+				RSYNC_REPATH="rsync"
+				RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS}"
+				RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.push"
+					create_rsynccmd
+				
+				# ${SSHPASSWORD} rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.push >/dev/null 2>&1
+				# error_validate
 
 			MESSAGE="Pushing ${CUSTOM_DNS} to ${REMOTE_HOST}"
 			echo_stat
-				${SSHPASSWORD} rsync --rsync-path="sudo rsync" -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${PIHOLE_DIR}/${CUSTOM_DNS} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
-				error_validate
+				RSYNC_REPATH="sudo rsync"
+				RSYNC_SOURCE="${PIHOLE_DIR}/${CUSTOM_DNS}"
+				RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS}"
+					create_rsynccmd
+
+				# ${SSHPASSWORD} rsync --rsync-path="sudo rsync" -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${PIHOLE_DIR}/${CUSTOM_DNS} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+				# error_validate
 
 			MESSAGE="Setting Permissions on ${CUSTOM_DNS}"
-			echo_stat	
-				${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 644 ${PIHOLE_DIR}/${CUSTOM_DNS}" >/dev/null 2>&1
-				error_validate
+			echo_stat
+				CMD_TIMEOUT='15'
+				CMD_REQUESTED="sudo chmod 644 ${PIHOLE_DIR}/${CUSTOM_DNS}"
+					create_sshcmd
+
+				#${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 644 ${PIHOLE_DIR}/${CUSTOM_DNS}" >/dev/null 2>&1
+				#error_validate
 
 			MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
-			echo_stat	
-				${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chown root:root ${PIHOLE_DIR}/${CUSTOM_DNS}" >/dev/null 2>&1
-				error_validate
+			echo_stat
+				CMD_TIMEOUT='15'
+				CMD_REQUESTED="sudo chown root:root ${PIHOLE_DIR}/${CUSTOM_DNS}"
+					create_sshcmd	
+				
+				#${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chown root:root ${PIHOLE_DIR}/${CUSTOM_DNS}" >/dev/null 2>&1
+				#error_validate
 		fi	
 	fi
 
@@ -344,14 +386,21 @@ function push_gs {
 
 	MESSAGE="Updating FTLDNS Configuration"
 	echo_stat
-		${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${PIHOLE_BIN} restartdns reloadlists" >/dev/null 2>&1
-		error_validate
+		CMD_TIMEOUT='15'
+		CMD_REQUESTED="${PIHOLE_BIN} restartdns reloadlists"
+			create_sshcmd
+
+		#${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${PIHOLE_BIN} restartdns reloadlists" >/dev/null 2>&1
+		#error_validate
 	
 	MESSAGE="Reloading FTLDNS Services"
-	echo_stat	
-		${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${PIHOLE_BIN} restartdns" >/dev/null 2>&1
-		error_validate
-	
+	echo_stat
+		CMD_TIMEOUT='15'
+		CMD_REQUESTED="${PIHOLE_BIN} restartdns"
+			create_sshcmd
+
+		# ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${PIHOLE_BIN} restartdns" >/dev/null 2>&1
+		# error_validate
 	logs_export
 	exit_withchange
 
@@ -653,15 +702,15 @@ function create_rsynccmd {
 	then
 		if [ -z "$SSHPASSWORD" ]
 		then
-			rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
+			rsync --rsync-path="${RSYNC_REPATH}" -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
 				error_validate		
 		else
-			rsync -e "${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
+			rsync --rsync-path="${RSYNC_REPATH}" -e "${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
 				error_validate
 		fi
 	elif hash dbclient 2>/dev/null
 	then
-		rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
+		rsync --rsync-path="${RSYNC_REPATH}" -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
 			error_validate
 	fi
 }
