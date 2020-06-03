@@ -16,7 +16,7 @@
 - Removes INFO that SSHPASS is not installed during config, if it's not needed. Redirects user to documentation.
 - Better error handling of configuration options.
 - Adds custom port specification to ssh-copy-id command during configuration generation.
-- OpenSSH key generation works fewer user prompts.
+- OpenSSH key generation works with fewer user prompts.
 
 #### 1.7.7
 - `config` function will attempt to ping remote host to validate network connection, can by bypassed by adding `PING_AVOID='1'` to your `gravity-sync.conf` file.

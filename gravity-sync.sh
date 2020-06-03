@@ -705,6 +705,74 @@ function detect_sshkeygen {
 	fi
 }
 
+function generate_sshkey {
+	if [ -z $INPUT_REMOTE_PASS ]
+	then
+		if [ -f $HOME/${SSH_PKIF} ]
+		then
+			MESSAGE="Using Existing ~/${SSH_PKIF}"
+			echo_info
+		else
+			if hash ssh-keygen >/dev/null 2>&1
+			then
+				MESSAGE="Generating ~/${SSH_PKIF} (SSH-KEYGEN)"
+				echo_stat
+				
+				ssh-keygen -q -P "" -t rsa -f $HOME/${SSH_PKIF}
+					error_validate
+
+			elif hash dropbearkey >/dev/null 2>&1
+			then
+				MESSAGE="Generating ~/${SSH_PKIF} (DROPBEARKEY)"
+				echo_info
+					if [ ! -d $HOME/.ssh ]
+					then
+						mkdir $HOME/.ssh >/dev/null 2>&1
+					fi
+					echo -e "========================================================"
+					echo -e "========================================================"
+					dropbearkey -t rsa -f $HOME/${SSH_PKIF}
+					echo -e "========================================================"
+					echo -e "========================================================"
+			else
+				MESSAGE="No SSH Key Generator Located"
+				echo_warn
+					exit_nochange
+			fi	
+		fi
+	fi
+}
+
+function export_sshkey {
+	if [ -z $REMOTE_PASS ]
+	then
+		if [ -f $HOME/${SSH_PKIF} ]
+		then
+			MESSAGE="Registering Key-Pair on ${REMOTE_HOST}"
+			echo_info
+			
+			MESSAGE="Enter ${REMOTE_USER}@${REMOTE_HOST} Password Below"
+			echo -e "${NEED} ${MESSAGE}"
+			
+			echo -e "========================================================"
+			echo -e "========================================================"
+			if hash ssh-copy-id 2>/dev/null
+			then
+				ssh-copy-id -f -p ${SSH_PORT} -i $HOME/${SSH_PKIF}.pub ${REMOTE_USER}@${REMOTE_HOST}
+			elif hash dbclient 2>/dev/null
+			then
+				dropbearkey -y -f $HOME/${SSH_PKIF} | grep "^ssh-rsa " > $HOME/${SSH_PKIF}.pub
+				cat $HOME/${SSH_PKIF}.pub | dbclient ${REMOTE_USER}@${REMOTE_HOST} 'cat - >> .ssh/authorized_keys'
+			fi
+			echo -e "========================================================"
+			echo -e "========================================================"
+		else
+		MESSAGE="Error Creating Key-Pair"
+		echo -e "${FAIL} ${MESSAGE}"
+		fi
+	fi
+}
+
 ## Detect Package Manager
 function distro_check { 
 	if hash apt-get 2>/dev/null
@@ -978,65 +1046,14 @@ function config_generate {
 			fi	
 	fi
 
-	if [ -z $INPUT_REMOTE_PASS ]
-	then
-		if [ -f $HOME/${SSH_PKIF} ]
-		then
-			MESSAGE="Using Existing ~/${SSH_PKIF}"
-			echo_info
-		else
-			KEYGEN_COMMAND="ssh-keygen -N \"""\" -t rsa -f"
-			detect_sshkeygen
-						
-			MESSAGE="Generating ~/${SSH_PKIF}"
-			echo_info
-			
-			MESSAGE="Accept All Defaults If Prompted"
-			echo_warn
-			
-			MESSAGE="Complete Key-Pair Creation"
-			echo -e "${NEED} ${MESSAGE}"
-			
-			echo -e "========================================================"
-			echo -e "========================================================"
-			${KEYGEN_COMMAND} $HOME/${SSH_PKIF}
-			echo -e "========================================================"
-			echo -e "========================================================"
-		fi
-	fi
+	generate_sshkey
 	
 	MESSAGE="Importing New ${CONFIG_FILE}"
 	echo_stat
 	source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 	error_validate
-	
-	if [ -z $REMOTE_PASS ]
-	then
-		if [ -f $HOME/${SSH_PKIF} ]
-		then
-			MESSAGE="Registering Key-Pair on ${REMOTE_HOST}"
-			echo_info
-			
-			MESSAGE="Enter ${REMOTE_USER}@${REMOTE_HOST} Password Below"
-			echo -e "${NEED} ${MESSAGE}"
-			
-			echo -e "========================================================"
-			echo -e "========================================================"
-			if hash ssh-copy-id 2>/dev/null
-			then
-				ssh-copy-id -f -p ${SSH_PORT} -i $HOME/${SSH_PKIF}.pub ${REMOTE_USER}@${REMOTE_HOST}
-			elif hash dbclient 2>/dev/null
-			then
-				dropbearkey -y -f $HOME/${SSH_PKIF} | grep "^ssh-rsa " > $HOME/${SSH_PKIF}.pub
-				cat $HOME/${SSH_PKIF}.pub | dbclient ${REMOTE_USER}@${REMOTE_HOST} 'cat - >> .ssh/authorized_keys'
-			fi
-			echo -e "========================================================"
-			echo -e "========================================================"
-		else
-		MESSAGE="Error Creating Key-Pair"
-		echo -e "${FAIL} ${MESSAGE}"
-		fi
-	fi
+
+	export_sshkey	
 	
 	MESSAGE="Testing Configuration"
 	echo_info
