@@ -654,7 +654,7 @@ function ssh_function {
 		fi
 	elif hash dbclient 2>/dev/null
 	then
-	SSH_SEND="timeout --preserve-status ${CMD_TIMEOUT} ${SSH_CMD} -p ${SSH_PORT} -i '$HOME/${SSH_PKIF}' ${REMOTE_USER}@${REMOTE_HOST} '${CMD_REQUESTED}'"
+	SSH_SEND="timeout ${CMD_TIMEOUT} ${SSH_CMD} -p ${SSH_PORT} -i '$HOME/${SSH_PKIF}' ${REMOTE_USER}@${REMOTE_HOST} '${CMD_REQUESTED}'"
 	fi
 }
 
