@@ -625,8 +625,7 @@ function validate_os_sshpass {
 	CMD_TIMEOUT='5'
 	CMD_REQUESTED="exit"
 		create_sshcmd
-	${SSH_SEND} >/dev/null 2>&1
-		error_validate
+	
 }
 
 ## Determine SSH Pathways
@@ -635,13 +634,16 @@ function create_sshcmd {
 	then
 		if [ -z "$SSHPASSWORD" ]
 		then
-			SSH_SEND="timeout --preserve-status ${CMD_TIMEOUT} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} '${CMD_REQUESTED}'"
+			timeout --preserve-status ${CMD_TIMEOUT} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} "${CMD_REQUESTED}"
+				error_validate
 		else
-			SSH_SEND="timeout --preserve-status ${CMD_TIMEOUT} ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} '${CMD_REQUESTED}'"
+			timeout --preserve-status ${CMD_TIMEOUT} ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} "${CMD_REQUESTED}"
+				error_validate
 		fi
 	elif hash dbclient 2>/dev/null
 	then
-		SSH_SEND="timeout --preserve-status ${CMD_TIMEOUT} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF} ${REMOTE_USER}@${REMOTE_HOST} \"${CMD_REQUESTED}\""
+		timeout --preserve-status ${CMD_TIMEOUT} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF} ${REMOTE_USER}@${REMOTE_HOST} "${CMD_REQUESTED}"
+			error_validate
 	fi
 }
 
@@ -651,15 +653,15 @@ function create_rsynccmd {
 	then
 		if [ -z "$SSHPASSWORD" ]
 		then
-			rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${RSYNC_SOURCE} ${RSYNC_TARGET}
+			rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
 				error_validate		
 		else
-			rsync -e "${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${RSYNC_SOURCE} ${RSYNC_TARGET}
+			rsync -e "${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
 				error_validate
 		fi
 	elif hash dbclient 2>/dev/null
 	then
-		rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${RSYNC_SOURCE} ${RSYNC_TARGET}
+		rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
 			error_validate
 	fi
 }
