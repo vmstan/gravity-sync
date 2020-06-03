@@ -651,7 +651,7 @@ function create_rsynccmd {
 	then
 		if [ -z "$SSHPASSWORD" ]
 		then
-			rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}\" ${REMOTE_USER}@${REMOTE_HOST}:${RSYNC_SOURCE} ${RSYNC_TARGET}
+			rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${RSYNC_SOURCE} ${RSYNC_TARGET}
 		else
 			rsync -e "${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${RSYNC_SOURCE} ${RSYNC_TARGET}
 		fi
