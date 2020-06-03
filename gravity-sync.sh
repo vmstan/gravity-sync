@@ -622,6 +622,7 @@ function validate_os_sshpass {
 
 	CMD_TIMEOUT='5'
 	CMD_REQUESTED="exit"
+	echo -e "${SSH_SEND}"
 	${SSH_SEND} >/dev/null 2>&1
 		error_validate
 
