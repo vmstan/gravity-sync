@@ -625,21 +625,21 @@ function validate_os_sshpass {
 	${SSH_SEND} >/dev/null 2>&1
 		error_validate
 
-		if hash ssh 2>/dev/null
-		then
-			if [ -z "$SSHPASSWORD" ]
-			then
+	#	if hash ssh 2>/dev/null
+	#	then
+	#		if [ -z "$SSHPASSWORD" ]
+	#		then
 				# timeout 5 ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
 				# error_validate
-			else
+	#		else
 				# timeout 5 ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
 				# error_validate
-			fi
-		elif hash dbclient 2>/dev/null
-		then
+	#		fi
+	#	elif hash dbclient 2>/dev/null
+	#	then
 			# timeout 5 ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
 			# error_validate
-		fi
+	#	fi
 }
 
 ## Determine SSH Pathways
