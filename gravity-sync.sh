@@ -730,7 +730,7 @@ function generate_sshkey {
 						mkdir $HOME/.ssh >/dev/null 2>&1
 					fi
 
-					dropbearkey -y -t rsa -f $HOME/${SSH_PKIF} >/dev/null 2>&1
+					dropbearkey -t rsa -f $HOME/${SSH_PKIF} >/dev/null 2>&1
 						error_validate
 			else
 				MESSAGE="No SSH Key Generator Located"
@@ -757,7 +757,7 @@ function export_sshkey {
 				ssh-copy-id -f -p ${SSH_PORT} -i $HOME/${SSH_PKIF}.pub ${REMOTE_USER}@${REMOTE_HOST}
 			elif hash dbclient 2>/dev/null
 			then
-				dropbearkey -f $HOME/${SSH_PKIF} | grep "^ssh-rsa " > $HOME/${SSH_PKIF}.pub
+				dropbearkey -y -f $HOME/${SSH_PKIF} | grep "^ssh-rsa " > $HOME/${SSH_PKIF}.pub
 				cat $HOME/${SSH_PKIF}.pub | dbclient -p ${SSH_PORT} -y ${REMOTE_USER}@${REMOTE_HOST} 'cat - >> .ssh/authorized_keys'
 			fi
 		else
