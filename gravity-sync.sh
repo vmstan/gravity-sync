@@ -1225,7 +1225,7 @@ function task_configure {
 	MESSAGE="Escalation Ability Check"
 	echo_stat
 
-	timeout 2 sudo cat VERSION
+	timeout 2 sudo cat VERSION >/dev/null 2>&1
 		error_validate
 	
 	if [ -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE} ]
