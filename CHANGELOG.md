@@ -2,6 +2,7 @@
 
 ## 1.8
 ### The Logical Release
+
 **Features**
 There is nothing really sexy here, but a lot of changes under the covers to improve reliablity between different SSH client types. A lot of the logic and functions are more consistent and cleaner. In some cultures, fewer bugs and more reliablity are considered features. Much of this will continue through the 1.8.x line.
 
@@ -10,6 +11,9 @@ There is nothing really sexy here, but a lot of changes under the covers to impr
 - SSHPASS options should be more reliable if used, but removes messages that SSHPASS is not installed during setup, if it's not needed and Redirects user to documentation.
 - Adds custom port specification to ssh-copy-id and dropbearkey commands during configuration generation.
 - Generally better error handling of configuration options.
+
+#### 1.8.1
+- Detects if script is running as the root user or via `sudo ./gravity-sync.sh` and exits on error.
 
 ## 1.7
 ### The Andrew Release

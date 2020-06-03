@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.8.0'
+VERSION='1.8.1'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -1345,6 +1345,21 @@ function echo_need {
 	echo -en "${NEED} ${MESSAGE}: "
 }
 
+# Root Check
+function root_check {
+	if [ ! "$EUID" -ne 0 ]
+  	then 
+		TASKTYPE='ROOT'
+		MESSAGE="${MESSAGE} ${TASKTYPE}"
+		echo_fail
+	  	
+		MESSAGE="${PROGRAM} Must Not Run as Root"
+		echo_warn
+		
+		exit_nochange
+	fi
+}
+
 # SCRIPT EXECUTION ###########################
 
 	MESSAGE="${PROGRAM} ${VERSION} Executing"
@@ -1352,6 +1367,8 @@ function echo_need {
 	
 	MESSAGE="Evaluating Arguments"
 	echo_stat
+
+	root_check
 
 case $# in
 	
