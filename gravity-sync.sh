@@ -1355,9 +1355,10 @@ function echo_need {
 
 	if [ ! "$EUID" -ne 0 ]
   	then 
+		MESSAGE="${MESSAGE} ROOT"
 		echo_fail
 	  	
-		MESSAGE="Root User Detected"
+		MESSAGE="${PROGRAM} Must Not Run as Root"
 		echo_warn
 		
 		exit_nochange
