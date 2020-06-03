@@ -1345,6 +1345,21 @@ function echo_need {
 	echo -en "${NEED} ${MESSAGE}: "
 }
 
+# Root Check
+function root_check {
+	if [ ! "$EUID" -ne 0 ]
+  	then 
+		TASKTYPE='ROOT'
+		MESSAGE="${MESSAGE} ${TASKTYPE}"
+		echo_fail
+	  	
+		MESSAGE="${PROGRAM} Must Not Run as Root"
+		echo_warn
+		
+		exit_nochange
+	fi
+}
+
 # SCRIPT EXECUTION ###########################
 
 	MESSAGE="${PROGRAM} ${VERSION} Executing"
@@ -1353,16 +1368,7 @@ function echo_need {
 	MESSAGE="Evaluating Arguments"
 	echo_stat
 
-	if [ ! "$EUID" -ne 0 ]
-  	then 
-		MESSAGE="${MESSAGE} ROOT"
-		echo_fail
-	  	
-		MESSAGE="${PROGRAM} Must Not Run as Root"
-		echo_warn
-		
-		exit_nochange
-	fi
+	root_check
 
 case $# in
 	
