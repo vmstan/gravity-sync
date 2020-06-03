@@ -93,7 +93,6 @@ function import_gs {
 
 		TASKTYPE='CONFIG'
 		config_generate
-		# echo -e "Please run ${YELLOW}$#${NC} again."
 	fi
 }
 
@@ -101,8 +100,7 @@ function import_gs {
 ## Master Branch
 function update_gs {
 	TASKTYPE='UPDATE'
-	# logs_export 	# dumps log prior to execution because script stops after successful pull
-	
+
 	if [ -f "$HOME/${LOCAL_FOLDR}/dev" ]
 	then
 		BRANCH='development'
@@ -123,8 +121,6 @@ function update_gs {
 		echo_warn
 		exit_nochange
 	else
-		# MESSAGE="This might break..." 
-		# echo_warn
 		MESSAGE="Updating Cache"
 		echo_stat
 		git fetch --all >/dev/null 2>&1
@@ -154,9 +150,6 @@ function pull_gs {
 		RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}"
 		RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull"
 			create_rsynccmd
-
-		#${SSHPASSWORD} rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull >/dev/null 2>&1
-		#error_validate
 		
 	MESSAGE="Replacing ${GRAVITY_FI} on $HOSTNAME"
 	echo_stat	
@@ -222,9 +215,6 @@ function pull_gs {
 				RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS}"
 				RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull"
 					create_rsynccmd
-
-				#${SSHPASSWORD} rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull >/dev/null 2>&1
-				#error_validate
 				
 			MESSAGE="Replacing ${CUSTOM_DNS} on $HOSTNAME"
 			echo_stat	
@@ -305,36 +295,24 @@ function push_gs {
 		RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push"
 			create_rsynccmd
 
-		# ${SSHPASSWORD} rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push >/dev/null 2>&1
-		# error_validate
-
 	MESSAGE="Pushing ${GRAVITY_FI} to ${REMOTE_HOST}"
 	echo_stat
 		RSYNC_REPATH="sudo rsync"
 		RSYNC_SOURCE="${PIHOLE_DIR}/${GRAVITY_FI}"
 		RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}"
 			create_rsynccmd
-		
-		#${SSHPASSWORD} rsync --rsync-path="sudo rsync" -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${PIHOLE_DIR}/${GRAVITY_FI} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
-		#error_validate
 
 	MESSAGE="Setting Permissions on ${GRAVITY_FI}"
 	echo_stat
 		CMD_TIMEOUT='15'
 		CMD_REQUESTED="sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI}"
 			create_sshcmd	
-		
-		#${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
-		#error_validate
 
 	MESSAGE="Setting Ownership on ${GRAVITY_FI}"
 	echo_stat
 		CMD_TIMEOUT='15'
 		CMD_REQUESTED="sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}"
 			create_sshcmd
-
-		# ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}" >/dev/null 2>&1
-		# error_validate	
 
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
@@ -346,9 +324,6 @@ function push_gs {
 				RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS}"
 				RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.push"
 					create_rsynccmd
-				
-				# ${SSHPASSWORD} rsync -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.push >/dev/null 2>&1
-				# error_validate
 
 			MESSAGE="Pushing ${CUSTOM_DNS} to ${REMOTE_HOST}"
 			echo_stat
@@ -357,26 +332,17 @@ function push_gs {
 				RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS}"
 					create_rsynccmd
 
-				# ${SSHPASSWORD} rsync --rsync-path="sudo rsync" -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${PIHOLE_DIR}/${CUSTOM_DNS} ${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
-				# error_validate
-
 			MESSAGE="Setting Permissions on ${CUSTOM_DNS}"
 			echo_stat
 				CMD_TIMEOUT='15'
 				CMD_REQUESTED="sudo chmod 644 ${PIHOLE_DIR}/${CUSTOM_DNS}"
 					create_sshcmd
 
-				#${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chmod 644 ${PIHOLE_DIR}/${CUSTOM_DNS}" >/dev/null 2>&1
-				#error_validate
-
 			MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
 			echo_stat
 				CMD_TIMEOUT='15'
 				CMD_REQUESTED="sudo chown root:root ${PIHOLE_DIR}/${CUSTOM_DNS}"
 					create_sshcmd	
-				
-				#${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo chown root:root ${PIHOLE_DIR}/${CUSTOM_DNS}" >/dev/null 2>&1
-				#error_validate
 		fi	
 	fi
 
@@ -389,9 +355,6 @@ function push_gs {
 		CMD_TIMEOUT='15'
 		CMD_REQUESTED="${PIHOLE_BIN} restartdns reloadlists"
 			create_sshcmd
-
-		#${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${PIHOLE_BIN} restartdns reloadlists" >/dev/null 2>&1
-		#error_validate
 	
 	MESSAGE="Reloading FTLDNS Services"
 	echo_stat
@@ -399,8 +362,6 @@ function push_gs {
 		CMD_REQUESTED="${PIHOLE_BIN} restartdns"
 			create_sshcmd
 
-		# ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${PIHOLE_BIN} restartdns" >/dev/null 2>&1
-		# error_validate
 	logs_export
 	exit_withchange
 
@@ -634,9 +595,6 @@ function validate_ph_folders {
 
 ## Validate SSHPASS
 function validate_os_sshpass {
-	# MESSAGE="Checking SSH Configuration"
-    # echo_info
-
 	SSHPASSWORD=''
 
 	if hash sshpass 2>/dev/null
@@ -852,8 +810,6 @@ function md5_compare {
 	
 	if [ "$primaryDBMD5" == "$secondDBMD5" ]
 	then
-		# MESSAGE="Identical ${GRAVITY_FI} Detected"
-		# echo_info
 		HASHMARK=$((HASHMARK+0))
 	else
 		MESSAGE="Differenced ${GRAVITY_FI} Detected"
@@ -1022,9 +978,6 @@ function config_generate {
 				MESSAGE="Skipping Password Setup"
 				echo_info
 			fi	
-	# else
-	#	MESSAGE="Defaulting to SSH Key-Pair Authentication"
-	#	echo_info
 	fi
 
 	if [ -z $INPUT_REMOTE_PASS ]
@@ -1152,10 +1105,6 @@ function list_gs_arguments {
 	echo -e " ${YELLOW}restore${NC}	Restore ${GRAVITY_FI} on this server"
 	echo -e " ${YELLOW}compare${NC}	Just check for differences"
 	echo -e ""
-#	echo -e "Update Options:"
-#	echo -e " ${YELLOW}update${NC}		Use GitHub to update this script to the latest version"
-#	echo -e " ${YELLOW}beta${NC}		Use GitHub to update this script to the latest beta version"
-#	echo -e ""
 	echo -e "Debug Options:"
 	echo -e " ${YELLOW}logs${NC}		Show recent successful replication jobs"
 	echo -e " ${YELLOW}cron${NC}		Display output of last crontab execution"
@@ -1263,9 +1212,6 @@ function task_configure {
 	TASKTYPE='CONFIGURE'
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
-
-	#MESSAGE="${TASKTYPE} Requested"
-	#echo_info
 	
 	if [ -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE} ]
 	then		
@@ -1308,9 +1254,6 @@ function task_update {
 	TASKTYPE='UPDATE'
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
-				
-	#MESSAGE="${TASKTYPE} Requested"
-	#echo_info
 	
 	update_gs
 }
@@ -1321,9 +1264,6 @@ function task_version {
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
 
-	#MESSAGE="${TASKTYPE} Requested"
-	#echo_info
-
 	show_version
 	exit_nochange
 }
@@ -1333,9 +1273,6 @@ function task_logs {
 	TASKTYPE='LOGS'
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
-	
-	#MESSAGE="${TASKTYPE} Requested"
-	#echo_info
 
 	logs_gs
 }
@@ -1345,14 +1282,8 @@ function task_compare {
 	TASKTYPE='COMPARE'
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
-
-	#MESSAGE="${TASKTYPE} Requested"
-	#echo_info
 	
 	import_gs
-	
-	# MESSAGE="Validating OS Configuration"
-	# echo_info
 
 		validate_gs_folders
 		validate_ph_folders
@@ -1366,9 +1297,6 @@ function task_cron {
 	TASKTYPE='CRON'
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
-
-	#MESSAGE="${TASKTYPE} Requested"
-	#echo_info
 	
 	show_crontab
 }
@@ -1429,17 +1357,11 @@ case $# in
 				TASKTYPE='PULL'
 				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
-
-				#MESSAGE="${TASKTYPE} Requested"
-				#echo_info
 				
 				import_gs
-				
-				# MESSAGE="Validating Folder Configuration"
-				# echo_info
-					validate_gs_folders
-					validate_ph_folders
-					validate_os_sshpass
+				validate_gs_folders
+				validate_ph_folders
+				validate_os_sshpass
 					
 				pull_gs
 				exit
@@ -1449,17 +1371,11 @@ case $# in
 				TASKTYPE='PUSH'
 				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
-
-				#MESSAGE="${TASKTYPE} Requested"
-				#echo_info
 				
 				import_gs
-
-				# MESSAGE="Validating Folder Configuration"
-				# echo_info
-					validate_gs_folders
-					validate_ph_folders
-					validate_os_sshpass
+				validate_gs_folders
+				validate_ph_folders
+				validate_os_sshpass
 					
 				push_gs
 				exit
@@ -1470,17 +1386,10 @@ case $# in
 				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
 
-				#MESSAGE="${TASKTYPE} Requested"
-				#echo_info
-				
 				import_gs
+				validate_gs_folders
+				validate_ph_folders
 
-				# MESSAGE="Validating Folder Configuration"
-				# echo_info
-					validate_gs_folders
-					validate_ph_folders
-					# validate_os_sshpass
-					
 				restore_gs
 				exit
 			;;
