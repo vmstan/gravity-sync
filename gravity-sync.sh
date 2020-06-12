@@ -846,7 +846,8 @@ function detect_ssh {
 
 ## Error Validation
 function error_validate {
-	if [ "$?" != "0" ]; then
+	if [ "$?" != "0" ]
+	then
 	    echo_fail
 	    exit 1
 	else
@@ -1221,12 +1222,6 @@ function task_configure {
 	TASKTYPE='CONFIGURE'
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
-
-	MESSAGE="Escalation Ability Check"
-	echo_stat
-
-	timeout 2 sudo cat VERSION >/dev/null 2>&1
-		error_validate
 	
 	if [ -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE} ]
 	then		
