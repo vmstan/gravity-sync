@@ -915,6 +915,7 @@ function md5_compare {
 			then
 				REMOTE_CUSTOM_DNS="1"
 				MESSAGE="${REMOTE_HOST} has ${CUSTOM_DNS}"
+				HASHMARK=$((HASHMARK+1))
 				echo_info
 			fi	
 			MESSAGE="No ${CUSTOM_DNS} Detected on $HOSTNAME"
