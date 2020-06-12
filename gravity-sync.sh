@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.8.1'
+VERSION='1.8.2'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -846,7 +846,8 @@ function detect_ssh {
 
 ## Error Validation
 function error_validate {
-	if [ "$?" != "0" ]; then
+	if [ "$?" != "0" ]
+	then
 	    echo_fail
 	    exit 1
 	else
@@ -914,6 +915,7 @@ function md5_compare {
 			then
 				REMOTE_CUSTOM_DNS="1"
 				MESSAGE="${REMOTE_HOST} has ${CUSTOM_DNS}"
+				HASHMARK=$((HASHMARK+1))
 				echo_info
 			fi	
 			MESSAGE="No ${CUSTOM_DNS} Detected on $HOSTNAME"
