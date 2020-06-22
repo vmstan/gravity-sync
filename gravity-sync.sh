@@ -1227,8 +1227,8 @@ function task_automate {
 			MESSAGE="Removing Existing Automation"
 			echo_stat
 			
-			crontab -l >$CRON_TEMP
-			sed '/pull/d' $CRON_TEMP >$CRON_NEW
+			crontab -l > $CRON_TEMP
+			sed '/pull/d' $CRON_TEMP > $CRON_NEW
 			crontab $CRON_NEW 2>/dev/null
 				error_validate
 		fi
