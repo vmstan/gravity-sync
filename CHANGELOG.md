@@ -14,6 +14,7 @@ There is nothing really sexy here, but a lot of changes under the covers to impr
 
 #### 1.8.3
 - Simplified method for input of automation frequency via crontab.
+- Adds dev tag to version output.
 
 #### 1.8.2
 - Corrects issue where `custom.list` file would not replicate if the file didn't exist locally, and there were no other changes to replicate. [#39](https://github.com/vmstan/gravity-sync/issues/39)
