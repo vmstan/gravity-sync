@@ -1188,17 +1188,17 @@ function task_automate {
 		exit_nochange
 	elif [ $INPUT_AUTO_FREQ -lt 1 ]
 	then
-		if [ $CRON_EXIST == 1 ]
-		then
+		#if [ $CRON_EXIST == 1 ]
+		#then
 			clear_cron
 
 			MESSAGE="Automation Disabled"
 			echo_info
-		else
-			MESSAGE="Invalid Input"
-			echo_stat
-			exit_nochange
-		fi
+		#else
+		#	MESSAGE="No Automation Scheduled"
+		#	echo_info
+		#	exit_nochange
+		#fi
 	else
 		if [ $CRON_EXIST == 1 ]
 		then
