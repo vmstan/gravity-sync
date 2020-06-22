@@ -1196,7 +1196,7 @@ function task_automate {
 	echo_need
 	read INPUT_AUTO_FREQ
 
-	if [ $INPUT_AUTO_FREQ > 60 ]
+	if [ $INPUT_AUTO_FREQ -gt 60 ]
 	# then
 	# 	AUTO_FREQ='60'
 	# elif [ $INPUT_AUTO_FREQ == 2 ]
@@ -1215,14 +1215,13 @@ function task_automate {
 		MESSAGE="Invalid Input"
 		echo_fail
 		exit_nochange
-	fi
-
-	MESSAGE="Saving to Crontab"
-	echo_stat
+	else
+		MESSAGE="Saving to Crontab"
+		echo_stat
 		(crontab -l 2>/dev/null; echo "*/${AUTO_FREQ} * * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/${GS_FILENAME} pull > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
 			error_validate
-
-	exit_withchange
+		exit_withchange
+	fi
 }	
 
 ## Configure Task
