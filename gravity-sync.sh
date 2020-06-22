@@ -1193,11 +1193,11 @@ function task_automate {
 	# MESSAGE="12 = Every 05 Minutes"
 	# echo -e "++++++ ${MESSAGE}"
 	
-	MESSAGE="Sync Frequency in Minutes (60 max)"
+	MESSAGE="Sync Frequency in Minutes (1-30)"
 	echo_need
 	read INPUT_AUTO_FREQ
 
-	if [ $INPUT_AUTO_FREQ -gt 60 ]
+	if [ $INPUT_AUTO_FREQ -gt 30 ]
 	# then
 	# 	AUTO_FREQ='60'
 	# elif [ $INPUT_AUTO_FREQ == 2 ]
@@ -1213,6 +1213,10 @@ function task_automate {
 	# then
 	# 	AUTO_FREQ='5'
 	then
+		MESSAGE="Invalid Input"
+		echo_fail
+		exit_nochange
+	elif [ $INPUT_AUTO_FREQ -lt 1 ]
 		MESSAGE="Invalid Input"
 		echo_fail
 		exit_nochange

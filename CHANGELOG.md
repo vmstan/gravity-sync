@@ -14,6 +14,7 @@ There is nothing really sexy here, but a lot of changes under the covers to impr
 
 #### 1.8.3
 - Simplified method for input of automation frequency via crontab.
+- Removes existing automation task from crontab, if it exists.
 - Adds dev tag to version output.
 
 #### 1.8.2
