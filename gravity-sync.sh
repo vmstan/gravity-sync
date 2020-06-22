@@ -1222,7 +1222,7 @@ function task_automate {
 		echo_fail
 		exit_nochange
 	else
-		if [ CRON_EXIST == 1 ]
+		if [ $CRON_EXIST == 1 ]
 		then
 			MESSAGE="Removing Existing Automation"
 			echo_stat
