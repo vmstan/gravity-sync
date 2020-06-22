@@ -13,10 +13,10 @@ There is nothing really sexy here, but a lot of changes under the covers to impr
 - Generally better error handling of configuration options.
 
 #### 1.8.3
-- Simplified method for input of automation frequency via crontab.
-- Removes existing automation task from crontab, if it exists.
-- Automation can be disabled by setting frequency to 0 when prompted.
-- Adds dev tag to version output.
+- Simplified method for input of automation frequency when running `./gravity-sync.sh automate` function.
+- Now removes existing automation task from crontab, if it exists, when re-running `automate` function.
+- Automation can be disabled by setting frequency to `0` when prompted.
+- Adds `dev` tag to `./gravity-sync.sh version` output for users running off the development branch.
 
 #### 1.8.2
 - Corrects issue where `custom.list` file would not replicate if the file didn't exist locally, and there were no other changes to replicate. [#39](https://github.com/vmstan/gravity-sync/issues/39)
