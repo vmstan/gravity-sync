@@ -1174,74 +1174,56 @@ function task_automate {
 		MESSAGE="Automation Task Already Exists"
 		echo_info
 		CRON_EXIST="1"
-		# MESSAGE="Use 'crontab -e' to manually remove/edit"
-		# echo_info
-		# exit_nochange
 	fi
-
-	# MESSAGE="Set Automation Frequency Per Hour"
-	# echo_info
-
-	# MESSAGE="1  = Every 60 Minutes"
-	# echo -e "++++++ ${MESSAGE}"
-	# MESSAGE="2  = Every 30 Minutes"
-	# echo -e "++++++ ${MESSAGE}"
-	# MESSAGE="4  = Every 15 Minutes"
-	# echo -e "++++++ ${MESSAGE}"
-	# MESSAGE="6  = Every 10 Minutes"
-	# echo -e "++++++ ${MESSAGE}"
-	# MESSAGE="12 = Every 05 Minutes"
-	# echo -e "++++++ ${MESSAGE}"
 	
-	MESSAGE="Sync Frequency in Minutes (1-30)"
+	MESSAGE="Sync Frequency in Minutes (0-30)"
 	echo_need
 	read INPUT_AUTO_FREQ
 
 	if [ $INPUT_AUTO_FREQ -gt 30 ]
-	# then
-	# 	AUTO_FREQ='60'
-	# elif [ $INPUT_AUTO_FREQ == 2 ]
-	# then
-	# 	AUTO_FREQ='30'
-	# elif [ $INPUT_AUTO_FREQ == 4 ]
-	# then
-	# 	AUTO_FREQ='15'
-	# elif [ $INPUT_AUTO_FREQ == 6 ]
-	# then
-	# 	AUTO_FREQ='10'
-	# elif [ $INPUT_AUTO_FREQ == 12 ]
-	# then
-	# 	AUTO_FREQ='5'
 	then
 		MESSAGE="Invalid Input"
 		echo_fail
 		exit_nochange
 	elif [ $INPUT_AUTO_FREQ -lt 1 ]
 	then
-		MESSAGE="Invalid Input"
-		echo_fail
-		exit_nochange
+		if [ $CRON_EXIST == 1 ]
+		then
+			clear_cron
+
+			MESSAGE="Automation Disabled"
+			echo_info
+		else
+			MESSAGE="Invalid Input"
+			echo_stat
+			exit_nochange
+		fi
 	else
 		if [ $CRON_EXIST == 1 ]
 		then
-			MESSAGE="Removing Existing Automation"
-			echo_stat
-			
-			crontab -l > cronjob-old.tmp
-			sed '/.sh pull/d' cronjob-old.tmp > cronjob-new.tmp
-			crontab cronjob-new.tmp 2>/dev/null
-				error_validate
-			rm cronjob-old.tmp
-			rm cronjob-new.tmp
+			clear_cron
 		fi
 
 		MESSAGE="Saving New Automation"
 		echo_stat
 		(crontab -l 2>/dev/null; echo "*/${INPUT_AUTO_FREQ} * * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/${GS_FILENAME} pull > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
 			error_validate
-		exit_withchange
 	fi
+	exit_withchange
 }	
+
+## Clear Existing Automation Settings
+function clear_cron {
+	MESSAGE="Removing Existing Automation"
+	echo_stat
+
+	crontab -l > cronjob-old.tmp
+	sed '/.sh pull/d' cronjob-old.tmp > cronjob-new.tmp
+	crontab cronjob-new.tmp 2>/dev/null
+		error_validate
+	rm cronjob-old.tmp
+	rm cronjob-new.tmp
+}
 
 ## Configure Task
 function task_configure {				
