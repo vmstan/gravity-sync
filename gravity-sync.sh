@@ -1168,12 +1168,13 @@ function task_automate {
 
 	import_gs
 
+	CRON_EXIST='0'
 	CRON_CHECK=$(crontab -l | grep -q "${GS_FILENAME}"  && echo '1' || echo '0')
 	if [ ${CRON_CHECK} == 1 ]
 	then
 		MESSAGE="Automation Task Already Exists"
 		echo_info
-		CRON_EXIST="1"
+		CRON_EXIST='1'
 	fi
 	
 	MESSAGE="Sync Frequency in Minutes (0-30)"
