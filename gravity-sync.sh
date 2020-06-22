@@ -1218,7 +1218,7 @@ function task_automate {
 	else
 		MESSAGE="Saving to Crontab"
 		echo_stat
-		(crontab -l 2>/dev/null; echo "*/${AUTO_FREQ} * * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/${GS_FILENAME} pull > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
+		(crontab -l 2>/dev/null; echo "*/${INPUT_AUTO_FREQ} * * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/${GS_FILENAME} pull > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
 			error_validate
 		exit_withchange
 	fi
