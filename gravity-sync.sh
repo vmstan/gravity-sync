@@ -1227,7 +1227,7 @@ function task_automate {
 			echo_stat
 			
 			crontab -l >$CRON_TEMP
-			awk '$0!~/pull/ { print $0 }' $CRON_TEMP >$CRON_NEW
+			sed '/pull/d' $CRON_TEMP >$CRON_NEW
 			crontab $CRON_NEW 2>/dev/null
 				error_validate
 		fi
