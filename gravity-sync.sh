@@ -1173,9 +1173,10 @@ function task_automate {
 	then
 		MESSAGE="Automation Task Already Exists"
 		echo_info
-		MESSAGE="Use 'crontab -e' to manually remove/edit"
-		echo_info
-		exit_nochange
+		CRON_EXIST="1"
+		# MESSAGE="Use 'crontab -e' to manually remove/edit"
+		# echo_info
+		# exit_nochange
 	fi
 
 	# MESSAGE="Set Automation Frequency Per Hour"
@@ -1216,7 +1217,18 @@ function task_automate {
 		echo_fail
 		exit_nochange
 	else
-		MESSAGE="Saving to Crontab"
+		if [ CRON_EXIST == 1 ]
+		then
+			MESSAGE="Removing Existing Automation"
+			echo_stat
+			
+			crontab -l >$CRON_TEMP
+			awk '$0!~/pull/ { print $0 }' $CRON_TEMP >$CRON_NEW
+			crontab $CRON_NEW 2>/dev/null
+				error_validate
+		fi
+
+		MESSAGE="Saving New Automation"
 		echo_stat
 		(crontab -l 2>/dev/null; echo "*/${INPUT_AUTO_FREQ} * * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/${GS_FILENAME} pull > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
 			error_validate
