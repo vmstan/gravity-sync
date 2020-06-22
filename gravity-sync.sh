@@ -1132,8 +1132,15 @@ function show_version {
 
 	MESSAGE="${BLUE}https://github.com/vmstan/gravity-sync${NC}"
 	echo_info
+
+	if [ -f $HOME/${LOCAL_FOLDR}/dev ]
+	then
+		DEVVERSION="dev"
+	else
+		DEVVERSION=""
+	fi
 	
-	MESSAGE="Running Version: ${GREEN}${VERSION}${NC}"
+	MESSAGE="Running Version: ${GREEN}${VERSION}${NC} ${DEVVERSION}"
 	echo_info
 
 	GITVERSION=$(curl -sf https://raw.githubusercontent.com/vmstan/gravity-sync/master/VERSION)
