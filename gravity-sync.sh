@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.8.2'
+VERSION='1.8.3'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -1171,42 +1171,42 @@ function task_automate {
 		exit_nochange
 	fi
 
-	MESSAGE="Set Automation Frequency Per Hour"
-	echo_info
+	# MESSAGE="Set Automation Frequency Per Hour"
+	# echo_info
 
-	MESSAGE="1  = Every 60 Minutes"
-	echo -e "++++++ ${MESSAGE}"
-	MESSAGE="2  = Every 30 Minutes"
-	echo -e "++++++ ${MESSAGE}"
-	MESSAGE="4  = Every 15 Minutes"
-	echo -e "++++++ ${MESSAGE}"
-	MESSAGE="6  = Every 10 Minutes"
-	echo -e "++++++ ${MESSAGE}"
-	MESSAGE="12 = Every 05 Minutes"
-	echo -e "++++++ ${MESSAGE}"
+	# MESSAGE="1  = Every 60 Minutes"
+	# echo -e "++++++ ${MESSAGE}"
+	# MESSAGE="2  = Every 30 Minutes"
+	# echo -e "++++++ ${MESSAGE}"
+	# MESSAGE="4  = Every 15 Minutes"
+	# echo -e "++++++ ${MESSAGE}"
+	# MESSAGE="6  = Every 10 Minutes"
+	# echo -e "++++++ ${MESSAGE}"
+	# MESSAGE="12 = Every 05 Minutes"
+	# echo -e "++++++ ${MESSAGE}"
 	
-	MESSAGE="Input Automation Frequency"
+	MESSAGE="Sync Frequency in Minutes (60 max)"
 	echo_need
 	read INPUT_AUTO_FREQ
 
-	if [ $INPUT_AUTO_FREQ == 1 ]
+	if [ $INPUT_AUTO_FREQ > 60 ]
+	# then
+	# 	AUTO_FREQ='60'
+	# elif [ $INPUT_AUTO_FREQ == 2 ]
+	# then
+	# 	AUTO_FREQ='30'
+	# elif [ $INPUT_AUTO_FREQ == 4 ]
+	# then
+	# 	AUTO_FREQ='15'
+	# elif [ $INPUT_AUTO_FREQ == 6 ]
+	# then
+	# 	AUTO_FREQ='10'
+	# elif [ $INPUT_AUTO_FREQ == 12 ]
+	# then
+	# 	AUTO_FREQ='5'
 	then
-		AUTO_FREQ='60'
-	elif [ $INPUT_AUTO_FREQ == 2 ]
-	then
-		AUTO_FREQ='30'
-	elif [ $INPUT_AUTO_FREQ == 4 ]
-	then
-		AUTO_FREQ='15'
-	elif [ $INPUT_AUTO_FREQ == 6 ]
-	then
-		AUTO_FREQ='10'
-	elif [ $INPUT_AUTO_FREQ == 12 ]
-	then
-		AUTO_FREQ='5'
-	else
 		MESSAGE="Invalid Input"
-		echo -e "${FAIL} ${MESSAGE}"
+		echo_fail
 		exit_nochange
 	fi
 

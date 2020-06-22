@@ -12,6 +12,9 @@ There is nothing really sexy here, but a lot of changes under the covers to impr
 - Adds custom port specification to ssh-copy-id and dropbearkey commands during configuration generation.
 - Generally better error handling of configuration options.
 
+#### 1.8.3
+- Simplified method for input of automation frequency via crontab.
+
 #### 1.8.2
 - Corrects issue where `custom.list` file would not replicate if the file didn't exist locally, and there were no other changes to replicate. [#39](https://github.com/vmstan/gravity-sync/issues/39)
 
