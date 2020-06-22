@@ -1183,7 +1183,7 @@ function task_automate {
 
 	if [ $INPUT_AUTO_FREQ -gt 30 ]
 	then
-		MESSAGE="Invalid Input"
+		MESSAGE="Invalid Frequency Range"
 		echo_fail
 		exit_nochange
 	elif [ $INPUT_AUTO_FREQ -lt 1 ]
