@@ -1217,6 +1217,7 @@ function task_automate {
 		echo_fail
 		exit_nochange
 	elif [ $INPUT_AUTO_FREQ -lt 1 ]
+	then
 		MESSAGE="Invalid Input"
 		echo_fail
 		exit_nochange
