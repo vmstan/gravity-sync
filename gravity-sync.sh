@@ -1177,7 +1177,7 @@ function task_automate {
 		CRON_EXIST='1'
 	fi
 	
-	MESSAGE="Sync Frequency in Minutes (0-30)"
+	MESSAGE="Sync Frequency in Minutes (1-30) or 0 to Disable"
 	echo_need
 	read INPUT_AUTO_FREQ
 

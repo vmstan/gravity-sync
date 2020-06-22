@@ -15,6 +15,7 @@ There is nothing really sexy here, but a lot of changes under the covers to impr
 #### 1.8.3
 - Simplified method for input of automation frequency via crontab.
 - Removes existing automation task from crontab, if it exists.
+- Automation can be disabled by setting frequency to 0 when prompted.
 - Adds dev tag to version output.
 
 #### 1.8.2
