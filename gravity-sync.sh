@@ -1228,7 +1228,7 @@ function task_automate {
 			echo_stat
 			
 			crontab -l > cronjob-old.tmp
-			sed '/pull/d' cronjob-old.tmp > cronjob-new.tmp
+			sed '/.sh pull/d' cronjob-old.tmp > cronjob-new.tmp
 			crontab cronjob-new.tmp 2>/dev/null
 				error_validate
 			rm cronjob-old.tmp
