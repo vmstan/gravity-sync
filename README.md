@@ -122,7 +122,7 @@ Automation of sync is accomplished by adding an execution of the script to the u
 ./gravity-sync.sh automate
 ```
 
-Select the frequency per hour that you'd like to sync (once, twice, quadrice, etc) and that's it.
+Select the frequency per hour (in minutes) that you'd like to sync and that's it.
 
 Now, make another small adjustment to your primary settings and wait until annointed time to see if your changes have been synchronized. If so, profit! If not, start from the beginning. From this point forward any blocklist changes you make to the primary will reflect on the secondary within the frequency you select.
 
@@ -135,7 +135,7 @@ If you'd like to see the log of what was run the last crontab, you can view that
 Keep in mind if your cron task has never run, you will not see any valid output from this command.
 
 ### Adjusting Automation
-You can verify your cron entry by running `crontab -l` and see it listed at the bottom of the file. If you decide to remove or change your frequency, you'll need to run `crontab -e` and adjust this by hand. If you're unsure of how to adjust the timers by hand, just delete the entire line in the crontab file and then re-run the `./gravity-sync automate` function.
+You can verify your existing automation entry by running `crontab -l` and see it listed at the bottom of the crontab file. If you decide to remove or change your frequency (as of version 1.8.3) you can run `./gravity-sync.sh automate` again and pick a new timing, including setting it to 0 to disable automation.
 
 ## Advanced Installation
 Please review the [Advanced Installation](https://github.com/vmstan/gravity-sync/blob/master/ADVANCED.md) guide for assistance.

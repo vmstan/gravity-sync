@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.8.2'
+VERSION='1.8.3'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -1132,8 +1132,15 @@ function show_version {
 
 	MESSAGE="${BLUE}https://github.com/vmstan/gravity-sync${NC}"
 	echo_info
+
+	if [ -f $HOME/${LOCAL_FOLDR}/dev ]
+	then
+		DEVVERSION="dev"
+	else
+		DEVVERSION=""
+	fi
 	
-	MESSAGE="Running Version: ${GREEN}${VERSION}${NC}"
+	MESSAGE="Running Version: ${GREEN}${VERSION}${NC} ${DEVVERSION}"
 	echo_info
 
 	GITVERSION=$(curl -sf https://raw.githubusercontent.com/vmstan/gravity-sync/master/VERSION)
@@ -1161,62 +1168,63 @@ function task_automate {
 
 	import_gs
 
+	CRON_EXIST='0'
 	CRON_CHECK=$(crontab -l | grep -q "${GS_FILENAME}"  && echo '1' || echo '0')
 	if [ ${CRON_CHECK} == 1 ]
 	then
 		MESSAGE="Automation Task Already Exists"
 		echo_info
-		MESSAGE="Use 'crontab -e' to manually remove/edit"
-		echo_info
-		exit_nochange
+		CRON_EXIST='1'
 	fi
-
-	MESSAGE="Set Automation Frequency Per Hour"
-	echo_info
-
-	MESSAGE="1  = Every 60 Minutes"
-	echo -e "++++++ ${MESSAGE}"
-	MESSAGE="2  = Every 30 Minutes"
-	echo -e "++++++ ${MESSAGE}"
-	MESSAGE="4  = Every 15 Minutes"
-	echo -e "++++++ ${MESSAGE}"
-	MESSAGE="6  = Every 10 Minutes"
-	echo -e "++++++ ${MESSAGE}"
-	MESSAGE="12 = Every 05 Minutes"
-	echo -e "++++++ ${MESSAGE}"
 	
-	MESSAGE="Input Automation Frequency"
+	MESSAGE="Sync Frequency in Minutes (1-30) or 0 to Disable"
 	echo_need
 	read INPUT_AUTO_FREQ
 
-	if [ $INPUT_AUTO_FREQ == 1 ]
+	if [ $INPUT_AUTO_FREQ -gt 30 ]
 	then
-		AUTO_FREQ='60'
-	elif [ $INPUT_AUTO_FREQ == 2 ]
-	then
-		AUTO_FREQ='30'
-	elif [ $INPUT_AUTO_FREQ == 4 ]
-	then
-		AUTO_FREQ='15'
-	elif [ $INPUT_AUTO_FREQ == 6 ]
-	then
-		AUTO_FREQ='10'
-	elif [ $INPUT_AUTO_FREQ == 12 ]
-	then
-		AUTO_FREQ='5'
-	else
-		MESSAGE="Invalid Input"
-		echo -e "${FAIL} ${MESSAGE}"
+		MESSAGE="Invalid Frequency Range"
+		echo_fail
 		exit_nochange
-	fi
+	elif [ $INPUT_AUTO_FREQ -lt 1 ]
+	then
+		if [ $CRON_EXIST == 1 ]
+		then
+			clear_cron
 
-	MESSAGE="Saving to Crontab"
-	echo_stat
-		(crontab -l 2>/dev/null; echo "*/${AUTO_FREQ} * * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/${GS_FILENAME} pull > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
+			MESSAGE="Automation Disabled"
+			echo_info
+		else
+			MESSAGE="No Automation Scheduled"
+			echo_info
+			exit_nochange
+		fi
+	else
+		if [ $CRON_EXIST == 1 ]
+		then
+			clear_cron
+		fi
+
+		MESSAGE="Saving New Automation"
+		echo_stat
+		(crontab -l 2>/dev/null; echo "*/${INPUT_AUTO_FREQ} * * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/${GS_FILENAME} pull > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
 			error_validate
-
+	fi
 	exit_withchange
 }	
+
+## Clear Existing Automation Settings
+function clear_cron {
+	MESSAGE="Removing Existing Automation"
+	echo_stat
+
+	crontab -l > cronjob-old.tmp
+	sed '/.sh pull/d' cronjob-old.tmp > cronjob-new.tmp
+	crontab cronjob-new.tmp 2>/dev/null
+		error_validate
+	rm cronjob-old.tmp
+	rm cronjob-new.tmp
+}
 
 ## Configure Task
 function task_configure {				
