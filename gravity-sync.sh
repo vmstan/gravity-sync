@@ -375,15 +375,15 @@ function smart_gs {
 	last_primaryCIMD5=$(sed "3q;d" gravity-sync.md5)
 	last_secondCIMD5=$(sed "4q;d" gravity-sync.md5)
 
-	echo -e $primaryDBMD5
-	echo -e $secondDBMD5
-	echo -e $primaryCLMD5
-	echo -e $secondCLMD5
+	echo -e $primaryDBMD5 " 1"
+	echo -e $secondDBMD5 " 2"
+	echo -e $primaryCLMD5 " 3"
+	echo -e $secondCLMD5 " 4"
 
-	echo -e $last_primaryDBMD5
-	echo -e $last_secondDBMD5
-	echo -e $last_primaryCLMD5
-	echo -e $last_secondCLMD5
+	echo -e $last_primaryDBMD5 " 5"
+	echo -e $last_secondDBMD5 " 6"
+	echo -e $last_primaryCLMD5 " 7"
+	echo -e $last_secondCLMD5 " 8"
 }
 
 function restore_gs {
