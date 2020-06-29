@@ -388,17 +388,21 @@ function smart_gs {
 	if [ "${primaryDBMD5}" != "${last_primaryDBMD5}" ]
 	then
 		echo "Primary DB has changed"
-	elif [ "${primaryDBMD5}" == "${last_primaryDBMD5}" ]
+	elif [ "${secondDBMD5}" != "${last_secondDBMD5}" ]
 	then
 		echo "Secondary DB has changed"
+	else
+		echo "No DB changes"
 	fi
 
 	if [ "${primaryCLMD5}" != "${last_primaryCLMD5}" ]
 	then
 		echo "Primary CL has changed"
-	elif [ "${primaryCLMD5}" == "${last_primaryCLMD5}" ]
+	elif [ "${secondCLMD5}" != "${last_secondCLMD5}" ]
 	then
 		echo "Secondary CL has changed"
+	else
+		echo "No CL changes"
 	fi
 }
 
