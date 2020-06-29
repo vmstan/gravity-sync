@@ -370,10 +370,20 @@ function push_gs {
 function smart_gs {
 	md5_compare
 
+	last_primaryDBMD5=$(sed "1q;d" gravity-sync.md5)
+	last_secondDBMD5=$(sed "2q;d" gravity-sync.md5)
+	last_primaryCIMD5=$(sed "3q;d" gravity-sync.md5)
+	last_secondCIMD5=$(sed "4q;d" gravity-sync.md5)
+
 	echo -e $primaryDBMD5
 	echo -e $secondDBMD5
 	echo -e $primaryCLMD5
 	echo -e $secondCLMD5
+
+	echo -e $last_primaryDBMD5
+	echo -e $last_secondDBMD5
+	echo -e $last_primaryCLMD5
+	echo -e $last_secondCLMD5
 }
 
 function restore_gs {
@@ -496,19 +506,19 @@ function restore_gs {
 ## Core Logging
 ### Write Logs Out
 function logs_export {
+	MESSAGE="Saving File Hashes"
+	echo_stat
+		rm -f gravity-sync.md5
+		echo -e ${primaryDBMD5} >> gravity-sync.md5
+		echo -e ${secondDBMD5} >> gravity-sync.md5
+		echo -e ${primaryCLMD5} >> gravity-sync.md5
+		echo -e ${secondCLMD5} >> gravity-sync.md5
+			error_validate
+
 	MESSAGE="Logging Successful ${TASKTYPE}"
 	echo_stat
 		echo -e $(date) "[${TASKTYPE}]" >> ${LOG_PATH}/${SYNCING_LOG}
 		error_validate
-
-	MESSAGE="Saving File Hashes"
-	echo_stat
-		rm -f backup/gravity-sync.md5
-		echo -e ${primaryDBMD5} >> backup/gravity-sync.md5
-		echo -e ${secondDBMD5} >> backup/gravity-sync.md5
-		echo -e ${primaryCLMD5} >> backup/gravity-sync.md5
-		echo -e ${secondCLMD5} >> backup/gravity-sync.md5
-			error_validate
 }
 
 ### Output Sync Logs
