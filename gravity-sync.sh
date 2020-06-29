@@ -367,6 +367,15 @@ function push_gs {
 
 }
 
+function smart_gs {
+	md5_compare
+
+	echo -e $primaryDBMD5
+	echo -e $secondDBMD5
+	echo -e $primaryCLMD5
+	echo -e $secondCLMD5
+}
+
 function restore_gs {
 	MESSAGE="This will restore ${GRAVITY_FI} on $HOSTNAME with the previous version!"
 	echo_warn
@@ -1383,7 +1392,17 @@ function root_check {
 case $# in
 	
 	0)
-		task_invalid
+		TASKTYPE='SYNC'
+		MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+		echo_good
+
+		import_gs
+		validate_gs_folders
+		validate_ph_folders
+		validate_os_sshpass
+
+		smart_gs
+		exit
 	;;
 	
 	1)
