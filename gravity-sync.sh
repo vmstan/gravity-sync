@@ -432,7 +432,7 @@ function smart_gs {
 		push_gs_reload
 	fi
 
-	md5_recheckr
+	md5_recheck
 
 	logs_export
 	exit_withchange
