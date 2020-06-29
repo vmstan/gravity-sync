@@ -372,18 +372,34 @@ function smart_gs {
 
 	last_primaryDBMD5=$(sed "1q;d" gravity-sync.md5)
 	last_secondDBMD5=$(sed "2q;d" gravity-sync.md5)
-	last_primaryCIMD5=$(sed "3q;d" gravity-sync.md5)
-	last_secondCIMD5=$(sed "4q;d" gravity-sync.md5)
+	last_primaryCLMD5=$(sed "3q;d" gravity-sync.md5)
+	last_secondCLMD5=$(sed "4q;d" gravity-sync.md5)
 
-	echo -e $primaryDBMD5 " 1"
-	echo -e $secondDBMD5 " 2"
-	echo -e $primaryCLMD5 " 3"
-	echo -e $secondCLMD5 " 4"
+	echo -e ${primaryDBMD5} " 1"
+	echo -e ${secondDBMD5} " 2"
+	echo -e ${primaryCLMD5} " 3"
+	echo -e ${secondCLMD5} " 4"
 
-	echo -e $last_primaryDBMD5 " 5"
-	echo -e $last_secondDBMD5 " 6"
-	echo -e $last_primaryCLMD5 " 7"
-	echo -e $last_secondCLMD5 " 8"
+	echo -e ${last_primaryDBMD5} " 5"
+	echo -e ${last_secondDBMD5} " 6"
+	echo -e ${last_primaryCLMD5} " 7"
+	echo -e ${last_secondCLMD5} " 8"
+
+	if [ "${primaryDBMD5}" != "${last_primaryDBMD5}" ]
+	then
+		echo "Primary DB has changed"
+	elif [ "${primaryDBMD5}" == "${last_primaryDBMD5}" ]
+	then
+		echo "Secondary DB has changed"
+	fi
+
+	if [ "${primaryCLMD5}" != "${last_primaryCLMD5}" ]
+	then
+		echo "Primary CL has changed"
+	elif [ "${primaryCLMD5}" == "${last_primaryCLMD5}" ]
+	then
+		echo "Secondary CL has changed"
+	fi
 }
 
 function restore_gs {
