@@ -500,6 +500,15 @@ function logs_export {
 	echo_stat
 		echo -e $(date) "[${TASKTYPE}]" >> ${LOG_PATH}/${SYNCING_LOG}
 		error_validate
+
+	MESSAGE="Saving File Hashes"
+	echo_stat
+		rm -f backup/gravity-sync.md5
+		echo -e ${primaryDBMD5} >> backup/gravity-sync.md5
+		echo -e ${secondDBMD5} >> backup/gravity-sync.md5
+		echo -e ${primaryCLMD5} >> backup/gravity-sync.md5
+		echo -e ${secondCLMD5} >> backup/gravity-sync.md5
+			error_validate
 }
 
 ### Output Sync Logs
