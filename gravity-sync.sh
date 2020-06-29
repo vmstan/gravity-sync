@@ -402,41 +402,22 @@ function smart_gs {
 	last_primaryCLMD5=$(sed "3q;d" ${HISTORY_MD5})
 	last_secondCLMD5=$(sed "4q;d" ${HISTORY_MD5})
 
-	echo -e ${primaryDBMD5} " 1"
-	echo -e ${secondDBMD5} " 2"
-	echo -e ${primaryCLMD5} " 3"
-	echo -e ${secondCLMD5} " 4"
-
-	echo -e ${last_primaryDBMD5} " 5"
-	echo -e ${last_secondDBMD5} " 6"
-	echo -e ${last_primaryCLMD5} " 7"
-	echo -e ${last_secondCLMD5} " 8"
-
-	DB_SMARTPULL="0"
-	DB_SMARTPUSH="0"
-	CL_SMARTPULL="0"
-	CL_SMARTPUSH="0"
-
 	if [ "${primaryDBMD5}" != "${last_primaryDBMD5}" ]
 	then
-		echo "Primary DB has changed"
-		DB_SMARTPULL="1"
+		pull_gs_grav
 	elif [ "${secondDBMD5}" != "${last_secondDBMD5}" ]
 	then
-		echo "Secondary DB has changed"
-		DB_SMARTPUSH="1"
+		push_gs_grav
 	else
 		echo "No DB changes"
 	fi
 
 	if [ "${primaryCLMD5}" != "${last_primaryCLMD5}" ]
 	then
-		echo "Primary CL has changed"
-		CL_SMARTPULL="1"
+		pull_gs_cust
 	elif [ "${secondCLMD5}" != "${last_secondCLMD5}" ]
 	then
-		echo "Secondary CL has changed"
-		CL_SMARTPUSH="1"
+		push_gs_cust
 	else
 		echo "No CL changes"
 	fi
@@ -1293,7 +1274,7 @@ function task_automate {
 
 		MESSAGE="Saving New Automation"
 		echo_stat
-		(crontab -l 2>/dev/null; echo "*/${INPUT_AUTO_FREQ} * * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/${GS_FILENAME} pull > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
+		(crontab -l 2>/dev/null; echo "*/${INPUT_AUTO_FREQ} * * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/${GS_FILENAME} > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
 			error_validate
 	fi
 	exit_withchange
@@ -1305,7 +1286,7 @@ function clear_cron {
 	echo_stat
 
 	crontab -l > cronjob-old.tmp
-	sed '/.sh pull/d' cronjob-old.tmp > cronjob-new.tmp
+	sed '/${GS_FILENAME}/d' cronjob-old.tmp > cronjob-new.tmp
 	crontab cronjob-new.tmp 2>/dev/null
 		error_validate
 	rm cronjob-old.tmp
