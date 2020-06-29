@@ -410,8 +410,6 @@ function smart_gs {
 	then
 		push_gs_grav
 		PUSHRESTART="1"
-	else
-		# echo "No DB changes"
 	fi
 
 	if [ "${primaryCLMD5}" != "${last_primaryCLMD5}" ]
@@ -422,8 +420,6 @@ function smart_gs {
 	then
 		push_gs_cust
 		PUSHRESTART="1"
-	else
-		# echo "No CL changes"
 	fi
 
 	if [ "$PULLRESTART" == "1" ]
@@ -1016,6 +1012,86 @@ function md5_compare {
 		MESSAGE="No Replication Required"
 		echo_info
 			exit_nochange
+	fi
+}
+
+function md5_recheck {
+	MESSAGE="Performing Replicator Diagnostics"
+	echo_info
+	
+	HASHMARK='0'
+
+	MESSAGE="Reanalyzing ${GRAVITY_FI} on ${REMOTE_HOST}"
+	echo_stat
+	primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${GRAVITY_FI}" | sed 's/\s.*$//') 
+		error_validate
+	
+	MESSAGE="Reanalyzing ${GRAVITY_FI} on $HOSTNAME"
+	echo_stat
+	secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI} | sed 's/\s.*$//')
+		error_validate
+	
+	if [ "$primaryDBMD5" == "$secondDBMD5" ]
+	then
+		HASHMARK=$((HASHMARK+0))
+	else
+		MESSAGE="Differenced ${GRAVITY_FI} Detected"
+		echo_warn
+		HASHMARK=$((HASHMARK+1))
+	fi
+
+	if [ "$SKIP_CUSTOM" != '1' ]
+	then
+		if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
+		then
+			if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${PIHOLE_DIR}/${CUSTOM_DNS}
+			then
+				REMOTE_CUSTOM_DNS="1"
+				MESSAGE="Reanalyzing ${CUSTOM_DNS} on ${REMOTE_HOST}"
+				echo_stat
+
+				primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//'") 
+					error_validate
+				
+				MESSAGE="Reanalyzing ${CUSTOM_DNS} on $HOSTNAME"
+				echo_stat
+				secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//')
+					error_validate
+				
+				if [ "$primaryCLMD5" == "$secondCLMD5" ]
+				then
+					# MESSAGE="${CUSTOM_DNS} Identical"
+					# echo_info
+					HASHMARK=$((HASHMARK+0))
+				else
+					MESSAGE="Differenced ${CUSTOM_DNS} Detected"
+					echo_warn
+					HASHMARK=$((HASHMARK+1))
+				fi
+			else
+				MESSAGE="No ${CUSTOM_DNS} Detected on ${REMOTE_HOST}"
+				echo_info
+			fi
+		else
+			if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${PIHOLE_DIR}/${CUSTOM_DNS}
+			then
+				REMOTE_CUSTOM_DNS="1"
+				MESSAGE="${REMOTE_HOST} has ${CUSTOM_DNS}"
+				HASHMARK=$((HASHMARK+1))
+				echo_info
+			fi	
+			MESSAGE="No ${CUSTOM_DNS} Detected on $HOSTNAME"
+			echo_info
+		fi
+	fi
+
+	if [ "$HASHMARK" != "0" ]
+	then
+		MESSAGE="Replication Checks Failed"
+		echo_warn
+	else
+		MESSAGE="Replication Was Successful"
+		echo_info
 	fi
 }
 
