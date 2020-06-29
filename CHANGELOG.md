@@ -6,11 +6,11 @@
 **Features**
 For 2.0, the `push` and `pull` functions have been broken up for each component part (`gravity.db` and `custom.list`), and Gravity Sync will now detect not only if each component has changed since the last sync but also what direction they need to go.
 
-Example: If the `gravity.db` has been modified on the primary Pi-hole, but the `custom.list` file has been changed on the secondary, Gravity Sync will now do a pull and a push of each part and then restart the correct components on each server.
+Example: If the `gravity.db` has been modified on the primary Pi-hole, but the `custom.list` file has been changed on the secondary, Gravity Sync will now do a pull and then push for each part, and then restart the correct components on each server. It will also only perform a sync of each component if there are changes within each type to replicate. 
 
-This allows you to be more flexible in where you make your configuration changes to block/allow lists, but it's still suggested to identify a primary server to make these changes on. In the event there are configuration changes to the same element (`custom.list` changes at both sides) then the primary will still be the authoritative source and overwrite the secondary copy.
+This allows you to be more flexible in where you make your configuration changes to block/allow lists and local DNS settings being made on either the primary or secondary, but it's best practice to continue making changes on the primary server where possible. In the event there are configuration changes to the same element (`custom.list` changes at both sides) then the primary will still be the authoritative source and overwrite the secondary copy.
 
-Existing users who want to use this new method as their standard should run `./gravity-sync.sh automate` function to replace the existing automated `pull` with the new Smart Sync.
+Existing users who want to use this new method as their standard should run `./gravity-sync.sh automate` function to replace the existing automated `pull` with the new Smart Sync. You can also continue to use `pull` in your automation if you choose. New installs will use the smart Sync function by default. Running `./gravity-sync.sh` without any arguments will now run the smart Sync function.
 
 ## 1.8
 ### The Logical Release

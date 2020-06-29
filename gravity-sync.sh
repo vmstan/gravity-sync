@@ -405,24 +405,39 @@ function smart_gs {
 	if [ "${primaryDBMD5}" != "${last_primaryDBMD5}" ]
 	then
 		pull_gs_grav
+		PULLRESTART="1"
 	elif [ "${secondDBMD5}" != "${last_secondDBMD5}" ]
 	then
 		push_gs_grav
+		PUSHRESTART="1"
 	else
-		echo "No DB changes"
+		# echo "No DB changes"
 	fi
 
 	if [ "${primaryCLMD5}" != "${last_primaryCLMD5}" ]
 	then
 		pull_gs_cust
+		PULLRESTART="1"
 	elif [ "${secondCLMD5}" != "${last_secondCLMD5}" ]
 	then
 		push_gs_cust
+		PUSHRESTART="1"
 	else
-		echo "No CL changes"
+		# echo "No CL changes"
 	fi
 
+	if [ "$PULLRESTART" == "1" ]
+	then
+		pull_gs_reload
+	fi
 
+	if [ "$PUSHRESTART" == "1" ]
+	then
+		push_gs_reload
+	fi
+
+	logs_export
+	exit_withchange
 }
 
 function restore_gs {
@@ -1178,9 +1193,10 @@ function list_gs_arguments {
 	echo -e " ${YELLOW}version${NC}	Display installed version of ${PROGRAM}"
 	echo -e ""
 	echo -e "Replication Options:"
-	echo -e " ${YELLOW}pull${NC}		Sync remote ${GRAVITY_FI} to this server"
-	echo -e " ${YELLOW}push${NC}		Force changes made on this server back"
-	echo -e " ${YELLOW}restore${NC}	Restore ${GRAVITY_FI} on this server"
+	echo -e " ${YELLOW}sync${NC}		Detect changes on each side and bring them together"
+	echo -e " ${YELLOW}pull${NC}		Force remote configuration changes to this server"
+	echo -e " ${YELLOW}push${NC}		Force local configuration made on this server back"
+	echo -e " ${YELLOW}restore${NC}	Restore the ${GRAVITY_FI} on this server"
 	echo -e " ${YELLOW}compare${NC}	Just check for differences"
 	echo -e ""
 	echo -e "Debug Options:"
@@ -1465,6 +1481,20 @@ case $# in
 	
 	1)
    		case $1 in
+		   sync)
+				TASKTYPE='SYNC'
+				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+				echo_good
+
+				import_gs
+				validate_gs_folders
+				validate_ph_folders
+				validate_os_sshpass
+
+				smart_gs
+				exit
+ 			;;
+
    	 		pull)
 				TASKTYPE='PULL'
 				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
