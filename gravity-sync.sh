@@ -156,6 +156,44 @@ function pull_gs_grav {
 	
 	MESSAGE="Validating Settings of ${GRAVITY_FI}"
 	echo_stat
+
+		GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk '{print $3 $4}')
+		if [ "$GRAVDB_OWN" != "piholepihole" ]
+		then
+			MESSAGE="Validating Ownership on ${GRAVITY_FI}"
+			echo_fail
+			
+			MESSAGE="Attempting to Compensate"
+			echo_warn
+			
+			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
+			echo_stat	
+				sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+				error_validate
+
+			MESSAGE="Continuing Validation of ${GRAVITY_FI}"
+			echo_stat
+		fi
+		
+		GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | awk '{print $1}')
+		if [ "$GRAVDB_RWE" != "-rw-rw-r--" ]
+		then
+			MESSAGE="Validating Permissions on ${GRAVITY_FI}"
+			echo_fail
+				
+			MESSAGE="Attempting to Compensate"
+			echo_warn
+		
+			MESSAGE="Setting Permissions on ${GRAVITY_FI}"
+			echo_stat
+				sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+				error_validate
+
+			MESSAGE="Continuing Validation of ${GRAVITY_FI}"
+			echo_stat
+		fi
+
+	echo_good
 }
 
 ## Pull Custom
