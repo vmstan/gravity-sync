@@ -135,10 +135,8 @@ function update_gs {
 }
 
 # Gravity Core Functions
-## Pull Function
-function pull_gs {
-	md5_compare
-	
+## Pull Gravity
+function pull_gs_grav {
 	MESSAGE="Backing Up ${GRAVITY_FI} on $HOSTNAME"
 	echo_stat
 		cp ${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.backup >/dev/null 2>&1
@@ -158,45 +156,10 @@ function pull_gs {
 	
 	MESSAGE="Validating Settings of ${GRAVITY_FI}"
 	echo_stat
-		
-		GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk '{print $3 $4}')
-		if [ "$GRAVDB_OWN" != "piholepihole" ]
-		then
-			MESSAGE="Validating Ownership on ${GRAVITY_FI}"
-			echo_fail
-			
-			MESSAGE="Attempting to Compensate"
-			echo_warn
-			
-			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
-			echo_stat	
-				sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
-				error_validate
+}
 
-			MESSAGE="Continuing Validation of ${GRAVITY_FI}"
-			echo_stat
-		fi
-		
-		GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | awk '{print $1}')
-		if [ "$GRAVDB_RWE" != "-rw-rw-r--" ]
-		then
-			MESSAGE="Validating Permissions on ${GRAVITY_FI}"
-			echo_fail
-				
-			MESSAGE="Attempting to Compensate"
-			echo_warn
-		
-			MESSAGE="Setting Permissions on ${GRAVITY_FI}"
-			echo_stat
-				sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
-				error_validate
-
-			MESSAGE="Continuing Validation of ${GRAVITY_FI}"
-			echo_stat
-		fi
-
-	echo_good
-
+## Pull Custom
+function pull_gs_cust {
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
 		if [ "$REMOTE_CUSTOM_DNS" == "1" ]
@@ -263,7 +226,10 @@ function pull_gs {
 			echo_good
 		fi
 	fi
+}
 
+## Pull Reload
+function pull_gs_reload {
 	MESSAGE="Isolating Regeneration Pathways"
 	echo_info
 		sleep 1	
@@ -277,17 +243,22 @@ function pull_gs {
 	echo_stat
 		${PIHOLE_BIN} restartdns >/dev/null 2>&1
 		error_validate
+}
+
+## Pull Function
+function pull_gs {
+	md5_compare
+	
+	pull_gs_grav
+	pull_gs_cust
+	pull_gs_reload
 	
 	logs_export
 	exit_withchange
 }
 
-## Push Function
-function push_gs {
-	md5_compare
-	
-	intent_validate
-
+## Push Gravity
+function push_gs_grav {
 	MESSAGE="Backing Up ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo_stat
 		RSYNC_REPATH="rsync"
@@ -313,7 +284,10 @@ function push_gs {
 		CMD_TIMEOUT='15'
 		CMD_REQUESTED="sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}"
 			create_sshcmd
+}
 
+## Push Custom
+function push_gs_cust {
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
 		if [ "$REMOTE_CUSTOM_DNS" == "1" ]
@@ -345,28 +319,42 @@ function push_gs {
 					create_sshcmd	
 		fi	
 	fi
+}
 
+## Push Reload
+function push_gs_reload {
 	MESSAGE="Inverting Tachyon Pulses"
 	echo_info
 		sleep 1	
 
-	MESSAGE="Updating FTLDNS Configuration"
+	MESSAGE="Updating Remote FTLDNS Configuration"
 	echo_stat
 		CMD_TIMEOUT='15'
 		CMD_REQUESTED="${PIHOLE_BIN} restartdns reloadlists"
 			create_sshcmd
 	
-	MESSAGE="Reloading FTLDNS Services"
+	MESSAGE="Reloading Remote FTLDNS Services"
 	echo_stat
 		CMD_TIMEOUT='15'
 		CMD_REQUESTED="${PIHOLE_BIN} restartdns"
 			create_sshcmd
+}
+
+## Push Function
+function push_gs {
+	md5_compare
+	
+	intent_validate
+
+	push_gs_grav
+	push_gs_cust
+	push_gs_reload
 
 	logs_export
 	exit_withchange
-
 }
 
+## Smart Sync Function
 function smart_gs {
 	md5_compare
 
@@ -385,12 +373,19 @@ function smart_gs {
 	echo -e ${last_primaryCLMD5} " 7"
 	echo -e ${last_secondCLMD5} " 8"
 
+	DB_SMARTPULL="0"
+	DB_SMARTPUSH="0"
+	CL_SMARTPULL="0"
+	CL_SMARTPUSH="0"
+
 	if [ "${primaryDBMD5}" != "${last_primaryDBMD5}" ]
 	then
 		echo "Primary DB has changed"
+		DB_SMARTPULL="1"
 	elif [ "${secondDBMD5}" != "${last_secondDBMD5}" ]
 	then
 		echo "Secondary DB has changed"
+		DB_SMARTPUSH="1"
 	else
 		echo "No DB changes"
 	fi
@@ -398,12 +393,16 @@ function smart_gs {
 	if [ "${primaryCLMD5}" != "${last_primaryCLMD5}" ]
 	then
 		echo "Primary CL has changed"
+		CL_SMARTPULL="1"
 	elif [ "${secondCLMD5}" != "${last_secondCLMD5}" ]
 	then
 		echo "Secondary CL has changed"
+		CL_SMARTPUSH="1"
 	else
 		echo "No CL changes"
 	fi
+
+
 }
 
 function restore_gs {
