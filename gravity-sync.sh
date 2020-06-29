@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.8.3'
+VERSION='2.0.0'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -24,6 +24,7 @@ BACKUP_FOLD='backup' 				# must exist as subdirectory in LOCAL_FOLDR
 LOG_PATH="$HOME/${LOCAL_FOLDR}"		# replace in gravity-sync.conf to overwrite
 SYNCING_LOG='gravity-sync.log' 		# replace in gravity-sync.conf to overwrite
 CRONJOB_LOG='gravity-sync.cron' 	# replace in gravity-sync.conf to overwrite
+HISTORY_MD5='gravity-sync.md5'		# replace in gravity-sync.conf to overwrite
 
 # Interaction Customization
 VERIFY_PASS='0'						# replace in gravity-sync.conf to overwrite
@@ -396,10 +397,10 @@ function push_gs {
 function smart_gs {
 	md5_compare
 
-	last_primaryDBMD5=$(sed "1q;d" gravity-sync.md5)
-	last_secondDBMD5=$(sed "2q;d" gravity-sync.md5)
-	last_primaryCLMD5=$(sed "3q;d" gravity-sync.md5)
-	last_secondCLMD5=$(sed "4q;d" gravity-sync.md5)
+	last_primaryDBMD5=$(sed "1q;d" ${HISTORY_MD5})
+	last_secondDBMD5=$(sed "2q;d" ${HISTORY_MD5})
+	last_primaryCLMD5=$(sed "3q;d" ${HISTORY_MD5})
+	last_secondCLMD5=$(sed "4q;d" ${HISTORY_MD5})
 
 	echo -e ${primaryDBMD5} " 1"
 	echo -e ${secondDBMD5} " 2"
