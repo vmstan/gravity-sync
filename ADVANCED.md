@@ -14,8 +14,8 @@ Download the latest release from [GitHub](https://github.com/vmstan/gravity-sync
 
 ```bash
 cd ~
-wget https://github.com/vmstan/gravity-sync/archive/v1.8.3.zip
-unzip v1.8.3.zip -d gravity-sync
+wget https://github.com/vmstan/gravity-sync/archive/v2.0.0.zip
+unzip v2.0.0.zip -d gravity-sync
 cd gravity-sync
 ```
 
@@ -97,7 +97,7 @@ Gravity Sync will place logs in the same folder as the script (identified as .cr
 Default setting in Gravity Sync is `$HOME/${LOCAL_FOLDR}`
 
 #### `SYNCING_LOG=''`
-Gravity Sync will write a timestamp for any completed pull, push or restore job to this file. If you want to change the name of this file, you will also need to adjust the LOG_PATH variable above, otherwise your file will be remove during an `update` operations.
+Gravity Sync will write a timestamp for any completed sync, pull, push or restore job to this file. If you want to change the name of this file, you will also need to adjust the LOG_PATH variable above, otherwise your file will be remove during an `update` operations.
 
 Default setting in Gravity Sync is `gravity-sync.log`
 
@@ -107,6 +107,11 @@ Gravity Sync will log the execution history of the previous automation task via 
 This will have an impact to both the `./gravity-sync.sh automate` function and the `./gravity-sync.sh cron` functions. If you need to change this after running the automate function, either modify your crontab manually or delete the entry and re-run the automate function.
 
 Default setting in Gravity Sync is `gravity-sync.cron`
+
+#### `HISTORY_MD5=''`
+Gravity Sync will log the file hashes of the previous `smart` task to this file. If you want to change the name of this file, you will also need to adjust the LOG_PATH variable above, otherwise your file will be removed during an `update` operations.
+
+Default setting in Gravity Sync is `gravity-sync.md5`
 
 #### `VERIFY_PASS=''`
 Gravity Sync will prompt to verify user interactivity during push, restore, or config operations (that overwrite an existing configuration) with the intention that it prevents someone from accidentally automating in the wrong direction or overwriting data intentionally. If you'd like to automate a push function, or just don't like to be asked twice to do something distructive, then you can opt-out.
@@ -173,5 +178,5 @@ If you prefer to still use cron but modify your settings by hand, using the entr
 
 ```bash
 crontab -e
-*/30 * * * * /bin/bash /home/USER/gravity-sync/gravity-sync.sh pull > /home/USER/gravity-sync/gravity-sync.cron
+*/30 * * * * /bin/bash /home/USER/gravity-sync/gravity-sync.sh > /home/USER/gravity-sync/gravity-sync.cron
 ```

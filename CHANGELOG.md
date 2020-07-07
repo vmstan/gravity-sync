@@ -1,5 +1,19 @@
 # The Changelog
 
+## 2.0
+### The Smart Release
+
+**Features**
+In this release, Gravity Sync will now detect not only if each component (`gravity.db` and `custom.list`) has changed since the last sync, but also what direction they need to go. It will then initate a `push` and/or `pull` specific to each piece.
+
+Example: If the `gravity.db` has been modified on the primary Pi-hole, but the `custom.list` file has been changed on the secondary, Gravity Sync will now do a pull of the `gravity.db` then push `custom.list` and finally restart the correct components on each server. It will also now only perform a sync of each component if there are changes within each type to replicate. So if you only make a small change to your Local DNS settings, it doesn't kickoff the larger `gravity.db` replication.
+
+The default command for Gravity Sync is now just `./gravity-sync.sh` -- but you can also run `./gravity-sync.sh smart` if you feel like it, and it'll do the same thing.
+
+This allows you to be more flexible in where you make your configuration changes to block/allow lists and local DNS settings being made on either the primary or secondary, but it's best practice to continue making changes on one side where possible. In the event there are configuration changes to the same element (example, `custom.list` changes at both sides) then Gravity Sync will attempt to determine based on timestamps on what side the last changed happened, in which case the latest changes will be considered authoritative and overwrite the other side. Gravity Sync does not merge the contents of the files when changes happen, it simply overwrites the entire content.
+
+New installs will use the `smart` function by default. Existing users who want to use this new method as their standard should run `./gravity-sync.sh automate` function to replace the existing automated `pull` with the new Smart Sync. This is not required. The previous `./gravity-sync.sh pull` and `./gravity-sync.sh push` commands continue to function as they did previously, with no intention to break this functionality.
+
 ## 1.8
 ### The Logical Release
 

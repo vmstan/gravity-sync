@@ -2,6 +2,7 @@ gravity-sync.log
 gravity-sync.cron
 gravity.db.last
 gravity-sync.conf
+gravity-sync.md5
 backup/*.last
 backup/*.backup
 backup/*.push

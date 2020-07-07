@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.8.3'
+VERSION='2.0.0'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -24,6 +24,7 @@ BACKUP_FOLD='backup' 				# must exist as subdirectory in LOCAL_FOLDR
 LOG_PATH="$HOME/${LOCAL_FOLDR}"		# replace in gravity-sync.conf to overwrite
 SYNCING_LOG='gravity-sync.log' 		# replace in gravity-sync.conf to overwrite
 CRONJOB_LOG='gravity-sync.cron' 	# replace in gravity-sync.conf to overwrite
+HISTORY_MD5='gravity-sync.md5'		# replace in gravity-sync.conf to overwrite
 
 # Interaction Customization
 VERIFY_PASS='0'						# replace in gravity-sync.conf to overwrite
@@ -135,10 +136,8 @@ function update_gs {
 }
 
 # Gravity Core Functions
-## Pull Function
-function pull_gs {
-	md5_compare
-	
+## Pull Gravity
+function pull_gs_grav {
 	MESSAGE="Backing Up ${GRAVITY_FI} on $HOSTNAME"
 	echo_stat
 		cp ${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.backup >/dev/null 2>&1
@@ -158,7 +157,7 @@ function pull_gs {
 	
 	MESSAGE="Validating Settings of ${GRAVITY_FI}"
 	echo_stat
-		
+
 		GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk '{print $3 $4}')
 		if [ "$GRAVDB_OWN" != "piholepihole" ]
 		then
@@ -196,7 +195,10 @@ function pull_gs {
 		fi
 
 	echo_good
+}
 
+## Pull Custom
+function pull_gs_cust {
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
 		if [ "$REMOTE_CUSTOM_DNS" == "1" ]
@@ -263,7 +265,10 @@ function pull_gs {
 			echo_good
 		fi
 	fi
+}
 
+## Pull Reload
+function pull_gs_reload {
 	MESSAGE="Isolating Regeneration Pathways"
 	echo_info
 		sleep 1	
@@ -277,17 +282,22 @@ function pull_gs {
 	echo_stat
 		${PIHOLE_BIN} restartdns >/dev/null 2>&1
 		error_validate
+}
+
+## Pull Function
+function pull_gs {
+	md5_compare
+	
+	pull_gs_grav
+	pull_gs_cust
+	pull_gs_reload
 	
 	logs_export
 	exit_withchange
 }
 
-## Push Function
-function push_gs {
-	md5_compare
-	
-	intent_validate
-
+## Push Gravity
+function push_gs_grav {
 	MESSAGE="Backing Up ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo_stat
 		RSYNC_REPATH="rsync"
@@ -313,7 +323,10 @@ function push_gs {
 		CMD_TIMEOUT='15'
 		CMD_REQUESTED="sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}"
 			create_sshcmd
+}
 
+## Push Custom
+function push_gs_cust {
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
 		if [ "$REMOTE_CUSTOM_DNS" == "1" ]
@@ -345,26 +358,171 @@ function push_gs {
 					create_sshcmd	
 		fi	
 	fi
+}
 
+## Push Reload
+function push_gs_reload {
 	MESSAGE="Inverting Tachyon Pulses"
 	echo_info
 		sleep 1	
 
-	MESSAGE="Updating FTLDNS Configuration"
+	MESSAGE="Updating Remote FTLDNS Configuration"
 	echo_stat
 		CMD_TIMEOUT='15'
 		CMD_REQUESTED="${PIHOLE_BIN} restartdns reloadlists"
 			create_sshcmd
 	
-	MESSAGE="Reloading FTLDNS Services"
+	MESSAGE="Reloading Remote FTLDNS Services"
 	echo_stat
 		CMD_TIMEOUT='15'
 		CMD_REQUESTED="${PIHOLE_BIN} restartdns"
 			create_sshcmd
+}
+
+## Push Function
+function push_gs {
+	md5_compare
+	
+	intent_validate
+
+	push_gs_grav
+	push_gs_cust
+	push_gs_reload
 
 	logs_export
 	exit_withchange
+}
 
+## Smart Sync Function
+function smart_gs {
+	md5_compare
+
+	if [ -f "${LOG_PATH}/${HISTORY_MD5}" ]
+	then
+		last_primaryDBMD5=$(sed "1q;d" ${LOG_PATH}/${HISTORY_MD5})
+		last_secondDBMD5=$(sed "2q;d" ${LOG_PATH}/${HISTORY_MD5})
+		last_primaryCLMD5=$(sed "3q;d" ${LOG_PATH}/${HISTORY_MD5})
+		last_secondCLMD5=$(sed "4q;d" ${LOG_PATH}/${HISTORY_MD5})
+	else
+		last_primaryDBMD5="0"
+		last_secondDBMD5="0"
+		last_primaryCLMD5="0"
+		last_secondCLMD5="0"
+	fi
+
+	PRIDBCHANGE="0"
+	SECDBCHANGE="0"
+	PRICLCHANGE="0"
+	SECCLCHANGE="0"
+	
+	if [ "${primaryDBMD5}" != "${last_primaryDBMD5}" ]
+	then
+		PRIDBCHANGE="1"
+	fi
+	
+	if [ "${secondDBMD5}" != "${last_secondDBMD5}" ]
+	then
+		SECDBCHANGE="1"
+	fi
+
+	if [ "${PRIDBCHANGE}" == "${SECDBCHANGE}" ]
+	then
+		if [ "${PRIDBCHANGE}" != "0" ]
+		then
+			MESSAGE="Both ${GRAVITY_FI} Changed"
+			echo_warn
+
+			PRIDBDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${PIHOLE_DIR}/${GRAVITY_FI}")
+			SECDBDATE=$(stat -c %Y ${PIHOLE_DIR}/${GRAVITY_FI})
+
+				if [ "${PRIDBDATE}" -gt "$SECDBDATE" ]
+				then
+					MESSAGE="Primary ${GRAVITY_FI} Last Changed"
+					echo_info
+
+					pull_gs_grav
+					PULLRESTART="1"
+				else
+					MESSAGE="Secondary ${GRAVITY_FI} Last Changed"
+					echo_info
+
+					push_gs_grav
+					PUSHRESTART="1"
+				fi
+		fi
+	else
+		if [ "${PRIDBCHANGE}" != "0" ]
+		then
+			pull_gs_grav
+			PULLRESTART="1"
+		elif [ "${SECDBCHANGE}" != "0" ]
+		then
+			push_gs_grav
+			PUSHRESTART="1"
+		fi
+	fi
+
+	if [ "${primaryCLMD5}" != "${last_primaryCLMD5}" ]
+	then
+		PRICLCHANGE="1"
+	fi
+	
+	if [ "${secondCLMD5}" != "${last_secondCLMD5}" ]
+	then
+		SECCLCHANGE="1"
+	fi
+
+	if [ "${PRICLCHANGE}" == "${SECCLCHANGE}" ]
+	then
+		if [ "${PRICLCHANGE}" != "0" ]
+		then
+			MESSAGE="Both ${CUSTOM_DNS} Changed"
+			echo_warn
+
+			PRICLDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${PIHOLE_DIR}/${CUSTOM_DNS}")
+			SECCLDATE=$(stat -c %Y ${PIHOLE_DIR}/${CUSTOM_DNS})
+
+				if [ "${PRICLDATE}" -gt "$SECCLDATE" ]
+				then
+					MESSAGE="Primary ${CUSTOM_DNS} Last Changed"
+					echo_info
+
+					pull_gs_cust
+					PULLRESTART="1"
+				else
+					MESSAGE="Secondary ${CUSTOM_DNS} Last Changed"
+					echo_info
+
+					push_gs_cust
+					PUSHRESTART="1"
+				fi
+		fi
+	else
+		if [ "${PRICLCHANGE}" != "0" ]
+		then
+			pull_gs_cust
+			PULLRESTART="1"
+		elif [ "${SECCLCHANGE}" != "0" ]
+		then
+			push_gs_cust
+			PUSHRESTART="1"
+		fi
+	fi
+
+	if [ "$PULLRESTART" == "1" ]
+	then
+		pull_gs_reload
+	fi
+
+	if [ "$PUSHRESTART" == "1" ]
+	then
+		push_gs_reload
+	fi
+
+	md5_recheck
+
+	logs_export
+	exit_withchange
 }
 
 function restore_gs {
@@ -487,6 +645,15 @@ function restore_gs {
 ## Core Logging
 ### Write Logs Out
 function logs_export {
+	MESSAGE="Saving File Hashes"
+	echo_stat
+		rm -f ${LOG_PATH}/${HISTORY_MD5}
+		echo -e ${primaryDBMD5} >> ${LOG_PATH}/${HISTORY_MD5}
+		echo -e ${secondDBMD5} >> ${LOG_PATH}/${HISTORY_MD5}
+		echo -e ${primaryCLMD5} >> ${LOG_PATH}/${HISTORY_MD5}
+		echo -e ${secondCLMD5} >> ${LOG_PATH}/${HISTORY_MD5}
+			error_validate
+
 	MESSAGE="Logging Successful ${TASKTYPE}"
 	echo_stat
 		echo -e $(date) "[${TASKTYPE}]" >> ${LOG_PATH}/${SYNCING_LOG}
@@ -501,6 +668,8 @@ function logs_gs {
 	echo_info
 
 	echo -e "========================================================"
+	echo -e "Recent Complete ${YELLOW}SMART${NC} Executions"
+		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep SMART
 	echo -e "Recent Complete ${YELLOW}PULL${NC} Executions"
 		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PULL
 	echo -e "Recent Complete ${YELLOW}PUSH${NC} Executions"
@@ -935,6 +1104,86 @@ function md5_compare {
 	fi
 }
 
+function md5_recheck {
+	MESSAGE="Performing Replicator Diagnostics"
+	echo_info
+	
+	HASHMARK='0'
+
+	MESSAGE="Reanalyzing ${GRAVITY_FI} on ${REMOTE_HOST}"
+	echo_stat
+	primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${GRAVITY_FI}" | sed 's/\s.*$//') 
+		error_validate
+	
+	MESSAGE="Reanalyzing ${GRAVITY_FI} on $HOSTNAME"
+	echo_stat
+	secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI} | sed 's/\s.*$//')
+		error_validate
+	
+	if [ "$primaryDBMD5" == "$secondDBMD5" ]
+	then
+		HASHMARK=$((HASHMARK+0))
+	else
+		MESSAGE="Differenced ${GRAVITY_FI} Detected"
+		echo_warn
+		HASHMARK=$((HASHMARK+1))
+	fi
+
+	if [ "$SKIP_CUSTOM" != '1' ]
+	then
+		if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
+		then
+			if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${PIHOLE_DIR}/${CUSTOM_DNS}
+			then
+				REMOTE_CUSTOM_DNS="1"
+				MESSAGE="Reanalyzing ${CUSTOM_DNS} on ${REMOTE_HOST}"
+				echo_stat
+
+				primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//'") 
+					error_validate
+				
+				MESSAGE="Reanalyzing ${CUSTOM_DNS} on $HOSTNAME"
+				echo_stat
+				secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//')
+					error_validate
+				
+				if [ "$primaryCLMD5" == "$secondCLMD5" ]
+				then
+					# MESSAGE="${CUSTOM_DNS} Identical"
+					# echo_info
+					HASHMARK=$((HASHMARK+0))
+				else
+					MESSAGE="Differenced ${CUSTOM_DNS} Detected"
+					echo_warn
+					HASHMARK=$((HASHMARK+1))
+				fi
+			else
+				MESSAGE="No ${CUSTOM_DNS} Detected on ${REMOTE_HOST}"
+				echo_info
+			fi
+		else
+			if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${PIHOLE_DIR}/${CUSTOM_DNS}
+			then
+				REMOTE_CUSTOM_DNS="1"
+				MESSAGE="${REMOTE_HOST} has ${CUSTOM_DNS}"
+				HASHMARK=$((HASHMARK+1))
+				echo_info
+			fi	
+			MESSAGE="No ${CUSTOM_DNS} Detected on $HOSTNAME"
+			echo_info
+		fi
+	fi
+
+	if [ "$HASHMARK" != "0" ]
+	then
+		MESSAGE="Replication Checks Failed"
+		echo_warn
+	else
+		MESSAGE="Replication Was Successful"
+		echo_info
+	fi
+}
+
 ## Validate Intent
 function intent_validate {
 	if [ "$VERIFY_PASS" == "0" ]
@@ -1111,9 +1360,10 @@ function list_gs_arguments {
 	echo -e " ${YELLOW}version${NC}	Display installed version of ${PROGRAM}"
 	echo -e ""
 	echo -e "Replication Options:"
-	echo -e " ${YELLOW}pull${NC}		Sync remote ${GRAVITY_FI} to this server"
-	echo -e " ${YELLOW}push${NC}		Force changes made on this server back"
-	echo -e " ${YELLOW}restore${NC}	Restore ${GRAVITY_FI} on this server"
+	echo -e " ${YELLOW}sync${NC}		Detect changes on each side and bring them together"
+	echo -e " ${YELLOW}pull${NC}		Force remote configuration changes to this server"
+	echo -e " ${YELLOW}push${NC}		Force local configuration made on this server back"
+	echo -e " ${YELLOW}restore${NC}	Restore the ${GRAVITY_FI} on this server"
 	echo -e " ${YELLOW}compare${NC}	Just check for differences"
 	echo -e ""
 	echo -e "Debug Options:"
@@ -1207,7 +1457,7 @@ function task_automate {
 
 		MESSAGE="Saving New Automation"
 		echo_stat
-		(crontab -l 2>/dev/null; echo "*/${INPUT_AUTO_FREQ} * * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/${GS_FILENAME} pull > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
+		(crontab -l 2>/dev/null; echo "*/${INPUT_AUTO_FREQ} * * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/${GS_FILENAME} > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
 			error_validate
 	fi
 	exit_withchange
@@ -1219,7 +1469,7 @@ function clear_cron {
 	echo_stat
 
 	crontab -l > cronjob-old.tmp
-	sed '/.sh pull/d' cronjob-old.tmp > cronjob-new.tmp
+	sed '/${GS_FILENAME}/d' cronjob-old.tmp > cronjob-new.tmp
 	crontab cronjob-new.tmp 2>/dev/null
 		error_validate
 	rm cronjob-old.tmp
@@ -1383,11 +1633,49 @@ function root_check {
 case $# in
 	
 	0)
-		task_invalid
+		TASKTYPE='SMART'
+		MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+		echo_good
+
+		import_gs
+		validate_gs_folders
+		validate_ph_folders
+		validate_os_sshpass
+
+		smart_gs
+		exit
 	;;
 	
 	1)
    		case $1 in
+		   sync)
+				TASKTYPE='SMART'
+				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+				echo_good
+
+				import_gs
+				validate_gs_folders
+				validate_ph_folders
+				validate_os_sshpass
+
+				smart_gs
+				exit
+ 			;;
+
+			smart)
+				TASKTYPE='SMART'
+				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+				echo_good
+
+				import_gs
+				validate_gs_folders
+				validate_ph_folders
+				validate_os_sshpass
+
+				smart_gs
+				exit
+ 			;;
+
    	 		pull)
 				TASKTYPE='PULL'
 				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
