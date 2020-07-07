@@ -426,15 +426,17 @@ function smart_gs {
 		if [ "${PRIDBCHANGE}" != "0" ]
 		then
 			echo "Both sides have changed"
+			exit
 		fi
 	else
-	then
 		if [ "${PRIDBCHANGE}" != "0" ]
 		then
-			echo "Primary has changed"
+			pull_gs_grav
+			PULLRESTART="1"
 		elif [ "${SECDBCHANGE}" != "0" ]
 		then
-			echo "Secondary has changed"
+			push_gs_grav
+			PUSHRESTART="1"
 		fi
 	fi
 
