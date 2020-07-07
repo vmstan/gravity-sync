@@ -397,10 +397,18 @@ function push_gs {
 function smart_gs {
 	md5_compare
 
-	last_primaryDBMD5=$(sed "1q;d" ${HISTORY_MD5})
-	last_secondDBMD5=$(sed "2q;d" ${HISTORY_MD5})
-	last_primaryCLMD5=$(sed "3q;d" ${HISTORY_MD5})
-	last_secondCLMD5=$(sed "4q;d" ${HISTORY_MD5})
+	if [ -f "${LOG_PATH}/${HISTORY_MD5}" ]
+	then
+		last_primaryDBMD5=$(sed "1q;d" ${LOG_PATH}/${HISTORY_MD5})
+		last_secondDBMD5=$(sed "2q;d" ${LOG_PATH}/${HISTORY_MD5})
+		last_primaryCLMD5=$(sed "3q;d" ${LOG_PATH}/${HISTORY_MD5})
+		last_secondCLMD5=$(sed "4q;d" ${LOG_PATH}/{HISTORY_MD5})
+	else
+		last_primaryDBMD5="0"
+		last_secondDBMD5="0"
+		last_primaryCLMD5="0"
+		last_secondCLMD5="0"
+	fi
 
 	PRIDBCHANGE="0"
 	SECDBCHANGE="0"
@@ -421,7 +429,7 @@ function smart_gs {
 	then
 		if [ "${PRIDBCHANGE}" != "0" ]
 		then
-			MESSAGE="Both Sides Have Changed"
+			MESSAGE="Both Sides Gravity Database Changed"
 			echo_warn
 
 			PRIDBDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${PIHOLE_DIR}/${GRAVITY_FI}")
@@ -429,13 +437,13 @@ function smart_gs {
 
 				if [ "${PRIDBDATE}" -gt "$SECDBDATE" ]
 				then
-					MESSAGE="Primary was Last Changed"
+					MESSAGE="Primary Gravity Database Last Changed"
 					echo_info
 
 					pull_gs_grav
 					PULLRESTART="1"
 				else
-					MESSAGE="Secondary was Last Changed"
+					MESSAGE="Secondary Gravity Database Last Changed"
 					echo_info
 
 					push_gs_grav
@@ -468,7 +476,7 @@ function smart_gs {
 	then
 		if [ "${PRICLCHANGE}" != "0" ]
 		then
-			MESSAGE="Both Sides Have Changed"
+			MESSAGE="Both Sides Custom DNS Changed"
 			echo_warn
 
 			PRICLDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${PIHOLE_DIR}/${CUSTOM_DNS}")
@@ -476,13 +484,13 @@ function smart_gs {
 
 				if [ "${PRICLDATE}" -gt "$SECCLDATE" ]
 				then
-					MESSAGE="Primary was Last Changed"
+					MESSAGE="Primary Custom DNS Last Changed"
 					echo_info
 
 					pull_gs_cust
 					PULLRESTART="1"
 				else
-					MESSAGE="Secondary was Last Changed"
+					MESSAGE="Secondary Custom DNS Last Changed"
 					echo_info
 
 					push_gs_cust
@@ -639,11 +647,11 @@ function restore_gs {
 function logs_export {
 	MESSAGE="Saving File Hashes"
 	echo_stat
-		rm -f gravity-sync.md5
-		echo -e ${primaryDBMD5} >> gravity-sync.md5
-		echo -e ${secondDBMD5} >> gravity-sync.md5
-		echo -e ${primaryCLMD5} >> gravity-sync.md5
-		echo -e ${secondCLMD5} >> gravity-sync.md5
+		rm -f ${LOG_PATH}/${HISTORY_MD5}
+		echo -e ${primaryDBMD5} >> ${LOG_PATH}/${HISTORY_MD5}
+		echo -e ${secondDBMD5} >> ${LOG_PATH}/${HISTORY_MD5}
+		echo -e ${primaryCLMD5} >> ${LOG_PATH}/${HISTORY_MD5}
+		echo -e ${secondCLMD5} >> ${LOG_PATH}/${HISTORY_MD5}
 			error_validate
 
 	MESSAGE="Logging Successful ${TASKTYPE}"
@@ -1623,7 +1631,7 @@ function root_check {
 case $# in
 	
 	0)
-		TASKTYPE='SYNC'
+		TASKTYPE='SMART'
 		MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 		echo_good
 
@@ -1639,7 +1647,21 @@ case $# in
 	1)
    		case $1 in
 		   sync)
-				TASKTYPE='SYNC'
+				TASKTYPE='SMART'
+				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+				echo_good
+
+				import_gs
+				validate_gs_folders
+				validate_ph_folders
+				validate_os_sshpass
+
+				smart_gs
+				exit
+ 			;;
+
+			smart)
+				TASKTYPE='SMART'
 				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
 

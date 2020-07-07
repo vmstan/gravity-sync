@@ -173,5 +173,5 @@ If you prefer to still use cron but modify your settings by hand, using the entr
 
 ```bash
 crontab -e
-*/30 * * * * /bin/bash /home/USER/gravity-sync/gravity-sync.sh pull > /home/USER/gravity-sync/gravity-sync.cron
+*/30 * * * * /bin/bash /home/USER/gravity-sync/gravity-sync.sh > /home/USER/gravity-sync/gravity-sync.cron
 ```
