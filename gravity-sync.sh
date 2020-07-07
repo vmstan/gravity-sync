@@ -405,7 +405,7 @@ function smart_gs {
 	PRIDBCHANGE="0"
 	SECDBCHANGE="0"
 	PRICLCHANGE="0"
-	SECICLCHANGE="0"
+	SECCLCHANGE="0"
 	
 	if [ "${primaryDBMD5}" != "${last_primaryDBMD5}" ]
 	then
