@@ -402,14 +402,40 @@ function smart_gs {
 	last_primaryCLMD5=$(sed "3q;d" ${HISTORY_MD5})
 	last_secondCLMD5=$(sed "4q;d" ${HISTORY_MD5})
 
+	PRIDBCHANGE="0"
+	SECDBCHANGE="0"
+	PRICLCHANGE="0"
+	SECICLCHANGE="0"
+	
 	if [ "${primaryDBMD5}" != "${last_primaryDBMD5}" ]
 	then
-		pull_gs_grav
-		PULLRESTART="1"
-	elif [ "${secondDBMD5}" != "${last_secondDBMD5}" ]
+		PRIDBCHANGE="1"
+		# pull_gs_grav
+		# PULLRESTART="1"
+	fi
+	
+	if [ "${secondDBMD5}" != "${last_secondDBMD5}" ]
 	then
-		push_gs_grav
-		PUSHRESTART="1"
+		SECDBCHANGE="1"
+		# push_gs_grav
+		# PUSHRESTART="1"
+	fi
+
+	if [ "${PRIDBCHANGE}" == "${SECDBCHANGE}" ]
+	then
+		if [ "${PRIDBCHANGE}" != "0" ]
+		then
+			echo "Both sides have changed"
+		fi
+	else
+	then
+		if [ "${PRIDBCHANGE}" != "0" ]
+		then
+			echo "Primary has changed"
+		elif [ "${SECDBCHANGE}" != "0" ]
+		then
+			echo "Secondary has changed"
+		fi
 	fi
 
 	if [ "${primaryCLMD5}" != "${last_primaryCLMD5}" ]
