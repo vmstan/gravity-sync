@@ -64,7 +64,7 @@ Assuming Gravity Sync runs successfully, it will indicate if there are changes p
 The default command for Gravity Sync is simple.
 
 ```
-./gravity-sync.sh`
+./gravity-sync.sh
 ```
 
 But you can also run `./gravity-sync.sh smart` if you feel like it, and it'll do the same thing.
