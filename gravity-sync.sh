@@ -429,7 +429,7 @@ function smart_gs {
 	then
 		if [ "${PRIDBCHANGE}" != "0" ]
 		then
-			MESSAGE="Both Sides Gravity Database Changed"
+			MESSAGE="Both ${GRAVITY_FI} Changed"
 			echo_warn
 
 			PRIDBDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${PIHOLE_DIR}/${GRAVITY_FI}")
@@ -437,13 +437,13 @@ function smart_gs {
 
 				if [ "${PRIDBDATE}" -gt "$SECDBDATE" ]
 				then
-					MESSAGE="Primary Gravity Database Last Changed"
+					MESSAGE="Primary ${GRAVITY_FI} Last Changed"
 					echo_info
 
 					pull_gs_grav
 					PULLRESTART="1"
 				else
-					MESSAGE="Secondary Gravity Database Last Changed"
+					MESSAGE="Secondary ${GRAVITY_FI} Last Changed"
 					echo_info
 
 					push_gs_grav
@@ -476,7 +476,7 @@ function smart_gs {
 	then
 		if [ "${PRICLCHANGE}" != "0" ]
 		then
-			MESSAGE="Both Sides Custom DNS Changed"
+			MESSAGE="Both ${CUSTOM_DNS} Changed"
 			echo_warn
 
 			PRICLDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${PIHOLE_DIR}/${CUSTOM_DNS}")
@@ -484,13 +484,13 @@ function smart_gs {
 
 				if [ "${PRICLDATE}" -gt "$SECCLDATE" ]
 				then
-					MESSAGE="Primary Custom DNS Last Changed"
+					MESSAGE="Primary ${CUSTOM_DNS} Last Changed"
 					echo_info
 
 					pull_gs_cust
 					PULLRESTART="1"
 				else
-					MESSAGE="Secondary Custom DNS Last Changed"
+					MESSAGE="Secondary ${CUSTOM_DNS} Last Changed"
 					echo_info
 
 					push_gs_cust
@@ -668,6 +668,8 @@ function logs_gs {
 	echo_info
 
 	echo -e "========================================================"
+	echo -e "Recent Complete ${YELLOW}SMART${NC} Executions"
+		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep SMART
 	echo -e "Recent Complete ${YELLOW}PULL${NC} Executions"
 		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PULL
 	echo -e "Recent Complete ${YELLOW}PUSH${NC} Executions"
