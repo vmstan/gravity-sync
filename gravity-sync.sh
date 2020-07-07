@@ -410,23 +410,37 @@ function smart_gs {
 	if [ "${primaryDBMD5}" != "${last_primaryDBMD5}" ]
 	then
 		PRIDBCHANGE="1"
-		# pull_gs_grav
-		# PULLRESTART="1"
 	fi
 	
 	if [ "${secondDBMD5}" != "${last_secondDBMD5}" ]
 	then
 		SECDBCHANGE="1"
-		# push_gs_grav
-		# PUSHRESTART="1"
 	fi
 
 	if [ "${PRIDBCHANGE}" == "${SECDBCHANGE}" ]
 	then
 		if [ "${PRIDBCHANGE}" != "0" ]
 		then
-			echo "Both sides have changed"
-			exit
+			MESSAGE="Both Sides Have Changed"
+			echo_warn
+
+			PRIDBDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${PIHOLE_DIR}/${GRAVITY_FI}")
+			SECDBDATE=$(stat -c %Y ${PIHOLE_DIR}/${GRAVITY_FI})
+
+				if [ "${PRIDBDATE}" -gt "$SECDBDATE" ]
+				then
+					MESSAGE="Primary was Last Changed"
+					echo_info
+
+					pull_gs_grav
+					PULLRESTART="1"
+				else
+					MESSAGE="Secondary was Last Changed"
+					echo_info
+
+					push_gs_grav
+					PUSHRESTART="1"
+				fi
 		fi
 	else
 		if [ "${PRIDBCHANGE}" != "0" ]
@@ -442,12 +456,49 @@ function smart_gs {
 
 	if [ "${primaryCLMD5}" != "${last_primaryCLMD5}" ]
 	then
-		pull_gs_cust
-		PULLRESTART="1"
-	elif [ "${secondCLMD5}" != "${last_secondCLMD5}" ]
+		PRICLCHANGE="1"
+	fi
+	
+	if [ "${secondCLMD5}" != "${last_secondCLMD5}" ]
 	then
-		push_gs_cust
-		PUSHRESTART="1"
+		SECCLCHANGE="1"
+	fi
+
+	if [ "${PRICLCHANGE}" == "${SECCLCHANGE}" ]
+	then
+		if [ "${PRICLCHANGE}" != "0" ]
+		then
+			MESSAGE="Both Sides Have Changed"
+			echo_warn
+
+			PRICLDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${PIHOLE_DIR}/${CUSTOM_DNS}")
+			SECCLDATE=$(stat -c %Y ${PIHOLE_DIR}/${CUSTOM_DNS})
+
+				if [ "${PRICLDATE}" -gt "$SECCLDATE" ]
+				then
+					MESSAGE="Primary was Last Changed"
+					echo_info
+
+					pull_gs_cust
+					PULLRESTART="1"
+				else
+					MESSAGE="Secondary was Last Changed"
+					echo_info
+
+					push_gs_cust
+					PUSHRESTART="1"
+				fi
+		fi
+	else
+		if [ "${PRICLCHANGE}" != "0" ]
+		then
+			pull_gs_cust
+			PULLRESTART="1"
+		elif [ "${SECCLCHANGE}" != "0" ]
+		then
+			push_gs_cust
+			PUSHRESTART="1"
+		fi
 	fi
 
 	if [ "$PULLRESTART" == "1" ]
