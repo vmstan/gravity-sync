@@ -17,11 +17,11 @@ Gravity Sync **requires** Pi-hole 5.0 or higher be already installed on your ser
 - Gravity Sync leverages SSH and RSYNC to do the leavy lifting between your Pi-hole nodes. OpenSSH is reccomended but if you're using a ultra-lightweight Pi distrbution (such as DietPi) that uses Dropbear by default, it should work as well. Other SSH client/server combonations are not supported at this time.
 
 ### Pi-hole Architecture
-You will need to designate one Pi-Hole as primary and at least one as secondary. The primary Pi-hole is where you'll make all your configuration changes through the Web UI, doing things such as; manual whitelisting, adding blocklists, device/group management, configuring custom/local network DNS, and other changing other list settings. The secondary Pi-hole(s) are where you will install and configure Gravity Sync.
-
-Gravity Sync will pull the `gravity.db` and `custom.list` files of the primary Pi-hole to the secondary. It will also bring over the downloaded blocklist files after a `pihole -g` command is run to update blocklists on the primary, so you do not need to reach out to all your blocklist hosts for updates after syncing on the secondary.
+You will want to designate one Pi-Hole as primary and at least one as secondary. The primary Pi-hole is where you'll make most of your configuration changes through the Web UI, doing things such as; manual allow-listing, adding blocklists, device/group management, configuring custom/local network DNS, and other changing other list settings. The secondary Pi-hole(s) are where you will install and configure Gravity Sync.
 
 The designation of primary and secondary is purely at your discretion. The doesn't matter if you're using an HA process like keepalived to present a single DNS IP address to clients, or handing out two DNS resolvers via DHCP. Generally it is expected that the two (or more) Pi-hole(s) will be at the same phyiscal location, or at least on the same internal networks. It should also be possible to to replicate to a secondary Pi-hole across networks, either over a VPN or open-Internet, with the approprate firewall/NAT configuration.
+
+Starting with version 2.0, Gravity Sync will sync the `gravity.db` and `custom.list` files on each Pi-hole with each other. (Previous versions only pulled data one way.) 
 
 ## Installation
 Login to your *secondary* Pi-hole, and run:
@@ -59,18 +59,36 @@ Now, test Gravity Sync. You can run a comparison between primary and secondary d
 
 Assuming Gravity Sync runs successfully, it will indicate if there are changes pending between the two databases. If not, make a subtle change to a whitelist/blacklist on your primary Pi-hole, such as changing a description field or disabling a whitelist item, and then running `./gravity-sync.sh compare` again to validate your installation is working correctly.
 
+### Smart Sync
+
+The default command for Gravity Sync is simple.
+
+```
+./gravity-sync.sh`
+```
+
+But you can also run `./gravity-sync.sh smart` if you feel like it, and it'll do the same thing.
+
+It will perform some checks to help insure success and then stop before making changes if it detects an issue. It will also perform the same `compare` function outlined above, and if there are no changes pending, it will exit without making an attempt to copy data.
+
+**Example:** If the `gravity.db` has been modified on the primary Pi-hole, but the `custom.list` file has been changed on the secondary, Gravity Sync will now do a pull of the `gravity.db` then push `custom.list` and finally restart the correct components on each server. It will also now only perform a sync of each component if there are changes within each type to replicate. So if you only make a small change to your Local DNS settings, it doesn't kickoff the larger `gravity.db` replication.
+
+This allows you to be more flexible in where you make your configuration changes to block/allow lists and local DNS settings being made on either the primary or secondary, but it's best practice to continue making changes on one side where possible. In the event there are configuration changes to the same element (example, `custom.list` changes at both sides) then Gravity Sync will attempt to determine based on timestamps on what side the last changed happened, in which case the latest changes will be considered authoritative and overwrite the other side. Gravity Sync does not merge the contents of the files when changes happen, it simply overwrites the entire content.
+
+If the execution completes, you will now have overwritten your running `gravity.db` and `custom.list` on the secondary Pi-hole after creating a copy of the running files (with `.backup` appended) in the `backup` subfolder located with your script. Gravity Sync will also keep a copy of the last sync'd files from the primary (in the `backup` folder appended with `.pull` or `.push`) for future use. 
+
+Finally, a file called `gravity-sync.log` will be created in the `gravity-sync` folder along side the script with the date the script was last executed appended to the bottom.
+
+You can check for successful pull attempts by running: `./gravity-sync.sh logs`
+
 ### The Pull Function
-The Gravity Sync Pull, is the standard method of sync operation, and will not prompt for user input after execution. It will perform some checks to help insure success and then stop before making changes if it detects an issue. It will also perform the same `compare` function outlined above, and if there are no changes pending, it will exit without making an attempt to copy data.
+The Gravity Sync Pull, prior to version 2.0, was the standard method of sync operation, and will not prompt for user input after execution. 
 
 ```bash
 ./gravity-sync.sh pull
 ```
 
 If the execution completes, you will now have overwritten your running `gravity.db` and `custom.list` on the secondary Pi-hole after creating a copy of the running files (with `.backup` appended) in the `backup` subfolder located with your script. Gravity Sync will also keep a copy of the last sync'd files from the primary (in the `backup` folder appended with `.pull`) for future use. 
-
-Finally, a file called `gravity-sync.log` will be created in the `gravity-sync` folder along side the script with the date the script was last executed appended to the bottom.
-
-You can check for successful pull attempts by running: `./gravity-sync.sh logs`
 
 ### The Push Function
 Gravity Sync includes the ability to `push` from the secondary Pi-hole back to the primary. This would be useful in a situation where your primary Pi-hole is down for an extended period of time, and you have made list changes on the secondary Pi-hole that you want to force back to the primary, when it comes online.
