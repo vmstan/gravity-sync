@@ -13,6 +13,9 @@ This allows you to be more flexible in where you make your configuration changes
 
 New installs will use the `smart` function by default. Existing users who want to use this new method as their standard should run `./gravity-sync.sh automate` function to replace the existing automated `pull` with the new Smart Sync. This is not required. The previous `./gravity-sync.sh pull` and `./gravity-sync.sh push` commands continue to function as they did previously, with no intention to break this functionality.
 
+#### 2.0.1
+- Fixes bug that caused existing crontab entry not to be removed when switching from `pull` to Smart Sync.
+
 ## 1.8
 ### The Logical Release
 
