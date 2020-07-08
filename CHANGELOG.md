@@ -18,6 +18,7 @@ New installs will use the `smart` function by default. Existing users who want t
 
 #### 2.0.2
 - Correct output of `smart` function when script is run without proper function requested.
+- Decided marketing team was correct about display of versions in `CHANGELOG.md` -- sorry Chris.
 
 ## 1.8
 ### The Logical Release
