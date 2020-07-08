@@ -59,7 +59,7 @@ Now, test Gravity Sync. You can run a comparison between primary and secondary d
 
 Assuming Gravity Sync runs successfully, it will indicate if there are changes pending between the two databases. If not, make a subtle change to a whitelist/blacklist on your primary Pi-hole, such as changing a description field or disabling a whitelist item, and then running `./gravity-sync.sh compare` again to validate your installation is working correctly.
 
-### Smart Sync
+### The Smart Sync
 
 The default command for Gravity Sync is simple.
 
