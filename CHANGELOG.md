@@ -3,10 +3,9 @@
 ## 2.0
 ### The Smart Release
 
-**Features**
 In this release, Gravity Sync will now detect not only if each component (`gravity.db` and `custom.list`) has changed since the last sync, but also what direction they need to go. It will then initate a `push` and/or `pull` specific to each piece.
 
-Example: If the `gravity.db` has been modified on the primary Pi-hole, but the `custom.list` file has been changed on the secondary, Gravity Sync will now do a pull of the `gravity.db` then push `custom.list` and finally restart the correct components on each server. It will also now only perform a sync of each component if there are changes within each type to replicate. So if you only make a small change to your Local DNS settings, it doesn't kickoff the larger `gravity.db` replication.
+**Example:** If the `gravity.db` has been modified on the primary Pi-hole, but the `custom.list` file has been changed on the secondary, Gravity Sync will now do a pull of the `gravity.db` then push `custom.list` and finally restart the correct components on each server. It will also now only perform a sync of each component if there are changes within each type to replicate. So if you only make a small change to your Local DNS settings, it doesn't kickoff the larger `gravity.db` replication.
 
 The default command for Gravity Sync is now just `./gravity-sync.sh` -- but you can also run `./gravity-sync.sh smart` if you feel like it, and it'll do the same thing.
 
@@ -17,7 +16,6 @@ New installs will use the `smart` function by default. Existing users who want t
 ## 1.8
 ### The Logical Release
 
-**Features**
 There is nothing really sexy here, but a lot of changes under the covers to improve reliablity between different SSH client types. A lot of the logic and functions are more consistent and cleaner. In some cultures, fewer bugs and more reliablity are considered features. Much of this will continue through the 1.8.x line.
 
 - SSH/RSYNC connection logic rewritten to be specific to client options between OpenSSH, OpenSSH w/ SSHPASS, and Dropbear.
