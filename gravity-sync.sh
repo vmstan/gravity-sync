@@ -1360,7 +1360,7 @@ function list_gs_arguments {
 	echo -e " ${YELLOW}version${NC}	Display installed version of ${PROGRAM}"
 	echo -e ""
 	echo -e "Replication Options:"
-	echo -e " ${YELLOW}sync${NC}		Detect changes on each side and bring them together"
+	echo -e " ${YELLOW}smart${NC}		Detect changes on each side and bring them together"
 	echo -e " ${YELLOW}pull${NC}		Force remote configuration changes to this server"
 	echo -e " ${YELLOW}push${NC}		Force local configuration made on this server back"
 	echo -e " ${YELLOW}restore${NC}	Restore the ${GRAVITY_FI} on this server"
