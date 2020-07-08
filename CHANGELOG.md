@@ -5,7 +5,7 @@
 
 In this release, Gravity Sync will now detect not only if each component (`gravity.db` and `custom.list`) has changed since the last sync, but also what direction they need to go. It will then initate a `push` and/or `pull` specific to each piece.
 
-Example: If the `gravity.db` has been modified on the primary Pi-hole, but the `custom.list` file has been changed on the secondary, Gravity Sync will now do a pull of the `gravity.db` then push `custom.list` and finally restart the correct components on each server. It will also now only perform a sync of each component if there are changes within each type to replicate. So if you only make a small change to your Local DNS settings, it doesn't kickoff the larger `gravity.db` replication.
+**Example:** If the `gravity.db` has been modified on the primary Pi-hole, but the `custom.list` file has been changed on the secondary, Gravity Sync will now do a pull of the `gravity.db` then push `custom.list` and finally restart the correct components on each server. It will also now only perform a sync of each component if there are changes within each type to replicate. So if you only make a small change to your Local DNS settings, it doesn't kickoff the larger `gravity.db` replication.
 
 The default command for Gravity Sync is now just `./gravity-sync.sh` -- but you can also run `./gravity-sync.sh smart` if you feel like it, and it'll do the same thing.
 
