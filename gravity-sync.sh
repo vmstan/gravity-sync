@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='2.0.0'
+VERSION='2.0.1'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -1469,7 +1469,7 @@ function clear_cron {
 	echo_stat
 
 	crontab -l > cronjob-old.tmp
-	sed '/${GS_FILENAME}/d' cronjob-old.tmp > cronjob-new.tmp
+	sed "/${GS_FILENAME}/d" cronjob-old.tmp > cronjob-new.tmp
 	crontab cronjob-new.tmp 2>/dev/null
 		error_validate
 	rm cronjob-old.tmp
