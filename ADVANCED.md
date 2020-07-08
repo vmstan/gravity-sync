@@ -180,3 +180,39 @@ If you prefer to still use cron but modify your settings by hand, using the entr
 crontab -e
 */30 * * * * /bin/bash /home/USER/gravity-sync/gravity-sync.sh > /home/USER/gravity-sync/gravity-sync.cron
 ```
+
+## Reference Architectures
+
+There are three reference architectures that I'll outline. All of them require an external DHCP server (such as a router, or dedicated DHCP server) handing out the DNS address(es) for your Pi-holes. Use of the integrated DHCP function in Pi-hole when using Gravity Sync is discouraged, although I'm sure there are ways to make it work. **Gravity Sync does not manage any DHCP settings.**
+
+### Easy Peasy
+![Easy Peasy](https://user-images.githubusercontent.com/3002053/86969050-c1131400-c132-11ea-9328-dfda772dc280.png)
+
+This design requires the least amount of overhead, or additional software/network configuration beyond Pi-hole and Gravity Sync.
+
+1. Client requests an IP address from a DHCP server on the network and receives it along with DNS and gateway information back. Two DNS servers (Pi-hole) are returned to the client.
+2. Client queries one of the two DNS servers, and Pi-hole does it's thing.
+
+You can make changes to your blocklist, exceptions, etc, on either Pi-hole and they will be sync'd to the other within the timeframe you establish (here, 15 minutes.)
+
+### Stay Alive
+![Stay Alive](https://user-images.githubusercontent.com/3002053/86969056-c40e0480-c132-11ea-8db4-15c26ab8999d.png)
+
+The downside in the above design is you have two places where your clients are logging lookup requests to. Gravity Sync will let you change filter settings in either location, but if you're doing it often things may get overwritten. One way to get around this is by using keepalived and present a single virtual IP address of the two Pi-hole, to clients in an active/passive mode. The two nodes will check their own status, and each other, and hand the VIP around if there are issues.
+
+1. Client requests an IP address from a DHCP server on the network and receives it along with DNS and gateway information back. One DNS server (VIP) is returned to the client.
+2. The VIP managed by the keepalived service will determine which Pi-hole responds. You make your configuration changes to the active VIP address.
+3. Client queries the single DNS servers, and Pi-hole does it's thing.
+
+You make your configuration changes to the active VIP address and they will be sync'd to the other within the timeframe you establish (here, 15 minutes.)
+
+### Crazy Town
+![Crazy Town](https://user-images.githubusercontent.com/3002053/86969028-b8bad900-c132-11ea-83f1-88b4888af32c.png)
+
+For those who really love Pi-hole and Gravity Sync. Combining the best of both worlds.  
+
+1. Client requests an IP address from a DHCP server on the network and receives it along with DNS and gateway information back. Two DNS servers (VIPs) are returned to the client.
+2. The VIPs are managed by the keepalived service on each side and will determine which of two Pi-hole responds. You can make your configuration changes to the active VIP address on either side.
+3. Client queries one of the two VIP servers, and the responding Pi-hole does it's thing.
+
+Here we use `./gravity-sync pull` on the secondary Pi-hole at each side, and ofset the update intervals from the main sync.
