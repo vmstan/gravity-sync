@@ -1013,6 +1013,23 @@ function detect_ssh {
 	fi
 }
 
+function detect_remotersync {
+	MESSAGE="Validating RSYNC Installed on ${REMOTE_HOST}"
+	echo_stat
+
+	REMOTERSYNC=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "hash rsync") 
+
+	if [ "${REMOTERSYNC}" == "-bash: hash: rsync: not found"
+	then
+		echo_fail
+		MESSAGE="Please install RSYNC on ${REMOTE_HOST}"
+		echo_info
+		exit_nochange
+	else
+		echo_good
+	fi
+}
+
 ## Error Validation
 function error_validate {
 	if [ "$?" != "0" ]
@@ -1304,6 +1321,8 @@ function config_generate {
 	echo_info
 
 	validate_os_sshpass
+
+	detect_remotersync
 	
 	exit_withchange
 }

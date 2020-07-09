@@ -215,4 +215,4 @@ For those who really love Pi-hole and Gravity Sync. Combining the best of both w
 2. The VIPs are managed by the keepalived service on each side and will determine which of two Pi-hole responds. You can make your configuration changes to the active VIP address on either side.
 3. Client queries one of the two VIP servers, and the responding Pi-hole does it's thing.
 
-Here we use `./gravity-sync pull` on the secondary Pi-hole at each side, and ofset the update intervals from the main sync.
+Here we use `./gravity-sync pull` on the secondary Pi-hole at each side, and off-set the update intervals from the main sync.
