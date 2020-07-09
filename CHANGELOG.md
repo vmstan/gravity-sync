@@ -14,12 +14,14 @@ This allows you to be more flexible in where you make your configuration changes
 New installs will use the `smart` function by default. Existing users who want to use this new method as their standard should run `./gravity-sync.sh automate` function to replace the existing automated `pull` with the new Smart Sync. This is not required. The previous `./gravity-sync.sh pull` and `./gravity-sync.sh push` commands continue to function as they did previously, with no intention to break this functionality.
 
 #### 2.0.1
-- Fixes bug that caused existing crontab entry not to be removed when switching from `pull` to Smart Sync.
+- Fixes bug that caused existing crontab entry not to be removed when switching from `pull` to Smart Sync. [#50](https://github.com/vmstan/gravity-sync/issues/50)
 
 #### 2.0.2
 - Correct output of `smart` function when script is run without proper function requested.
 - Decided marketing team was correct about display of versions in `CHANGELOG.md` -- sorry Chris.
 - Adds reference architectures to the `ADVANCED.md` file.
+- Checks for RSYNC functionality to remote host during `./gravity-sync.sh configure` and prompts to install. [#53](https://github.com/vmstan/gravity-sync/issues/53)
+- Move much of the previous `README.md` to `ADVANCED.md` file.
 
 ## 1.8
 ### The Logical Release

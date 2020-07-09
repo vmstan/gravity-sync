@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='2.0.1'
+VERSION='2.0.2'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -1021,7 +1021,7 @@ function detect_remotersync {
 		CMD_REQUESTED="touch ~/gs.test"
 			create_sshcmd
 
-	MESSAGE="If this fails make sure RSYNC is installed on ${REMOTE_HOST}"
+	MESSAGE="If pull test fails insure RSYNC is installed on ${REMOTE_HOST}"
 	echo_warn
 
 	MESSAGE="Pulling Test File to $HOSTNAME"
