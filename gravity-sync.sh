@@ -1017,16 +1017,22 @@ function detect_remotersync {
 	MESSAGE="Validating RSYNC Installed on ${REMOTE_HOST}"
 	echo_stat
 
-	${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "hash rsync" 2>/dev/null
+		CMD_TIMEOUT='15'
+		CMD_REQUESTED="touch ~/gs.test"
+			create_sshcmd
 
-	if [ "$?" == "0" ]
-	then
-		echo_good
-	else
-		echo_fail
-		MESSAGE="Please install RSYNC on ${REMOTE_HOST}"
-		echo_warn
-	fi
+		RSYNC_REPATH="rsync"
+		RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:~/gs.test"
+		RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/gs.test"
+			create_rsynccmd
+
+		rm $HOME/${LOCAL_FOLDR}/gs.test
+
+		CMD_TIMEOUT='15'
+		CMD_REQUESTED="rm ~/gs.test"
+			create_sshcmd
+
+		error_validate
 }
 
 ## Error Validation
