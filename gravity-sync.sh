@@ -1019,7 +1019,7 @@ function detect_remotersync {
 
 	${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "hash rsync" 2>/dev/null
 
-	if [ "$?" == "-bash: 0: command not found" ]
+	if [ "$?" == "0" ]
 	then
 		echo_good
 	else
