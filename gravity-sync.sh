@@ -1017,15 +1017,15 @@ function detect_remotersync {
 	MESSAGE="Validating RSYNC Installed on ${REMOTE_HOST}"
 	echo_stat
 
-	REMOTERSYNC=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "hash rsync") 
+	REMOTERSYNC=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "hash rsync") >/dev/null 2>&1
 
-	if [ "${REMOTERSYNC}" == "-bash: hash: rsync: not found" ]
+	if [ "${REMOTERSYNC}" == "" ]
 	then
+		echo_good
+	else
 		echo_fail
 		MESSAGE="Please install RSYNC on ${REMOTE_HOST}"
 		echo_warn
-	else
-		echo_good
 	fi
 }
 
