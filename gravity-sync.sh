@@ -1014,25 +1014,32 @@ function detect_ssh {
 }
 
 function detect_remotersync {
-	MESSAGE="Validating RSYNC Installed on ${REMOTE_HOST}"
+	MESSAGE="Validating RSYNC Ability to ${REMOTE_HOST}"
+	echo_info
+
+	MESSAGE="Creating Test File on ${REMOTE_HOST}"
 	echo_stat
 
 		CMD_TIMEOUT='15'
 		CMD_REQUESTED="touch ~/gs.test"
 			create_sshcmd
 
+	MESSAGE="Pulling Test File to $HOSTNAME"
+	echo_stat
+
 		RSYNC_REPATH="rsync"
 		RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:~/gs.test"
 		RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/gs.test"
 			create_rsynccmd
+
+	MESSAGE="Cleaning Up Test Files"
+	echo_stat
 
 		rm $HOME/${LOCAL_FOLDR}/gs.test
 
 		CMD_TIMEOUT='15'
 		CMD_REQUESTED="rm ~/gs.test"
 			create_sshcmd
-
-		error_validate
 }
 
 ## Error Validation
