@@ -1014,15 +1014,15 @@ function detect_ssh {
 }
 
 function detect_remotersync {
-	MESSAGE="Validating RSYNC Ability to ${REMOTE_HOST}"
-	echo_info
-
 	MESSAGE="Creating Test File on ${REMOTE_HOST}"
 	echo_stat
 
 		CMD_TIMEOUT='15'
 		CMD_REQUESTED="touch ~/gs.test"
 			create_sshcmd
+
+	MESSAGE="If this fails make sure RSYNC is installed on ${REMOTE_HOST}"
+	echo_warn
 
 	MESSAGE="Pulling Test File to $HOSTNAME"
 	echo_stat
