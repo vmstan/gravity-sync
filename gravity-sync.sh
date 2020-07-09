@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='2.0.1'
+VERSION='2.0.2'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -1013,6 +1013,35 @@ function detect_ssh {
 	fi
 }
 
+function detect_remotersync {
+	MESSAGE="Creating Test File on ${REMOTE_HOST}"
+	echo_stat
+
+		CMD_TIMEOUT='15'
+		CMD_REQUESTED="touch ~/gs.test"
+			create_sshcmd
+
+	MESSAGE="If pull test fails insure RSYNC is installed on ${REMOTE_HOST}"
+	echo_warn
+
+	MESSAGE="Pulling Test File to $HOSTNAME"
+	echo_stat
+
+		RSYNC_REPATH="rsync"
+		RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:~/gs.test"
+		RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/gs.test"
+			create_rsynccmd
+
+	MESSAGE="Cleaning Up Test Files"
+	echo_stat
+
+		rm $HOME/${LOCAL_FOLDR}/gs.test
+
+		CMD_TIMEOUT='15'
+		CMD_REQUESTED="rm ~/gs.test"
+			create_sshcmd
+}
+
 ## Error Validation
 function error_validate {
 	if [ "$?" != "0" ]
@@ -1304,6 +1333,8 @@ function config_generate {
 	echo_info
 
 	validate_os_sshpass
+
+	detect_remotersync
 	
 	exit_withchange
 }
@@ -1360,7 +1391,7 @@ function list_gs_arguments {
 	echo -e " ${YELLOW}version${NC}	Display installed version of ${PROGRAM}"
 	echo -e ""
 	echo -e "Replication Options:"
-	echo -e " ${YELLOW}sync${NC}		Detect changes on each side and bring them together"
+	echo -e " ${YELLOW}smart${NC}		Detect changes on each side and bring them together"
 	echo -e " ${YELLOW}pull${NC}		Force remote configuration changes to this server"
 	echo -e " ${YELLOW}push${NC}		Force local configuration made on this server back"
 	echo -e " ${YELLOW}restore${NC}	Restore the ${GRAVITY_FI} on this server"
