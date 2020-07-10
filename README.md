@@ -3,7 +3,7 @@
 What is better than a [Pi-hole](https://github.com/pi-hole/pi-hole) blocking ads via DNS on your network? That's right, Two Pi-hole! (Redundency is key in any network infrastucture.) But if you have more than one Pi-hole in your network you'll want a simple way to keep the list configurations and local DNS settings identical between the two. That's where Gravity Sync comes in. 
 
 Gravity Sync will:
-- Sync that the allow/blocklist configurations stored in `gravity.db` between two Pi-hole
+- Sync the allow/blocklist configurations stored in `gravity.db` between two Pi-hole
 - Sync the local DNS settings stored in `custom.list` between two Pi-hole. 
 - Provide an easy way to keep this happening in the background. 
 
@@ -16,7 +16,10 @@ Gravity Sync will **not**:
 
 It is suggested that you use an external DHCP server on your network (such as your router) when using multiple Pi-hole.
 
-### Requirements
+### Disclaimer
+Gravity Sync is not developed by or affiliated with the Pi-hole project. This is a community effort that seeks to implement replication, which is currently not a part of the core Pi-hole product. The code has been well tested across multiple user environments but there always is an element of risk involved with running any arbitrary software you find on the Internet.
+
+## Requirements
 - Pi-hole 5.0 (or higher) be installed on at least two systems, using any of the Linux distros that Pi-hole is [certified to run on](https://docs.pi-hole.net/main/prerequesites/#supported-operating-systems). Docker deployments of Pi-hole are not supported.
 - You will need to make sure that you have passwordless `SUDO` enabled for the accounts on both the primary and secondary Pi-hole that will be performing the work. Most of the pre-built images available for the Raspberry Pi already have this configured, but if you have your Pi-hole running in a virtual machine built from a generic ISO, you may need to [adjust this manually](https://linuxize.com/post/how-to-run-sudo-command-without-password/).
 - Make sure `SSH` and `RSYNC` are installed on both the primary and secondary Pi-hole prior to installation. This is what does the leavy lifting between your Pi-hole nodes. OpenSSH is reccomended but if you're using a ultra-lightweight Pi distrbution (such as DietPi) that uses Dropbear by default, it should work as well. Other SSH client/server combonations are not supported at this time.
