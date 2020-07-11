@@ -14,8 +14,8 @@ Download the latest release from [GitHub](https://github.com/vmstan/gravity-sync
 
 ```bash
 cd ~
-wget https://github.com/vmstan/gravity-sync/archive/v2.0.2.zip
-unzip v2.0.2.zip -d gravity-sync
+wget https://github.com/vmstan/gravity-sync/archive/v2.1.0.zip
+unzip v2.1.0.zip -d gravity-sync
 cd gravity-sync
 ```
 
@@ -168,6 +168,11 @@ If you need to adjust the path to bash that is identified for automated executio
 The `./gravity-sync.sh config` function will attempt to ping the remote host to validate it has a valid network connection. If there is a firewall between your hosts preventing ping replies, or you otherwise wish to skip this step, it can by bypassed here.
 
 Default setting in Gravity Sync is 0, change to 1 to skip this network test.
+
+#### `BACKUP_RETAIN=''`
+The `./gravity-sync.sh backup` function will retain a defined number of days worth of `gravity.db` and `custom.list` backups.
+
+Default setting in Gravity Sync is 7, adjust as resired.
 
 ## Execution
 If you are just straight up unable to run the `gravity-sync.sh` file, make sure it's marked as an executable by Linux.

@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='2.0.2'
+VERSION='2.1.0'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -31,6 +31,9 @@ VERIFY_PASS='0'						# replace in gravity-sync.conf to overwrite
 SKIP_CUSTOM='0'						# replace in gravity-sync.conf to overwrite
 DATE_OUTPUT='0'						# replace in gravity-sync.conf to overwrite
 PING_AVOID='0'						# replace in gravity-sync.conf to overwrite
+
+# Backup Customization
+BACKUP_RETAIN='7'					# replace in gravity-sync.conf to overwrite
 
 # Pi-hole Folder/File Locations
 PIHOLE_DIR='/etc/pihole' 			# default Pi-hole data directory
@@ -526,14 +529,36 @@ function smart_gs {
 }
 
 function restore_gs {
-	MESSAGE="This will restore ${GRAVITY_FI} on $HOSTNAME with the previous version!"
+	MESSAGE="This will restore your settings on $HOSTNAME with a previous version!"
 	echo_warn
+
+	MESSAGE="PREVIOUS BACKUPS"
+	echo_info
+	ls $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${GRAVITY_FI} | colrm 18
+
+	MESSAGE="Enter the date you want to restore from"
+	echo_need
+	read INPUT_BACKUP_DATE
+
+	if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${GRAVITY_FI}.backup ]
+	then
+		MESSAGE="Backup File Located"
+		echo_info
+	else
+		MESSAGE="Invalid Requested"
+	fi
 
 	intent_validate
 
+	MESSAGE="Stopping Pi-hole Services"
+	echo_stat
+
+	sudo service pihole-FTL stop >/dev/null 2>&1
+		error_validate
+
 	MESSAGE="Restoring ${GRAVITY_FI} on $HOSTNAME"
 	echo_stat	
-		sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.backup ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+		sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${GRAVITY_FI}.backup ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 		error_validate
 	
 	MESSAGE="Validating Ownership on ${GRAVITY_FI}"
@@ -576,11 +601,11 @@ function restore_gs {
 
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
-		if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.backup ]
+		if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${CUSTOM_DNS}.backup ]
 		then
 			MESSAGE="Restoring ${CUSTOM_DNS} on $HOSTNAME"
 			echo_stat
-				sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.backup ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+				sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${CUSTOM_DNS}.backup ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
 				error_validate
 				
 			MESSAGE="Validating Ownership on ${CUSTOM_DNS}"
@@ -626,19 +651,36 @@ function restore_gs {
 	MESSAGE="Evacuating Saucer Section"
 	echo_info
 		sleep 1	
+
+	MESSAGE="Restarting FTLDNS Services"
+	echo_stat
+		sudo service pihole-FTL start >/dev/null 2>&1
+		error_validate
 	
 	MESSAGE="Updating FTLDNS Configuration"
 	echo_stat
 		${PIHOLE_BIN} restartdns reloadlists >/dev/null 2>&1
 		error_validate
 	
-	MESSAGE="Reloading FTLDNS Services"
-	echo_stat
-		${PIHOLE_BIN} restartdns >/dev/null 2>&1
-		error_validate
-	
-	logs_export
-	exit_withchange
+
+	MESSAGE="Do you want to push the restored configuration to the primary Pi-hole? (yes/no)"
+	echo_need
+	read PUSH_TO_PRIMARY
+
+	if [ "${PUSH_TO_PRIMARY}" == "Yes" ] || [ "${PUSH_TO_PRIMARY}" == "yes" ] || [ "${PUSH_TO_PRIMARY}" == "Y" ] || [ "${PUSH_TO_PRIMARY}" == "y" ]
+	then
+		push_gs
+	elif [ "${PUSH_TO_PRIMARY}" == "No" ] || [ "${PUSH_TO_PRIMARY}" == "no" ] || [ "${PUSH_TO_PRIMARY}" == "N" ] || [ "${PUSH_TO_PRIMARY}" == "n" ]
+	then
+		logs_export
+		exit_withchange
+	else
+		MESSAGE="Invalid Selection - Defaulting No"
+		echo_warn
+
+		logs_export
+		exit_withchange
+	fi
 }
 
 # Logging Functions
@@ -1335,6 +1377,8 @@ function config_generate {
 	validate_os_sshpass
 
 	detect_remotersync
+
+	task_backup
 	
 	exit_withchange
 }
@@ -1431,13 +1475,23 @@ function show_version {
 	else
 		if [ "$GITVERSION" != "$VERSION" ]
 		then
-		MESSAGE="Upgrade Available: ${PURPLE}${GITVERSION}${NC}"
+		MESSAGE="Update Available: ${PURPLE}${GITVERSION}${NC}"
 		else
 		MESSAGE="Latest Version: ${GREEN}${GITVERSION}${NC}"
 		fi
 	fi
 	echo_info
 	echo -e "========================================================"
+
+	dbclient_warning
+}
+
+function dbclient_warning {
+	if hash dbclient 2>/dev/null
+	then
+		MESSAGE="Dropbear support has been deprecated - please convert to OpenSSH"
+		echo_warn
+	fi
 }
 
 # Task Stack
@@ -1458,6 +1512,9 @@ function task_automate {
 		CRON_EXIST='1'
 	fi
 	
+	MESSAGE="Configuring Hourly Smart Sync"
+	echo_info
+
 	MESSAGE="Sync Frequency in Minutes (1-30) or 0 to Disable"
 	echo_need
 	read INPUT_AUTO_FREQ
@@ -1473,12 +1530,11 @@ function task_automate {
 		then
 			clear_cron
 
-			MESSAGE="Automation Disabled"
-			echo_info
+			MESSAGE="Sync Automation Disabled"
+			echo_warn
 		else
-			MESSAGE="No Automation Scheduled"
-			echo_info
-			exit_nochange
+			MESSAGE="No Sync Automation Scheduled"
+			echo_warn
 		fi
 	else
 		if [ $CRON_EXIST == 1 ]
@@ -1486,11 +1542,35 @@ function task_automate {
 			clear_cron
 		fi
 
-		MESSAGE="Saving New Automation"
+		MESSAGE="Saving New Sync Automation"
 		echo_stat
-		(crontab -l 2>/dev/null; echo "*/${INPUT_AUTO_FREQ} * * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/${GS_FILENAME} > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
+		(crontab -l 2>/dev/null; echo "*/${INPUT_AUTO_FREQ} * * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/${GS_FILENAME} smart > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
 			error_validate
 	fi
+
+	MESSAGE="Configuring Daily Backup Frequency"
+	echo_info
+
+	MESSAGE="Hour of Day to Backup (1-24) or 0 to Disable"
+	echo_need
+	read INPUT_AUTO_BACKUP
+
+	if [ $INPUT_AUTO_BACKUP -gt 24 ]
+	then
+		MESSAGE="Invalid Frequency Range"
+		echo_fail
+		exit_nochange
+	elif [ $INPUT_AUTO_BACKUP -lt 1 ]
+	then
+		MESSAGE="No Backup Automation Scheduled"
+		echo_warn
+	else
+		MESSAGE="Saving New Backup Automation"
+		echo_stat
+		(crontab -l 2>/dev/null; echo "* ${INPUT_AUTO_BACKUP} * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/${GS_FILENAME} backup >/dev/null 2>&1") | crontab -
+			error_validate
+	fi
+
 	exit_withchange
 }	
 
@@ -1554,6 +1634,8 @@ function task_update {
 	TASKTYPE='UPDATE'
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
+
+	dbclient_warning
 	
 	update_gs
 }
@@ -1603,6 +1685,35 @@ function task_cron {
 function task_invalid {
 	echo_fail
 	list_gs_arguments
+}
+
+## Backup Task
+function task_backup {
+	TASKTYPE='BACKUP'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+
+	BACKUPTIMESTAMP=$(date +%F-%H%M%S)
+
+	MESSAGE="Performing Backup of ${GRAVITY_FI}"
+	echo_stat
+	
+	sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} ".backup '$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${GRAVITY_FI}.backup'"
+		error_validate
+
+	MESSAGE="Performing Backup Up ${CUSTOM_DNS}"
+	echo_stat
+
+	cp ${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CUSTOM_DNS}.backup
+		error_validate
+
+	MESSAGE="Cleaning Up Old Backups"
+	echo_stat
+
+	find $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/$(date +%Y)*.backup -mtime +${BACKUP_RETAIN} -type f -delete 
+		error_validate
+	
+	exit_withchange
 }
 
 # Echo Stack
@@ -1799,6 +1910,10 @@ case $# in
 			automate)
 				task_automate
 			;;	
+
+			backup)
+				task_backup
+			;;
 
 			*)
 				task_invalid
