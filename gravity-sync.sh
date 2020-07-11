@@ -1634,10 +1634,57 @@ function task_devmode {
 		echo_stat
 		rm -f $HOME/${LOCAL_FOLDR}/dev
 			error_validate
+	elif [ -f $HOME/${LOCAL_FOLDR}/beta ]
+	then
+		MESSAGE="Disabling BETA"
+		echo_stat
+		rm -f $HOME/${LOCAL_FOLDR}/beta
+			error_validate
+		
+		MESSAGE="Enabling ${TASKTYPE}"
+		echo_stat
+		touch $HOME/${LOCAL_FOLDR}/dev
+			error_validate
 	else
 		MESSAGE="Enabling ${TASKTYPE}"
 		echo_stat
 		touch $HOME/${LOCAL_FOLDR}/dev
+			error_validate
+	fi
+	
+	MESSAGE="Run UPDATE to apply changes"
+	echo_info
+	
+	exit_withchange
+}
+
+## Devmode Task
+function task_betamode {
+	TASKTYPE='BETA'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+	
+	if [ -f $HOME/${LOCAL_FOLDR}/beta ]
+	then
+		MESSAGE="Disabling ${TASKTYPE}"
+		echo_stat
+		rm -f $HOME/${LOCAL_FOLDR}/beta
+			error_validate
+	elif [ -f $HOME/${LOCAL_FOLDR}/dev ]
+	then
+		MESSAGE="Disabling DEV"
+		echo_stat
+		rm -f $HOME/${LOCAL_FOLDR}/dev
+			error_validate
+		
+		MESSAGE="Enabling ${TASKTYPE}"
+		echo_stat
+		touch $HOME/${LOCAL_FOLDR}/beta
+			error_validate
+	else
+		MESSAGE="Enabling ${TASKTYPE}"
+		echo_stat
+		touch $HOME/${LOCAL_FOLDR}/beta
 			error_validate
 	fi
 	
@@ -1935,6 +1982,9 @@ case $# in
 			dev)
 				task_devmode
 			;;
+
+			beta)
+				task_betamode
 
 			devmode)
 				task_devmode
