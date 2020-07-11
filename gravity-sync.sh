@@ -148,6 +148,8 @@ function pull_gs_grav {
 	# echo_stat
 	#	cp ${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.backup >/dev/null 2>&1
 	#	error_validate
+
+
 	
 	MESSAGE="Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo_stat
@@ -205,6 +207,7 @@ function pull_gs_grav {
 
 ## Pull Custom
 function pull_gs_cust {
+
 	backup_local_custom
 	
 	if [ "$SKIP_CUSTOM" != '1' ]
@@ -307,6 +310,8 @@ function pull_gs {
 
 ## Push Gravity
 function push_gs_grav {
+	backup_remote_gravity
+	
 	MESSAGE="Backing Up ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo_stat
 		RSYNC_REPATH="rsync"
@@ -1732,6 +1737,16 @@ function backup_local_custom {
 			error_validate
 		fi
 	fi
+}
+
+function backup_remote_gravity {
+	CMD_TIMEOUT='15'
+	CMD_REQUESTED="sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} \".backup '${PIHOLE_DIR}/${GRAVITY_FI}.backup'\""
+		create_sshcmd
+}
+
+function backup_remote_custom {
+
 }
 
 function backup_cleanup {
