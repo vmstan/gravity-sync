@@ -1985,6 +1985,7 @@ case $# in
 
 			beta)
 				task_betamode
+			;;
 
 			devmode)
 				task_devmode
