@@ -22,6 +22,9 @@ The `./gravity-sync.sh update` and `version` functions will look for the `dbclie
 #### 2.1.1
 - Last release was incorrectly published without logic to ignore `custom.list` if request or not used. 
 
+#### 2.1.2
+- Corrects a bug in `backup` automation that causes the backup to run every minute during the hour selected.
+
 ## 2.0
 ### The Smart Release
 
