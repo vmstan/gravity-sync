@@ -3,11 +3,21 @@
 ## 2.1
 ### The Backup Release
 
-A new function `./gravity-sync.sh backup` will now perform a sqlite operated backup of the `gravity.db` on the local Pi-hole. This can be run at any time you wish, but can also be automated by the `./gravity-sync.sh automate` function to run once a day. New and existing users will be prompted to configure both during this task. If can also disable both using the automate function, or just automate one or the other, by setting the value to `0` during setup.
+A new function `./gravity-sync.sh backup` will now perform a `SQLITE3` operated backup of the `gravity.db` on the local Pi-hole. This can be run at any time you wish, but can also be automated by the `./gravity-sync.sh automate` function to run once a day. New and existing users will be prompted to configure both during this task. If can also disable both using the automate function, or just automate one or the other, by setting the value to `0` during setup.
+
+New users will automatically have their local settings backed up after completion of the initial setup, before the first run of any sync tasks.
 
 By default, 7 days worth of backups will be retained in the `backup` folder. You can adjust the retention length by changing the `BACKUP_RETAIN` function in your `gravity-sync.conf` file. See the `ADVANCED.md` file for more information on setting these custom configuration options.
 
-There are also enhancements to the `./gravity-sync.sh restore` function, where as previously this task would only restore the previous copy of the database that is made during sync operations, now this will ask you to select a previous backup copy (by date) and will use that file to restore. This will stop the Pi-hole services on the local server while the task is completed. You will now also be prompted to perform a push operation of the restored database to the primary Pi-hole server.  
+There are also enhancements to the `./gravity-sync.sh restore` function, where as previously this task would only restore the previous copy of the database that is made during sync operations, now this will ask you to select a previous backup copy (by date) and will use that file to restore. This will stop the Pi-hole services on the local server while the task is completed. After a successful restoration, you will now also be prompted to perform a `push` operation of the restored database to the primary Pi-hole server. 
+
+It's suggested to make sure your local restore was successful before completing the `restore` operation with the `push` job.
+
+#### Deprecation
+
+Support for the the Dropbear SSH client/server (which was added in 1.7.6) will be removed in an upcoming version of Gravity Sync. If you are using this instead of OpenSSH (common with DietPi) please reconfigure your installation to use OpenSSH. You will want to delete your existing `~/.ssh/id_rsa` and `~/.ssh/id_rsa.pub` files and run `./gravity-sync.sh configure` again to generate a new key and copy it to the primary Pi-hole.
+
+The `./gravity-sync.sh update` and `version` functions will look for the `dbclient` binary on the local system and warn users to change.
 
 ## 2.0
 ### The Smart Release

@@ -1377,6 +1377,8 @@ function config_generate {
 	validate_os_sshpass
 
 	detect_remotersync
+
+	task_backup
 	
 	exit_withchange
 }
@@ -1473,13 +1475,23 @@ function show_version {
 	else
 		if [ "$GITVERSION" != "$VERSION" ]
 		then
-		MESSAGE="Upgrade Available: ${PURPLE}${GITVERSION}${NC}"
+		MESSAGE="Update Available: ${PURPLE}${GITVERSION}${NC}"
 		else
 		MESSAGE="Latest Version: ${GREEN}${GITVERSION}${NC}"
 		fi
 	fi
 	echo_info
 	echo -e "========================================================"
+
+	dbclient_warning
+}
+
+function dbclient_warning {
+	if hash dbclient 2>/dev/null
+	then
+		MESSAGE="Dropbear support has been deprecated - please convert to OpenSSH"
+		echo_warn
+	fi
 }
 
 # Task Stack
@@ -1622,6 +1634,8 @@ function task_update {
 	TASKTYPE='UPDATE'
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
+
+	dbclient_warning
 	
 	update_gs
 }
