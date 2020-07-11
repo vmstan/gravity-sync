@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='2.1.2'
+VERSION='2.1.5'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -141,10 +141,13 @@ function update_gs {
 # Gravity Core Functions
 ## Pull Gravity
 function pull_gs_grav {
-	MESSAGE="Backing Up ${GRAVITY_FI} on $HOSTNAME"
-	echo_stat
-		cp ${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.backup >/dev/null 2>&1
-		error_validate
+
+	backup_local_gravity
+
+	# MESSAGE="Backing Up ${GRAVITY_FI} on $HOSTNAME"
+	# echo_stat
+	#	cp ${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.backup >/dev/null 2>&1
+	#	error_validate
 	
 	MESSAGE="Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo_stat
@@ -291,6 +294,7 @@ function pull_gs_reload {
 function pull_gs {
 	md5_compare
 	
+	backup_settime
 	pull_gs_grav
 	pull_gs_cust
 	pull_gs_reload
@@ -1693,14 +1697,27 @@ function task_backup {
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
 
-	BACKUPTIMESTAMP=$(date +%F-%H%M%S)
+	backup_settime
+	backup_local_gravity
+	backup_local_custom
+	backup_cleanup
+	
+	exit_withchange
+}
 
+function backup_settime {
+	BACKUPTIMESTAMP=$(date +%F-%H%M%S)
+}
+
+function backup_local_gravity {
 	MESSAGE="Performing Backup of ${GRAVITY_FI}"
 	echo_stat
 	
 	sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} ".backup '$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${GRAVITY_FI}.backup'"
 		error_validate
+}
 
+function backup_local_custom {
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
 		if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
@@ -1712,14 +1729,14 @@ function task_backup {
 			error_validate
 		fi
 	fi
+}
 
+function backup_cleanup {
 	MESSAGE="Cleaning Up Old Backups"
 	echo_stat
 
 	find $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/$(date +%Y)*.backup -mtime +${BACKUP_RETAIN} -type f -delete 
 		error_validate
-	
-	exit_withchange
 }
 
 # Echo Stack
