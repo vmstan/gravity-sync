@@ -170,7 +170,7 @@ The `./gravity-sync.sh config` function will attempt to ping the remote host to 
 Default setting in Gravity Sync is 0, change to 1 to skip this network test.
 
 #### `BACKUP_RETAIN=''`
-The `./gravity-sync.sh backup` function will retain a defined number of previous `gravity.db` and `custom.list` backups.
+The `./gravity-sync.sh backup` function will retain a defined number of days worth of `gravity.db` and `custom.list` backups.
 
 Default setting in Gravity Sync is 7, adjust as resired.
 

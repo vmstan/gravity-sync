@@ -1627,6 +1627,12 @@ function task_backup {
 
 	cp ${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CUSTOM_DNS}.backup
 		error_validate
+
+	MESSAGE="Cleaning Up Old Backups"
+	echo_stat
+
+	find $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/$(date +%Y)*.backup -mtime +${BACKUP_RETAIN} -type f -delete 
+		error_validate
 	
 	exit_withchange
 }
