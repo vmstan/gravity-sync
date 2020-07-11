@@ -1810,7 +1810,7 @@ function backup_remote_custom {
 			echo_stat
 	
 			CMD_TIMEOUT='15'
-			CMD_REQUESTED="sudo cp ${PIHOLE_DIR}/${CUSTOM_DNS} ${PIHOLE_DIR}/${CUSTOM_DNS}.backup'\""
+			CMD_REQUESTED="sudo cp ${PIHOLE_DIR}/${CUSTOM_DNS} ${PIHOLE_DIR}/${CUSTOM_DNS}.backup"
 				create_sshcmd
 		fi
 	fi
