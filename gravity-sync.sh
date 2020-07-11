@@ -1611,7 +1611,19 @@ function task_backup {
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
 
-	sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} ".backup '$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/$(date +%F-%H-%M+%S)-${GRAVITY_FI}.backup'"
+	MESSAGE="Performing SQLITE3 Backup of ${GRAVITY_FI}"
+	echo_stat
+	
+	sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} ".backup '$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/$(date +%F-%H%M%S)-${GRAVITY_FI}.backup'"
+		error_validate
+
+	MESSAGE="Backing Up ${CUSTOM_DNS}"
+	echo_stat
+
+	cp ${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/$(date +%F-%H%M%S)-${GRAVITY_FI}.backup
+		error_validate
+	
+	exit_withchange
 }
 
 # Echo Stack
