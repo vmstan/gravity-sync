@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='2.0.2'
+VERSION='2.1.0'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -1605,6 +1605,15 @@ function task_invalid {
 	list_gs_arguments
 }
 
+## Backup Task
+function task_backup {
+	TASKTYPE='BACKUP'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+
+	sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} ".backup '$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/$(date +%F)-${GRAVITY_FI}'"
+}
+
 # Echo Stack
 ## Informative
 function echo_info {
@@ -1799,6 +1808,10 @@ case $# in
 			automate)
 				task_automate
 			;;	
+
+			backup)
+				task_backup
+			;;
 
 			*)
 				task_invalid

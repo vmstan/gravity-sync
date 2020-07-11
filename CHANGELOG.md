@@ -1,5 +1,10 @@
 # The Changelog
 
+## 2.1
+### The Backup Release
+
+A new function `./gravity-sync.sh backup` will now perform a sqlite operated backup of the `gravity.db` on the local Pi-hole.
+
 ## 2.0
 ### The Smart Release
 
