@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='2.1.0'
+VERSION='2.1.1'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -1701,11 +1701,17 @@ function task_backup {
 	sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} ".backup '$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${GRAVITY_FI}.backup'"
 		error_validate
 
-	MESSAGE="Performing Backup Up ${CUSTOM_DNS}"
-	echo_stat
+	if [ "$SKIP_CUSTOM" != '1' ]
+	then	
+		if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
+		then
+			MESSAGE="Performing Backup Up ${CUSTOM_DNS}"
+			echo_stat
 
-	cp ${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CUSTOM_DNS}.backup
-		error_validate
+			cp ${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CUSTOM_DNS}.backup
+			error_validate
+		fi
+	fi
 
 	MESSAGE="Cleaning Up Old Backups"
 	echo_stat

@@ -17,7 +17,10 @@ It's suggested to make sure your local restore was successful before completing 
 
 Support for the the Dropbear SSH client/server (which was added in 1.7.6) will be removed in an upcoming version of Gravity Sync. If you are using this instead of OpenSSH (common with DietPi) please reconfigure your installation to use OpenSSH. You will want to delete your existing `~/.ssh/id_rsa` and `~/.ssh/id_rsa.pub` files and run `./gravity-sync.sh configure` again to generate a new key and copy it to the primary Pi-hole.
 
-The `./gravity-sync.sh update` and `version` functions will look for the `dbclient` binary on the local system and warn users to change.
+The `./gravity-sync.sh update` and `version` functions will look for the `dbclient` binary on the local system and warn users about the upcoming changes.
+
+#### 2.1.1
+- Last release was incorrectly published without logic to ignore `custom.list` if request or not used. 
 
 ## 2.0
 ### The Smart Release
