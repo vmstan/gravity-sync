@@ -32,6 +32,9 @@ SKIP_CUSTOM='0'						# replace in gravity-sync.conf to overwrite
 DATE_OUTPUT='0'						# replace in gravity-sync.conf to overwrite
 PING_AVOID='0'						# replace in gravity-sync.conf to overwrite
 
+# Backup Customization
+BACKUP_RETAIN='7'					# replace in gravity-sync.conf to overwrite
+
 # Pi-hole Folder/File Locations
 PIHOLE_DIR='/etc/pihole' 			# default Pi-hole data directory
 GRAVITY_FI='gravity.db' 			# default Pi-hole database file
@@ -1611,16 +1614,18 @@ function task_backup {
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
 
-	MESSAGE="Performing SQLITE3 Backup of ${GRAVITY_FI}"
+	BACKUPTIMESTAMP=$(date +%F-%H%M%S)
+
+	MESSAGE="Performing Backup of ${GRAVITY_FI}"
 	echo_stat
 	
-	sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} ".backup '$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/$(date +%F-%H%M%S)-${GRAVITY_FI}.backup'"
+	sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} ".backup '$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${GRAVITY_FI}.backup'"
 		error_validate
 
-	MESSAGE="Backing Up ${CUSTOM_DNS}"
+	MESSAGE="Performing Backup Up ${CUSTOM_DNS}"
 	echo_stat
 
-	cp ${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/$(date +%F-%H%M%S)-${GRAVITY_FI}.backup
+	cp ${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CUSTOM_DNS}.backup
 		error_validate
 	
 	exit_withchange
