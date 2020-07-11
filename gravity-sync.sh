@@ -1701,11 +1701,17 @@ function task_backup {
 	sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} ".backup '$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${GRAVITY_FI}.backup'"
 		error_validate
 
-	MESSAGE="Performing Backup Up ${CUSTOM_DNS}"
-	echo_stat
+	if [ "$SKIP_CUSTOM" != '1' ]
+	then	
+		if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
+		then
+			MESSAGE="Performing Backup Up ${CUSTOM_DNS}"
+			echo_stat
 
-	cp ${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CUSTOM_DNS}.backup
-		error_validate
+			cp ${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CUSTOM_DNS}.backup
+			error_validate
+		fi
+	fi
 
 	MESSAGE="Cleaning Up Old Backups"
 	echo_stat
