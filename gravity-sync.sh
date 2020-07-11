@@ -671,6 +671,7 @@ function restore_gs {
 	then
 		push_gs
 	elif [ "${PUSH_TO_PRIMARY}" == "No" ] || [ "${PUSH_TO_PRIMARY}" == "no" ] || [ "${PUSH_TO_PRIMARY}" == "N" ] || [ "${PUSH_TO_PRIMARY}" == "n" ]
+	then
 		logs_export
 		exit_withchange
 	else
