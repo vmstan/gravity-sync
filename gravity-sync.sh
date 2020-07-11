@@ -1461,6 +1461,9 @@ function task_automate {
 		CRON_EXIST='1'
 	fi
 	
+	MESSAGE="Configuring Hourly Smart Sync"
+	echo_info
+
 	MESSAGE="Sync Frequency in Minutes (1-30) or 0 to Disable"
 	echo_need
 	read INPUT_AUTO_FREQ
@@ -1476,12 +1479,11 @@ function task_automate {
 		then
 			clear_cron
 
-			MESSAGE="Automation Disabled"
-			echo_info
+			MESSAGE="Sync Automation Disabled"
+			echo_warn
 		else
-			MESSAGE="No Automation Scheduled"
-			echo_info
-			exit_nochange
+			MESSAGE="No Sync Automation Scheduled"
+			echo_warn
 		fi
 	else
 		if [ $CRON_EXIST == 1 ]
@@ -1489,11 +1491,35 @@ function task_automate {
 			clear_cron
 		fi
 
-		MESSAGE="Saving New Automation"
+		MESSAGE="Saving New Sync Automation"
 		echo_stat
-		(crontab -l 2>/dev/null; echo "*/${INPUT_AUTO_FREQ} * * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/${GS_FILENAME} > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
+		(crontab -l 2>/dev/null; echo "*/${INPUT_AUTO_FREQ} * * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/${GS_FILENAME} smart > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
 			error_validate
 	fi
+
+	MESSAGE="Configuring Daily Backup Frequency"
+	echo_info
+
+	MESSAGE="Hour of Day to Backup (1-24) or 0 to Disable"
+	echo_need
+	read INPUT_AUTO_BACKUP
+
+	if [ $INPUT_AUTO_BACKUP -gt 24 ]
+	then
+		MESSAGE="Invalid Frequency Range"
+		echo_fail
+		exit_nochange
+	elif [ $INPUT_AUTO_BACKUP-lt 1 ]
+	then
+		MESSAGE="No Backup Automation Scheduled"
+		echo_warn
+	else
+		MESSAGE="Saving New Backup Automation"
+		echo_stat
+		(crontab -l 2>/dev/null; echo "* ${INPUT_AUTO_FREQ} * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/${GS_FILENAME} backup >/dev/null 2>&1") | crontab -
+			error_validate
+	fi
+
 	exit_withchange
 }	
 
