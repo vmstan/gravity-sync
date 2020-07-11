@@ -205,17 +205,19 @@ function pull_gs_grav {
 
 ## Pull Custom
 function pull_gs_cust {
+	backup_local_custom
+	
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
 		if [ "$REMOTE_CUSTOM_DNS" == "1" ]
 		then
-			if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
-			then
-			MESSAGE="Backing Up ${CUSTOM_DNS} on $HOSTNAME"
-			echo_stat
-				cp ${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.backup >/dev/null 2>&1
-				error_validate
-			fi
+			# if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
+			# then
+			# MESSAGE="Backing Up ${CUSTOM_DNS} on $HOSTNAME"
+			# echo_stat
+			# 	cp ${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.backup >/dev/null 2>&1
+			# 	error_validate
+			# fi
 			
 			MESSAGE="Pulling ${CUSTOM_DNS} from ${REMOTE_HOST}"
 			echo_stat
@@ -403,6 +405,7 @@ function push_gs {
 ## Smart Sync Function
 function smart_gs {
 	md5_compare
+	backup_settime
 
 	if [ -f "${LOG_PATH}/${HISTORY_MD5}" ]
 	then
