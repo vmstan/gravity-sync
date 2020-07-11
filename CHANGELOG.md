@@ -19,6 +19,9 @@ Support for the the Dropbear SSH client/server (which was added in 1.7.6) will b
 
 The `./gravity-sync.sh update` and `version` functions will look for the `dbclient` binary on the local system and warn users about the upcoming changes.
 
+#### 2.1.1
+- Last release was incorrectly published without logic to ignore `custom.list` if request or not used. 
+
 ## 2.0
 ### The Smart Release
 
