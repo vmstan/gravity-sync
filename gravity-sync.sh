@@ -662,8 +662,24 @@ function restore_gs {
 		${PIHOLE_BIN} restartdns reloadlists >/dev/null 2>&1
 		error_validate
 	
-	logs_export
-	exit_withchange
+
+	MESSAGE="Do you want to push the restored configuration to the primary Pi-hole? (yes/no)"
+	echo_need
+	read PUSH_TO_PRIMARY
+
+	if [ "${PUSH_TO_PRIMARY}" == "Yes" ] || [ "${PUSH_TO_PRIMARY}" == "yes" ] || [ "${PUSH_TO_PRIMARY}" == "Y" ] || [ "${PUSH_TO_PRIMARY}" == "y" ]
+	then
+		push_gs
+	elif [ "${PUSH_TO_PRIMARY}" == "No" ] || [ "${PUSH_TO_PRIMARY}" == "no" ] || [ "${PUSH_TO_PRIMARY}" == "N" ] || [ "${PUSH_TO_PRIMARY}" == "n" ]
+		logs_export
+		exit_withchange
+	else
+		MESSAGE="Invalid Selection - Defaulting No"
+		echo_warn
+
+		logs_export
+		exit_withchange
+	fi
 }
 
 # Logging Functions

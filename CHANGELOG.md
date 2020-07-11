@@ -7,6 +7,8 @@ A new function `./gravity-sync.sh backup` will now perform a sqlite operated bac
 
 By default, 7 days worth of backups will be retained in the `backup` folder. You can adjust the retention length by changing the `BACKUP_RETAIN` function in your `gravity-sync.conf` file. See the `ADVANCED.md` file for more information on setting these custom configuration options.
 
+There are also enhancements to the `./gravity-sync.sh restore` function, where as previously this task would only restore the previous copy of the database that is made during sync operations, now this will ask you to select a previous backup copy (by date) and will use that file to restore. This will stop the Pi-hole services on the local server while the task is completed. You will now also be prompted to perform a push operation of the restored database to the primary Pi-hole server.  
+
 ## 2.0
 ### The Smart Release
 
