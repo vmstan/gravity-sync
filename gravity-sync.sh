@@ -143,6 +143,7 @@ function update_gs {
 function pull_gs_grav {
 
 	backup_local_gravity
+	backup_remote_gravity
 
 	# MESSAGE="Backing Up ${GRAVITY_FI} on $HOSTNAME"
 	# echo_stat
@@ -154,7 +155,7 @@ function pull_gs_grav {
 	MESSAGE="Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo_stat
 		RSYNC_REPATH="rsync"
-		RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}"
+		RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}.backup"
 		RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull"
 			create_rsynccmd
 		
@@ -209,6 +210,7 @@ function pull_gs_grav {
 function pull_gs_cust {
 
 	backup_local_custom
+	backup_remote_custom
 	
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
@@ -225,7 +227,7 @@ function pull_gs_cust {
 			MESSAGE="Pulling ${CUSTOM_DNS} from ${REMOTE_HOST}"
 			echo_stat
 				RSYNC_REPATH="rsync"
-				RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS}"
+				RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS}.backup"
 				RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull"
 					create_rsynccmd
 				
@@ -311,18 +313,19 @@ function pull_gs {
 ## Push Gravity
 function push_gs_grav {
 	backup_remote_gravity
+	backup_local_gravity
 	
-	MESSAGE="Backing Up ${GRAVITY_FI} from ${REMOTE_HOST}"
+	MESSAGE="Copying ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo_stat
 		RSYNC_REPATH="rsync"
-		RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}"
+		RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}.backup"
 		RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push"
 			create_rsynccmd
 
 	MESSAGE="Pushing ${GRAVITY_FI} to ${REMOTE_HOST}"
 	echo_stat
 		RSYNC_REPATH="sudo rsync"
-		RSYNC_SOURCE="${PIHOLE_DIR}/${GRAVITY_FI}"
+		RSYNC_SOURCE="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${GRAVITY_FI}.backup"
 		RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}"
 			create_rsynccmd
 
@@ -341,21 +344,24 @@ function push_gs_grav {
 
 ## Push Custom
 function push_gs_cust {
+	backup_remote_custom
+	backup_local_custom
+
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
 		if [ "$REMOTE_CUSTOM_DNS" == "1" ]
 		then
-			MESSAGE="Backing Up ${CUSTOM_DNS} from ${REMOTE_HOST}"
+			MESSAGE="Copying ${CUSTOM_DNS} from ${REMOTE_HOST}"
 			echo_stat
 				RSYNC_REPATH="rsync"
-				RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS}"
+				RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS}.backup"
 				RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.push"
 					create_rsynccmd
 
 			MESSAGE="Pushing ${CUSTOM_DNS} to ${REMOTE_HOST}"
 			echo_stat
 				RSYNC_REPATH="sudo rsync"
-				RSYNC_SOURCE="${PIHOLE_DIR}/${CUSTOM_DNS}"
+				RSYNC_SOURCE="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CUSTOM_DNS}.backup"
 				RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS}"
 					create_rsynccmd
 
@@ -1718,7 +1724,7 @@ function backup_settime {
 }
 
 function backup_local_gravity {
-	MESSAGE="Performing Backup of ${GRAVITY_FI}"
+	MESSAGE="Performing Backup of Local ${GRAVITY_FI}"
 	echo_stat
 	
 	sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} ".backup '$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${GRAVITY_FI}.backup'"
@@ -1730,7 +1736,7 @@ function backup_local_custom {
 	then	
 		if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
 		then
-			MESSAGE="Performing Backup Up ${CUSTOM_DNS}"
+			MESSAGE="Performing Backup Up Local ${CUSTOM_DNS}"
 			echo_stat
 
 			cp ${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CUSTOM_DNS}.backup
@@ -1740,13 +1746,27 @@ function backup_local_custom {
 }
 
 function backup_remote_gravity {
+	MESSAGE="Performing Backup of Remote ${GRAVITY_FI}"
+	echo_stat
+	
 	CMD_TIMEOUT='15'
-	CMD_REQUESTED="sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} \".backup '${PIHOLE_DIR}/${GRAVITY_FI}.backup'\""
+	CMD_REQUESTED="sudo sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} \".backup '${PIHOLE_DIR}/${GRAVITY_FI}.backup'\""
 		create_sshcmd
 }
 
 function backup_remote_custom {
-
+	if [ "$SKIP_CUSTOM" != '1' ]
+	then	
+		if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
+		then
+			MESSAGE="Performing Backup of Remote ${CUSTOM_DNS}"
+			echo_stat
+	
+			CMD_TIMEOUT='15'
+			CMD_REQUESTED="sudo cp ${PIHOLE_DIR}/${CUSTOM_DNS} ${PIHOLE_DIR}/${CUSTOM_DNS}.backup'\""
+				create_sshcmd
+		fi
+	fi
 }
 
 function backup_cleanup {
