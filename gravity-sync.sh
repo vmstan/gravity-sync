@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='2.1.1'
+VERSION='2.1.2'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -1567,7 +1567,7 @@ function task_automate {
 	else
 		MESSAGE="Saving New Backup Automation"
 		echo_stat
-		(crontab -l 2>/dev/null; echo "* ${INPUT_AUTO_BACKUP} * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/${GS_FILENAME} backup >/dev/null 2>&1") | crontab -
+		(crontab -l 2>/dev/null; echo "0 ${INPUT_AUTO_BACKUP} * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/${GS_FILENAME} backup >/dev/null 2>&1") | crontab -
 			error_validate
 	fi
 
