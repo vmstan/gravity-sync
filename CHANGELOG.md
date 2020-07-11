@@ -3,7 +3,9 @@
 ## 2.1
 ### The Backup Release
 
-A new function `./gravity-sync.sh backup` will now perform a sqlite operated backup of the `gravity.db` on the local Pi-hole.
+A new function `./gravity-sync.sh backup` will now perform a sqlite operated backup of the `gravity.db` on the local Pi-hole. This can be run at any time you wish, but can also be automated by the `./gravity-sync.sh automate` function to run once a day. New and existing users will be prompted to configure both during this task. If can also disable both using the automate function, or just automate one or the other, by setting the value to `0` during setup.
+
+By default, 7 days worth of backups will be retained in the `backup` folder. You can adjust the retention length by changing the `BACKUP_RETAIN` function in your `gravity-sync.conf` file. See the `ADVANCED.md` file for more information on setting these custom configuration options.
 
 ## 2.0
 ### The Smart Release

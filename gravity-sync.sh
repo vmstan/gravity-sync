@@ -529,14 +529,36 @@ function smart_gs {
 }
 
 function restore_gs {
-	MESSAGE="This will restore ${GRAVITY_FI} on $HOSTNAME with the previous version!"
+	MESSAGE="This will restore your settings on $HOSTNAME with a previous version!"
 	echo_warn
+
+	MESSAGE="PREVIOUS BACKUPS"
+	echo_info
+	ls $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${GRAVITY_FI} | colrm 18
+
+	MESSAGE="Enter the date you want to restore from"
+	echo_need
+	read INPUT_BACKUP_DATE
+
+	if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${GRAVITY_FI}.backup ]
+	then
+		MESSAGE="Backup File Located"
+		echo_info
+	else
+		MESSAGE="Invalid Requested"
+	fi
 
 	intent_validate
 
+	MESSAGE="Stopping Pi-hole Services"
+	echo_stat
+
+	sudo service pihole-FTL stop >/dev/null 2>&1
+		error_validate
+
 	MESSAGE="Restoring ${GRAVITY_FI} on $HOSTNAME"
 	echo_stat	
-		sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.backup ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+		sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${GRAVITY_FI}.backup ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 		error_validate
 	
 	MESSAGE="Validating Ownership on ${GRAVITY_FI}"
@@ -579,11 +601,11 @@ function restore_gs {
 
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
-		if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.backup ]
+		if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${CUSTOM_DNS}.backup ]
 		then
 			MESSAGE="Restoring ${CUSTOM_DNS} on $HOSTNAME"
 			echo_stat
-				sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.backup ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+				sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${CUSTOM_DNS}.backup ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
 				error_validate
 				
 			MESSAGE="Validating Ownership on ${CUSTOM_DNS}"
@@ -629,15 +651,15 @@ function restore_gs {
 	MESSAGE="Evacuating Saucer Section"
 	echo_info
 		sleep 1	
+
+	MESSAGE="Restarting FTLDNS Services"
+	echo_stat
+		sudo service pihole-FTL start >/dev/null 2>&1
+		error_validate
 	
 	MESSAGE="Updating FTLDNS Configuration"
 	echo_stat
 		${PIHOLE_BIN} restartdns reloadlists >/dev/null 2>&1
-		error_validate
-	
-	MESSAGE="Reloading FTLDNS Services"
-	echo_stat
-		${PIHOLE_BIN} restartdns >/dev/null 2>&1
 		error_validate
 	
 	logs_export
