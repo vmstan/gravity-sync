@@ -602,9 +602,9 @@ function restore_gs {
 		fi
 	fi
 
-	MESSAGE="${GRAVITY_FI} from ${INPUT_BACKUP_DATE} Selected"
+	MESSAGE="${GRAVITY_FI} from ${CYAN}${INPUT_BACKUP_DATE}${NC} Selected"
 		echo_info
-	MESSAGE="${CUSTOM_DNS} from ${INPUT_DNSBACKUP_DATE} Selected"
+	MESSAGE="${CUSTOM_DNS} from ${CYAN}${INPUT_DNSBACKUP_DATE}${NC} Selected"
 		echo_info
 	
 	intent_validate
