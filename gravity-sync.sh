@@ -108,7 +108,7 @@ function update_gs {
 	if [ -f "$HOME/${LOCAL_FOLDR}/dev" ]
 	then
 		BRANCH='development'
-	elif if [ -f "$HOME/${LOCAL_FOLDR}/beta" ]
+	elif [ -f "$HOME/${LOCAL_FOLDR}/beta" ]
 	then
 		BRANCH='beta'
 	else
