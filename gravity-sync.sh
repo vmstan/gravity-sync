@@ -405,6 +405,7 @@ function push_gs_reload {
 function push_gs {
 	previous_md5
 	md5_compare
+	backup_settime
 	
 	intent_validate
 
@@ -412,6 +413,7 @@ function push_gs {
 	push_gs_cust
 	push_gs_reload
 
+	md5_recheck
 	logs_export
 	exit_withchange
 }
