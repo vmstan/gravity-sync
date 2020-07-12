@@ -108,6 +108,9 @@ function update_gs {
 	if [ -f "$HOME/${LOCAL_FOLDR}/dev" ]
 	then
 		BRANCH='development'
+	elif if [ -f "$HOME/${LOCAL_FOLDR}/beta" ]
+	then
+		BRANCH='beta'
 	else
 		BRANCH='master'
 	fi
@@ -1492,6 +1495,9 @@ function show_version {
 	if [ -f $HOME/${LOCAL_FOLDR}/dev ]
 	then
 		DEVVERSION="dev"
+	elif [ -f $HOME/${LOCAL_FOLDR}/beta ]
+	then 
+		DEVVERSION="beta"
 	else
 		DEVVERSION=""
 	fi
@@ -1513,8 +1519,6 @@ function show_version {
 	fi
 	echo_info
 	echo -e "========================================================"
-
-	dbclient_warning
 }
 
 function dbclient_warning {
