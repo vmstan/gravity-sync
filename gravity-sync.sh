@@ -1747,7 +1747,8 @@ function task_compare {
 	validate_gs_folders
 	validate_ph_folders
 	validate_os_sshpass
-		
+	
+	previous_md5
 	md5_compare
 }
 
