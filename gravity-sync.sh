@@ -561,21 +561,22 @@ function restore_gs {
 	MESSAGE="This will restore your settings on $HOSTNAME with a previous version!"
 	echo_warn
 
-	MESSAGE="PREVIOUS BACKUPS"
+	MESSAGE="PREVIOUS BACKUPS AVAILABLE FOR RESTORATION"
 	echo_info
 	ls $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${GRAVITY_FI} | colrm 18
 
-	MESSAGE="Enter the backup you want to restore ${GRAVITY_FI} from"
+	MESSAGE="Select backup date to restore ${GRAVITY_FI} from"
 	echo_need
 	read INPUT_BACKUP_DATE
 
 	if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${GRAVITY_FI}.backup ]
 	then
 		MESSAGE="Backup File Selected"
-		echo_info
 	else
 		MESSAGE="Invalid Request"
 		echo_info
+
+		exit_nochange
 	fi
 
 	if [ "$SKIP_CUSTOM" != '1' ]
@@ -585,17 +586,18 @@ function restore_gs {
 		then
 			ls $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${CUSTOM_DNS} | colrm 18
 
-			MESSAGE="Enter the backup you want to restore ${CUSTOM_DNS} from"
+			MESSAGE="Select backup date to restore ${CUSTOM_DNS} from"
 			echo_need
 			read INPUT_DNSBACKUP_DATE
 
 			if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ]
 			then
 				MESSAGE="Backup File Selected"
-				echo_info
 			else
 				MESSAGE="Invalid Request"
 				echo_info
+
+				exit_nochange
 			fi
 		fi
 	fi
@@ -606,6 +608,9 @@ function restore_gs {
 		echo_info
 	
 	intent_validate
+
+	MESSAGE="Making Time Warp Calculations"
+	echo_info
 
 	MESSAGE="Stopping Pi-hole Services"
 	echo_stat

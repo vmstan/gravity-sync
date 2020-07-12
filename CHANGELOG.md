@@ -31,6 +31,7 @@ Skipping a few digits because what does it really matter?
 - Implements a new beta branch, and with it a new `./gravity-sync.sh beta` function to enable it. This will hopefully allow new features and such to be added for test users who can adopt them and provide feedback before rolling out to the main update branch.
 - Uses new SQLITE3 backup methodology introduced in 2.1, for all push/pull sync operations.
 - `./gravity-sync.sh restore` lets you select a different `gravity.db` and `custom.list` for restoration.
+- One new Star Trek reference.
 
 ## 2.0
 ### The Smart Release
