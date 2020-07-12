@@ -749,6 +749,9 @@ function restore_gs {
 ## Core Logging
 ### Write Logs Out
 function logs_export {
+	
+	if [ "${TASKTYPE}" != "BACKUP" ]
+	then
 	MESSAGE="Saving File Hashes"
 	echo_stat
 		rm -f ${LOG_PATH}/${HISTORY_MD5}
@@ -757,6 +760,7 @@ function logs_export {
 		echo -e ${primaryCLMD5} >> ${LOG_PATH}/${HISTORY_MD5}
 		echo -e ${secondCLMD5} >> ${LOG_PATH}/${HISTORY_MD5}
 			error_validate
+	fi
 
 	MESSAGE="Logging Successful ${TASKTYPE}"
 	echo_stat
@@ -778,6 +782,8 @@ function logs_gs {
 		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PULL
 	echo -e "Recent Complete ${YELLOW}PUSH${NC} Executions"
 		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PUSH
+	echo -e "Recent Complete ${YELLOW}BACKUP${NC} Executions"
+		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep BACKUP
 	echo -e "Recent Complete ${YELLOW}RESTORE${NC} Executions"
 		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep RESTORE
 	echo -e "========================================================"
@@ -1814,6 +1820,7 @@ function task_backup {
 	backup_local_custom
 	backup_cleanup
 	
+	logs_export
 	exit_withchange
 }
 

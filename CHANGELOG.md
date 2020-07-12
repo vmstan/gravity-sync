@@ -32,6 +32,7 @@ Skipping a few digits because what does it really matter?
 - Uses new SQLITE3 backup methodology introduced in 2.1, for all push/pull sync operations.
 - `./gravity-sync.sh restore` lets you select a different `gravity.db` and `custom.list` for restoration.
 - One new Star Trek reference.
+- `./gravity-sync.sh restore` now shows recent complete Backup executions.
 
 ## 2.0
 ### The Smart Release
