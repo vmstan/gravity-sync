@@ -565,18 +565,46 @@ function restore_gs {
 	echo_info
 	ls $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${GRAVITY_FI} | colrm 18
 
-	MESSAGE="Enter the date you want to restore from"
+	MESSAGE="Enter the backup you want to restore ${GRAVITY_FI} from"
 	echo_need
 	read INPUT_BACKUP_DATE
 
 	if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${GRAVITY_FI}.backup ]
 	then
-		MESSAGE="Backup File Located"
+		MESSAGE="Backup File Selected"
 		echo_info
 	else
-		MESSAGE="Invalid Requested"
+		MESSAGE="Invalid Request"
+		echo_info
 	fi
 
+	if [ "$SKIP_CUSTOM" != '1' ]
+	then
+
+		if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
+		then
+			ls $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${CUSTOM_DNS} | colrm 18
+
+			MESSAGE="Enter the backup you want to restore ${CUSTOM_DNS} from"
+			echo_need
+			read INPUT_DNSBACKUP_DATE
+
+			if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ]
+			then
+				MESSAGE="Backup File Selected"
+				echo_info
+			else
+				MESSAGE="Invalid Request"
+				echo_info
+			fi
+		fi
+	fi
+
+	MESSAGE="${GRAVITY_FI} from ${INPUT_BACKUP_DATE} Selected"
+		echo_info
+	MESSAGE="${CUSTOM_DNS} from ${INPUT_DNSBACKUP_DATE} Selected"
+		echo_info
+	
 	intent_validate
 
 	MESSAGE="Stopping Pi-hole Services"
@@ -630,11 +658,11 @@ function restore_gs {
 
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
-		if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${CUSTOM_DNS}.backup ]
+		if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ]
 		then
 			MESSAGE="Restoring ${CUSTOM_DNS} on $HOSTNAME"
 			echo_stat
-				sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${CUSTOM_DNS}.backup ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+				sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
 				error_validate
 				
 			MESSAGE="Validating Ownership on ${CUSTOM_DNS}"
