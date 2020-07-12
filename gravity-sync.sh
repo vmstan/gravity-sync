@@ -299,12 +299,14 @@ function pull_gs_reload {
 
 ## Pull Function
 function pull_gs {
+	previous_md5
 	md5_compare
 	
 	backup_settime
 	pull_gs_grav
 	pull_gs_cust
 	pull_gs_reload
+	md5_recheck
 	
 	logs_export
 	exit_withchange
@@ -401,6 +403,7 @@ function push_gs_reload {
 
 ## Push Function
 function push_gs {
+	previous_md5
 	md5_compare
 	
 	intent_validate
@@ -413,11 +416,7 @@ function push_gs {
 	exit_withchange
 }
 
-## Smart Sync Function
-function smart_gs {
-	md5_compare
-	backup_settime
-
+function previous_md5 {
 	if [ -f "${LOG_PATH}/${HISTORY_MD5}" ]
 	then
 		last_primaryDBMD5=$(sed "1q;d" ${LOG_PATH}/${HISTORY_MD5})
@@ -430,6 +429,13 @@ function smart_gs {
 		last_primaryCLMD5="0"
 		last_secondCLMD5="0"
 	fi
+}
+
+## Smart Sync Function
+function smart_gs {
+	previous_md5
+	md5_compare
+	backup_settime
 
 	PRIDBCHANGE="0"
 	SECDBCHANGE="0"
@@ -1115,6 +1121,11 @@ function error_validate {
 
 ## Validate Sync Required
 function md5_compare {
+	# last_primaryDBMD5="0"
+	# last_secondDBMD5="0"
+	# last_primaryCLMD5="0"
+	# last_secondCLMD5="0"
+	
 	HASHMARK='0'
 
 	MESSAGE="Analyzing ${GRAVITY_FI} on ${REMOTE_HOST}"
@@ -1127,7 +1138,7 @@ function md5_compare {
 	secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI} | sed 's/\s.*$//')
 		error_validate
 	
-	if [ "$primaryDBMD5" == "$secondDBMD5" ]
+	if [ "$primaryDBMD5" == "$last_primaryDBMD5" ] && [ "$secondDBMD5" == "$last_secondDBMD5" ]
 	then
 		HASHMARK=$((HASHMARK+0))
 	else
@@ -1154,7 +1165,7 @@ function md5_compare {
 				secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//')
 					error_validate
 				
-				if [ "$primaryCLMD5" == "$secondCLMD5" ]
+				if [ "$primaryCLMD5" == "$last_primaryCLMD5" ] && [ "$secondCLMD5" == "$last_secondCLMD5" ]
 				then
 					# MESSAGE="${CUSTOM_DNS} Identical"
 					# echo_info
