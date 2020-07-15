@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='2.1.2'
+VERSION='2.1.5'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -108,6 +108,9 @@ function update_gs {
 	if [ -f "$HOME/${LOCAL_FOLDR}/dev" ]
 	then
 		BRANCH='development'
+	elif [ -f "$HOME/${LOCAL_FOLDR}/beta" ]
+	then
+		BRANCH='beta'
 	else
 		BRANCH='master'
 	fi
@@ -141,15 +144,21 @@ function update_gs {
 # Gravity Core Functions
 ## Pull Gravity
 function pull_gs_grav {
-	MESSAGE="Backing Up ${GRAVITY_FI} on $HOSTNAME"
-	echo_stat
-		cp ${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.backup >/dev/null 2>&1
-		error_validate
+
+	backup_local_gravity
+	backup_remote_gravity
+
+	# MESSAGE="Backing Up ${GRAVITY_FI} on $HOSTNAME"
+	# echo_stat
+	#	cp ${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.backup >/dev/null 2>&1
+	#	error_validate
+
+
 	
 	MESSAGE="Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo_stat
 		RSYNC_REPATH="rsync"
-		RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}"
+		RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}.backup"
 		RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull"
 			create_rsynccmd
 		
@@ -202,22 +211,26 @@ function pull_gs_grav {
 
 ## Pull Custom
 function pull_gs_cust {
+
+	backup_local_custom
+	backup_remote_custom
+	
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
 		if [ "$REMOTE_CUSTOM_DNS" == "1" ]
 		then
-			if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
-			then
-			MESSAGE="Backing Up ${CUSTOM_DNS} on $HOSTNAME"
-			echo_stat
-				cp ${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.backup >/dev/null 2>&1
-				error_validate
-			fi
+			# if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
+			# then
+			# MESSAGE="Backing Up ${CUSTOM_DNS} on $HOSTNAME"
+			# echo_stat
+			# 	cp ${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.backup >/dev/null 2>&1
+			# 	error_validate
+			# fi
 			
 			MESSAGE="Pulling ${CUSTOM_DNS} from ${REMOTE_HOST}"
 			echo_stat
 				RSYNC_REPATH="rsync"
-				RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS}"
+				RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS}.backup"
 				RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull"
 					create_rsynccmd
 				
@@ -289,11 +302,14 @@ function pull_gs_reload {
 
 ## Pull Function
 function pull_gs {
+	previous_md5
 	md5_compare
 	
+	backup_settime
 	pull_gs_grav
 	pull_gs_cust
 	pull_gs_reload
+	md5_recheck
 	
 	logs_export
 	exit_withchange
@@ -301,17 +317,20 @@ function pull_gs {
 
 ## Push Gravity
 function push_gs_grav {
-	MESSAGE="Backing Up ${GRAVITY_FI} from ${REMOTE_HOST}"
+	backup_remote_gravity
+	backup_local_gravity
+	
+	MESSAGE="Copying ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo_stat
 		RSYNC_REPATH="rsync"
-		RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}"
+		RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}.backup"
 		RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push"
 			create_rsynccmd
 
 	MESSAGE="Pushing ${GRAVITY_FI} to ${REMOTE_HOST}"
 	echo_stat
 		RSYNC_REPATH="sudo rsync"
-		RSYNC_SOURCE="${PIHOLE_DIR}/${GRAVITY_FI}"
+		RSYNC_SOURCE="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${GRAVITY_FI}.backup"
 		RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}"
 			create_rsynccmd
 
@@ -330,21 +349,24 @@ function push_gs_grav {
 
 ## Push Custom
 function push_gs_cust {
+	backup_remote_custom
+	backup_local_custom
+
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
 		if [ "$REMOTE_CUSTOM_DNS" == "1" ]
 		then
-			MESSAGE="Backing Up ${CUSTOM_DNS} from ${REMOTE_HOST}"
+			MESSAGE="Copying ${CUSTOM_DNS} from ${REMOTE_HOST}"
 			echo_stat
 				RSYNC_REPATH="rsync"
-				RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS}"
+				RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS}.backup"
 				RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.push"
 					create_rsynccmd
 
 			MESSAGE="Pushing ${CUSTOM_DNS} to ${REMOTE_HOST}"
 			echo_stat
 				RSYNC_REPATH="sudo rsync"
-				RSYNC_SOURCE="${PIHOLE_DIR}/${CUSTOM_DNS}"
+				RSYNC_SOURCE="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CUSTOM_DNS}.backup"
 				RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS}"
 					create_rsynccmd
 
@@ -384,7 +406,9 @@ function push_gs_reload {
 
 ## Push Function
 function push_gs {
+	previous_md5
 	md5_compare
+	backup_settime
 	
 	intent_validate
 
@@ -392,14 +416,12 @@ function push_gs {
 	push_gs_cust
 	push_gs_reload
 
+	md5_recheck
 	logs_export
 	exit_withchange
 }
 
-## Smart Sync Function
-function smart_gs {
-	md5_compare
-
+function previous_md5 {
 	if [ -f "${LOG_PATH}/${HISTORY_MD5}" ]
 	then
 		last_primaryDBMD5=$(sed "1q;d" ${LOG_PATH}/${HISTORY_MD5})
@@ -412,6 +434,13 @@ function smart_gs {
 		last_primaryCLMD5="0"
 		last_secondCLMD5="0"
 	fi
+}
+
+## Smart Sync Function
+function smart_gs {
+	previous_md5
+	md5_compare
+	backup_settime
 
 	PRIDBCHANGE="0"
 	SECDBCHANGE="0"
@@ -1097,6 +1126,11 @@ function error_validate {
 
 ## Validate Sync Required
 function md5_compare {
+	# last_primaryDBMD5="0"
+	# last_secondDBMD5="0"
+	# last_primaryCLMD5="0"
+	# last_secondCLMD5="0"
+	
 	HASHMARK='0'
 
 	MESSAGE="Analyzing ${GRAVITY_FI} on ${REMOTE_HOST}"
@@ -1109,7 +1143,7 @@ function md5_compare {
 	secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI} | sed 's/\s.*$//')
 		error_validate
 	
-	if [ "$primaryDBMD5" == "$secondDBMD5" ]
+	if [ "$primaryDBMD5" == "$last_primaryDBMD5" ] && [ "$secondDBMD5" == "$last_secondDBMD5" ]
 	then
 		HASHMARK=$((HASHMARK+0))
 	else
@@ -1136,7 +1170,7 @@ function md5_compare {
 				secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//')
 					error_validate
 				
-				if [ "$primaryCLMD5" == "$secondCLMD5" ]
+				if [ "$primaryCLMD5" == "$last_primaryCLMD5" ] && [ "$secondCLMD5" == "$last_secondCLMD5" ]
 				then
 					# MESSAGE="${CUSTOM_DNS} Identical"
 					# echo_info
@@ -1191,14 +1225,14 @@ function md5_recheck {
 	secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI} | sed 's/\s.*$//')
 		error_validate
 	
-	if [ "$primaryDBMD5" == "$secondDBMD5" ]
-	then
-		HASHMARK=$((HASHMARK+0))
-	else
-		MESSAGE="Differenced ${GRAVITY_FI} Detected"
-		echo_warn
-		HASHMARK=$((HASHMARK+1))
-	fi
+	# if [ "$primaryDBMD5" == "$secondDBMD5" ]
+	# then
+	#	HASHMARK=$((HASHMARK+0))
+	# else
+	#	MESSAGE="Differenced ${GRAVITY_FI} Detected"
+	#	echo_warn
+	#	HASHMARK=$((HASHMARK+1))
+	# fi
 
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then
@@ -1218,16 +1252,16 @@ function md5_recheck {
 				secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//')
 					error_validate
 				
-				if [ "$primaryCLMD5" == "$secondCLMD5" ]
-				then
+				# if [ "$primaryCLMD5" == "$secondCLMD5" ]
+				# then
 					# MESSAGE="${CUSTOM_DNS} Identical"
 					# echo_info
-					HASHMARK=$((HASHMARK+0))
-				else
-					MESSAGE="Differenced ${CUSTOM_DNS} Detected"
-					echo_warn
-					HASHMARK=$((HASHMARK+1))
-				fi
+				#	HASHMARK=$((HASHMARK+0))
+				# else
+				#	MESSAGE="Differenced ${CUSTOM_DNS} Detected"
+				#	echo_warn
+				#	HASHMARK=$((HASHMARK+1))
+				# fi
 			else
 				MESSAGE="No ${CUSTOM_DNS} Detected on ${REMOTE_HOST}"
 				echo_info
@@ -1237,7 +1271,7 @@ function md5_recheck {
 			then
 				REMOTE_CUSTOM_DNS="1"
 				MESSAGE="${REMOTE_HOST} has ${CUSTOM_DNS}"
-				HASHMARK=$((HASHMARK+1))
+			#	HASHMARK=$((HASHMARK+1))
 				echo_info
 			fi	
 			MESSAGE="No ${CUSTOM_DNS} Detected on $HOSTNAME"
@@ -1245,14 +1279,14 @@ function md5_recheck {
 		fi
 	fi
 
-	if [ "$HASHMARK" != "0" ]
-	then
-		MESSAGE="Replication Checks Failed"
-		echo_warn
-	else
-		MESSAGE="Replication Was Successful"
-		echo_info
-	fi
+	# if [ "$HASHMARK" != "0" ]
+	# then
+	#	MESSAGE="Replication Checks Failed"
+	#	echo_warn
+	# else
+	#	MESSAGE="Replication Was Successful"
+	#	echo_info
+	# fi
 }
 
 ## Validate Intent
@@ -1461,6 +1495,9 @@ function show_version {
 	if [ -f $HOME/${LOCAL_FOLDR}/dev ]
 	then
 		DEVVERSION="dev"
+	elif [ -f $HOME/${LOCAL_FOLDR}/beta ]
+	then 
+		DEVVERSION="beta"
 	else
 		DEVVERSION=""
 	fi
@@ -1482,8 +1519,6 @@ function show_version {
 	fi
 	echo_info
 	echo -e "========================================================"
-
-	dbclient_warning
 }
 
 function dbclient_warning {
@@ -1616,10 +1651,57 @@ function task_devmode {
 		echo_stat
 		rm -f $HOME/${LOCAL_FOLDR}/dev
 			error_validate
+	elif [ -f $HOME/${LOCAL_FOLDR}/beta ]
+	then
+		MESSAGE="Disabling BETA"
+		echo_stat
+		rm -f $HOME/${LOCAL_FOLDR}/beta
+			error_validate
+		
+		MESSAGE="Enabling ${TASKTYPE}"
+		echo_stat
+		touch $HOME/${LOCAL_FOLDR}/dev
+			error_validate
 	else
 		MESSAGE="Enabling ${TASKTYPE}"
 		echo_stat
 		touch $HOME/${LOCAL_FOLDR}/dev
+			error_validate
+	fi
+	
+	MESSAGE="Run UPDATE to apply changes"
+	echo_info
+	
+	exit_withchange
+}
+
+## Devmode Task
+function task_betamode {
+	TASKTYPE='BETA'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+	
+	if [ -f $HOME/${LOCAL_FOLDR}/beta ]
+	then
+		MESSAGE="Disabling ${TASKTYPE}"
+		echo_stat
+		rm -f $HOME/${LOCAL_FOLDR}/beta
+			error_validate
+	elif [ -f $HOME/${LOCAL_FOLDR}/dev ]
+	then
+		MESSAGE="Disabling DEV"
+		echo_stat
+		rm -f $HOME/${LOCAL_FOLDR}/dev
+			error_validate
+		
+		MESSAGE="Enabling ${TASKTYPE}"
+		echo_stat
+		touch $HOME/${LOCAL_FOLDR}/beta
+			error_validate
+	else
+		MESSAGE="Enabling ${TASKTYPE}"
+		echo_stat
+		touch $HOME/${LOCAL_FOLDR}/beta
 			error_validate
 	fi
 	
@@ -1669,7 +1751,8 @@ function task_compare {
 	validate_gs_folders
 	validate_ph_folders
 	validate_os_sshpass
-		
+	
+	previous_md5
 	md5_compare
 }
 
@@ -1693,33 +1776,70 @@ function task_backup {
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
 
-	BACKUPTIMESTAMP=$(date +%F-%H%M%S)
+	backup_settime
+	backup_local_gravity
+	backup_local_custom
+	backup_cleanup
+	
+	exit_withchange
+}
 
-	MESSAGE="Performing Backup of ${GRAVITY_FI}"
+function backup_settime {
+	BACKUPTIMESTAMP=$(date +%F-%H%M%S)
+}
+
+function backup_local_gravity {
+	MESSAGE="Performing Backup of Local ${GRAVITY_FI}"
 	echo_stat
 	
 	sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} ".backup '$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${GRAVITY_FI}.backup'"
 		error_validate
+}
 
+function backup_local_custom {
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
 		if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
 		then
-			MESSAGE="Performing Backup Up ${CUSTOM_DNS}"
+			MESSAGE="Performing Backup Up Local ${CUSTOM_DNS}"
 			echo_stat
 
 			cp ${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CUSTOM_DNS}.backup
 			error_validate
 		fi
 	fi
+}
 
+function backup_remote_gravity {
+	MESSAGE="Performing Backup of Remote ${GRAVITY_FI}"
+	echo_stat
+	
+	CMD_TIMEOUT='15'
+	CMD_REQUESTED="sudo sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} \".backup '${PIHOLE_DIR}/${GRAVITY_FI}.backup'\""
+		create_sshcmd
+}
+
+function backup_remote_custom {
+	if [ "$SKIP_CUSTOM" != '1' ]
+	then	
+		if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
+		then
+			MESSAGE="Performing Backup of Remote ${CUSTOM_DNS}"
+			echo_stat
+	
+			CMD_TIMEOUT='15'
+			CMD_REQUESTED="sudo cp ${PIHOLE_DIR}/${CUSTOM_DNS} ${PIHOLE_DIR}/${CUSTOM_DNS}.backup"
+				create_sshcmd
+		fi
+	fi
+}
+
+function backup_cleanup {
 	MESSAGE="Cleaning Up Old Backups"
 	echo_stat
 
 	find $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/$(date +%Y)*.backup -mtime +${BACKUP_RETAIN} -type f -delete 
 		error_validate
-	
-	exit_withchange
 }
 
 # Echo Stack
@@ -1879,6 +1999,10 @@ case $# in
 			
 			dev)
 				task_devmode
+			;;
+
+			beta)
+				task_betamode
 			;;
 
 			devmode)

@@ -25,6 +25,12 @@ The `./gravity-sync.sh update` and `version` functions will look for the `dbclie
 #### 2.1.2
 - Corrects a bug in `backup` automation that causes the backup to run every minute during the hour selected.
 
+#### 2.1.5
+Skipping a few digits because what does it really matter? 
+
+- Implements a new beta branch, and with it a new `./gravity-sync.sh beta` function to enable it. This will hopefully allow new features and such to be added for test users who can adopt them and provide feedback before rolling out to the main update branch.
+- Uses new SQLITE3 backup methodology introduced in 2.1, for all push/pull sync operations.
+
 ## 2.0
 ### The Smart Release
 
