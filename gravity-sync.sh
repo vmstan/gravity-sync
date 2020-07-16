@@ -1512,9 +1512,14 @@ function task_automate {
 	MESSAGE="Configuring Hourly Smart Sync"
 	echo_info
 
-	MESSAGE="Sync Frequency in Minutes (1-30) or 0 to Disable"
-	echo_need
-	read INPUT_AUTO_FREQ
+	if [[ $1 =~ ^[0-9][0-9]?$ ]]
+	then
+		INPUT_AUTO_FREQ=$1
+	else
+		MESSAGE="Sync Frequency in Minutes (1-30) or 0 to Disable"
+		echo_need
+		read INPUT_AUTO_FREQ
+	fi
 
 	if [ $INPUT_AUTO_FREQ -gt 30 ]
 	then
@@ -1548,9 +1553,14 @@ function task_automate {
 	MESSAGE="Configuring Daily Backup Frequency"
 	echo_info
 
-	MESSAGE="Hour of Day to Backup (1-24) or 0 to Disable"
-	echo_need
-	read INPUT_AUTO_BACKUP
+	if [[ $2 =~ ^[0-9][0-9]?$ ]]
+	then
+		INPUT_AUTO_BACKUP=$2
+	else
+		MESSAGE="Hour of Day to Backup (1-24) or 0 to Disable"
+		echo_need
+		read INPUT_AUTO_BACKUP
+	fi
 
 	if [ $INPUT_AUTO_BACKUP -gt 24 ]
 	then
@@ -1917,6 +1927,24 @@ case $# in
 			*)
 				task_invalid
 			;;
+		esac
+	;;
+
+	2)
+   		case $1 in
+			automate)
+				task_automate
+			;;	
+
+		esac
+	;;
+
+	3)
+   		case $1 in
+			automate)
+				task_automate $2 $3
+			;;	
+
 		esac
 	;;
 	
