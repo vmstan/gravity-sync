@@ -169,6 +169,11 @@ The `./gravity-sync.sh config` function will attempt to ping the remote host to 
 
 Default setting in Gravity Sync is 0, change to 1 to skip this network test.
 
+#### `ROOT_CHECK_AVOID=''`
+The `./gravity-sync.sh` check that it's deployed with it's own user, but for container deployment it's a nuisance, to install a user and gave it passwordless sudo power, witch result with the same security risk as running as root.
+
+Default setting in Gravity Sync is 0, change to 1 to skip this root user test.
+
 #### `BACKUP_RETAIN=''`
 The `./gravity-sync.sh backup` function will retain a defined number of days worth of `gravity.db` and `custom.list` backups.
 

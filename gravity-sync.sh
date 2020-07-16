@@ -31,6 +31,7 @@ VERIFY_PASS='0'						# replace in gravity-sync.conf to overwrite
 SKIP_CUSTOM='0'						# replace in gravity-sync.conf to overwrite
 DATE_OUTPUT='0'						# replace in gravity-sync.conf to overwrite
 PING_AVOID='0'						# replace in gravity-sync.conf to overwrite
+ROOT_CHECK_AVOID='0'				# replace in gravity-sync.conf to overwrite
 
 # Backup Customization
 BACKUP_RETAIN='7'					# replace in gravity-sync.conf to overwrite
@@ -704,7 +705,6 @@ function logs_export {
 
 ### Output Sync Logs
 function logs_gs {
-	import_gs
 
 	MESSAGE="Tailing ${LOG_PATH}/${SYNCING_LOG}"
 	echo_info
@@ -726,7 +726,6 @@ function logs_gs {
 ## Crontab Logs
 ### Core Crontab Logs
 function show_crontab {
-	import_gs
 	
 	MESSAGE="Replaying Last Cronjob"
 	echo_stat
@@ -1501,8 +1500,6 @@ function task_automate {
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
 
-	import_gs
-
 	CRON_EXIST='0'
 	CRON_CHECK=$(crontab -l | grep -q "${GS_FILENAME}"  && echo '1' || echo '0')
 	if [ ${CRON_CHECK} == 1 ]
@@ -1664,8 +1661,7 @@ function task_compare {
 	TASKTYPE='COMPARE'
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
-	
-	import_gs
+
 	validate_gs_folders
 	validate_ph_folders
 	validate_os_sshpass
@@ -1775,8 +1771,11 @@ function root_check {
 	
 	MESSAGE="Evaluating Arguments"
 	echo_stat
-
-	root_check
+	import_gs
+	if [ "${ROOT_CHECK_AVOID}" != "1" ]
+	then
+		root_check
+	fi
 
 case $# in
 	
@@ -1785,7 +1784,6 @@ case $# in
 		MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 		echo_good
 
-		import_gs
 		validate_gs_folders
 		validate_ph_folders
 		validate_os_sshpass
@@ -1801,7 +1799,6 @@ case $# in
 				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
 
-				import_gs
 				validate_gs_folders
 				validate_ph_folders
 				validate_os_sshpass
@@ -1815,7 +1812,6 @@ case $# in
 				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
 
-				import_gs
 				validate_gs_folders
 				validate_ph_folders
 				validate_os_sshpass
@@ -1828,8 +1824,7 @@ case $# in
 				TASKTYPE='PULL'
 				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
-				
-				import_gs
+
 				validate_gs_folders
 				validate_ph_folders
 				validate_os_sshpass
@@ -1842,8 +1837,7 @@ case $# in
 				TASKTYPE='PUSH'
 				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
-				
-				import_gs
+
 				validate_gs_folders
 				validate_ph_folders
 				validate_os_sshpass
@@ -1857,7 +1851,6 @@ case $# in
 				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
 
-				import_gs
 				validate_gs_folders
 				validate_ph_folders
 
