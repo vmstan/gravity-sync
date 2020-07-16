@@ -37,7 +37,9 @@ Skipping a few digits because what does it really matter?
 #### 2.1.6
 - Adds prompts during `./gravity-sync.sh configure` to allow custom SSH port and enable PING avoidance.
 - Adds `ROOT_CHECK_AVOID` variable to advanced configuration options, to help facilitate running Gravity Sync with container installations of Pi-hole. (PR [#64](https://github.com/vmstan/gravity-sync/pull/64))
-- Adds 
+- Adds the ability to automate automation. :mind_blown_emoji: Please see the ADVANCED.md document for more information. (PR [#64](https://github.com/vmstan/gravity-sync/pull/64))
+
+(Thanks to [@fbourqui](https://github.com/fbourqui) for this contributions to this release.)
 
 ## 2.0
 ### The Smart Release
