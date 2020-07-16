@@ -1395,7 +1395,7 @@ function config_generate {
 	read INPUT_PING_AVOID
 	INPUT_PING_AVOID="${INPUT_PING_AVOID:-Y}"
 
-	if [[ "${INPUT_PING_AVOID}" != "Yes" || "${INPUT_PING_AVOID}" != "yes" || "${INPUT_PING_AVOID}" != "Y" ||  "${INPUT_PING_AVOID}" != "y" ]]
+	if [ "${INPUT_PING_AVOID}" != "Yes" ] || [ "${INPUT_PING_AVOID}" != "yes" ] || [ "${INPUT_PING_AVOID}" != "Y" ] || [ "${INPUT_PING_AVOID}" != "y" ]
 	then
 		MESSAGE="Saving Ping Avoidance to ${CONFIG_FILE}"
 		echo_stat
