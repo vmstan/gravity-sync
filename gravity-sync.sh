@@ -1393,7 +1393,7 @@ function config_generate {
 	MESSAGE="Perform PING tests between Pi-holes? (Leave blank for default 'Yes')"
 	echo_need
 	read INPUT_PING_AVOID
-	INPUT_SSH_PORT="${INPUT_SSH_PORT:-Y}"
+	INPUT_PING_AVOID="${INPUT_PING_AVOID:-Y}"
 
 	if [[ "${INPUT_PING_AVOID}" != "Yes" || "${INPUT_PING_AVOID}" != "yes" || "${INPUT_PING_AVOID}" != "Y" ||  "${INPUT_PING_AVOID}" != "y" ]]
 	then
