@@ -169,6 +169,11 @@ The `./gravity-sync.sh config` function will attempt to ping the remote host to 
 
 Default setting in Gravity Sync is 0, change to 1 to skip this network test.
 
+#### `ROOT_CHECK_AVOID=''`
+The `./gravity-sync.sh` check that it's deployed with it's own user, but for container deployment it's a nuisance, to install a user and gave it passwordless sudo power, witch result with the same security risk as running as root.
+
+Default setting in Gravity Sync is 0, change to 1 to skip this root user test.
+
 #### `BACKUP_RETAIN=''`
 The `./gravity-sync.sh backup` function will retain a defined number of days worth of `gravity.db` and `custom.list` backups.
 
@@ -212,11 +217,22 @@ If your code is still not updating after this, reinstallation is suggested rathe
 ## Automation
 There are many automation methods available to run scripts on a regular basis of a Linux system. The one built into all of them is cron, but if you'd like to utilize something different then the principles are still the same.
 
+To automate the deployment of automation option, you can call it with 2 parameters:
+first interval in minutes to run sync [0-30], 
+then the hour to run backup [0-24] 
+Note: 0 will disable the cron entry.
+
+for example:
+gravity-sync.sh automate 15 23
+
+will sync every 15 minutes and backup at 23:00.
+
 If you prefer to still use cron but modify your settings by hand, using the entry below will cause the entry to run at the top and bottom of every hour (1:00 PM, 1:30 PM, 2:00 PM, etc) but you are free to dial this back or be more agressive if you feel the need.
 
 ```bash
 crontab -e
-*/30 * * * * /bin/bash /home/USER/gravity-sync/gravity-sync.sh > /home/USER/gravity-sync/gravity-sync.cron
+*/15 * * * * /bin/bash /home/USER/gravity-sync/gravity-sync.sh > /home/USER/gravity-sync/gravity-sync.cron
+0 23 * * * /bin/bash /home/USER//gravity-sync/gravity-sync.sh backup >/dev/null 2>&1
 ```
 
 ## Reference Architectures
