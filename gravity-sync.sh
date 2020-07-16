@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='2.1.5'
+VERSION='2.1.6'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -602,9 +602,9 @@ function restore_gs {
 		fi
 	fi
 
-	MESSAGE="${GRAVITY_FI} from ${CYAN}${INPUT_BACKUP_DATE}${NC} Selected"
+	MESSAGE="${GRAVITY_FI} from ${INPUT_BACKUP_DATE} Selected"
 		echo_info
-	MESSAGE="${CUSTOM_DNS} from ${CYAN}${INPUT_DNSBACKUP_DATE}${NC} Selected"
+	MESSAGE="${CUSTOM_DNS} from ${INPUT_DNSBACKUP_DATE} Selected"
 		echo_info
 	
 	intent_validate
@@ -1373,13 +1373,46 @@ function config_generate {
 	echo_stat
 	cp $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}.example $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 	error_validate
+
+	MESSAGE="Environment Customization"
+	echo_info
+
+	MESSAGE="Are you using a custom SSH Port? (Leave blank for default '22')"
+	echo_need
+	read INPUT_SSH_PORT
+
+	if [ "${INPUT_SSH_PORT}" != "" ] || [ "${INPUT_SSH_PORT}" != "22" ]
+	then
+		MESSAGE="Saving Custom SSH Port to ${CONFIG_FILE}"
+		echo_stat
+		sed -i "/# SSH_PORT=''/c\SSH_PORT='${INPUT_SSH_PORT}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+		error_validate
+	fi
+
+	MESSAGE="Perform PING tests between Pi-holes? (Leave blank for default 'Yes')"
+	echo_need
+	read INPUT_PING_AVOID
+
+	if [ "${INPUT_PING_AVOID}" != "" ] || [ "${INPUT_PING_AVOID}" != "Yes" ] || [ "${INPUT_PING_AVOID}" != "yes" ] || [ "${INPUT_PING_AVOID}" != "Y" ] || [ "${INPUT_PING_AVOID}" != "y" ]
+	then
+		MESSAGE="Saving Ping Avoidance to ${CONFIG_FILE}"
+		echo_stat
+		sed -i "/# PING_AVOID=''/c\PING_AVOID='1'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+		error_validate
+		PING_AVOID=1
+	fi
 	
+	MESSAGE="Standard Settings"
+	echo_info
+
 	MESSAGE="IP or DNS of Primary Pi-hole"
 	echo_need
 	read INPUT_REMOTE_HOST
 
 	if [ "${PING_AVOID}" != "1" ]
 	then
+		
+		
 		MESSAGE="Testing Network Connection (PING)"
 		echo_stat
 		ping -c 3 ${INPUT_REMOTE_HOST} >/dev/null 2>&1

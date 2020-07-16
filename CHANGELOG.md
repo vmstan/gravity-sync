@@ -34,6 +34,9 @@ Skipping a few digits because what does it really matter?
 - One new Star Trek reference.
 - `./gravity-sync.sh restore` now shows recent complete Backup executions.
 
+#### 2.1.6
+- Adds prompts during `./gravity-sync.sh configure` to allow custom SSH port and enable PING avoidance.
+
 ## 2.0
 ### The Smart Release
 
