@@ -1380,8 +1380,9 @@ function config_generate {
 	MESSAGE="Enter a custom SSH port if required (Leave blank for default '22')"
 	echo_need
 	read INPUT_SSH_PORT
+	INPUT_SSH_PORT="${INPUT_SSH_PORT:-22}"
 
-	if [[ -z "${INPUT_SSH_PORT}" || "${INPUT_SSH_PORT}" != "22" ]]
+	if [ "${INPUT_SSH_PORT}" != "22" ]
 	then
 		MESSAGE="Saving Custom SSH Port to ${CONFIG_FILE}"
 		echo_stat
@@ -1392,8 +1393,9 @@ function config_generate {
 	MESSAGE="Perform PING tests between Pi-holes? (Leave blank for default 'Yes')"
 	echo_need
 	read INPUT_PING_AVOID
+	INPUT_SSH_PORT="${INPUT_SSH_PORT:-Y}"
 
-	if [[ -z "${INPUT_PING_AVOID}" || "${INPUT_PING_AVOID}" != "Yes" || "${INPUT_PING_AVOID}" != "yes" || "${INPUT_PING_AVOID}" != "Y" ||  "${INPUT_PING_AVOID}" != "y" ]]
+	if [[ "${INPUT_PING_AVOID}" != "Yes" || "${INPUT_PING_AVOID}" != "yes" || "${INPUT_PING_AVOID}" != "Y" ||  "${INPUT_PING_AVOID}" != "y" ]]
 	then
 		MESSAGE="Saving Ping Avoidance to ${CONFIG_FILE}"
 		echo_stat
