@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='2.1.5'
+VERSION='2.1.6'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -561,23 +561,56 @@ function restore_gs {
 	MESSAGE="This will restore your settings on $HOSTNAME with a previous version!"
 	echo_warn
 
-	MESSAGE="PREVIOUS BACKUPS"
+	MESSAGE="PREVIOUS BACKUPS AVAILABLE FOR RESTORATION"
 	echo_info
 	ls $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${GRAVITY_FI} | colrm 18
 
-	MESSAGE="Enter the date you want to restore from"
+	MESSAGE="Select backup date to restore ${GRAVITY_FI} from"
 	echo_need
 	read INPUT_BACKUP_DATE
 
 	if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${GRAVITY_FI}.backup ]
 	then
-		MESSAGE="Backup File Located"
-		echo_info
+		MESSAGE="Backup File Selected"
 	else
-		MESSAGE="Invalid Requested"
+		MESSAGE="Invalid Request"
+		echo_info
+
+		exit_nochange
 	fi
 
+	if [ "$SKIP_CUSTOM" != '1' ]
+	then
+
+		if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
+		then
+			ls $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${CUSTOM_DNS} | colrm 18
+
+			MESSAGE="Select backup date to restore ${CUSTOM_DNS} from"
+			echo_need
+			read INPUT_DNSBACKUP_DATE
+
+			if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ]
+			then
+				MESSAGE="Backup File Selected"
+			else
+				MESSAGE="Invalid Request"
+				echo_info
+
+				exit_nochange
+			fi
+		fi
+	fi
+
+	MESSAGE="${GRAVITY_FI} from ${INPUT_BACKUP_DATE} Selected"
+		echo_info
+	MESSAGE="${CUSTOM_DNS} from ${INPUT_DNSBACKUP_DATE} Selected"
+		echo_info
+	
 	intent_validate
+
+	MESSAGE="Making Time Warp Calculations"
+	echo_info
 
 	MESSAGE="Stopping Pi-hole Services"
 	echo_stat
@@ -630,11 +663,11 @@ function restore_gs {
 
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
-		if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${CUSTOM_DNS}.backup ]
+		if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ]
 		then
 			MESSAGE="Restoring ${CUSTOM_DNS} on $HOSTNAME"
 			echo_stat
-				sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${CUSTOM_DNS}.backup ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+				sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
 				error_validate
 				
 			MESSAGE="Validating Ownership on ${CUSTOM_DNS}"
@@ -716,6 +749,9 @@ function restore_gs {
 ## Core Logging
 ### Write Logs Out
 function logs_export {
+	
+	if [ "${TASKTYPE}" != "BACKUP" ]
+	then
 	MESSAGE="Saving File Hashes"
 	echo_stat
 		rm -f ${LOG_PATH}/${HISTORY_MD5}
@@ -724,6 +760,7 @@ function logs_export {
 		echo -e ${primaryCLMD5} >> ${LOG_PATH}/${HISTORY_MD5}
 		echo -e ${secondCLMD5} >> ${LOG_PATH}/${HISTORY_MD5}
 			error_validate
+	fi
 
 	MESSAGE="Logging Successful ${TASKTYPE}"
 	echo_stat
@@ -745,6 +782,8 @@ function logs_gs {
 		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PULL
 	echo -e "Recent Complete ${YELLOW}PUSH${NC} Executions"
 		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PUSH
+	echo -e "Recent Complete ${YELLOW}BACKUP${NC} Executions"
+		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep BACKUP
 	echo -e "Recent Complete ${YELLOW}RESTORE${NC} Executions"
 		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep RESTORE
 	echo -e "========================================================"
@@ -1334,13 +1373,48 @@ function config_generate {
 	echo_stat
 	cp $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}.example $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 	error_validate
+
+	MESSAGE="Environment Customization"
+	echo_info
+
+	MESSAGE="Enter a custom SSH port if required (Leave blank for default '22')"
+	echo_need
+	read INPUT_SSH_PORT
+	INPUT_SSH_PORT="${INPUT_SSH_PORT:-22}"
+
+	if [ "${INPUT_SSH_PORT}" != "22" ]
+	then
+		MESSAGE="Saving Custom SSH Port to ${CONFIG_FILE}"
+		echo_stat
+		sed -i "/# SSH_PORT=''/c\SSH_PORT='${INPUT_SSH_PORT}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+		error_validate
+	fi
+
+	MESSAGE="Perform PING tests between Pi-holes? (Leave blank for default 'Yes')"
+	echo_need
+	read INPUT_PING_AVOID
+	INPUT_PING_AVOID="${INPUT_PING_AVOID:-Y}"
+
+	if [ "${INPUT_PING_AVOID}" != "Y" ]
+	then
+		MESSAGE="Saving Ping Avoidance to ${CONFIG_FILE}"
+		echo_stat
+		sed -i "/# PING_AVOID=''/c\PING_AVOID='1'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+		error_validate
+		PING_AVOID=1
+	fi
 	
+	MESSAGE="Standard Settings"
+	echo_info
+
 	MESSAGE="IP or DNS of Primary Pi-hole"
 	echo_need
 	read INPUT_REMOTE_HOST
 
 	if [ "${PING_AVOID}" != "1" ]
 	then
+		
+		
 		MESSAGE="Testing Network Connection (PING)"
 		echo_stat
 		ping -c 3 ${INPUT_REMOTE_HOST} >/dev/null 2>&1
@@ -1781,6 +1855,7 @@ function task_backup {
 	backup_local_custom
 	backup_cleanup
 	
+	logs_export
 	exit_withchange
 }
 
