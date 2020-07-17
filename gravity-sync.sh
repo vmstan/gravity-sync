@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='1.8.3'
+VERSION='2.1.7'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -24,12 +24,17 @@ BACKUP_FOLD='backup' 				# must exist as subdirectory in LOCAL_FOLDR
 LOG_PATH="$HOME/${LOCAL_FOLDR}"		# replace in gravity-sync.conf to overwrite
 SYNCING_LOG='gravity-sync.log' 		# replace in gravity-sync.conf to overwrite
 CRONJOB_LOG='gravity-sync.cron' 	# replace in gravity-sync.conf to overwrite
+HISTORY_MD5='gravity-sync.md5'		# replace in gravity-sync.conf to overwrite
 
 # Interaction Customization
 VERIFY_PASS='0'						# replace in gravity-sync.conf to overwrite
 SKIP_CUSTOM='0'						# replace in gravity-sync.conf to overwrite
 DATE_OUTPUT='0'						# replace in gravity-sync.conf to overwrite
 PING_AVOID='0'						# replace in gravity-sync.conf to overwrite
+ROOT_CHECK_AVOID='0'				# replace in gravity-sync.conf to overwrite
+
+# Backup Customization
+BACKUP_RETAIN='7'					# replace in gravity-sync.conf to overwrite
 
 # Pi-hole Folder/File Locations
 PIHOLE_DIR='/etc/pihole' 			# default Pi-hole data directory
@@ -81,10 +86,10 @@ function import_gs {
 	    source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 			error_validate
 			
-		MESSAGE="Targeting ${REMOTE_USER}@${REMOTE_HOST}"
-		echo_info
+		# MESSAGE="Targeting ${REMOTE_USER}@${REMOTE_HOST}"
+		# echo_info
 
-		detect_ssh
+		# detect_ssh
 	else
 		echo_fail
 		
@@ -96,6 +101,13 @@ function import_gs {
 	fi
 }
 
+function show_target {
+	MESSAGE="Targeting ${REMOTE_USER}@${REMOTE_HOST}"
+	echo_info
+
+	detect_ssh
+}
+
 # GS Update Functions
 ## Master Branch
 function update_gs {
@@ -104,6 +116,9 @@ function update_gs {
 	if [ -f "$HOME/${LOCAL_FOLDR}/dev" ]
 	then
 		BRANCH='development'
+	elif [ -f "$HOME/${LOCAL_FOLDR}/beta" ]
+	then
+		BRANCH='beta'
 	else
 		BRANCH='master'
 	fi
@@ -135,19 +150,23 @@ function update_gs {
 }
 
 # Gravity Core Functions
-## Pull Function
-function pull_gs {
-	md5_compare
-	
-	MESSAGE="Backing Up ${GRAVITY_FI} on $HOSTNAME"
-	echo_stat
-		cp ${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.backup >/dev/null 2>&1
-		error_validate
+## Pull Gravity
+function pull_gs_grav {
+
+	backup_local_gravity
+	backup_remote_gravity
+
+	# MESSAGE="Backing Up ${GRAVITY_FI} on $HOSTNAME"
+	# echo_stat
+	#	cp ${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.backup >/dev/null 2>&1
+	#	error_validate
+
+
 	
 	MESSAGE="Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo_stat
 		RSYNC_REPATH="rsync"
-		RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}"
+		RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}.backup"
 		RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull"
 			create_rsynccmd
 		
@@ -158,7 +177,7 @@ function pull_gs {
 	
 	MESSAGE="Validating Settings of ${GRAVITY_FI}"
 	echo_stat
-		
+
 		GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk '{print $3 $4}')
 		if [ "$GRAVDB_OWN" != "piholepihole" ]
 		then
@@ -196,23 +215,30 @@ function pull_gs {
 		fi
 
 	echo_good
+}
 
+## Pull Custom
+function pull_gs_cust {
+
+	backup_local_custom
+	backup_remote_custom
+	
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
 		if [ "$REMOTE_CUSTOM_DNS" == "1" ]
 		then
-			if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
-			then
-			MESSAGE="Backing Up ${CUSTOM_DNS} on $HOSTNAME"
-			echo_stat
-				cp ${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.backup >/dev/null 2>&1
-				error_validate
-			fi
+			# if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
+			# then
+			# MESSAGE="Backing Up ${CUSTOM_DNS} on $HOSTNAME"
+			# echo_stat
+			# 	cp ${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.backup >/dev/null 2>&1
+			# 	error_validate
+			# fi
 			
 			MESSAGE="Pulling ${CUSTOM_DNS} from ${REMOTE_HOST}"
 			echo_stat
 				RSYNC_REPATH="rsync"
-				RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS}"
+				RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS}.backup"
 				RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull"
 					create_rsynccmd
 				
@@ -263,7 +289,10 @@ function pull_gs {
 			echo_good
 		fi
 	fi
+}
 
+## Pull Reload
+function pull_gs_reload {
 	MESSAGE="Isolating Regeneration Pathways"
 	echo_info
 		sleep 1	
@@ -277,28 +306,39 @@ function pull_gs {
 	echo_stat
 		${PIHOLE_BIN} restartdns >/dev/null 2>&1
 		error_validate
+}
+
+## Pull Function
+function pull_gs {
+	previous_md5
+	md5_compare
+	
+	backup_settime
+	pull_gs_grav
+	pull_gs_cust
+	pull_gs_reload
+	md5_recheck
 	
 	logs_export
 	exit_withchange
 }
 
-## Push Function
-function push_gs {
-	md5_compare
+## Push Gravity
+function push_gs_grav {
+	backup_remote_gravity
+	backup_local_gravity
 	
-	intent_validate
-
-	MESSAGE="Backing Up ${GRAVITY_FI} from ${REMOTE_HOST}"
+	MESSAGE="Copying ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo_stat
 		RSYNC_REPATH="rsync"
-		RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}"
+		RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}.backup"
 		RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push"
 			create_rsynccmd
 
 	MESSAGE="Pushing ${GRAVITY_FI} to ${REMOTE_HOST}"
 	echo_stat
 		RSYNC_REPATH="sudo rsync"
-		RSYNC_SOURCE="${PIHOLE_DIR}/${GRAVITY_FI}"
+		RSYNC_SOURCE="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${GRAVITY_FI}.backup"
 		RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}"
 			create_rsynccmd
 
@@ -313,22 +353,28 @@ function push_gs {
 		CMD_TIMEOUT='15'
 		CMD_REQUESTED="sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}"
 			create_sshcmd
+}
+
+## Push Custom
+function push_gs_cust {
+	backup_remote_custom
+	backup_local_custom
 
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
 		if [ "$REMOTE_CUSTOM_DNS" == "1" ]
 		then
-			MESSAGE="Backing Up ${CUSTOM_DNS} from ${REMOTE_HOST}"
+			MESSAGE="Copying ${CUSTOM_DNS} from ${REMOTE_HOST}"
 			echo_stat
 				RSYNC_REPATH="rsync"
-				RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS}"
+				RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS}.backup"
 				RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.push"
 					create_rsynccmd
 
 			MESSAGE="Pushing ${CUSTOM_DNS} to ${REMOTE_HOST}"
 			echo_stat
 				RSYNC_REPATH="sudo rsync"
-				RSYNC_SOURCE="${PIHOLE_DIR}/${CUSTOM_DNS}"
+				RSYNC_SOURCE="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CUSTOM_DNS}.backup"
 				RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS}"
 					create_rsynccmd
 
@@ -345,37 +391,244 @@ function push_gs {
 					create_sshcmd	
 		fi	
 	fi
+}
 
+## Push Reload
+function push_gs_reload {
 	MESSAGE="Inverting Tachyon Pulses"
 	echo_info
 		sleep 1	
 
-	MESSAGE="Updating FTLDNS Configuration"
+	MESSAGE="Updating Remote FTLDNS Configuration"
 	echo_stat
 		CMD_TIMEOUT='15'
 		CMD_REQUESTED="${PIHOLE_BIN} restartdns reloadlists"
 			create_sshcmd
 	
-	MESSAGE="Reloading FTLDNS Services"
+	MESSAGE="Reloading Remote FTLDNS Services"
 	echo_stat
 		CMD_TIMEOUT='15'
 		CMD_REQUESTED="${PIHOLE_BIN} restartdns"
 			create_sshcmd
+}
+
+## Push Function
+function push_gs {
+	previous_md5
+	md5_compare
+	backup_settime
+	
+	intent_validate
+
+	push_gs_grav
+	push_gs_cust
+	push_gs_reload
+
+	md5_recheck
+	logs_export
+	exit_withchange
+}
+
+function previous_md5 {
+	if [ -f "${LOG_PATH}/${HISTORY_MD5}" ]
+	then
+		last_primaryDBMD5=$(sed "1q;d" ${LOG_PATH}/${HISTORY_MD5})
+		last_secondDBMD5=$(sed "2q;d" ${LOG_PATH}/${HISTORY_MD5})
+		last_primaryCLMD5=$(sed "3q;d" ${LOG_PATH}/${HISTORY_MD5})
+		last_secondCLMD5=$(sed "4q;d" ${LOG_PATH}/${HISTORY_MD5})
+	else
+		last_primaryDBMD5="0"
+		last_secondDBMD5="0"
+		last_primaryCLMD5="0"
+		last_secondCLMD5="0"
+	fi
+}
+
+## Smart Sync Function
+function smart_gs {
+	previous_md5
+	md5_compare
+	backup_settime
+
+	PRIDBCHANGE="0"
+	SECDBCHANGE="0"
+	PRICLCHANGE="0"
+	SECCLCHANGE="0"
+	
+	if [ "${primaryDBMD5}" != "${last_primaryDBMD5}" ]
+	then
+		PRIDBCHANGE="1"
+	fi
+	
+	if [ "${secondDBMD5}" != "${last_secondDBMD5}" ]
+	then
+		SECDBCHANGE="1"
+	fi
+
+	if [ "${PRIDBCHANGE}" == "${SECDBCHANGE}" ]
+	then
+		if [ "${PRIDBCHANGE}" != "0" ]
+		then
+			MESSAGE="Both ${GRAVITY_FI} Changed"
+			echo_warn
+
+			PRIDBDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${PIHOLE_DIR}/${GRAVITY_FI}")
+			SECDBDATE=$(stat -c %Y ${PIHOLE_DIR}/${GRAVITY_FI})
+
+				if [ "${PRIDBDATE}" -gt "$SECDBDATE" ]
+				then
+					MESSAGE="Primary ${GRAVITY_FI} Last Changed"
+					echo_info
+
+					pull_gs_grav
+					PULLRESTART="1"
+				else
+					MESSAGE="Secondary ${GRAVITY_FI} Last Changed"
+					echo_info
+
+					push_gs_grav
+					PUSHRESTART="1"
+				fi
+		fi
+	else
+		if [ "${PRIDBCHANGE}" != "0" ]
+		then
+			pull_gs_grav
+			PULLRESTART="1"
+		elif [ "${SECDBCHANGE}" != "0" ]
+		then
+			push_gs_grav
+			PUSHRESTART="1"
+		fi
+	fi
+
+	if [ "${primaryCLMD5}" != "${last_primaryCLMD5}" ]
+	then
+		PRICLCHANGE="1"
+	fi
+	
+	if [ "${secondCLMD5}" != "${last_secondCLMD5}" ]
+	then
+		SECCLCHANGE="1"
+	fi
+
+	if [ "${PRICLCHANGE}" == "${SECCLCHANGE}" ]
+	then
+		if [ "${PRICLCHANGE}" != "0" ]
+		then
+			MESSAGE="Both ${CUSTOM_DNS} Changed"
+			echo_warn
+
+			PRICLDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${PIHOLE_DIR}/${CUSTOM_DNS}")
+			SECCLDATE=$(stat -c %Y ${PIHOLE_DIR}/${CUSTOM_DNS})
+
+				if [ "${PRICLDATE}" -gt "$SECCLDATE" ]
+				then
+					MESSAGE="Primary ${CUSTOM_DNS} Last Changed"
+					echo_info
+
+					pull_gs_cust
+					PULLRESTART="1"
+				else
+					MESSAGE="Secondary ${CUSTOM_DNS} Last Changed"
+					echo_info
+
+					push_gs_cust
+					PUSHRESTART="1"
+				fi
+		fi
+	else
+		if [ "${PRICLCHANGE}" != "0" ]
+		then
+			pull_gs_cust
+			PULLRESTART="1"
+		elif [ "${SECCLCHANGE}" != "0" ]
+		then
+			push_gs_cust
+			PUSHRESTART="1"
+		fi
+	fi
+
+	if [ "$PULLRESTART" == "1" ]
+	then
+		pull_gs_reload
+	fi
+
+	if [ "$PUSHRESTART" == "1" ]
+	then
+		push_gs_reload
+	fi
+
+	md5_recheck
 
 	logs_export
 	exit_withchange
-
 }
 
 function restore_gs {
-	MESSAGE="This will restore ${GRAVITY_FI} on $HOSTNAME with the previous version!"
+	MESSAGE="This will restore your settings on $HOSTNAME with a previous version!"
 	echo_warn
 
+	MESSAGE="PREVIOUS BACKUPS AVAILABLE FOR RESTORATION"
+	echo_info
+	ls $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${GRAVITY_FI} | colrm 18
+
+	MESSAGE="Select backup date to restore ${GRAVITY_FI} from"
+	echo_need
+	read INPUT_BACKUP_DATE
+
+	if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${GRAVITY_FI}.backup ]
+	then
+		MESSAGE="Backup File Selected"
+	else
+		MESSAGE="Invalid Request"
+		echo_info
+
+		exit_nochange
+	fi
+
+	if [ "$SKIP_CUSTOM" != '1' ]
+	then
+
+		if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
+		then
+			ls $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${CUSTOM_DNS} | colrm 18
+
+			MESSAGE="Select backup date to restore ${CUSTOM_DNS} from"
+			echo_need
+			read INPUT_DNSBACKUP_DATE
+
+			if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ]
+			then
+				MESSAGE="Backup File Selected"
+			else
+				MESSAGE="Invalid Request"
+				echo_info
+
+				exit_nochange
+			fi
+		fi
+	fi
+
+	MESSAGE="${GRAVITY_FI} from ${INPUT_BACKUP_DATE} Selected"
+		echo_info
+	MESSAGE="${CUSTOM_DNS} from ${INPUT_DNSBACKUP_DATE} Selected"
+		echo_info
+	
 	intent_validate
+
+	MESSAGE="Making Time Warp Calculations"
+	echo_info
+
+	MESSAGE="Stopping Pi-hole Services"
+	echo_stat
+
+	sudo service pihole-FTL stop >/dev/null 2>&1
+		error_validate
 
 	MESSAGE="Restoring ${GRAVITY_FI} on $HOSTNAME"
 	echo_stat	
-		sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.backup ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+		sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${GRAVITY_FI}.backup ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 		error_validate
 	
 	MESSAGE="Validating Ownership on ${GRAVITY_FI}"
@@ -418,11 +671,11 @@ function restore_gs {
 
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
-		if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.backup ]
+		if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ]
 		then
 			MESSAGE="Restoring ${CUSTOM_DNS} on $HOSTNAME"
 			echo_stat
-				sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.backup ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+				sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
 				error_validate
 				
 			MESSAGE="Validating Ownership on ${CUSTOM_DNS}"
@@ -468,25 +721,55 @@ function restore_gs {
 	MESSAGE="Evacuating Saucer Section"
 	echo_info
 		sleep 1	
+
+	MESSAGE="Restarting FTLDNS Services"
+	echo_stat
+		sudo service pihole-FTL start >/dev/null 2>&1
+		error_validate
 	
 	MESSAGE="Updating FTLDNS Configuration"
 	echo_stat
 		${PIHOLE_BIN} restartdns reloadlists >/dev/null 2>&1
 		error_validate
 	
-	MESSAGE="Reloading FTLDNS Services"
-	echo_stat
-		${PIHOLE_BIN} restartdns >/dev/null 2>&1
-		error_validate
-	
-	logs_export
-	exit_withchange
+
+	MESSAGE="Do you want to push the restored configuration to the primary Pi-hole? (yes/no)"
+	echo_need
+	read PUSH_TO_PRIMARY
+
+	if [ "${PUSH_TO_PRIMARY}" == "Yes" ] || [ "${PUSH_TO_PRIMARY}" == "yes" ] || [ "${PUSH_TO_PRIMARY}" == "Y" ] || [ "${PUSH_TO_PRIMARY}" == "y" ]
+	then
+		push_gs
+	elif [ "${PUSH_TO_PRIMARY}" == "No" ] || [ "${PUSH_TO_PRIMARY}" == "no" ] || [ "${PUSH_TO_PRIMARY}" == "N" ] || [ "${PUSH_TO_PRIMARY}" == "n" ]
+	then
+		logs_export
+		exit_withchange
+	else
+		MESSAGE="Invalid Selection - Defaulting No"
+		echo_warn
+
+		logs_export
+		exit_withchange
+	fi
 }
 
 # Logging Functions
 ## Core Logging
 ### Write Logs Out
 function logs_export {
+	
+	if [ "${TASKTYPE}" != "BACKUP" ]
+	then
+	MESSAGE="Saving File Hashes"
+	echo_stat
+		rm -f ${LOG_PATH}/${HISTORY_MD5}
+		echo -e ${primaryDBMD5} >> ${LOG_PATH}/${HISTORY_MD5}
+		echo -e ${secondDBMD5} >> ${LOG_PATH}/${HISTORY_MD5}
+		echo -e ${primaryCLMD5} >> ${LOG_PATH}/${HISTORY_MD5}
+		echo -e ${secondCLMD5} >> ${LOG_PATH}/${HISTORY_MD5}
+			error_validate
+	fi
+
 	MESSAGE="Logging Successful ${TASKTYPE}"
 	echo_stat
 		echo -e $(date) "[${TASKTYPE}]" >> ${LOG_PATH}/${SYNCING_LOG}
@@ -495,16 +778,20 @@ function logs_export {
 
 ### Output Sync Logs
 function logs_gs {
-	import_gs
+	# import_gs
 
 	MESSAGE="Tailing ${LOG_PATH}/${SYNCING_LOG}"
 	echo_info
 
 	echo -e "========================================================"
+	echo -e "Recent Complete ${YELLOW}SMART${NC} Executions"
+		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep SMART
 	echo -e "Recent Complete ${YELLOW}PULL${NC} Executions"
 		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PULL
 	echo -e "Recent Complete ${YELLOW}PUSH${NC} Executions"
 		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PUSH
+	echo -e "Recent Complete ${YELLOW}BACKUP${NC} Executions"
+		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep BACKUP
 	echo -e "Recent Complete ${YELLOW}RESTORE${NC} Executions"
 		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep RESTORE
 	echo -e "========================================================"
@@ -515,7 +802,7 @@ function logs_gs {
 ## Crontab Logs
 ### Core Crontab Logs
 function show_crontab {
-	import_gs
+	# import_gs
 	
 	MESSAGE="Replaying Last Cronjob"
 	echo_stat
@@ -844,6 +1131,35 @@ function detect_ssh {
 	fi
 }
 
+function detect_remotersync {
+	MESSAGE="Creating Test File on ${REMOTE_HOST}"
+	echo_stat
+
+		CMD_TIMEOUT='15'
+		CMD_REQUESTED="touch ~/gs.test"
+			create_sshcmd
+
+	MESSAGE="If pull test fails insure RSYNC is installed on ${REMOTE_HOST}"
+	echo_warn
+
+	MESSAGE="Pulling Test File to $HOSTNAME"
+	echo_stat
+
+		RSYNC_REPATH="rsync"
+		RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:~/gs.test"
+		RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/gs.test"
+			create_rsynccmd
+
+	MESSAGE="Cleaning Up Test Files"
+	echo_stat
+
+		rm $HOME/${LOCAL_FOLDR}/gs.test
+
+		CMD_TIMEOUT='15'
+		CMD_REQUESTED="rm ~/gs.test"
+			create_sshcmd
+}
+
 ## Error Validation
 function error_validate {
 	if [ "$?" != "0" ]
@@ -857,6 +1173,11 @@ function error_validate {
 
 ## Validate Sync Required
 function md5_compare {
+	# last_primaryDBMD5="0"
+	# last_secondDBMD5="0"
+	# last_primaryCLMD5="0"
+	# last_secondCLMD5="0"
+	
 	HASHMARK='0'
 
 	MESSAGE="Analyzing ${GRAVITY_FI} on ${REMOTE_HOST}"
@@ -869,7 +1190,7 @@ function md5_compare {
 	secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI} | sed 's/\s.*$//')
 		error_validate
 	
-	if [ "$primaryDBMD5" == "$secondDBMD5" ]
+	if [ "$primaryDBMD5" == "$last_primaryDBMD5" ] && [ "$secondDBMD5" == "$last_secondDBMD5" ]
 	then
 		HASHMARK=$((HASHMARK+0))
 	else
@@ -896,7 +1217,7 @@ function md5_compare {
 				secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//')
 					error_validate
 				
-				if [ "$primaryCLMD5" == "$secondCLMD5" ]
+				if [ "$primaryCLMD5" == "$last_primaryCLMD5" ] && [ "$secondCLMD5" == "$last_secondCLMD5" ]
 				then
 					# MESSAGE="${CUSTOM_DNS} Identical"
 					# echo_info
@@ -933,6 +1254,86 @@ function md5_compare {
 		echo_info
 			exit_nochange
 	fi
+}
+
+function md5_recheck {
+	MESSAGE="Performing Replicator Diagnostics"
+	echo_info
+	
+	HASHMARK='0'
+
+	MESSAGE="Reanalyzing ${GRAVITY_FI} on ${REMOTE_HOST}"
+	echo_stat
+	primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${GRAVITY_FI}" | sed 's/\s.*$//') 
+		error_validate
+	
+	MESSAGE="Reanalyzing ${GRAVITY_FI} on $HOSTNAME"
+	echo_stat
+	secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI} | sed 's/\s.*$//')
+		error_validate
+	
+	# if [ "$primaryDBMD5" == "$secondDBMD5" ]
+	# then
+	#	HASHMARK=$((HASHMARK+0))
+	# else
+	#	MESSAGE="Differenced ${GRAVITY_FI} Detected"
+	#	echo_warn
+	#	HASHMARK=$((HASHMARK+1))
+	# fi
+
+	if [ "$SKIP_CUSTOM" != '1' ]
+	then
+		if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
+		then
+			if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${PIHOLE_DIR}/${CUSTOM_DNS}
+			then
+				REMOTE_CUSTOM_DNS="1"
+				MESSAGE="Reanalyzing ${CUSTOM_DNS} on ${REMOTE_HOST}"
+				echo_stat
+
+				primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//'") 
+					error_validate
+				
+				MESSAGE="Reanalyzing ${CUSTOM_DNS} on $HOSTNAME"
+				echo_stat
+				secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//')
+					error_validate
+				
+				# if [ "$primaryCLMD5" == "$secondCLMD5" ]
+				# then
+					# MESSAGE="${CUSTOM_DNS} Identical"
+					# echo_info
+				#	HASHMARK=$((HASHMARK+0))
+				# else
+				#	MESSAGE="Differenced ${CUSTOM_DNS} Detected"
+				#	echo_warn
+				#	HASHMARK=$((HASHMARK+1))
+				# fi
+			else
+				MESSAGE="No ${CUSTOM_DNS} Detected on ${REMOTE_HOST}"
+				echo_info
+			fi
+		else
+			if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${PIHOLE_DIR}/${CUSTOM_DNS}
+			then
+				REMOTE_CUSTOM_DNS="1"
+				MESSAGE="${REMOTE_HOST} has ${CUSTOM_DNS}"
+			#	HASHMARK=$((HASHMARK+1))
+				echo_info
+			fi	
+			MESSAGE="No ${CUSTOM_DNS} Detected on $HOSTNAME"
+			echo_info
+		fi
+	fi
+
+	# if [ "$HASHMARK" != "0" ]
+	# then
+	#	MESSAGE="Replication Checks Failed"
+	#	echo_warn
+	# else
+	#	MESSAGE="Replication Was Successful"
+	#	echo_info
+	# fi
 }
 
 ## Validate Intent
@@ -980,13 +1381,48 @@ function config_generate {
 	echo_stat
 	cp $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}.example $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 	error_validate
+
+	MESSAGE="Environment Customization"
+	echo_info
+
+	MESSAGE="Enter a custom SSH port if required (Leave blank for default '22')"
+	echo_need
+	read INPUT_SSH_PORT
+	INPUT_SSH_PORT="${INPUT_SSH_PORT:-22}"
+
+	if [ "${INPUT_SSH_PORT}" != "22" ]
+	then
+		MESSAGE="Saving Custom SSH Port to ${CONFIG_FILE}"
+		echo_stat
+		sed -i "/# SSH_PORT=''/c\SSH_PORT='${INPUT_SSH_PORT}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+		error_validate
+	fi
+
+	MESSAGE="Perform PING tests between Pi-holes? (Leave blank for default 'Yes')"
+	echo_need
+	read INPUT_PING_AVOID
+	INPUT_PING_AVOID="${INPUT_PING_AVOID:-Y}"
+
+	if [ "${INPUT_PING_AVOID}" != "Y" ]
+	then
+		MESSAGE="Saving Ping Avoidance to ${CONFIG_FILE}"
+		echo_stat
+		sed -i "/# PING_AVOID=''/c\PING_AVOID='1'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+		error_validate
+		PING_AVOID=1
+	fi
 	
+	MESSAGE="Standard Settings"
+	echo_info
+
 	MESSAGE="IP or DNS of Primary Pi-hole"
 	echo_need
 	read INPUT_REMOTE_HOST
 
 	if [ "${PING_AVOID}" != "1" ]
 	then
+		
+		
 		MESSAGE="Testing Network Connection (PING)"
 		echo_stat
 		ping -c 3 ${INPUT_REMOTE_HOST} >/dev/null 2>&1
@@ -1055,6 +1491,10 @@ function config_generate {
 	echo_info
 
 	validate_os_sshpass
+
+	detect_remotersync
+
+	task_backup
 	
 	exit_withchange
 }
@@ -1111,9 +1551,10 @@ function list_gs_arguments {
 	echo -e " ${YELLOW}version${NC}	Display installed version of ${PROGRAM}"
 	echo -e ""
 	echo -e "Replication Options:"
-	echo -e " ${YELLOW}pull${NC}		Sync remote ${GRAVITY_FI} to this server"
-	echo -e " ${YELLOW}push${NC}		Force changes made on this server back"
-	echo -e " ${YELLOW}restore${NC}	Restore ${GRAVITY_FI} on this server"
+	echo -e " ${YELLOW}smart${NC}		Detect changes on each side and bring them together"
+	echo -e " ${YELLOW}pull${NC}		Force remote configuration changes to this server"
+	echo -e " ${YELLOW}push${NC}		Force local configuration made on this server back"
+	echo -e " ${YELLOW}restore${NC}	Restore the ${GRAVITY_FI} on this server"
 	echo -e " ${YELLOW}compare${NC}	Just check for differences"
 	echo -e ""
 	echo -e "Debug Options:"
@@ -1136,6 +1577,9 @@ function show_version {
 	if [ -f $HOME/${LOCAL_FOLDR}/dev ]
 	then
 		DEVVERSION="dev"
+	elif [ -f $HOME/${LOCAL_FOLDR}/beta ]
+	then 
+		DEVVERSION="beta"
 	else
 		DEVVERSION=""
 	fi
@@ -1150,13 +1594,21 @@ function show_version {
 	else
 		if [ "$GITVERSION" != "$VERSION" ]
 		then
-		MESSAGE="Upgrade Available: ${PURPLE}${GITVERSION}${NC}"
+		MESSAGE="Update Available: ${PURPLE}${GITVERSION}${NC}"
 		else
 		MESSAGE="Latest Version: ${GREEN}${GITVERSION}${NC}"
 		fi
 	fi
 	echo_info
 	echo -e "========================================================"
+}
+
+function dbclient_warning {
+	if hash dbclient 2>/dev/null
+	then
+		MESSAGE="Dropbear support has been deprecated - please convert to OpenSSH"
+		echo_warn
+	fi
 }
 
 # Task Stack
@@ -1166,7 +1618,7 @@ function task_automate {
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
 
-	import_gs
+	# import_gs
 
 	CRON_EXIST='0'
 	CRON_CHECK=$(crontab -l | grep -q "${GS_FILENAME}"  && echo '1' || echo '0')
@@ -1177,9 +1629,17 @@ function task_automate {
 		CRON_EXIST='1'
 	fi
 	
-	MESSAGE="Sync Frequency in Minutes (1-30) or 0 to Disable"
-	echo_need
-	read INPUT_AUTO_FREQ
+	MESSAGE="Configuring Hourly Smart Sync"
+	echo_info
+
+	if [[ $1 =~ ^[0-9][0-9]?$ ]]
+	then
+		INPUT_AUTO_FREQ=$1
+	else
+		MESSAGE="Sync Frequency in Minutes (1-30) or 0 to Disable"
+		echo_need
+		read INPUT_AUTO_FREQ
+	fi
 
 	if [ $INPUT_AUTO_FREQ -gt 30 ]
 	then
@@ -1192,12 +1652,11 @@ function task_automate {
 		then
 			clear_cron
 
-			MESSAGE="Automation Disabled"
-			echo_info
+			MESSAGE="Sync Automation Disabled"
+			echo_warn
 		else
-			MESSAGE="No Automation Scheduled"
-			echo_info
-			exit_nochange
+			MESSAGE="No Sync Automation Scheduled"
+			echo_warn
 		fi
 	else
 		if [ $CRON_EXIST == 1 ]
@@ -1205,11 +1664,40 @@ function task_automate {
 			clear_cron
 		fi
 
-		MESSAGE="Saving New Automation"
+		MESSAGE="Saving New Sync Automation"
 		echo_stat
-		(crontab -l 2>/dev/null; echo "*/${INPUT_AUTO_FREQ} * * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/${GS_FILENAME} pull > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
+		(crontab -l 2>/dev/null; echo "*/${INPUT_AUTO_FREQ} * * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/${GS_FILENAME} smart > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
 			error_validate
 	fi
+
+	MESSAGE="Configuring Daily Backup Frequency"
+	echo_info
+
+	if [[ $2 =~ ^[0-9][0-9]?$ ]]
+	then
+		INPUT_AUTO_BACKUP=$2
+	else
+		MESSAGE="Hour of Day to Backup (1-24) or 0 to Disable"
+		echo_need
+		read INPUT_AUTO_BACKUP
+	fi
+
+	if [ $INPUT_AUTO_BACKUP -gt 24 ]
+	then
+		MESSAGE="Invalid Frequency Range"
+		echo_fail
+		exit_nochange
+	elif [ $INPUT_AUTO_BACKUP -lt 1 ]
+	then
+		MESSAGE="No Backup Automation Scheduled"
+		echo_warn
+	else
+		MESSAGE="Saving New Backup Automation"
+		echo_stat
+		(crontab -l 2>/dev/null; echo "0 ${INPUT_AUTO_BACKUP} * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/${GS_FILENAME} backup >/dev/null 2>&1") | crontab -
+			error_validate
+	fi
+
 	exit_withchange
 }	
 
@@ -1219,7 +1707,7 @@ function clear_cron {
 	echo_stat
 
 	crontab -l > cronjob-old.tmp
-	sed '/.sh pull/d' cronjob-old.tmp > cronjob-new.tmp
+	sed "/${GS_FILENAME}/d" cronjob-old.tmp > cronjob-new.tmp
 	crontab cronjob-new.tmp 2>/dev/null
 		error_validate
 	rm cronjob-old.tmp
@@ -1255,10 +1743,57 @@ function task_devmode {
 		echo_stat
 		rm -f $HOME/${LOCAL_FOLDR}/dev
 			error_validate
+	elif [ -f $HOME/${LOCAL_FOLDR}/beta ]
+	then
+		MESSAGE="Disabling BETA"
+		echo_stat
+		rm -f $HOME/${LOCAL_FOLDR}/beta
+			error_validate
+		
+		MESSAGE="Enabling ${TASKTYPE}"
+		echo_stat
+		touch $HOME/${LOCAL_FOLDR}/dev
+			error_validate
 	else
 		MESSAGE="Enabling ${TASKTYPE}"
 		echo_stat
 		touch $HOME/${LOCAL_FOLDR}/dev
+			error_validate
+	fi
+	
+	MESSAGE="Run UPDATE to apply changes"
+	echo_info
+	
+	exit_withchange
+}
+
+## Devmode Task
+function task_betamode {
+	TASKTYPE='BETA'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+	
+	if [ -f $HOME/${LOCAL_FOLDR}/beta ]
+	then
+		MESSAGE="Disabling ${TASKTYPE}"
+		echo_stat
+		rm -f $HOME/${LOCAL_FOLDR}/beta
+			error_validate
+	elif [ -f $HOME/${LOCAL_FOLDR}/dev ]
+	then
+		MESSAGE="Disabling DEV"
+		echo_stat
+		rm -f $HOME/${LOCAL_FOLDR}/dev
+			error_validate
+		
+		MESSAGE="Enabling ${TASKTYPE}"
+		echo_stat
+		touch $HOME/${LOCAL_FOLDR}/beta
+			error_validate
+	else
+		MESSAGE="Enabling ${TASKTYPE}"
+		echo_stat
+		touch $HOME/${LOCAL_FOLDR}/beta
 			error_validate
 	fi
 	
@@ -1273,6 +1808,8 @@ function task_update {
 	TASKTYPE='UPDATE'
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
+
+	dbclient_warning
 	
 	update_gs
 }
@@ -1301,12 +1838,14 @@ function task_compare {
 	TASKTYPE='COMPARE'
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
-	
-	import_gs
+
+	# import_gs
+	show_target
 	validate_gs_folders
 	validate_ph_folders
 	validate_os_sshpass
-		
+	
+	previous_md5
 	md5_compare
 }
 
@@ -1322,6 +1861,79 @@ function task_cron {
 function task_invalid {
 	echo_fail
 	list_gs_arguments
+}
+
+## Backup Task
+function task_backup {
+	TASKTYPE='BACKUP'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+
+	backup_settime
+	backup_local_gravity
+	backup_local_custom
+	backup_cleanup
+	
+	logs_export
+	exit_withchange
+}
+
+function backup_settime {
+	BACKUPTIMESTAMP=$(date +%F-%H%M%S)
+}
+
+function backup_local_gravity {
+	MESSAGE="Performing Backup of Local ${GRAVITY_FI}"
+	echo_stat
+	
+	sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} ".backup '$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${GRAVITY_FI}.backup'"
+		error_validate
+}
+
+function backup_local_custom {
+	if [ "$SKIP_CUSTOM" != '1' ]
+	then	
+		if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
+		then
+			MESSAGE="Performing Backup Up Local ${CUSTOM_DNS}"
+			echo_stat
+
+			cp ${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CUSTOM_DNS}.backup
+			error_validate
+		fi
+	fi
+}
+
+function backup_remote_gravity {
+	MESSAGE="Performing Backup of Remote ${GRAVITY_FI}"
+	echo_stat
+	
+	CMD_TIMEOUT='15'
+	CMD_REQUESTED="sudo sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} \".backup '${PIHOLE_DIR}/${GRAVITY_FI}.backup'\""
+		create_sshcmd
+}
+
+function backup_remote_custom {
+	if [ "$SKIP_CUSTOM" != '1' ]
+	then	
+		if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
+		then
+			MESSAGE="Performing Backup of Remote ${CUSTOM_DNS}"
+			echo_stat
+	
+			CMD_TIMEOUT='15'
+			CMD_REQUESTED="sudo cp ${PIHOLE_DIR}/${CUSTOM_DNS} ${PIHOLE_DIR}/${CUSTOM_DNS}.backup"
+				create_sshcmd
+		fi
+	fi
+}
+
+function backup_cleanup {
+	MESSAGE="Cleaning Up Old Backups"
+	echo_stat
+
+	find $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/$(date +%Y)*.backup -mtime +${BACKUP_RETAIN} -type f -delete 
+		error_validate
 }
 
 # Echo Stack
@@ -1375,25 +1987,72 @@ function root_check {
 	MESSAGE="${PROGRAM} ${VERSION} Executing"
 	echo_info
 	
+	import_gs
+
 	MESSAGE="Evaluating Arguments"
 	echo_stat
 
-	root_check
+	if [ "${ROOT_CHECK_AVOID}" != "1" ]
+	then
+		root_check
+	fi
 
 case $# in
 	
 	0)
-		task_invalid
+		TASKTYPE='SMART'
+		MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+		echo_good
+
+		# import_gs
+		show_target
+		validate_gs_folders
+		validate_ph_folders
+		validate_os_sshpass
+
+		smart_gs
+		exit
 	;;
 	
 	1)
    		case $1 in
+		   sync)
+				TASKTYPE='SMART'
+				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+				echo_good
+
+				# import_gs
+				show_target
+				validate_gs_folders
+				validate_ph_folders
+				validate_os_sshpass
+
+				smart_gs
+				exit
+ 			;;
+
+			smart)
+				TASKTYPE='SMART'
+				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+				echo_good
+
+				# import_gs
+				show_target
+				validate_gs_folders
+				validate_ph_folders
+				validate_os_sshpass
+
+				smart_gs
+				exit
+ 			;;
+
    	 		pull)
 				TASKTYPE='PULL'
 				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
-				
-				import_gs
+
+				# import_gs
+				show_target
 				validate_gs_folders
 				validate_ph_folders
 				validate_os_sshpass
@@ -1406,8 +2065,9 @@ case $# in
 				TASKTYPE='PUSH'
 				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
-				
-				import_gs
+
+				# import_gs
+				show_target
 				validate_gs_folders
 				validate_ph_folders
 				validate_os_sshpass
@@ -1421,7 +2081,8 @@ case $# in
 				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
 
-				import_gs
+				# import_gs
+				show_target
 				validate_gs_folders
 				validate_ph_folders
 
@@ -1443,6 +2104,10 @@ case $# in
 			
 			dev)
 				task_devmode
+			;;
+
+			beta)
+				task_betamode
 			;;
 
 			devmode)
@@ -1481,9 +2146,31 @@ case $# in
 				task_automate
 			;;	
 
+			backup)
+				task_backup
+			;;
+
 			*)
 				task_invalid
 			;;
+		esac
+	;;
+
+	2)
+   		case $1 in
+			automate)
+				task_automate
+			;;	
+
+		esac
+	;;
+
+	3)
+   		case $1 in
+			automate)
+				task_automate $2 $3
+			;;	
+
 		esac
 	;;
 	

@@ -14,8 +14,8 @@ Download the latest release from [GitHub](https://github.com/vmstan/gravity-sync
 
 ```bash
 cd ~
-wget https://github.com/vmstan/gravity-sync/archive/v1.8.3.zip
-unzip v1.8.3.zip -d gravity-sync
+wget https://github.com/vmstan/gravity-sync/archive/v2.1.7.zip
+unzip v2.1.7.zip -d gravity-sync
 cd gravity-sync
 ```
 
@@ -76,6 +76,39 @@ Gravity Sync will validate that the `sshpass` utility is installed on your syste
 
 Save. Keep calm, carry on.
 
+### The Pull Function
+The Gravity Sync Pull, prior to version 2.0, was the standard method of sync operation, and will not prompt for user input after execution. 
+
+```bash
+./gravity-sync.sh pull
+```
+
+If the execution completes, you will now have overwritten your running `gravity.db` and `custom.list` on the secondary Pi-hole after creating a copy of the running files (with `.backup` appended) in the `backup` subfolder located with your script. Gravity Sync will also keep a copy of the last sync'd files from the primary (in the `backup` folder appended with `.pull`) for future use. 
+
+### The Push Function
+Gravity Sync includes the ability to `push` from the secondary Pi-hole back to the primary. This would be useful in a situation where your primary Pi-hole is down for an extended period of time, and you have made list changes on the secondary Pi-hole that you want to force back to the primary, when it comes online.
+
+```bash
+./gravity-sync.sh push
+```
+
+Before executing, this will make a copy of the remote database under `backup/gravity.db.push` and `backup/custom.list.push` then sync the local configuration to the primary Pi-hole.
+
+This function purposefuly asks for user interaction to avoid being accidentally automated.
+
+- If your script prompts for a password on the remote system, make sure that your remote user account is setup not to require passwords in the sudoers file.
+
+### The Restore Function
+Gravity Sync can also `restore` the database on the secondary Pi-hole in the event you've overwritten it accidentally. This might happen in the above scenario where you've had your primary Pi-hole down for an extended period, made changes to the secondary, but perhaps didn't get a chance to perform a `push` of the changes back to the primary, before your automated sync ran.
+
+```bash
+./gravity-sync.sh restore
+```
+
+This will copy your last `gravity.db.backup` and  `custom.list.backup` to the running copy on the secondary Pi-hole.
+
+This function purposefuly asks for user interaction to avoid being accidentally automated.
+
 ### Hidden Figures
 There are a series of advanced configuration options that you may need to change to better adapt Gravity Sync to your environment. They are referenced at the end of the `gravity-sync.conf` file. It is suggested that you make any necessary variable changes to this file, as they will superceed the ones located in the core script. If you want to revert back to the Gravity Sync default for any of these settings, just apply a `#` to the beginning of the line to comment it out.
 
@@ -97,7 +130,7 @@ Gravity Sync will place logs in the same folder as the script (identified as .cr
 Default setting in Gravity Sync is `$HOME/${LOCAL_FOLDR}`
 
 #### `SYNCING_LOG=''`
-Gravity Sync will write a timestamp for any completed pull, push or restore job to this file. If you want to change the name of this file, you will also need to adjust the LOG_PATH variable above, otherwise your file will be remove during an `update` operations.
+Gravity Sync will write a timestamp for any completed sync, pull, push or restore job to this file. If you want to change the name of this file, you will also need to adjust the LOG_PATH variable above, otherwise your file will be remove during an `update` operations.
 
 Default setting in Gravity Sync is `gravity-sync.log`
 
@@ -107,6 +140,11 @@ Gravity Sync will log the execution history of the previous automation task via 
 This will have an impact to both the `./gravity-sync.sh automate` function and the `./gravity-sync.sh cron` functions. If you need to change this after running the automate function, either modify your crontab manually or delete the entry and re-run the automate function.
 
 Default setting in Gravity Sync is `gravity-sync.cron`
+
+#### `HISTORY_MD5=''`
+Gravity Sync will log the file hashes of the previous `smart` task to this file. If you want to change the name of this file, you will also need to adjust the LOG_PATH variable above, otherwise your file will be removed during an `update` operations.
+
+Default setting in Gravity Sync is `gravity-sync.md5`
 
 #### `VERIFY_PASS=''`
 Gravity Sync will prompt to verify user interactivity during push, restore, or config operations (that overwrite an existing configuration) with the intention that it prevents someone from accidentally automating in the wrong direction or overwriting data intentionally. If you'd like to automate a push function, or just don't like to be asked twice to do something distructive, then you can opt-out.
@@ -130,6 +168,16 @@ If you need to adjust the path to bash that is identified for automated executio
 The `./gravity-sync.sh config` function will attempt to ping the remote host to validate it has a valid network connection. If there is a firewall between your hosts preventing ping replies, or you otherwise wish to skip this step, it can by bypassed here.
 
 Default setting in Gravity Sync is 0, change to 1 to skip this network test.
+
+#### `ROOT_CHECK_AVOID=''`
+At execution, Gravity Sync will check that it's deployed with it's own user (not running as root), but for a container deployment this is not necessary.
+
+Default setting in Gravity Sync is 0, change to 1 to skip this root user test.
+
+#### `BACKUP_RETAIN=''`
+The `./gravity-sync.sh backup` function will retain a defined number of days worth of `gravity.db` and `custom.list` backups.
+
+Default setting in Gravity Sync is 7, adjust as resired.
 
 ## Execution
 If you are just straight up unable to run the `gravity-sync.sh` file, make sure it's marked as an executable by Linux.
@@ -173,5 +221,58 @@ If you prefer to still use cron but modify your settings by hand, using the entr
 
 ```bash
 crontab -e
-*/30 * * * * /bin/bash /home/USER/gravity-sync/gravity-sync.sh pull > /home/USER/gravity-sync/gravity-sync.cron
+*/15 * * * * /bin/bash /home/USER/gravity-sync/gravity-sync.sh > /home/USER/gravity-sync/gravity-sync.cron
+0 23 * * * /bin/bash /home/USER//gravity-sync/gravity-sync.sh backup >/dev/null 2>&1
 ```
+
+### Automating Automation
+
+To automate the deployment of automation option you can call it with 2 parameters:
+- First interval in minutes to run sync [0-30], 
+- Second the hour to run backup [0-24] 
+
+(0 will disable the cron entry)
+
+For example:
+`./gravity-sync.sh automate 15 23`
+
+Will configure automation of the sync function every 15 minutes and of a backup at 23:00.
+
+## Reference Architectures
+The designation of primary and secondary is purely at your discretion. The doesn't matter if you're using an HA process like keepalived to present a single DNS IP address to clients, or handing out two DNS resolvers via DHCP. Generally it is expected that the two (or more) Pi-hole(s) will be at the same phyiscal location, or at least on the same internal networks. It should also be possible to to replicate to a secondary Pi-hole across networks, either over a VPN or open-Internet, with the approprate firewall/NAT configuration.
+
+There are three reference architectures that I'll outline. All of them require an external DHCP server (such as a router, or dedicated DHCP server) handing out the DNS address(es) for your Pi-holes. Use of the integrated DHCP function in Pi-hole when using Gravity Sync is discouraged, although I'm sure there are ways to make it work. **Gravity Sync does not manage any DHCP settings.**
+
+### Easy Peasy
+![Easy Peasy](https://user-images.githubusercontent.com/3002053/87058413-ac378e80-c1cd-11ea-9f21-376170e69ff3.png)
+
+This design requires the least amount of overhead, or additional software/network configuration beyond Pi-hole and Gravity Sync.
+
+1. Client requests an IP address from a DHCP server on the network and receives it along with DNS and gateway information back. Two DNS servers (Pi-hole) are returned to the client.
+2. Client queries one of the two DNS servers, and Pi-hole does it's thing.
+
+You can make changes to your blocklist, exceptions, etc, on either Pi-hole and they will be sync'd to the other within the timeframe you establish (here, 15 minutes.) The downside in the above design is you have two places where your clients are logging lookup requests to. Gravity Sync will let you change filter settings in either location, but if you're doing it often things may get overwritten. 
+
+### Stay Alive
+![Stay Alive](https://user-images.githubusercontent.com/3002053/87058415-acd02500-c1cd-11ea-8884-6579a2d5eedc.png)
+
+One way to get around having logging in two places is by using keepalived and present a single virtual IP address of the two Pi-hole, to clients in an active/passive mode. The two nodes will check their own status, and each other, and hand the VIP around if there are issues.
+
+1. Client requests an IP address from a DHCP server on the network and receives it along with DNS and gateway information back. One DNS server (VIP) is returned to the client.
+2. The VIP managed by the keepalived service will determine which Pi-hole responds. You make your configuration changes to the active VIP address.
+3. Client queries the single DNS servers, and Pi-hole does it's thing.
+
+You make your configuration changes to the active VIP address and they will be sync'd to the other within the timeframe you establish (here, 15 minutes.)
+
+### Crazy Town
+![Crazy Town](https://user-images.githubusercontent.com/3002053/87058406-aa6dcb00-c1cd-11ea-8f64-59c529b00166.png)
+
+For those who really love Pi-hole and Gravity Sync. Combining the best of both worlds.  
+
+1. Client requests an IP address from a DHCP server on the network and receives it along with DNS and gateway information back. Two DNS servers (VIPs) are returned to the client.
+2. The VIPs are managed by the keepalived service on each side and will determine which of two Pi-hole responds. You can make your configuration changes to the active VIP address on either side.
+3. Client queries one of the two VIP servers, and the responding Pi-hole does it's thing.
+
+Here we use `./gravity-sync pull` on the secondary Pi-hole at each side, and off-set the update intervals from the main sync.
+
+(I call this crazy, but this is what I use at home.)
