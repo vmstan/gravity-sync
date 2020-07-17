@@ -1983,6 +1983,8 @@ function root_check {
 	MESSAGE="Evaluating Arguments"
 	echo_stat
 
+	import_gs
+
 	if [ "${ROOT_CHECK_AVOID}" != "1" ]
 	then
 		root_check
