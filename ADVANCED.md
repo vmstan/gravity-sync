@@ -14,8 +14,8 @@ Download the latest release from [GitHub](https://github.com/vmstan/gravity-sync
 
 ```bash
 cd ~
-wget https://github.com/vmstan/gravity-sync/archive/v2.1.5.zip
-unzip v2.1.5.zip -d gravity-sync
+wget https://github.com/vmstan/gravity-sync/archive/v2.1.7.zip
+unzip v2.1.7.zip -d gravity-sync
 cd gravity-sync
 ```
 
@@ -169,6 +169,11 @@ The `./gravity-sync.sh config` function will attempt to ping the remote host to 
 
 Default setting in Gravity Sync is 0, change to 1 to skip this network test.
 
+#### `ROOT_CHECK_AVOID=''`
+At execution, Gravity Sync will check that it's deployed with it's own user (not running as root), but for a container deployment this is not necessary.
+
+Default setting in Gravity Sync is 0, change to 1 to skip this root user test.
+
 #### `BACKUP_RETAIN=''`
 The `./gravity-sync.sh backup` function will retain a defined number of days worth of `gravity.db` and `custom.list` backups.
 
@@ -216,8 +221,22 @@ If you prefer to still use cron but modify your settings by hand, using the entr
 
 ```bash
 crontab -e
-*/30 * * * * /bin/bash /home/USER/gravity-sync/gravity-sync.sh > /home/USER/gravity-sync/gravity-sync.cron
+*/15 * * * * /bin/bash /home/USER/gravity-sync/gravity-sync.sh > /home/USER/gravity-sync/gravity-sync.cron
+0 23 * * * /bin/bash /home/USER//gravity-sync/gravity-sync.sh backup >/dev/null 2>&1
 ```
+
+### Automating Automation
+
+To automate the deployment of automation option you can call it with 2 parameters:
+- First interval in minutes to run sync [0-30], 
+- Second the hour to run backup [0-24] 
+
+(0 will disable the cron entry)
+
+For example:
+`./gravity-sync.sh automate 15 23`
+
+Will configure automation of the sync function every 15 minutes and of a backup at 23:00.
 
 ## Reference Architectures
 The designation of primary and secondary is purely at your discretion. The doesn't matter if you're using an HA process like keepalived to present a single DNS IP address to clients, or handing out two DNS resolvers via DHCP. Generally it is expected that the two (or more) Pi-hole(s) will be at the same phyiscal location, or at least on the same internal networks. It should also be possible to to replicate to a secondary Pi-hole across networks, either over a VPN or open-Internet, with the approprate firewall/NAT configuration.

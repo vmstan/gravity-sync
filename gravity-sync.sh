@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='2.1.5'
+VERSION='2.1.7'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -31,6 +31,7 @@ VERIFY_PASS='0'						# replace in gravity-sync.conf to overwrite
 SKIP_CUSTOM='0'						# replace in gravity-sync.conf to overwrite
 DATE_OUTPUT='0'						# replace in gravity-sync.conf to overwrite
 PING_AVOID='0'						# replace in gravity-sync.conf to overwrite
+ROOT_CHECK_AVOID='0'				# replace in gravity-sync.conf to overwrite
 
 # Backup Customization
 BACKUP_RETAIN='7'					# replace in gravity-sync.conf to overwrite
@@ -108,6 +109,9 @@ function update_gs {
 	if [ -f "$HOME/${LOCAL_FOLDR}/dev" ]
 	then
 		BRANCH='development'
+	elif [ -f "$HOME/${LOCAL_FOLDR}/beta" ]
+	then
+		BRANCH='beta'
 	else
 		BRANCH='master'
 	fi
@@ -299,12 +303,14 @@ function pull_gs_reload {
 
 ## Pull Function
 function pull_gs {
+	previous_md5
 	md5_compare
 	
 	backup_settime
 	pull_gs_grav
 	pull_gs_cust
 	pull_gs_reload
+	md5_recheck
 	
 	logs_export
 	exit_withchange
@@ -401,7 +407,9 @@ function push_gs_reload {
 
 ## Push Function
 function push_gs {
+	previous_md5
 	md5_compare
+	backup_settime
 	
 	intent_validate
 
@@ -409,15 +417,12 @@ function push_gs {
 	push_gs_cust
 	push_gs_reload
 
+	md5_recheck
 	logs_export
 	exit_withchange
 }
 
-## Smart Sync Function
-function smart_gs {
-	md5_compare
-	backup_settime
-
+function previous_md5 {
 	if [ -f "${LOG_PATH}/${HISTORY_MD5}" ]
 	then
 		last_primaryDBMD5=$(sed "1q;d" ${LOG_PATH}/${HISTORY_MD5})
@@ -430,6 +435,13 @@ function smart_gs {
 		last_primaryCLMD5="0"
 		last_secondCLMD5="0"
 	fi
+}
+
+## Smart Sync Function
+function smart_gs {
+	previous_md5
+	md5_compare
+	backup_settime
 
 	PRIDBCHANGE="0"
 	SECDBCHANGE="0"
@@ -550,23 +562,56 @@ function restore_gs {
 	MESSAGE="This will restore your settings on $HOSTNAME with a previous version!"
 	echo_warn
 
-	MESSAGE="PREVIOUS BACKUPS"
+	MESSAGE="PREVIOUS BACKUPS AVAILABLE FOR RESTORATION"
 	echo_info
 	ls $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${GRAVITY_FI} | colrm 18
 
-	MESSAGE="Enter the date you want to restore from"
+	MESSAGE="Select backup date to restore ${GRAVITY_FI} from"
 	echo_need
 	read INPUT_BACKUP_DATE
 
 	if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${GRAVITY_FI}.backup ]
 	then
-		MESSAGE="Backup File Located"
-		echo_info
+		MESSAGE="Backup File Selected"
 	else
-		MESSAGE="Invalid Requested"
+		MESSAGE="Invalid Request"
+		echo_info
+
+		exit_nochange
 	fi
 
+	if [ "$SKIP_CUSTOM" != '1' ]
+	then
+
+		if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
+		then
+			ls $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${CUSTOM_DNS} | colrm 18
+
+			MESSAGE="Select backup date to restore ${CUSTOM_DNS} from"
+			echo_need
+			read INPUT_DNSBACKUP_DATE
+
+			if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ]
+			then
+				MESSAGE="Backup File Selected"
+			else
+				MESSAGE="Invalid Request"
+				echo_info
+
+				exit_nochange
+			fi
+		fi
+	fi
+
+	MESSAGE="${GRAVITY_FI} from ${INPUT_BACKUP_DATE} Selected"
+		echo_info
+	MESSAGE="${CUSTOM_DNS} from ${INPUT_DNSBACKUP_DATE} Selected"
+		echo_info
+	
 	intent_validate
+
+	MESSAGE="Making Time Warp Calculations"
+	echo_info
 
 	MESSAGE="Stopping Pi-hole Services"
 	echo_stat
@@ -619,11 +664,11 @@ function restore_gs {
 
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
-		if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${CUSTOM_DNS}.backup ]
+		if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ]
 		then
 			MESSAGE="Restoring ${CUSTOM_DNS} on $HOSTNAME"
 			echo_stat
-				sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${CUSTOM_DNS}.backup ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+				sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
 				error_validate
 				
 			MESSAGE="Validating Ownership on ${CUSTOM_DNS}"
@@ -705,6 +750,9 @@ function restore_gs {
 ## Core Logging
 ### Write Logs Out
 function logs_export {
+	
+	if [ "${TASKTYPE}" != "BACKUP" ]
+	then
 	MESSAGE="Saving File Hashes"
 	echo_stat
 		rm -f ${LOG_PATH}/${HISTORY_MD5}
@@ -713,6 +761,7 @@ function logs_export {
 		echo -e ${primaryCLMD5} >> ${LOG_PATH}/${HISTORY_MD5}
 		echo -e ${secondCLMD5} >> ${LOG_PATH}/${HISTORY_MD5}
 			error_validate
+	fi
 
 	MESSAGE="Logging Successful ${TASKTYPE}"
 	echo_stat
@@ -734,6 +783,8 @@ function logs_gs {
 		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PULL
 	echo -e "Recent Complete ${YELLOW}PUSH${NC} Executions"
 		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PUSH
+	echo -e "Recent Complete ${YELLOW}BACKUP${NC} Executions"
+		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep BACKUP
 	echo -e "Recent Complete ${YELLOW}RESTORE${NC} Executions"
 		tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep RESTORE
 	echo -e "========================================================"
@@ -1115,6 +1166,11 @@ function error_validate {
 
 ## Validate Sync Required
 function md5_compare {
+	# last_primaryDBMD5="0"
+	# last_secondDBMD5="0"
+	# last_primaryCLMD5="0"
+	# last_secondCLMD5="0"
+	
 	HASHMARK='0'
 
 	MESSAGE="Analyzing ${GRAVITY_FI} on ${REMOTE_HOST}"
@@ -1127,7 +1183,7 @@ function md5_compare {
 	secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI} | sed 's/\s.*$//')
 		error_validate
 	
-	if [ "$primaryDBMD5" == "$secondDBMD5" ]
+	if [ "$primaryDBMD5" == "$last_primaryDBMD5" ] && [ "$secondDBMD5" == "$last_secondDBMD5" ]
 	then
 		HASHMARK=$((HASHMARK+0))
 	else
@@ -1154,7 +1210,7 @@ function md5_compare {
 				secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//')
 					error_validate
 				
-				if [ "$primaryCLMD5" == "$secondCLMD5" ]
+				if [ "$primaryCLMD5" == "$last_primaryCLMD5" ] && [ "$secondCLMD5" == "$last_secondCLMD5" ]
 				then
 					# MESSAGE="${CUSTOM_DNS} Identical"
 					# echo_info
@@ -1209,14 +1265,14 @@ function md5_recheck {
 	secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI} | sed 's/\s.*$//')
 		error_validate
 	
-	if [ "$primaryDBMD5" == "$secondDBMD5" ]
-	then
-		HASHMARK=$((HASHMARK+0))
-	else
-		MESSAGE="Differenced ${GRAVITY_FI} Detected"
-		echo_warn
-		HASHMARK=$((HASHMARK+1))
-	fi
+	# if [ "$primaryDBMD5" == "$secondDBMD5" ]
+	# then
+	#	HASHMARK=$((HASHMARK+0))
+	# else
+	#	MESSAGE="Differenced ${GRAVITY_FI} Detected"
+	#	echo_warn
+	#	HASHMARK=$((HASHMARK+1))
+	# fi
 
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then
@@ -1236,16 +1292,16 @@ function md5_recheck {
 				secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//')
 					error_validate
 				
-				if [ "$primaryCLMD5" == "$secondCLMD5" ]
-				then
+				# if [ "$primaryCLMD5" == "$secondCLMD5" ]
+				# then
 					# MESSAGE="${CUSTOM_DNS} Identical"
 					# echo_info
-					HASHMARK=$((HASHMARK+0))
-				else
-					MESSAGE="Differenced ${CUSTOM_DNS} Detected"
-					echo_warn
-					HASHMARK=$((HASHMARK+1))
-				fi
+				#	HASHMARK=$((HASHMARK+0))
+				# else
+				#	MESSAGE="Differenced ${CUSTOM_DNS} Detected"
+				#	echo_warn
+				#	HASHMARK=$((HASHMARK+1))
+				# fi
 			else
 				MESSAGE="No ${CUSTOM_DNS} Detected on ${REMOTE_HOST}"
 				echo_info
@@ -1255,7 +1311,7 @@ function md5_recheck {
 			then
 				REMOTE_CUSTOM_DNS="1"
 				MESSAGE="${REMOTE_HOST} has ${CUSTOM_DNS}"
-				HASHMARK=$((HASHMARK+1))
+			#	HASHMARK=$((HASHMARK+1))
 				echo_info
 			fi	
 			MESSAGE="No ${CUSTOM_DNS} Detected on $HOSTNAME"
@@ -1263,14 +1319,14 @@ function md5_recheck {
 		fi
 	fi
 
-	if [ "$HASHMARK" != "0" ]
-	then
-		MESSAGE="Replication Checks Failed"
-		echo_warn
-	else
-		MESSAGE="Replication Was Successful"
-		echo_info
-	fi
+	# if [ "$HASHMARK" != "0" ]
+	# then
+	#	MESSAGE="Replication Checks Failed"
+	#	echo_warn
+	# else
+	#	MESSAGE="Replication Was Successful"
+	#	echo_info
+	# fi
 }
 
 ## Validate Intent
@@ -1318,13 +1374,48 @@ function config_generate {
 	echo_stat
 	cp $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}.example $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 	error_validate
+
+	MESSAGE="Environment Customization"
+	echo_info
+
+	MESSAGE="Enter a custom SSH port if required (Leave blank for default '22')"
+	echo_need
+	read INPUT_SSH_PORT
+	INPUT_SSH_PORT="${INPUT_SSH_PORT:-22}"
+
+	if [ "${INPUT_SSH_PORT}" != "22" ]
+	then
+		MESSAGE="Saving Custom SSH Port to ${CONFIG_FILE}"
+		echo_stat
+		sed -i "/# SSH_PORT=''/c\SSH_PORT='${INPUT_SSH_PORT}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+		error_validate
+	fi
+
+	MESSAGE="Perform PING tests between Pi-holes? (Leave blank for default 'Yes')"
+	echo_need
+	read INPUT_PING_AVOID
+	INPUT_PING_AVOID="${INPUT_PING_AVOID:-Y}"
+
+	if [ "${INPUT_PING_AVOID}" != "Y" ]
+	then
+		MESSAGE="Saving Ping Avoidance to ${CONFIG_FILE}"
+		echo_stat
+		sed -i "/# PING_AVOID=''/c\PING_AVOID='1'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+		error_validate
+		PING_AVOID=1
+	fi
 	
+	MESSAGE="Standard Settings"
+	echo_info
+
 	MESSAGE="IP or DNS of Primary Pi-hole"
 	echo_need
 	read INPUT_REMOTE_HOST
 
 	if [ "${PING_AVOID}" != "1" ]
 	then
+		
+		
 		MESSAGE="Testing Network Connection (PING)"
 		echo_stat
 		ping -c 3 ${INPUT_REMOTE_HOST} >/dev/null 2>&1
@@ -1479,6 +1570,9 @@ function show_version {
 	if [ -f $HOME/${LOCAL_FOLDR}/dev ]
 	then
 		DEVVERSION="dev"
+	elif [ -f $HOME/${LOCAL_FOLDR}/beta ]
+	then 
+		DEVVERSION="beta"
 	else
 		DEVVERSION=""
 	fi
@@ -1500,8 +1594,6 @@ function show_version {
 	fi
 	echo_info
 	echo -e "========================================================"
-
-	dbclient_warning
 }
 
 function dbclient_warning {
@@ -1533,9 +1625,14 @@ function task_automate {
 	MESSAGE="Configuring Hourly Smart Sync"
 	echo_info
 
-	MESSAGE="Sync Frequency in Minutes (1-30) or 0 to Disable"
-	echo_need
-	read INPUT_AUTO_FREQ
+	if [[ $1 =~ ^[0-9][0-9]?$ ]]
+	then
+		INPUT_AUTO_FREQ=$1
+	else
+		MESSAGE="Sync Frequency in Minutes (1-30) or 0 to Disable"
+		echo_need
+		read INPUT_AUTO_FREQ
+	fi
 
 	if [ $INPUT_AUTO_FREQ -gt 30 ]
 	then
@@ -1569,9 +1666,14 @@ function task_automate {
 	MESSAGE="Configuring Daily Backup Frequency"
 	echo_info
 
-	MESSAGE="Hour of Day to Backup (1-24) or 0 to Disable"
-	echo_need
-	read INPUT_AUTO_BACKUP
+	if [[ $2 =~ ^[0-9][0-9]?$ ]]
+	then
+		INPUT_AUTO_BACKUP=$2
+	else
+		MESSAGE="Hour of Day to Backup (1-24) or 0 to Disable"
+		echo_need
+		read INPUT_AUTO_BACKUP
+	fi
 
 	if [ $INPUT_AUTO_BACKUP -gt 24 ]
 	then
@@ -1634,10 +1736,57 @@ function task_devmode {
 		echo_stat
 		rm -f $HOME/${LOCAL_FOLDR}/dev
 			error_validate
+	elif [ -f $HOME/${LOCAL_FOLDR}/beta ]
+	then
+		MESSAGE="Disabling BETA"
+		echo_stat
+		rm -f $HOME/${LOCAL_FOLDR}/beta
+			error_validate
+		
+		MESSAGE="Enabling ${TASKTYPE}"
+		echo_stat
+		touch $HOME/${LOCAL_FOLDR}/dev
+			error_validate
 	else
 		MESSAGE="Enabling ${TASKTYPE}"
 		echo_stat
 		touch $HOME/${LOCAL_FOLDR}/dev
+			error_validate
+	fi
+	
+	MESSAGE="Run UPDATE to apply changes"
+	echo_info
+	
+	exit_withchange
+}
+
+## Devmode Task
+function task_betamode {
+	TASKTYPE='BETA'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+	
+	if [ -f $HOME/${LOCAL_FOLDR}/beta ]
+	then
+		MESSAGE="Disabling ${TASKTYPE}"
+		echo_stat
+		rm -f $HOME/${LOCAL_FOLDR}/beta
+			error_validate
+	elif [ -f $HOME/${LOCAL_FOLDR}/dev ]
+	then
+		MESSAGE="Disabling DEV"
+		echo_stat
+		rm -f $HOME/${LOCAL_FOLDR}/dev
+			error_validate
+		
+		MESSAGE="Enabling ${TASKTYPE}"
+		echo_stat
+		touch $HOME/${LOCAL_FOLDR}/beta
+			error_validate
+	else
+		MESSAGE="Enabling ${TASKTYPE}"
+		echo_stat
+		touch $HOME/${LOCAL_FOLDR}/beta
 			error_validate
 	fi
 	
@@ -1682,12 +1831,14 @@ function task_compare {
 	TASKTYPE='COMPARE'
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
-	
+
 	import_gs
+
 	validate_gs_folders
 	validate_ph_folders
 	validate_os_sshpass
-		
+	
+	previous_md5
 	md5_compare
 }
 
@@ -1716,6 +1867,7 @@ function task_backup {
 	backup_local_custom
 	backup_cleanup
 	
+	logs_export
 	exit_withchange
 }
 
@@ -1763,7 +1915,7 @@ function backup_remote_custom {
 			echo_stat
 	
 			CMD_TIMEOUT='15'
-			CMD_REQUESTED="sudo cp ${PIHOLE_DIR}/${CUSTOM_DNS} ${PIHOLE_DIR}/${CUSTOM_DNS}.backup'\""
+			CMD_REQUESTED="sudo cp ${PIHOLE_DIR}/${CUSTOM_DNS} ${PIHOLE_DIR}/${CUSTOM_DNS}.backup"
 				create_sshcmd
 		fi
 	fi
@@ -1831,7 +1983,10 @@ function root_check {
 	MESSAGE="Evaluating Arguments"
 	echo_stat
 
-	root_check
+	if [ "${ROOT_CHECK_AVOID}" != "1" ]
+	then
+		root_check
+	fi
 
 case $# in
 	
@@ -1883,7 +2038,7 @@ case $# in
 				TASKTYPE='PULL'
 				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
-				
+
 				import_gs
 				validate_gs_folders
 				validate_ph_folders
@@ -1897,7 +2052,7 @@ case $# in
 				TASKTYPE='PUSH'
 				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
-				
+
 				import_gs
 				validate_gs_folders
 				validate_ph_folders
@@ -1934,6 +2089,10 @@ case $# in
 			
 			dev)
 				task_devmode
+			;;
+
+			beta)
+				task_betamode
 			;;
 
 			devmode)
@@ -1979,6 +2138,24 @@ case $# in
 			*)
 				task_invalid
 			;;
+		esac
+	;;
+
+	2)
+   		case $1 in
+			automate)
+				task_automate
+			;;	
+
+		esac
+	;;
+
+	3)
+   		case $1 in
+			automate)
+				task_automate $2 $3
+			;;	
+
 		esac
 	;;
 	

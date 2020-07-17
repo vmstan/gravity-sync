@@ -28,6 +28,22 @@ The `./gravity-sync.sh update` and `version` functions will look for the `dbclie
 #### 2.1.5
 Skipping a few digits because what does it really matter? 
 
+- Implements a new beta branch, and with it a new `./gravity-sync.sh beta` function to enable it. This will hopefully allow new features and such to be added for test users who can adopt them and provide feedback before rolling out to the main update branch.
+- Uses new SQLITE3 backup methodology introduced in 2.1, for all push/pull sync operations.
+- `./gravity-sync.sh restore` lets you select a different `gravity.db` and `custom.list` for restoration.
+- One new Star Trek reference.
+- `./gravity-sync.sh restore` now shows recent complete Backup executions.
+
+#### 2.1.6
+- Adds prompts during `./gravity-sync.sh configure` to allow custom SSH port and enable PING avoidance.
+- Adds `ROOT_CHECK_AVOID` variable to advanced configuration options, to help facilitate running Gravity Sync with container installations of Pi-hole. (PR [#64](https://github.com/vmstan/gravity-sync/pull/64))
+- Adds the ability to automate automation. :mind_blown_emoji: Please see the [ADVANCED.md](https://github.com/vmstan/gravity-sync/blob/master/ADVANCED.md) document for more information. (PR [#64](https://github.com/vmstan/gravity-sync/pull/64))
+
+(Thanks to [@fbourqui](https://github.com/fbourqui) for this contributions to this release.)
+
+#### 2.1.7
+- Git Rebase
+
 ## 2.0
 ### The Smart Release
 
