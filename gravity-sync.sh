@@ -86,10 +86,10 @@ function import_gs {
 	    source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 			error_validate
 			
-		MESSAGE="Targeting ${REMOTE_USER}@${REMOTE_HOST}"
-		echo_info
+		# MESSAGE="Targeting ${REMOTE_USER}@${REMOTE_HOST}"
+		# echo_info
 
-		detect_ssh
+		# detect_ssh
 	else
 		echo_fail
 		
@@ -99,6 +99,13 @@ function import_gs {
 		TASKTYPE='CONFIG'
 		config_generate
 	fi
+}
+
+function show_target {
+	MESSAGE="Targeting ${REMOTE_USER}@${REMOTE_HOST}"
+	echo_info
+
+	detect_ssh
 }
 
 # GS Update Functions
@@ -771,7 +778,7 @@ function logs_export {
 
 ### Output Sync Logs
 function logs_gs {
-	import_gs
+	# import_gs
 
 	MESSAGE="Tailing ${LOG_PATH}/${SYNCING_LOG}"
 	echo_info
@@ -795,7 +802,7 @@ function logs_gs {
 ## Crontab Logs
 ### Core Crontab Logs
 function show_crontab {
-	import_gs
+	# import_gs
 	
 	MESSAGE="Replaying Last Cronjob"
 	echo_stat
@@ -1611,7 +1618,7 @@ function task_automate {
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
 
-	import_gs
+	# import_gs
 
 	CRON_EXIST='0'
 	CRON_CHECK=$(crontab -l | grep -q "${GS_FILENAME}"  && echo '1' || echo '0')
@@ -1832,8 +1839,8 @@ function task_compare {
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
 
-	import_gs
-
+	# import_gs
+	show_target
 	validate_gs_folders
 	validate_ph_folders
 	validate_os_sshpass
@@ -1980,6 +1987,8 @@ function root_check {
 	MESSAGE="${PROGRAM} ${VERSION} Executing"
 	echo_info
 	
+	import_gs
+
 	MESSAGE="Evaluating Arguments"
 	echo_stat
 
@@ -1995,7 +2004,8 @@ case $# in
 		MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 		echo_good
 
-		import_gs
+		# import_gs
+		show_target
 		validate_gs_folders
 		validate_ph_folders
 		validate_os_sshpass
@@ -2011,7 +2021,8 @@ case $# in
 				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
 
-				import_gs
+				# import_gs
+				show_target
 				validate_gs_folders
 				validate_ph_folders
 				validate_os_sshpass
@@ -2025,7 +2036,8 @@ case $# in
 				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
 
-				import_gs
+				# import_gs
+				show_target
 				validate_gs_folders
 				validate_ph_folders
 				validate_os_sshpass
@@ -2039,7 +2051,8 @@ case $# in
 				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
 
-				import_gs
+				# import_gs
+				show_target
 				validate_gs_folders
 				validate_ph_folders
 				validate_os_sshpass
@@ -2053,7 +2066,8 @@ case $# in
 				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
 
-				import_gs
+				# import_gs
+				show_target
 				validate_gs_folders
 				validate_ph_folders
 				validate_os_sshpass
@@ -2067,7 +2081,8 @@ case $# in
 				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 				echo_good
 
-				import_gs
+				# import_gs
+				show_target
 				validate_gs_folders
 				validate_ph_folders
 
