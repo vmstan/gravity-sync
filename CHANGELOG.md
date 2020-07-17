@@ -42,7 +42,7 @@ Skipping a few digits because what does it really matter?
 (Thanks to [@fbourqui](https://github.com/fbourqui) for this contributions to this release.)
 
 #### 2.1.7
-- Git Rebase
+- Adjusts placement of configuration import to fully implement `ROOT_CHECK_AVOID` variable.
 
 ## 2.0
 ### The Smart Release
