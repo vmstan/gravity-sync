@@ -1148,14 +1148,18 @@ function detect_remotersync {
 		RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/gs.test"
 			create_rsynccmd
 
-	MESSAGE="Cleaning Up Test Files"
+	MESSAGE="Cleaning Up Local Test File"
 	echo_stat
 
-		rm $HOME/${LOCAL_FOLDR}/gs.test
+	rm $HOME/${LOCAL_FOLDR}/gs.test
+		error_validate
 
-		CMD_TIMEOUT='15'
-		CMD_REQUESTED="rm ~/gs.test"
-			create_sshcmd
+	MESSAGE="Cleaning Up Local Test File"
+	echo_stat
+
+	CMD_TIMEOUT='15'
+	CMD_REQUESTED="rm ~/gs.test"
+		create_sshcmd
 }
 
 ## Error Validation
