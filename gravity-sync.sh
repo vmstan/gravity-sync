@@ -1608,8 +1608,13 @@ function show_version {
 function dbclient_warning {
 	if hash dbclient 2>/dev/null
 	then
-		MESSAGE="Dropbear support has been deprecated - please convert to OpenSSH"
-		echo_warn
+		if hash ssh 2>/dev/null
+		then
+			NOEMPTYBASHIF="1"
+		else
+			MESSAGE="Dropbear support has been deprecated - please convert to OpenSSH"
+			echo_warn
+		fi
 	fi
 }
 
