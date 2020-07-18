@@ -1733,7 +1733,11 @@ function task_configure {
 		config_generate
 	fi
 
-	task_backup
+	backup_settime
+	backup_local_gravity
+	backup_local_custom
+	backup_cleanup
+	
 	exit_withchange
 }
 
