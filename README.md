@@ -42,11 +42,14 @@ Gravity Sync is not developed by or affiliated with the Pi-hole project. This is
 
 ### Pi-hole Architecture
 
-You will want to designate one Pi-Hole as primary and at least one as secondary. The primary Pi-hole is where you'll make most of your configuration changes through the Web UI, doing things such as; manual allow-listing, adding block-lists, device/group management, configuring custom/local network DNS, and other changing other list settings. The secondary Pi-hole(s) are where you will install and configure Gravity Sync.
+You will want to designate one Pi-Hole as primary and at least one as secondary. 
+
+- The primary Pi-hole is where you'll make most of your configuration changes through the Web UI, doing things such as; manual allow-listing, adding block-lists, device/group management, configuring custom/local network DNS, and changing other list settings. 
+- The secondary Pi-hole(s) are where you will install and configure Gravity Sync.
 
 For more information and for reference architectures, please [refer to this document](https://github.com/vmstan/gravity-sync/blob/master/ADVANCED.md#reference-architectures)
 
-Starting with version 2.0, Gravity Sync will sync the Adlist database and Local DNS Settings on each Pi-hole with each other. (Previous versions only pulled data one way.)
+Starting with version 2.0, Gravity Sync will attempt to sync the Adlist database and Local DNS Settings on each Pi-hole reguardless of where the data was changed. Previous versions only pulled data one way as the standard operation.
 
 ## Installation
 
@@ -62,7 +65,7 @@ Proceed to the Configuration section.
 
 ## Configuration
 
-After you install Gravity Sync to your server you will need to create a configuration file called `gravity-sync.conf` in the same folder as the script.
+After you install Gravity Sync to your server you will need to create a configuration file.
 
 ```bash
 ./gravity-sync.sh config
@@ -75,8 +78,11 @@ This will guide you through the process of:
 - Selecting the SSH authentication mechanism (key-pair or password.)
 - Configuring your key-pair and applying it to your primary Pi-hole.
 - Testing your authentication method, and testing RSYNC to the primary.
+- Perform a backup of the existing Pi-hole database. 
 
-After you've completed your configuration, proceed to the Execution phase.
+The configuration will be saved as `gravity-sync.conf` in the same folder as the script. If you need to make adjustments to your settings in the future, you can edit this file or run the configuration tool to generate a new one. 
+
+After you're pleased your configuration, proceed to the Execution phase.
 
 ## Execution
 
