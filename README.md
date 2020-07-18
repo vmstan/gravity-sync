@@ -42,14 +42,14 @@ Gravity Sync is not developed by or affiliated with the Pi-hole project. This is
 
 ### Pi-hole Architecture
 
-You will want to designate one Pi-Hole as primary and at least one as secondary. 
+You will want to designate one Pi-Hole as primary and at least one as secondary.
 
-- The primary Pi-hole is where you'll make most of your configuration changes through the Web UI, doing things such as; manual allow-listing, adding block-lists, device/group management, configuring custom/local network DNS, and changing other list settings. 
+- The primary Pi-hole is where you'll make most of your configuration changes through the Web UI, doing things such as; manual allow-listing, adding block-lists, device/group management, configuring custom/local network DNS, and changing other list settings.
 - The secondary Pi-hole(s) are where you will install and configure Gravity Sync.
 
 For more information and for reference architectures, please [refer to this document](https://github.com/vmstan/gravity-sync/blob/master/ADVANCED.md#reference-architectures)
 
-Starting with version 2.0, Gravity Sync will attempt to sync the Adlist database and Local DNS Settings on each Pi-hole reguardless of where the data was changed. Previous versions only pulled data one way as the standard operation.
+Starting with version 2.0, Gravity Sync will attempt to sync the Adlist database and Local DNS Settings on each Pi-hole regardless of where the data was changed. Previous versions only pulled data one way as the standard operation.
 
 ## Installation
 
@@ -78,9 +78,9 @@ This will guide you through the process of:
 - Selecting the SSH authentication mechanism (key-pair or password.)
 - Configuring your key-pair and applying it to your primary Pi-hole.
 - Testing your authentication method, and testing RSYNC to the primary.
-- Perform a backup of the existing Pi-hole database. 
+- Perform a backup of the existing Pi-hole database.
 
-The configuration will be saved as `gravity-sync.conf` in the same folder as the script. If you need to make adjustments to your settings in the future, you can edit this file or run the configuration tool to generate a new one. 
+The configuration will be saved as `gravity-sync.conf` in the same folder as the script. If you need to make adjustments to your settings in the future, you can edit this file or run the configuration tool to generate a new one.
 
 After you're pleased your configuration, proceed to the Execution phase.
 
