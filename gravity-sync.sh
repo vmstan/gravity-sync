@@ -1908,7 +1908,7 @@ function backup_remote_gravity {
 	MESSAGE="Performing Backup of Remote ${GRAVITY_FI}"
 	echo_stat
 	
-	CMD_TIMEOUT='15'
+	CMD_TIMEOUT='60'
 	CMD_REQUESTED="sudo sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} \".backup '${PIHOLE_DIR}/${GRAVITY_FI}.backup'\""
 		create_sshcmd
 }
