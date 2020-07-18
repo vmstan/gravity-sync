@@ -983,7 +983,7 @@ function detect_sshkeygen {
 		#	MESSAGE="No Alternatives Located"
 		#	echo_info
 		#		exit_nochange
-		fi	
+		# fi	
 	fi
 }
 
