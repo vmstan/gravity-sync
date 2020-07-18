@@ -1,5 +1,9 @@
 # The Changelog
 
+## 2.2
+### The Lesser Release
+This release removes support for Dropbear SSH client/server. If you are using this instead of OpenSSH (common with DietPi) please reconfigure your installation to use OpenSSH. You will want to delete your existing `~/.ssh/id_rsa` and `~/.ssh/id_rsa.pub` files and run `./gravity-sync.sh configure` again to generate a new key and copy it to the primary Pi-hole.
+
 ## 2.1
 ### The Backup Release
 
