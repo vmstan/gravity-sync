@@ -1154,7 +1154,7 @@ function detect_remotersync {
 	rm $HOME/${LOCAL_FOLDR}/gs.test
 		error_validate
 
-	MESSAGE="Cleaning Up Local Test File"
+	MESSAGE="Cleaning Up Remote Test File"
 	echo_stat
 
 	CMD_TIMEOUT='15'
@@ -1495,10 +1495,6 @@ function config_generate {
 	validate_os_sshpass
 
 	detect_remotersync
-
-	task_backup
-	
-	exit_withchange
 }
 
 ## Delete Existing Configuration
@@ -1736,6 +1732,9 @@ function task_configure {
 		
 		config_generate
 	fi
+
+	task_backup
+	exit_withchange
 }
 
 ## Devmode Task
