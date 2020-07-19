@@ -160,6 +160,30 @@ You can run a `./gravity-sync.sh config` at any time to generate a new configura
 
 - If the update script fails, make sure you did your original deployment via `git clone` and not a manual install. Refer to [ADVANCED.md](https://github.com/vmstan/gravity-sync/blob/master/ADVANCED.md) for more details.
 
+## Starting Over
+
+Starting in version 2.2, Gravity Sync has a built in tool to purge everything custom about itself from the system.
+
+```
+./gravity-sync.sh purge
+```
+
+This will remove:
+
+- All backups files.
+- Your `gravity-sync.conf` file.
+- All cronjob/automation tasks.
+- All job history/logs.
+- The SSH id_rsa keys associated with Gravity Sync.
+
+This function will totally wipe out your existing Gravity Sync installation and reset it to the default state for the version you are running. If all troubleshooting of a bad installation fails, this is the command of last resort.
+
+**This will not impact any of the Pi-hole binaries, configuration files, directories, services, etc.** Your Adlist database and Local Custom DNS records will no longer sync, but they will be in the status they were when Gravity Sync was removed.
+
+### Uninstalling
+
+If you are completely uninstalling Gravity Sync, the last step would be to remove the `gravity-sync` folder from your user's home directory.
+
 ## Advanced Installation
 
 Please review the [Advanced Installation](https://github.com/vmstan/gravity-sync/blob/master/ADVANCED.md) guide for more assistance.
