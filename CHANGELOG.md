@@ -8,6 +8,7 @@ This release removes support for Dropbear SSH client/server. If you are using th
 
 - Updates the remote backup timeout from 15 to 60, preventing the `gravity.db` backup on the remote Pi-hole from failing. (PR [#76](https://github.com/vmstan/gravity-sync/pull/76))
 - Adds `./gravity-sync.sh purge` function that will totally wipe out your existing Gravity Sync installation and reset it to the default state for the version you are running. If all troubleshooting of a bad installation fails, this is the command of last resort.
+- Adds uninstall instructions to the README.md file.
 
 ## 2.1
 

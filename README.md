@@ -164,7 +164,7 @@ You can run a `./gravity-sync.sh config` at any time to generate a new configura
 
 Starting in version 2.2, Gravity Sync has a built in tool to purge everything custom about itself from the system.
 
-```
+```bash
 ./gravity-sync.sh purge
 ```
 
