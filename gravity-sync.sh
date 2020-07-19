@@ -1873,6 +1873,59 @@ function task_invalid {
 	list_gs_arguments
 }
 
+## Purge Task
+function task_purge {
+	TASKTYPE="THE-PURGE"
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+
+	MESSAGE="THIS WILL RESET YOUR ENTIRE GRAVITY SYNC INSTALLATION"
+	echo_warn
+	MESSAGE="- All backups files will be deleted."
+	echo_warn
+	MESSAGE="- Your ${CONFIG_FILE} will be deleted."
+	echo_warn
+
+	if [ -f "$HOME/${LOCAL_FOLDR}/dev" ]
+	then
+		MESSAGE="- You will no longer use the development branch updater."
+	elif [ -f "$HOME/${LOCAL_FOLDR}/beta" ]
+	then
+		MESSAGE="- You will no longer use the beta branch updater."
+	fi
+	echo_warn
+
+	MESSAGE="- All cronjob tasks will be removed."
+	echo_warn
+	MESSAGE="- All job history/logs will be deleted."
+	echo_warn
+	MESSAGE="- Your SSH id_rsa keys will be deleted."
+	echo_warn
+
+	MESSAGE="YOU WILL NEED TO REBUILD GRAVITY SYNC AFTER EXECUTION"
+	echo_warn
+
+	MESSAGE="Pi-hole files, directory and services ARE NOT impacted!"
+	echo_info
+
+	intent_validate
+
+	MESSAGE="Cleaning Gravity Sync Directory"
+	echo_stat
+
+	git clean -f -X -d >/dev/null 2>&1
+		error_validate
+
+	clear_cron
+
+	MESSAGE="Deleting SSH Key-files"
+		echo_stat
+
+	rm -f $HOME/${SSH_PKIF} >/dev/null 2>&1
+	rm -f $HOME/${SSH_PKIF}.pub >/dev/null 2>&1
+		error_validate
+}
+
 ## Backup Task
 function task_backup {
 	TASKTYPE='BACKUP'
@@ -2158,6 +2211,10 @@ case $# in
 
 			backup)
 				task_backup
+			;;
+
+			purge)
+				task_purge
 			;;
 
 			*)
