@@ -1885,11 +1885,21 @@ function task_purge {
 	echo_warn
 	MESSAGE="- Your ${CONFIG_FILE} will be deleted."
 	echo_warn
-	MESSAGE="- Restore the Update utility to the default branch."
+
+	if [ -f "$HOME/${LOCAL_FOLDR}/dev" ]
+	then
+		MESSAGE="- You will no longer use the development branch updater."
+	elif [ -f "$HOME/${LOCAL_FOLDR}/beta" ]
+	then
+		MESSAGE="- You will no longer use the beta branch updater."
+	fi
 	echo_warn
+
 	MESSAGE="- All cronjob tasks will be removed."
 	echo_warn
-	MESSAGE="- SSH id_rsa keys will be deleted."
+	MESSAGE="- All job history/logs will be deleted."
+	echo_warn
+	MESSAGE="- Your SSH id_rsa keys will be deleted."
 	echo_warn
 
 	intent_validate
