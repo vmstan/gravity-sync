@@ -1879,7 +1879,7 @@ function task_purge {
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
 
-	MESSAGE="THIS WILL RESET YOUR ENTIRE GRAVITY SYNC INSTALLATION TO THE DEFAULT STATE"
+	MESSAGE="THIS WILL RESET YOUR ENTIRE GRAVITY SYNC INSTALLATION"
 	echo_warn
 	MESSAGE="- All backups files will be deleted."
 	echo_warn
@@ -1901,6 +1901,12 @@ function task_purge {
 	echo_warn
 	MESSAGE="- Your SSH id_rsa keys will be deleted."
 	echo_warn
+
+	MESSAGE="YOU WILL NEED TO REBUILD GRAVITY SYNC AFTER EXECUTION"
+	echo_warn
+
+	MESSAGE="Note: Pi-hole files, directory and services ARE NOT impacted!"
+	echo_info
 
 	intent_validate
 
