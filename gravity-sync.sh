@@ -1885,6 +1885,8 @@ function task_purge {
 	echo_warn
 	MESSAGE="- Your ${CONFIG_FILE} will be deleted."
 	echo_warn
+	MESSAGE="- Restore the Update utility to the default branch."
+	echo_warn
 	MESSAGE="- All cronjob tasks will be removed."
 	echo_warn
 	MESSAGE="- SSH id_rsa keys will be deleted."
