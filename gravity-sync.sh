@@ -1873,6 +1873,41 @@ function task_invalid {
 	list_gs_arguments
 }
 
+## Purge Task
+function task_purge {
+	TASKTYPE="THE-PURGE"
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+
+	MESSAGE="THIS WILL RESET YOUR ENTIRE GRAVITY SYNC INSTALLATION TO THE DEFAULT STATE"
+	echo_warn
+	MESSAGE="- All backups files will be deleted."
+	echo_warn
+	MESSAGE="- Your ${CONFIG_FILE} will be deleted."
+	echo_warn
+	MESSAGE="- All cronjob tasks will be removed."
+	echo_warn
+	MESSAGE="- SSH id_rsa keys will be deleted."
+	echo_warn
+
+	intent_validate
+
+	MESSAGE="Cleaning Gravity Sync Directory"
+	echo_stat
+
+	git clean -f -X -d
+		error_validate
+
+	clear_cron
+
+	MESSAGE="Deleting SSH Key-files"
+		echo_stat
+
+	rm -f $HOME/${SSH_PKIF}
+	rm -f $HOME/${SSH_PKIF}.pub
+		error_validate
+}
+
 ## Backup Task
 function task_backup {
 	TASKTYPE='BACKUP'
@@ -2158,6 +2193,10 @@ case $# in
 
 			backup)
 				task_backup
+			;;
+
+			purge)
+				task_purge
 			;;
 
 			*)
