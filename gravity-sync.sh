@@ -1905,7 +1905,7 @@ function task_purge {
 	MESSAGE="YOU WILL NEED TO REBUILD GRAVITY SYNC AFTER EXECUTION"
 	echo_warn
 
-	MESSAGE="Note: Pi-hole files, directory and services ARE NOT impacted!"
+	MESSAGE="Pi-hole files, directory and services ARE NOT impacted!"
 	echo_info
 
 	intent_validate
@@ -1913,7 +1913,7 @@ function task_purge {
 	MESSAGE="Cleaning Gravity Sync Directory"
 	echo_stat
 
-	git clean -f -X -d
+	git clean -f -X -d >/dev/null 2>&1
 		error_validate
 
 	clear_cron
@@ -1921,8 +1921,8 @@ function task_purge {
 	MESSAGE="Deleting SSH Key-files"
 		echo_stat
 
-	rm -f $HOME/${SSH_PKIF}
-	rm -f $HOME/${SSH_PKIF}.pub
+	rm -f $HOME/${SSH_PKIF} >/dev/null 2>&1
+	rm -f $HOME/${SSH_PKIF}.pub >/dev/null 2>&1
 		error_validate
 }
 
