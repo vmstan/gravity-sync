@@ -142,7 +142,7 @@ You can verify your existing automation entry by running `crontab -l` and see it
 
 ## Updates
 
-If you'd like to know what version of the script you have running the built in version checker. It will notify you if there are updates available.
+If you'd like to know what version of the script you have running, check the built in version checker. It will notify you if there are updates available.
 
  ```bash
  ./gravity-sync.sh version
