@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='2.1.7'
+VERSION='2.2.0'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -155,13 +155,6 @@ function pull_gs_grav {
 
 	backup_local_gravity
 	backup_remote_gravity
-
-	# MESSAGE="Backing Up ${GRAVITY_FI} on $HOSTNAME"
-	# echo_stat
-	#	cp ${PIHOLE_DIR}/${GRAVITY_FI} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.backup >/dev/null 2>&1
-	#	error_validate
-
-
 	
 	MESSAGE="Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo_stat
@@ -934,10 +927,10 @@ function create_sshcmd {
 			timeout --preserve-status ${CMD_TIMEOUT} ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} "${CMD_REQUESTED}"
 				error_validate
 		fi
-	elif hash dbclient 2>/dev/null
-	then
-		timeout --preserve-status ${CMD_TIMEOUT} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF} ${REMOTE_USER}@${REMOTE_HOST} "${CMD_REQUESTED}"
-			error_validate
+	# elif hash dbclient 2>/dev/null
+	# then
+	#	timeout --preserve-status ${CMD_TIMEOUT} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF} ${REMOTE_USER}@${REMOTE_HOST} "${CMD_REQUESTED}"
+	#		error_validate
 	fi
 }
 
@@ -953,10 +946,10 @@ function create_rsynccmd {
 			rsync --rsync-path="${RSYNC_REPATH}" -e "${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
 				error_validate
 		fi
-	elif hash dbclient 2>/dev/null
-	then
-		rsync --rsync-path="${RSYNC_REPATH}" -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
-			error_validate
+	# elif hash dbclient 2>/dev/null
+	# then
+	#	rsync --rsync-path="${RSYNC_REPATH}" -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
+	#		error_validate
 	fi
 }
 
@@ -972,23 +965,25 @@ function detect_sshkeygen {
 		echo_fail
 		MESSAGE="SSH-KEYGEN is Required"
 		echo_info
-		MESSAGE="Attempting to Compensate"
-		echo_warn
+		
+		exit_nochange
+		# MESSAGE="Attempting to Compensate"
+		# echo_warn
 
-		if hash dropbearkey >/dev/null 2>&1
-		then
-			MESSAGE="Using DROPBEARKEY Instead"
-			echo_info
-				if [ ! -d $HOME/.ssh ]
-				then
-					mkdir $HOME/.ssh >/dev/null 2>&1
-				fi
-			KEYGEN_COMMAND="dropbearkey -t rsa -f"
-		else
-			MESSAGE="No Alternatives Located"
-			echo_info
-				exit_nochange
-		fi	
+		# if hash dropbearkey >/dev/null 2>&1
+		# then
+		#	MESSAGE="Using DROPBEARKEY Instead"
+		#	echo_info
+		#		if [ ! -d $HOME/.ssh ]
+		#		then
+		#			mkdir $HOME/.ssh >/dev/null 2>&1
+		#		fi
+		#	KEYGEN_COMMAND="dropbearkey -t rsa -f"
+		# else
+		#	MESSAGE="No Alternatives Located"
+		#	echo_info
+		#		exit_nochange
+		# fi	
 	fi
 }
 
@@ -1008,17 +1003,17 @@ function generate_sshkey {
 				ssh-keygen -q -P "" -t rsa -f $HOME/${SSH_PKIF} >/dev/null 2>&1
 					error_validate
 
-			elif hash dropbearkey >/dev/null 2>&1
-			then
-				MESSAGE="Generating ~/${SSH_PKIF} (DROPBEARKEY)"
-				echo_stat
-					if [ ! -d $HOME/.ssh ]
-					then
-						mkdir $HOME/.ssh >/dev/null 2>&1
-					fi
-
-					dropbearkey -t rsa -f $HOME/${SSH_PKIF} >/dev/null 2>&1
-						error_validate
+			# elif hash dropbearkey >/dev/null 2>&1
+			# then
+			#	MESSAGE="Generating ~/${SSH_PKIF} (DROPBEARKEY)"
+			#	echo_stat
+			#		if [ ! -d $HOME/.ssh ]
+			#		then
+			#			mkdir $HOME/.ssh >/dev/null 2>&1
+			#		fi
+			#
+			#		dropbearkey -t rsa -f $HOME/${SSH_PKIF} >/dev/null 2>&1
+			#			error_validate
 			else
 				MESSAGE="No SSH Key Generator Located"
 				echo_warn
@@ -1039,14 +1034,14 @@ function export_sshkey {
 			#MESSAGE="Enter ${REMOTE_USER}@${REMOTE_HOST} Password Below"
 			#echo -e "${NEED} ${MESSAGE}"
 
-			if hash ssh-copy-id 2>/dev/null
-			then
+			# if hash ssh-copy-id 2>/dev/null
+			# then
 				ssh-copy-id -f -p ${SSH_PORT} -i $HOME/${SSH_PKIF}.pub ${REMOTE_USER}@${REMOTE_HOST}
-			elif hash dbclient 2>/dev/null
-			then
-				dropbearkey -y -f $HOME/${SSH_PKIF} | grep "^ssh-rsa " > $HOME/${SSH_PKIF}.pub
-				cat $HOME/${SSH_PKIF}.pub | dbclient -p ${SSH_PORT} ${REMOTE_USER}@${REMOTE_HOST} 'cat - >> .ssh/authorized_keys'
-			fi
+			# elif hash dbclient 2>/dev/null
+			# then
+			# 	dropbearkey -y -f $HOME/${SSH_PKIF} | grep "^ssh-rsa " > $HOME/${SSH_PKIF}.pub
+			#	cat $HOME/${SSH_PKIF}.pub | dbclient -p ${SSH_PORT} ${REMOTE_USER}@${REMOTE_HOST} 'cat - >> .ssh/authorized_keys'
+			# fi
 		else
 		MESSAGE="Error Registering Key-Pair"
 		echo_warn
@@ -1094,8 +1089,11 @@ function detect_ssh {
 	elif hash dbclient 2>/dev/null
 	then
 		MESSAGE="${MESSAGE} (Dropbear)"
-		echo_good
-		SSH_CMD='dbclient'
+		echo_fail
+
+		MESSAGE="Dropbear not supported in GS ${VERSION}"
+		echo_info
+			exit_nochange
 	else
 		echo_fail
 		
@@ -1150,14 +1148,18 @@ function detect_remotersync {
 		RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/gs.test"
 			create_rsynccmd
 
-	MESSAGE="Cleaning Up Test Files"
+	MESSAGE="Cleaning Up Local Test File"
 	echo_stat
 
-		rm $HOME/${LOCAL_FOLDR}/gs.test
+	rm $HOME/${LOCAL_FOLDR}/gs.test
+		error_validate
 
-		CMD_TIMEOUT='15'
-		CMD_REQUESTED="rm ~/gs.test"
-			create_sshcmd
+	MESSAGE="Cleaning Up Remote Test File"
+	echo_stat
+
+	CMD_TIMEOUT='15'
+	CMD_REQUESTED="rm ~/gs.test"
+		create_sshcmd
 }
 
 ## Error Validation
@@ -1493,10 +1495,6 @@ function config_generate {
 	validate_os_sshpass
 
 	detect_remotersync
-
-	task_backup
-	
-	exit_withchange
 }
 
 ## Delete Existing Configuration
@@ -1606,8 +1604,13 @@ function show_version {
 function dbclient_warning {
 	if hash dbclient 2>/dev/null
 	then
-		MESSAGE="Dropbear support has been deprecated - please convert to OpenSSH"
-		echo_warn
+		if hash ssh 2>/dev/null
+		then
+			NOEMPTYBASHIF="1"
+		else
+			MESSAGE="Dropbear support has been deprecated - please convert to OpenSSH"
+			echo_warn
+		fi
 	fi
 }
 
@@ -1729,6 +1732,13 @@ function task_configure {
 		
 		config_generate
 	fi
+
+	backup_settime
+	backup_local_gravity
+	backup_local_custom
+	backup_cleanup
+	
+	exit_withchange
 }
 
 ## Devmode Task
@@ -1908,7 +1918,7 @@ function backup_remote_gravity {
 	MESSAGE="Performing Backup of Remote ${GRAVITY_FI}"
 	echo_stat
 	
-	CMD_TIMEOUT='15'
+	CMD_TIMEOUT='60'
 	CMD_REQUESTED="sudo sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} \".backup '${PIHOLE_DIR}/${GRAVITY_FI}.backup'\""
 		create_sshcmd
 }
