@@ -111,8 +111,6 @@ function show_target {
 # GS Update Functions
 ## Master Branch
 function update_gs {
-	TASKTYPE='UPDATE'
-
 	if [ -f "$HOME/${LOCAL_FOLDR}/dev" ]
 	then
 		BRANCH='development'
@@ -144,9 +142,7 @@ function update_gs {
 		echo_stat
 		git reset --hard origin/${BRANCH} >/dev/null 2>&1
 			error_validate
-	fi 
-		
-	exit_withchange
+	fi
 }
 
 # Gravity Core Functions
@@ -1822,6 +1818,8 @@ function task_update {
 	dbclient_warning
 	
 	update_gs
+
+	exit_withchange
 }
 
 ## Version Task
@@ -1924,6 +1922,8 @@ function task_purge {
 	rm -f $HOME/${SSH_PKIF} >/dev/null 2>&1
 	rm -f $HOME/${SSH_PKIF}.pub >/dev/null 2>&1
 		error_validate
+
+	update_gs
 }
 
 ## Backup Task
