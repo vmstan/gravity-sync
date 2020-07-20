@@ -1901,13 +1901,17 @@ function task_purge {
 	echo_warn
 	MESSAGE="- Associated SSH id_rsa keys."
 	echo_warn
+	MESSAGE="This function cannot be undone!"
+	echo_warn
 
 	MESSAGE="YOU WILL NEED TO REBUILD GRAVITY SYNC AFTER EXECUTION"
 	echo_warn
 
-	MESSAGE="Pi-hole binaries, files, directory and services ARE NOT impacted!"
+	MESSAGE="Pi-hole binaries, configuration and services ARE NOT impacted!"
 	echo_info
-	MESSAGE="Your ${GRAVITY_DB} and ${CUSTOM_DNS} WILL NOT sync anymore,"
+	MESSAGE="Your device will continue to resolve and block DNS requests,"
+	echo_info
+	MESSAGE="but your ${GRAVITY_FI} and ${CUSTOM_DNS} WILL NOT sync anymore,"
 	echo_info
 	MESSAGE="until you reconfigure Gravity Sync on this device."
 	echo_info
