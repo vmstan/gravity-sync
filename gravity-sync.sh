@@ -1879,31 +1879,37 @@ function task_purge {
 
 	MESSAGE="THIS WILL RESET YOUR ENTIRE GRAVITY SYNC INSTALLATION"
 	echo_warn
-	MESSAGE="- All backups files will be deleted."
+	MESSAGE="This will remove:"
 	echo_warn
-	MESSAGE="- Your ${CONFIG_FILE} will be deleted."
+	MESSAGE="- All backups files."
+	echo_warn
+	MESSAGE="- Your ${CONFIG_FILE} file."
 	echo_warn
 
 	if [ -f "$HOME/${LOCAL_FOLDR}/dev" ]
 	then
-		MESSAGE="- You will no longer use the development branch updater."
+		MESSAGE="- Your development branch updater."
 	elif [ -f "$HOME/${LOCAL_FOLDR}/beta" ]
 	then
-		MESSAGE="- You will no longer use the beta branch updater."
+		MESSAGE="- Your beta branch updater."
 	fi
 	echo_warn
 
-	MESSAGE="- All cronjob tasks will be removed."
+	MESSAGE="- All cronjob/automation tasks."
 	echo_warn
-	MESSAGE="- All job history/logs will be deleted."
+	MESSAGE="- All job history/logs."
 	echo_warn
-	MESSAGE="- Your SSH id_rsa keys will be deleted."
+	MESSAGE="- Associated SSH id_rsa keys."
 	echo_warn
 
 	MESSAGE="YOU WILL NEED TO REBUILD GRAVITY SYNC AFTER EXECUTION"
 	echo_warn
 
-	MESSAGE="Pi-hole files, directory and services ARE NOT impacted!"
+	MESSAGE="Pi-hole binaries, files, directory and services ARE NOT impacted!"
+	echo_info
+	MESSAGE="Your ${GRAVITY_DB} and ${CUSTOM_DNS} WILL NOT sync anymore,"
+	echo_info
+	MESSAGE="until you reconfigure Gravity Sync on this device."
 	echo_info
 
 	intent_validate
