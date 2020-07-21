@@ -111,8 +111,6 @@ function show_target {
 # GS Update Functions
 ## Master Branch
 function update_gs {
-	TASKTYPE='UPDATE'
-
 	if [ -f "$HOME/${LOCAL_FOLDR}/dev" ]
 	then
 		BRANCH='development'
@@ -144,9 +142,7 @@ function update_gs {
 		echo_stat
 		git reset --hard origin/${BRANCH} >/dev/null 2>&1
 			error_validate
-	fi 
-		
-	exit_withchange
+	fi
 }
 
 # Gravity Core Functions
@@ -1822,6 +1818,8 @@ function task_update {
 	dbclient_warning
 	
 	update_gs
+
+	exit_withchange
 }
 
 ## Version Task
@@ -1881,31 +1879,41 @@ function task_purge {
 
 	MESSAGE="THIS WILL RESET YOUR ENTIRE GRAVITY SYNC INSTALLATION"
 	echo_warn
-	MESSAGE="- All backups files will be deleted."
+	MESSAGE="This will remove:"
 	echo_warn
-	MESSAGE="- Your ${CONFIG_FILE} will be deleted."
+	MESSAGE="- All backups files."
+	echo_warn
+	MESSAGE="- Your ${CONFIG_FILE} file."
 	echo_warn
 
 	if [ -f "$HOME/${LOCAL_FOLDR}/dev" ]
 	then
-		MESSAGE="- You will no longer use the development branch updater."
+		MESSAGE="- Your development branch updater."
 	elif [ -f "$HOME/${LOCAL_FOLDR}/beta" ]
 	then
-		MESSAGE="- You will no longer use the beta branch updater."
+		MESSAGE="- Your beta branch updater."
 	fi
 	echo_warn
 
-	MESSAGE="- All cronjob tasks will be removed."
+	MESSAGE="- All cronjob/automation tasks."
 	echo_warn
-	MESSAGE="- All job history/logs will be deleted."
+	MESSAGE="- All job history/logs."
 	echo_warn
-	MESSAGE="- Your SSH id_rsa keys will be deleted."
+	MESSAGE="- Associated SSH id_rsa keys."
+	echo_warn
+	MESSAGE="This function cannot be undone!"
 	echo_warn
 
 	MESSAGE="YOU WILL NEED TO REBUILD GRAVITY SYNC AFTER EXECUTION"
 	echo_warn
 
-	MESSAGE="Pi-hole files, directory and services ARE NOT impacted!"
+	MESSAGE="Pi-hole binaries, configuration and services ARE NOT impacted!"
+	echo_info
+	MESSAGE="Your device will continue to resolve and block DNS requests,"
+	echo_info
+	MESSAGE="but your ${GRAVITY_FI} and ${CUSTOM_DNS} WILL NOT sync anymore,"
+	echo_info
+	MESSAGE="until you reconfigure Gravity Sync on this device."
 	echo_info
 
 	intent_validate
@@ -1924,6 +1932,13 @@ function task_purge {
 	rm -f $HOME/${SSH_PKIF} >/dev/null 2>&1
 	rm -f $HOME/${SSH_PKIF}.pub >/dev/null 2>&1
 		error_validate
+
+	MESSAGE="Realigning Dilithium Matrix"
+		echo_fail
+
+	sleep 1
+
+	update_gs
 }
 
 ## Backup Task

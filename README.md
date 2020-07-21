@@ -110,7 +110,7 @@ Gravity Sync will perform some checks to help insure success and then stop befor
 
 This allows you to be more flexible in where you make your configuration changes to block/allow lists and local DNS settings being made on either the primary or secondary, but it's best practice to continue making changes on one side where possible. In the event there are configuration changes to the same element (example, `custom.list` changes at both sides) then Gravity Sync will attempt to determine based on timestamps on what side the last changed happened, in which case the latest changes will be considered authoritative and overwrite the other side. Gravity Sync does not merge the contents of the files when changes happen, it simply overwrites the entire content.
 
-If the execution completes, you will now have overwritten your running `gravity.db` and `custom.list` on the secondary Pi-hole after creating a copy of the running files (with `.backup` appended) in the `backup` subfolder located with your script. Gravity Sync will also keep a copy of the last sync'd files from the primary (in the `backup` folder appended with `.pull` or `.push`) for future use.
+If the execution completes, you will now have a synchronized copy of your running `gravity.db` and `custom.list` on the both Pi-hole after creating a time-stamped copy of the running files (with `.backup` appended) in the `backup` subfolder located with your script, on the secondary Pi-hole.
 
 Finally, a file called `gravity-sync.log` will be created in the `gravity-sync` folder along side the script with the date the script was last executed appended to the bottom.
 
@@ -142,7 +142,7 @@ You can verify your existing automation entry by running `crontab -l` and see it
 
 ## Updates
 
-If you'd like to know what version of the script you have running the built in version checker. It will notify you if there are updates available.
+If you'd like to know what version of the script you have running, check the built in version checker. It will notify you if there are updates available.
 
  ```bash
  ./gravity-sync.sh version
@@ -159,6 +159,30 @@ Your copy of the `gravity-sync.conf` file, logs and backups should not be be imp
 You can run a `./gravity-sync.sh config` at any time to generate a new configuration file if you're concerned that you're missing something.
 
 - If the update script fails, make sure you did your original deployment via `git clone` and not a manual install. Refer to [ADVANCED.md](https://github.com/vmstan/gravity-sync/blob/master/ADVANCED.md) for more details.
+
+## Starting Over
+
+Starting in version 2.2, Gravity Sync has a built in tool to purge everything custom about itself from the system.
+
+```bash
+./gravity-sync.sh purge
+```
+
+This will remove:
+
+- All backups files.
+- Your `gravity-sync.conf` file.
+- All cronjob/automation tasks.
+- All job history/logs.
+- The SSH id_rsa keys associated with Gravity Sync.
+
+This function will totally wipe out your existing Gravity Sync installation and reset it to the default state for the version you are running. If all troubleshooting of a bad installation fails, this is the command of last resort.
+
+**This will not impact any of the Pi-hole binaries, configuration files, directories, services, etc.** Your Adlist database and Local Custom DNS records will no longer sync, but they will be in the status they were when Gravity Sync was removed.
+
+### Uninstalling
+
+If you are completely uninstalling Gravity Sync, the last step would be to remove the `gravity-sync` folder from your user's home directory.
 
 ## Advanced Installation
 
