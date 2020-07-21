@@ -8,3 +8,5 @@ backup/*.backup
 backup/*.push
 backup/*.pull
 dev
+.vscode
+.DS_Store

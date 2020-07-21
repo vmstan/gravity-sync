@@ -18,7 +18,7 @@ REMOTE_PASS=''
 
 # ADVANCED SETTINGS ######################
 
-# Uncomment and set for auxillary control
+# Uncomment and set for auxiliary control
 # Overrides gravity-sync.sh defaults
 # See ADVANCED.md for more information
 
