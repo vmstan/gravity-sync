@@ -1933,6 +1933,11 @@ function task_purge {
 	rm -f $HOME/${SSH_PKIF}.pub >/dev/null 2>&1
 		error_validate
 
+	MESSAGE="Realigning Dilithium Matrix"
+		echo_fail
+
+	sleep 1
+
 	update_gs
 }
 
