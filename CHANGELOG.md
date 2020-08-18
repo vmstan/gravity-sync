@@ -16,7 +16,7 @@ This release also adds the `./gravity-sync.sh purge` function that will totally 
 #### 2.2.1
 
 - Corrects issue with Smart Sync where it would fail if there was no `custom.list` already present on the local Pi-hole.
-- Adds Pihole default directories to `gravity-sync.conf.example` file.
+- Adds Pi-hole default directories to `gravity-sync.conf.example` file.
 - Adds `RIHOLE_BIN` variable to specify different Pi-hole binary location on remote server.
 
 ## 2.1
@@ -270,7 +270,7 @@ Delete the `dev` file and update again to revert back to the stable/master branc
 
 #### 1.3.3
 
-- Corrected Pihole bin path issue that cause automated sync not to reload services.
+- Corrected Pi-hole bin path issue that cause automated sync not to reload services.
 
 #### 1.3.4
 
