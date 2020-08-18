@@ -36,3 +36,13 @@ REMOTE_PASS=''
 # ROOT_CHECK_AVOID=''
 
 # BACKUP_RETAIN=''
+
+# PIHOLE DEFAULTS ########################
+
+# Have a very good reason to change these!
+
+# PIHOLE_DIR=''
+# GRAVITY_FI=''
+# CUSTOM_DNS=''
+# PIHOLE_BIN=''
+# RIHOLE_BIN=''

@@ -13,6 +13,12 @@ This release also adds the `./gravity-sync.sh purge` function that will totally 
 - I found a markdown spellcheck utility for Visual Studio Code, and ran it against all my markdown files. I'm sorry, I don't spell good. 🤷‍♂️
 - New Star Trek references.
 
+#### 2.2.1
+
+- Corrects issue with Smart Sync where it would fail if there was no `custom.list` already present on the local Pi-hole.
+- Adds Pihole default directories to `gravity-sync.conf.example` file.
+- Adds `RIHOLE_BIN` variable to specify different Pi-hole binary location on remote server.
+
 ## 2.1
 
 ### The Backup Release

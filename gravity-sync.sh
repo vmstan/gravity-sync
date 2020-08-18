@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='2.2.0'
+VERSION='2.2.1'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -40,7 +40,8 @@ BACKUP_RETAIN='7'					# replace in gravity-sync.conf to overwrite
 PIHOLE_DIR='/etc/pihole' 			# default Pi-hole data directory
 GRAVITY_FI='gravity.db' 			# default Pi-hole database file
 CUSTOM_DNS='custom.list'			# default Pi-hole local DNS lookups
-PIHOLE_BIN='/usr/local/bin/pihole' 	# default Pi-hole binary directory
+PIHOLE_BIN='/usr/local/bin/pihole' 	# default Pi-hole binary directory (local)
+RIHOLE_BIN='/usr/local/bin/pihole' 	# default Pi-hole binary directory (remote)
 
 # OS Settings
 BASH_PATH='/bin/bash'				# default OS bash path
@@ -383,13 +384,13 @@ function push_gs_reload {
 	MESSAGE="Updating Remote FTLDNS Configuration"
 	echo_stat
 		CMD_TIMEOUT='15'
-		CMD_REQUESTED="${PIHOLE_BIN} restartdns reloadlists"
+		CMD_REQUESTED="${RIHOLE_BIN} restartdns reloadlists"
 			create_sshcmd
 	
 	MESSAGE="Reloading Remote FTLDNS Services"
 	echo_stat
 		CMD_TIMEOUT='15'
-		CMD_REQUESTED="${PIHOLE_BIN} restartdns"
+		CMD_REQUESTED="${RIHOLE_BIN} restartdns"
 			create_sshcmd
 }
 
