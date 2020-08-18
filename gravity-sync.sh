@@ -535,6 +535,9 @@ function smart_gs {
 					PUSHRESTART="1"
 				fi
 			fi
+		else
+			pull_gs_cust
+			PULLRESTART="1"
 		fi
 	fi
 
