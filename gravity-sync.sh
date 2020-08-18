@@ -215,15 +215,7 @@ function pull_gs_cust {
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
 		if [ "$REMOTE_CUSTOM_DNS" == "1" ]
-		then
-			# if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
-			# then
-			# MESSAGE="Backing Up ${CUSTOM_DNS} on $HOSTNAME"
-			# echo_stat
-			# 	cp ${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.backup >/dev/null 2>&1
-			# 	error_validate
-			# fi
-			
+		then	
 			MESSAGE="Pulling ${CUSTOM_DNS} from ${REMOTE_HOST}"
 			echo_stat
 				RSYNC_REPATH="rsync"
@@ -501,40 +493,48 @@ function smart_gs {
 		SECCLCHANGE="1"
 	fi
 
-	if [ "${PRICLCHANGE}" == "${SECCLCHANGE}" ]
+	if [ "$SKIP_CUSTOM" != '1' ]
 	then
-		if [ "${PRICLCHANGE}" != "0" ]
+
+		if [ -f "${PIHOLE_DIR}/${CUSTOM_DNS}" ]
 		then
-			MESSAGE="Both ${CUSTOM_DNS} Changed"
-			echo_warn
 
-			PRICLDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${PIHOLE_DIR}/${CUSTOM_DNS}")
-			SECCLDATE=$(stat -c %Y ${PIHOLE_DIR}/${CUSTOM_DNS})
-
-				if [ "${PRICLDATE}" -gt "$SECCLDATE" ]
+			if [ "${PRICLCHANGE}" == "${SECCLCHANGE}" ]
+			then
+				if [ "${PRICLCHANGE}" != "0" ]
 				then
-					MESSAGE="Primary ${CUSTOM_DNS} Last Changed"
-					echo_info
+					MESSAGE="Both ${CUSTOM_DNS} Changed"
+					echo_warn
 
+					PRICLDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${PIHOLE_DIR}/${CUSTOM_DNS}")
+					SECCLDATE=$(stat -c %Y ${PIHOLE_DIR}/${CUSTOM_DNS})
+
+						if [ "${PRICLDATE}" -gt "${SECCLDATE}" ]
+						then
+							MESSAGE="Primary ${CUSTOM_DNS} Last Changed"
+							echo_info
+
+							pull_gs_cust
+							PULLRESTART="1"
+						else
+							MESSAGE="Secondary ${CUSTOM_DNS} Last Changed"
+							echo_info
+
+							push_gs_cust
+							PUSHRESTART="1"
+						fi
+				fi
+			else
+				if [ "${PRICLCHANGE}" != "0" ]
+				then
 					pull_gs_cust
 					PULLRESTART="1"
-				else
-					MESSAGE="Secondary ${CUSTOM_DNS} Last Changed"
-					echo_info
-
+				elif [ "${SECCLCHANGE}" != "0" ]
+				then
 					push_gs_cust
 					PUSHRESTART="1"
 				fi
-		fi
-	else
-		if [ "${PRICLCHANGE}" != "0" ]
-		then
-			pull_gs_cust
-			PULLRESTART="1"
-		elif [ "${SECCLCHANGE}" != "0" ]
-		then
-			push_gs_cust
-			PUSHRESTART="1"
+			fi
 		fi
 	fi
 
