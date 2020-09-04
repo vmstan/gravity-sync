@@ -1137,7 +1137,7 @@ function detect_remotersync {
 		CMD_REQUESTED="touch ~/gs.test"
 			create_sshcmd
 
-	MESSAGE="If pull test fails insure RSYNC is installed on ${REMOTE_HOST}"
+	MESSAGE="If pull test fails ensure RSYNC is installed on ${REMOTE_HOST}"
 	echo_warn
 
 	MESSAGE="Pulling Test File to $HOSTNAME"
