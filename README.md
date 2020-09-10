@@ -188,6 +188,6 @@ If you are completely uninstalling Gravity Sync, the last step would be to remov
 
 Please review the [Advanced Installation](https://github.com/vmstan/gravity-sync/blob/master/ADVANCED.md) guide for more assistance.
 
-### Troubleshooting
+## Troubleshooting
 
 If you get the error `sudo: a terminal is required to read the password` or `sudo: no tty present and no askpass program specified` during your execution, make sure you have [implemented passwordless sudo](https://linuxize.com/post/how-to-run-sudo-command-without-password/), as defined in the system requirements, for the user accounts on both the local and remote systems. 
