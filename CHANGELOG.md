@@ -13,6 +13,10 @@ This release also adds the `./gravity-sync.sh purge` function that will totally 
 - I found a markdown spellcheck utility for Visual Studio Code, and ran it against all my markdown files. I'm sorry, I don't spell good. 🤷‍♂️
 - New Star Trek references.
 
+#### 2.2.2
+
+- Corrects another logical problem that prevented `custom.list` from being backed up and replicated, if it didn't already exist on the local Pi-hole.
+
 #### 2.2.1
 
 - Corrects issue with Smart Sync where it would fail if there was no `custom.list` already present on the local Pi-hole.

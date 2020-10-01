@@ -1997,15 +1997,12 @@ function backup_remote_gravity {
 function backup_remote_custom {
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
-		if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
-		then
 			MESSAGE="Performing Backup of Remote ${CUSTOM_DNS}"
 			echo_stat
 	
 			CMD_TIMEOUT='15'
 			CMD_REQUESTED="sudo cp ${PIHOLE_DIR}/${CUSTOM_DNS} ${PIHOLE_DIR}/${CUSTOM_DNS}.backup"
 				create_sshcmd
-		fi
 	fi
 }
 
