@@ -209,14 +209,13 @@ function pull_gs_grav {
 
 ## Pull Custom
 function pull_gs_cust {
-
-	backup_local_custom
-	backup_remote_custom
-	
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
 		if [ "$REMOTE_CUSTOM_DNS" == "1" ]
-		then	
+		then
+			backup_local_custom
+			backup_remote_custom
+
 			MESSAGE="Pulling ${CUSTOM_DNS} from ${REMOTE_HOST}"
 			echo_stat
 				RSYNC_REPATH="rsync"
@@ -339,13 +338,13 @@ function push_gs_grav {
 
 ## Push Custom
 function push_gs_cust {
-	backup_remote_custom
-	backup_local_custom
-
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
 		if [ "$REMOTE_CUSTOM_DNS" == "1" ]
 		then
+			backup_remote_custom
+			backup_local_custom
+
 			MESSAGE="Copying ${CUSTOM_DNS} from ${REMOTE_HOST}"
 			echo_stat
 				RSYNC_REPATH="rsync"
