@@ -99,7 +99,7 @@ cd $HOME/gravity-sync
 
 This will guide you through the process of:
 
-- Specifying the IP or DNS name of your primary Pi-hole.
+- Specifying the IP or xDNS name of your primary Pi-hole.
 - Specifying the SSH username to connect to your primary Pi-hole.
 - Selecting the SSH authentication mechanism (key-pair or password.)
 - Configuring your key-pair and applying it to your primary Pi-hole.
