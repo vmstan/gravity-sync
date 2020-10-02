@@ -873,20 +873,22 @@ function validate_ph_folders {
 
 ## Validate SQLite3
 function validate_sqlite3 {
-	if hash sqlite3 2>/dev/null
-	then
-		MESSAGE="SQLITE3 Utility Detected"
-		echo_info
-	else
-		MESSAGE="SQLITE3 Utility Missing"
-		echo_warn
+	MESSAGE="Validating SQLITE Installed on $HOSTNAME"
+	echo_stat
+		if hash sqlite3 2>/dev/null
+		then
+			MESSAGE="SQLITE3 Utility Detected"
+			echo_good
+		else
+			MESSAGE="SQLITE3 Utility Missing"
+			echo_warn
 
-		MESSAGE="Installing SQLLITE3 with ${PKG_MANAGER}"
-		echo_stat
-		
-		${PKG_INSTALL} sqllite3 >/dev/null 2>&1
-			error_validate
-	fi
+			MESSAGE="Installing SQLLITE3 with ${PKG_MANAGER}"
+			echo_stat
+			
+			${PKG_INSTALL} sqllite3 >/dev/null 2>&1
+				error_validate
+		fi
 }
 
 ## Validate SSHPASS
