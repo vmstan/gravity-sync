@@ -29,6 +29,8 @@ This release also adds the `./gravity-sync.sh purge` function that will totally 
 - Adds variable to easily override Pi-hole binary directory for remote host, seperate from local host. (Thanks @dpraul)
 - Rewritten `dev` option now lets you select the branch to pull code against, allowing for more flexibility in updating against test versions of the code. The `beta` function introduced in 2.1.5 has now been removed.
 - Validates existance of SQLite installation on local Pi-hole.
+- Adds Gravity Sync permissions for running user to local `/etc/sudoer.d` file during `config` operation. 
+- Adds `./gravity-sync.sh sudo` function to create above file for existing setups, or to configure the remote Pi-hole by placing the installer files on that system. This is not required for existing functional installs, but this should also negate the need to give the Gravity Sync user NOPASSWD permissions to the entire system.
 
 ## 2.1
 

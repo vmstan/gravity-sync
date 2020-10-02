@@ -1395,6 +1395,8 @@ function intent_validate {
 # Configuration Management
 ## Generate New Configuration
 function config_generate {
+	task_sudo
+	
 	detect_ssh
 	
 	MESSAGE="Creating ${CONFIG_FILE} from Template"
@@ -1990,8 +1992,6 @@ function task_sudo {
 
 	sudo install -m 0440 gs-nopasswd.sudo /etc/sudoers.d/gs-nopasswd
 		error_validate
-
-	exit_withchange
 }
 
 ## Backup Task
@@ -2290,6 +2290,7 @@ case $# in
 
 			sudo)
 				task_sudo
+				exit_withchange
 			;;
 
 			*)
