@@ -27,6 +27,7 @@ This release also adds the `./gravity-sync.sh purge` function that will totally 
 
 - Adds variable to easily override database/binary file owners, useful for container deployments. (Thanks @dpraul)
 - Adds variable to easily override Pi-hole binary directory for remote host, seperate from local host. (Thanks @dpraul)
+- Rewritten `dev` option now lets you select the branch to pull code against, allowing for more flexibility in updating against test versions of the code. The `beta` function introduced in 2.1.5 has now been removed.
 
 ## 2.1
 
