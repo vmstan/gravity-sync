@@ -1982,7 +1982,7 @@ function task_sudo {
 	echo_stat
 
 	NEW_SUDO_USER=$(whoami)
-	echo -e "${NEW_SUDO_USER} ALL=(ALL) NOPASSWD: ${PIHOLE_DIR}" >> gs-nopasswd.sudo
+	echo -e "${NEW_SUDO_USER} ALL=(ALL) NOPASSWD: ${PIHOLE_DIR}" > gs-nopasswd.sudo
 		error_validate
 
 	MESSAGE="Installing Sudoer.d File"
