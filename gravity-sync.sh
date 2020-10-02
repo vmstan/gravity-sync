@@ -1978,11 +1978,17 @@ function task_sudo {
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
 
-	MESSAGE="Adding Current User to Sudoers"
+	MESSAGE="Creating Sudoer.d Template"
 	echo_stat
 
 	NEW_SUDO_USER=$(whoami)
-	sudo echo -e "${NEW_SUDO_USER} ALL=(ALL) NOPASSWD: ${PIHOLE_DIR}" >> /etc/sudoers.d/gs-nopasswd && chmod 0440 /etc/sudoers.d/gs-nopasswd
+	echo -e "${NEW_SUDO_USER} ALL=(ALL) NOPASSWD: ${PIHOLE_DIR}" >> gs-nopasswd.sudo
+		error_validate
+
+	MESSAGE="Installing Sudoer.d File"
+	echo_stat
+
+	sudo install -m 0440 gs-nopasswd.sudo /etc/sudoers.d/gs-nopasswd
 		error_validate
 
 	exit_withchange
