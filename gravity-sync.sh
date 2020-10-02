@@ -116,17 +116,14 @@ function show_target {
 function update_gs {
 	if [ -f "$HOME/${LOCAL_FOLDR}/dev" ]
 	then
-		BRANCH='development'
-	elif [ -f "$HOME/${LOCAL_FOLDR}/beta" ]
-	then
-		BRANCH='beta'
+		source $HOME/${LOCAL_FOLDR}/dev
 	else
-		BRANCH='master'
+		BRANCH='origin/master'
 	fi
 
-	if [ "$BRANCH" = "development" ]
+	if [ "$BRANCH" != "origin/master" ]
 	then
-		MESSAGE="Pulling from origin/${BRANCH}"
+		MESSAGE="Pulling from ${BRANCH}"
 		echo_info
 	fi
 
@@ -143,7 +140,7 @@ function update_gs {
 			error_validate
 		MESSAGE="Applying Update"
 		echo_stat
-		git reset --hard origin/${BRANCH} >/dev/null 2>&1
+		git reset --hard ${BRANCH} >/dev/null 2>&1
 			error_validate
 	fi
 }
@@ -1770,6 +1767,14 @@ function task_devmode {
 		echo_stat
 		touch $HOME/${LOCAL_FOLDR}/dev
 			error_validate
+		
+		git branch -r
+
+		MESSAGE="Select Branch to Update Against"
+		echo_need
+		read INPUT_BRANCH
+
+		echo -e "BRANCH='${INPUT_BRANCH}'" >> $HOME/${LOCAL_FOLDR}/dev
 	fi
 	
 	MESSAGE="Run UPDATE to apply changes"
@@ -2186,9 +2191,9 @@ case $# in
 				task_devmode
 			;;
 
-			beta)
-				task_betamode
-			;;
+			# beta)
+			# 	task_betamode
+			# ;;
 
 			devmode)
 				task_devmode
