@@ -1982,7 +1982,7 @@ function task_sudo {
 	echo_stat
 
 	NEW_SUDO_USER=$(whoami)
-	sudo echo -e "${NEW_SUDO_USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/gs-nopasswd
+	sudo echo -e "${NEW_SUDO_USER} ALL=(ALL) NOPASSWD: ${PIHOLE_DIR}" >> /etc/sudoers.d/gs-nopasswd && chmod 0440 /etc/sudoers.d/gs-nopasswd
 		error_validate
 
 	exit_withchange
