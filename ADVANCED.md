@@ -18,8 +18,8 @@ Download the latest release from [GitHub](https://github.com/vmstan/gravity-sync
 
 ```bash
 cd ~
-wget https://github.com/vmstan/gravity-sync/archive/v2.2.2.zip
-unzip v2.2.1.zip -d gravity-sync
+wget https://github.com/vmstan/gravity-sync/archive/v2.2.3.zip
+unzip v2.2.3.zip -d gravity-sync
 cd gravity-sync
 ```
 
@@ -220,15 +220,9 @@ At the very least, I would recommend backing up your existing `gravity-sync` fol
 
 ### Development Builds
 
-Starting in v1.7.2, you can easily flag if you want to receive the development branch of Gravity Sync when running the built in `./gravity-sync.sh update` function. Beginning in v1.7.4 `./gravity-sync.sh dev` will now toggle the dev flag on/off. No `touch` required, although it still works that way under the covers.
+Starting in v1.7.2, you can easily flag if you want to receive the development branch of Gravity Sync when running the built in `./gravity-sync.sh update` function. Beginning in v1.7.4 `./gravity-sync.sh dev` will now toggle the dev flag on/off. Starting in v2.2.3, it will prompt you to select the development branch you want to use.
 
-To manually adjust the flag, create an empty file in the `gravity-sync` folder called `dev` and afterwards the standard `./gravity-sync.sh update` function will apply the correct updates.
-
-```bash
-cd gravity-sync
-touch dev
-./gravity-sync.sh update
-```
+To manually adjust the flag, create an empty file in the `gravity-sync` folder called `dev` and then edit the file to include only one line `BRANCH='origin/x.x.x'` (where x.x.x is the development version you want to use) afterwards the standard `./gravity-sync.sh update` function will apply the correct updates.
 
 Delete the `dev` file and update again to revert back to the stable/master branch.
 

@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='2.2.2'
+VERSION='2.2.3'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -42,6 +42,8 @@ GRAVITY_FI='gravity.db' 			# default Pi-hole database file
 CUSTOM_DNS='custom.list'			# default Pi-hole local DNS lookups
 PIHOLE_BIN='/usr/local/bin/pihole' 	# default Pi-hole binary directory (local)
 RIHOLE_BIN='/usr/local/bin/pihole' 	# default Pi-hole binary directory (remote)
+FILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (local)
+REMOTE_FILE_OWNER='pihole:pihole'	# default Pi-hole file owner and group (remote)
 
 # OS Settings
 BASH_PATH='/bin/bash'				# default OS bash path
@@ -114,17 +116,14 @@ function show_target {
 function update_gs {
 	if [ -f "$HOME/${LOCAL_FOLDR}/dev" ]
 	then
-		BRANCH='development'
-	elif [ -f "$HOME/${LOCAL_FOLDR}/beta" ]
-	then
-		BRANCH='beta'
+		source $HOME/${LOCAL_FOLDR}/dev
 	else
-		BRANCH='master'
+		BRANCH='origin/master'
 	fi
 
-	if [ "$BRANCH" = "development" ]
+	if [ "$BRANCH" != "origin/master" ]
 	then
-		MESSAGE="Pulling from origin/${BRANCH}"
+		MESSAGE="Pulling from ${BRANCH}"
 		echo_info
 	fi
 
@@ -141,7 +140,7 @@ function update_gs {
 			error_validate
 		MESSAGE="Applying Update"
 		echo_stat
-		git reset --hard origin/${BRANCH} >/dev/null 2>&1
+		git reset --hard ${BRANCH} >/dev/null 2>&1
 			error_validate
 	fi
 }
@@ -168,8 +167,8 @@ function pull_gs_grav {
 	MESSAGE="Validating Settings of ${GRAVITY_FI}"
 	echo_stat
 
-		GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk '{print $3 $4}')
-		if [ "$GRAVDB_OWN" != "piholepihole" ]
+		GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk 'OFS=":" {print $3,$4}')
+		if [ "$GRAVDB_OWN" != "$FILE_OWNER" ]
 		then
 			MESSAGE="Validating Ownership on ${GRAVITY_FI}"
 			echo_fail
@@ -179,7 +178,7 @@ function pull_gs_grav {
 			
 			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
 			echo_stat	
-				sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+				sudo chown ${FILE_OWNER} ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 				error_validate
 
 			MESSAGE="Continuing Validation of ${GRAVITY_FI}"
@@ -332,7 +331,7 @@ function push_gs_grav {
 	MESSAGE="Setting Ownership on ${GRAVITY_FI}"
 	echo_stat
 		CMD_TIMEOUT='15'
-		CMD_REQUESTED="sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}"
+		CMD_REQUESTED="sudo chown ${RFILE_OWNER} ${PIHOLE_DIR}/${GRAVITY_FI}"
 			create_sshcmd
 }
 
@@ -626,8 +625,8 @@ function restore_gs {
 	MESSAGE="Validating Ownership on ${GRAVITY_FI}"
 	echo_stat
 		
-		GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk '{print $3 $4}')
-		if [ "$GRAVDB_OWN" == "piholepihole" ]
+		GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk 'OFS=":" {print $3,$4}')
+		if [ "$GRAVDB_OWN" == "$FILE_OWNER" ]
 		then
 			echo_good
 		else
@@ -638,7 +637,7 @@ function restore_gs {
 			
 			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
 			echo_stat	
-				sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+				sudo chown ${FILE_OWNER} ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 				error_validate
 		fi
 		
@@ -870,6 +869,26 @@ function validate_ph_folders {
 			exit_nochange
 		fi
 	echo_good
+}
+
+## Validate SQLite3
+function validate_sqlite3 {
+	MESSAGE="Validating SQLITE Installed on $HOSTNAME"
+	echo_stat
+		if hash sqlite3 2>/dev/null
+		then
+			MESSAGE="SQLITE3 Utility Detected"
+			echo_good
+		else
+			MESSAGE="SQLITE3 Utility Missing"
+			echo_warn
+
+			MESSAGE="Installing SQLLITE3 with ${PKG_MANAGER}"
+			echo_stat
+			
+			${PKG_INSTALL} sqllite3 >/dev/null 2>&1
+				error_validate
+		fi
 }
 
 ## Validate SSHPASS
@@ -1376,6 +1395,8 @@ function intent_validate {
 # Configuration Management
 ## Generate New Configuration
 function config_generate {
+	task_sudo
+	
 	detect_ssh
 	
 	MESSAGE="Creating ${CONFIG_FILE} from Template"
@@ -1492,6 +1513,7 @@ function config_generate {
 	echo_info
 
 	validate_os_sshpass
+	validate_sqlite3
 
 	detect_remotersync
 }
@@ -1768,6 +1790,14 @@ function task_devmode {
 		echo_stat
 		touch $HOME/${LOCAL_FOLDR}/dev
 			error_validate
+		
+		git branch -r
+
+		MESSAGE="Select Branch to Update Against"
+		echo_need
+		read INPUT_BRANCH
+
+		echo -e "BRANCH='${INPUT_BRANCH}'" >> $HOME/${LOCAL_FOLDR}/dev
 	fi
 	
 	MESSAGE="Run UPDATE to apply changes"
@@ -1944,6 +1974,26 @@ function task_purge {
 	update_gs
 }
 
+## Sudo Creation Task
+function task_sudo {
+	TASKTYPE='SUDO'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+
+	MESSAGE="Creating Sudoer.d Template"
+	echo_stat
+
+	NEW_SUDO_USER=$(whoami)
+	echo -e "${NEW_SUDO_USER} ALL=(ALL) NOPASSWD: ${PIHOLE_DIR}" > gs-nopasswd.sudo
+		error_validate
+
+	MESSAGE="Installing Sudoer.d File"
+	echo_stat
+
+	sudo install -m 0440 gs-nopasswd.sudo /etc/sudoers.d/gs-nopasswd
+		error_validate
+}
+
 ## Backup Task
 function task_backup {
 	TASKTYPE='BACKUP'
@@ -2086,6 +2136,7 @@ case $# in
 		show_target
 		validate_gs_folders
 		validate_ph_folders
+		validate_sqlite3
 		validate_os_sshpass
 
 		smart_gs
@@ -2103,6 +2154,7 @@ case $# in
 				show_target
 				validate_gs_folders
 				validate_ph_folders
+				validate_sqlite3
 				validate_os_sshpass
 
 				smart_gs
@@ -2118,6 +2170,7 @@ case $# in
 				show_target
 				validate_gs_folders
 				validate_ph_folders
+				validate_sqlite3
 				validate_os_sshpass
 
 				smart_gs
@@ -2133,6 +2186,7 @@ case $# in
 				show_target
 				validate_gs_folders
 				validate_ph_folders
+				validate_sqlite3
 				validate_os_sshpass
 					
 				pull_gs
@@ -2148,6 +2202,7 @@ case $# in
 				show_target
 				validate_gs_folders
 				validate_ph_folders
+				validate_sqlite3
 				validate_os_sshpass
 					
 				push_gs
@@ -2163,6 +2218,7 @@ case $# in
 				show_target
 				validate_gs_folders
 				validate_ph_folders
+				validate_sqlite3
 
 				restore_gs
 				exit
@@ -2184,9 +2240,9 @@ case $# in
 				task_devmode
 			;;
 
-			beta)
-				task_betamode
-			;;
+			# beta)
+			# 	task_betamode
+			# ;;
 
 			devmode)
 				task_devmode
@@ -2230,6 +2286,11 @@ case $# in
 
 			purge)
 				task_purge
+			;;
+
+			sudo)
+				task_sudo
+				exit_withchange
 			;;
 
 			*)

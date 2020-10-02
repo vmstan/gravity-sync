@@ -13,15 +13,24 @@ This release also adds the `./gravity-sync.sh purge` function that will totally 
 - I found a markdown spellcheck utility for Visual Studio Code, and ran it against all my markdown files. I'm sorry, I don't spell good. 🤷‍♂️
 - New Star Trek references.
 
-#### 2.2.2
-
-- Corrects another logical problem that prevented `custom.list` from being backed up and replicated, if it didn't already exist on the local Pi-hole.
-
 #### 2.2.1
 
 - Corrects issue with Smart Sync where it would fail if there was no `custom.list` already present on the local Pi-hole.
 - Adds Pi-hole default directories to `gravity-sync.conf.example` file.
 - Adds `RIHOLE_BIN` variable to specify different Pi-hole binary location on remote server.
+
+#### 2.2.2
+
+- Corrects another logical problem that prevented `custom.list` from being backed up and replicated, if it didn't already exist on the local Pi-hole.
+
+#### 2.2.3
+
+- Adds variable to easily override database/binary file owners, useful for container deployments. (Thanks @dpraul)
+- Adds variable to easily override Pi-hole binary directory for remote host, seperate from local host. (Thanks @dpraul)
+- Rewritten `dev` option now lets you select the branch to pull code against, allowing for more flexibility in updating against test versions of the code. The `beta` function introduced in 2.1.5 has now been removed.
+- Validates existance of SQLite installation on local Pi-hole.
+- Adds Gravity Sync permissions for running user to local `/etc/sudoer.d` file during `config` operation. 
+- Adds `./gravity-sync.sh sudo` function to create above file for existing setups, or to configure the remote Pi-hole by placing the installer files on that system. This is not required for existing functional installs, but this should also negate the need to give the Gravity Sync user NOPASSWD permissions to the entire system.
 
 ## 2.1
 
