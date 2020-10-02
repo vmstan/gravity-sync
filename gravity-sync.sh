@@ -1972,6 +1972,22 @@ function task_purge {
 	update_gs
 }
 
+## Sudo Creation Task
+function task_sudo {
+	TASKTYPE='SUDO'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+
+	MESSAGE="Adding Current User to Sudoers"
+	echo_stat
+
+	NEW_SUDO_USER=$(whoami)
+	sudo echo -e "${NEW_SUDO_USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/gs-nopasswd
+		error_validate
+
+	exit_withchange
+}
+
 ## Backup Task
 function task_backup {
 	TASKTYPE='BACKUP'
@@ -2264,6 +2280,10 @@ case $# in
 
 			purge)
 				task_purge
+			;;
+
+			sudo)
+				task_sudo
 			;;
 
 			*)
