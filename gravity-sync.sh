@@ -42,6 +42,8 @@ GRAVITY_FI='gravity.db' 			# default Pi-hole database file
 CUSTOM_DNS='custom.list'			# default Pi-hole local DNS lookups
 PIHOLE_BIN='/usr/local/bin/pihole' 	# default Pi-hole binary directory (local)
 RIHOLE_BIN='/usr/local/bin/pihole' 	# default Pi-hole binary directory (remote)
+FILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (local)
+REMOTE_FILE_OWNER='pihole:pihole'	# default Pi-hole file owner and group (remote)
 
 # OS Settings
 BASH_PATH='/bin/bash'				# default OS bash path
@@ -168,8 +170,8 @@ function pull_gs_grav {
 	MESSAGE="Validating Settings of ${GRAVITY_FI}"
 	echo_stat
 
-		GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk '{print $3 $4}')
-		if [ "$GRAVDB_OWN" != "piholepihole" ]
+		GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk 'OFS=":" {print $3,$4}')
+		if [ "$GRAVDB_OWN" != "$FILE_OWNER" ]
 		then
 			MESSAGE="Validating Ownership on ${GRAVITY_FI}"
 			echo_fail
@@ -179,7 +181,7 @@ function pull_gs_grav {
 			
 			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
 			echo_stat	
-				sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+				sudo chown ${FILE_OWNER} ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 				error_validate
 
 			MESSAGE="Continuing Validation of ${GRAVITY_FI}"
@@ -332,7 +334,7 @@ function push_gs_grav {
 	MESSAGE="Setting Ownership on ${GRAVITY_FI}"
 	echo_stat
 		CMD_TIMEOUT='15'
-		CMD_REQUESTED="sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI}"
+		CMD_REQUESTED="sudo chown ${RFILE_OWNER} ${PIHOLE_DIR}/${GRAVITY_FI}"
 			create_sshcmd
 }
 
@@ -626,8 +628,8 @@ function restore_gs {
 	MESSAGE="Validating Ownership on ${GRAVITY_FI}"
 	echo_stat
 		
-		GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk '{print $3 $4}')
-		if [ "$GRAVDB_OWN" == "piholepihole" ]
+		GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk 'OFS=":" {print $3,$4}')
+		if [ "$GRAVDB_OWN" == "$FILE_OWNER" ]
 		then
 			echo_good
 		else
@@ -638,7 +640,7 @@ function restore_gs {
 			
 			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
 			echo_stat	
-				sudo chown pihole:pihole ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+				sudo chown ${FILE_OWNER} ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 				error_validate
 		fi
 		
