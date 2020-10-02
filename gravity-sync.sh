@@ -871,6 +871,24 @@ function validate_ph_folders {
 	echo_good
 }
 
+## Validate SQLite3
+function validate_sqlite3 {
+	if hash sqlite3 2>/dev/null
+	then
+		MESSAGE="SQLITE3 Utility Detected"
+		echo_info
+	else
+		MESSAGE="SQLITE3 Utility Missing"
+		echo_warn
+
+		MESSAGE="Installing SQLLITE3 with ${PKG_MANAGER}"
+		echo_stat
+		
+		${PKG_INSTALL} sqllite3 >/dev/null 2>&1
+			error_validate
+	fi
+}
+
 ## Validate SSHPASS
 function validate_os_sshpass {
 	SSHPASSWORD=''
@@ -1491,6 +1509,7 @@ function config_generate {
 	echo_info
 
 	validate_os_sshpass
+	validate_sqlite3
 
 	detect_remotersync
 }
@@ -2094,6 +2113,7 @@ case $# in
 		validate_gs_folders
 		validate_ph_folders
 		validate_os_sshpass
+		validate_sqlite3
 
 		smart_gs
 		exit

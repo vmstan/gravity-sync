@@ -39,6 +39,7 @@ Gravity Sync is not developed by or affiliated with the Pi-hole project. This is
 - While it is possible to leverage container/Docker deployments of Pi-hole and Gravity Sync, this configuration is currently not officially supported. Instructions here assume a "native" installation of Pi-hole.
 - You will need to make sure that you have password-less `SUDO` enabled for the user accounts on both the primary and secondary Pi-hole. Most of the pre-built images available for the Raspberry Pi already have this configured, but if you have your Pi-hole running in a virtual machine built from a generic ISO, you may need to [adjust this manually](https://linuxize.com/post/how-to-run-sudo-command-without-password/).
 - Make sure `SSH` and `RSYNC` are installed on both the primary and secondary Pi-hole prior to installation. These two binaries are what does the heavy lifting between your Pi-hole nodes. In the past, Dropbear was supported but this has proven problematic. If you're using a ultra-lightweight Pi distribution (such as DietPi) that uses Dropbear by default, you will need to convert to OpenSSH as of Gravity Sync version 2.2.
+- You will need to make sure that `SQLite3` is installed on both Pi-hole systems, in order for the backup and restore functions against the databases to completely successfully. This should be covered by the installation of Pi-hole or already installed on most Linux distros.
 
 ### Pi-hole Architecture
 
