@@ -2114,8 +2114,8 @@ case $# in
 		show_target
 		validate_gs_folders
 		validate_ph_folders
-		validate_os_sshpass
 		validate_sqlite3
+		validate_os_sshpass
 
 		smart_gs
 		exit
@@ -2132,6 +2132,7 @@ case $# in
 				show_target
 				validate_gs_folders
 				validate_ph_folders
+				validate_sqlite3
 				validate_os_sshpass
 
 				smart_gs
@@ -2147,6 +2148,7 @@ case $# in
 				show_target
 				validate_gs_folders
 				validate_ph_folders
+				validate_sqlite3
 				validate_os_sshpass
 
 				smart_gs
@@ -2162,6 +2164,7 @@ case $# in
 				show_target
 				validate_gs_folders
 				validate_ph_folders
+				validate_sqlite3
 				validate_os_sshpass
 					
 				pull_gs
@@ -2177,6 +2180,7 @@ case $# in
 				show_target
 				validate_gs_folders
 				validate_ph_folders
+				validate_sqlite3
 				validate_os_sshpass
 					
 				push_gs
@@ -2192,6 +2196,7 @@ case $# in
 				show_target
 				validate_gs_folders
 				validate_ph_folders
+				validate_sqlite3
 
 				restore_gs
 				exit
