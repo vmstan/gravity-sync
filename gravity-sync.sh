@@ -60,23 +60,7 @@ SSH_PKIF='.ssh/id_rsa'				# default local SSH key
 ### DO NOT CHANGE ANYTHING BELOW THIS LINE ###
 ##############################################
 
-# Script Colors
-RED='\033[0;91m'
-GREEN='\033[0;92m'
-CYAN='\033[0;96m'
-YELLOW='\033[0;93m'
-PURPLE='\033[0;95m'
-BLUE='\033[0;94m'
-BOLD='\033[1m'
-NC='\033[0m'
-
-# Message Codes
-FAIL="[ ${RED}FAIL${NC} ]"
-WARN="[ ${PURPLE}WARN${NC} ]"
-GOOD="[ ${GREEN} OK ${NC} ]"
-STAT="[ ${CYAN}EXEC${NC} ]"
-INFO="[ ${YELLOW}INFO${NC} ]"
-NEED="[ ${BLUE}NEED${NC} ]"
+source includes/gs-colors.sh
 
 # FUNCTION DEFINITIONS #######################
 
@@ -1984,13 +1968,13 @@ function task_sudo {
 	echo_stat
 
 	NEW_SUDO_USER=$(whoami)
-	echo -e "${NEW_SUDO_USER} ALL=(ALL) NOPASSWD: ${PIHOLE_DIR}" > gs-nopasswd.sudo
+	echo -e "${NEW_SUDO_USER} ALL=(ALL) NOPASSWD: ${PIHOLE_DIR}" > ${LOCAL_FOLDR}/templates/gs-nopasswd.sudo
 		error_validate
 
 	MESSAGE="Installing Sudoer.d File"
 	echo_stat
 
-	sudo install -m 0440 gs-nopasswd.sudo /etc/sudoers.d/gs-nopasswd
+	sudo install -m 0440 ${LOCAL_FOLDR}/templates/gs-nopasswd.sudo /etc/sudoers.d/gs-nopasswd
 		error_validate
 }
 
