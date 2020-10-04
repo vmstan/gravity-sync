@@ -1,5 +1,9 @@
 # The Changelog
 
+## 3.0
+
+### The Breakout Release
+
 ## 2.2
 
 ### The Purged Release
