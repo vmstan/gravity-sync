@@ -106,8 +106,7 @@ source includes/gs-hashing.sh
 source includes/gs-pull.sh
 source includes/gs-push.sh
 source includes/gs-smart.sh
-
-
+source includes/gs-restore.sh
 
 # Logging Functions
 ## Core Logging
