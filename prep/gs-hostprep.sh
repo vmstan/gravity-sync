@@ -18,6 +18,9 @@ NC='\033[0m'
 
 CROSSCOUNT="0"
 
+echo -e "${YELLOW}Gravity Sync 3.0 - Deployment Scan{$NC}"
+echo -e ""
+
 if [ ! "$EUID" -ne 0 ]
 then 
     echo -e "[${RED}✗${NC}] Running as Root"
