@@ -90,48 +90,34 @@ function import_gs {
 	fi
 }
 
-# Check Intent
-source includes/gs-intent.sh
-
-# GS Update Functions
-source includes/gs-update.sh
-
-# GS Hashing Functions
-source includes/gs-hashing.sh
-
 # Gravity Core Functions
 source includes/gs-compare.sh
 source includes/gs-pull.sh
 source includes/gs-push.sh
 source includes/gs-smart.sh
 source includes/gs-restore.sh
+source includes/gs-backup.sh
+
+# Hashing & SSH Functions
+source includes/gs-hashing.sh
+source includes/gs-ssh.sh
 
 # Logging Functions
 source includes/gs-logging.sh
 
-# Validate Functions
+# Validation Functions
 source includes/gs-validate.sh
-
-# SSH Functions
-source includes/gs-ssh.sh
+source includes/gs-intent.sh
+source includes/gs-root.sh
 
 # Configuration Management
 source includes/gs-config.sh
+source includes/gs-update.sh
+source includes/gs-automate.sh
+source includes/gs-purge.sh
 
 # Exit Codes
 source includes/gs-exit.sh
-
-# Automation Functions
-source includes/gs-automate.sh
-
-# Purge Functions
-source includes/gs-purge.sh
-
-# Backup Functions
-source includes/gs-backup.sh
-
-# Root Check
-source includes/gs-root.sh
 
 # Invalid Tasks
 function task_invalid {
