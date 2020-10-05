@@ -182,9 +182,9 @@ case $# in
 				task_version ;;
 			update|upgrade)
 				task_update ;;
-			dev|devmode|development)
+			dev|devmode|development|develop)
 				task_devmode ;;
-			logs)
+			logs|log)
 				task_logs ;;
 			compare)
 				task_compare ;;
@@ -192,8 +192,8 @@ case $# in
 				task_cron ;;
 			config|configure)
 				task_configure ;;
-			# auto|automate)
-			#	task_automate ;;
+			auto|automate)
+				task_automate ;;
 			backup)
 				task_backup ;;
 			purge)
