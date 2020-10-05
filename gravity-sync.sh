@@ -163,123 +163,64 @@ function error_validate {
 	fi
 
 case $# in
-	
 	0)
-		task_smart
-	;;
-	
+		task_smart ;;
 	1)
    		case $1 in
-		   sync)
-				task_smart
- 			;;
-
-			smart)
-				task_smart
- 			;;
-
+			smart|sync)
+				task_smart ;;
    	 		pull)
-				task_pull
- 			;;
-
+				task_pull ;;
 			push)	
-				task_push
-			;;
-
+				task_push ;;
 			restore)	
-				task_restore
-			;;
-	
+				task_restore ;;
 			version)
-				task_version
-			;;
-	
-			update)
-				task_update
-			;;
-
-			upgrade)
-				task_update
-			;;
-			
-			dev)
-				task_devmode
-			;;
-
-			devmode)
-				task_devmode
-			;;
-
-			development)
-				task_devmode
-			;;
-	
+				task_version ;;
+			update|upgrade)
+				task_update ;;
+			dev|devmode|development)
+				task_devmode ;;
 			logs)
-				task_logs
-			;;
-			
+				task_logs ;;
 			compare)
-				task_compare
-			;;
-			
+				task_compare ;;
 			cron)
-				task_cron
-			;;
-			
-			config)
-				task_configure
-			;;
-
-			configure)
-				task_configure
-			;;
-
-			auto)
-				task_automate
-			;;	
-
-			automate)
-				task_automate
-			;;	
-
+				task_cron ;;
+			config|configure)
+				task_configure ;;
+			# auto|automate)
+			#	task_automate ;;
 			backup)
-				task_backup
-			;;
-
+				task_backup ;;
 			purge)
-				task_purge
-			;;
-
+				task_purge ;;
 			sudo)
 				task_sudo
 				exit_withchange
 			;;
 
 			*)
-				task_invalid
-			;;
+				task_invalid ;;
 		esac
 	;;
 
 	2)
    		case $1 in
-			automate)
-				task_automate
-			;;	
-
+			auto|automate)
+				task_automate ;;
 		esac
 	;;
 
 	3)
    		case $1 in
-			automate)
-				task_automate $2 $3
-			;;	
-
+			auto|automate)
+				task_automate $2 $3 ;;	
 		esac
 	;;
 	
 	*)
-		task_invalid
-	;;
+		task_invalid ;;
 esac
+
+# END OF SCRIPT ##############################
