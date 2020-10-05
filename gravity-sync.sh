@@ -135,7 +135,7 @@ function error_validate {
 source includes/gs-config.sh
 
 # Exit Codes
-
+source includes/gs-exit.sh
 
 # Version Control
 ## Show Version
