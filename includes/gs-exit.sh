@@ -1,3 +1,9 @@
+# GRAVITY SYNC BY VMSTAN #####################
+# gs-exit.sh #################################
+
+# For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
+# This code is called from the main gravity-sync.sh file and should not execute directly!
+
 ## No Changes Made
 function exit_nochange {
 	SCRIPT_END=$SECONDS

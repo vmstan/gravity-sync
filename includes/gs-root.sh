@@ -1,3 +1,9 @@
+# GRAVITY SYNC BY VMSTAN #####################
+# gs-root.sh #################################
+
+# For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
+# This code is called from the main gravity-sync.sh file and should not execute directly!
+
 ## Sudo Creation Task
 function task_sudo {
 	TASKTYPE='SUDO'

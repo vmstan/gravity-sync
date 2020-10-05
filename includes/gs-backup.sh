@@ -1,3 +1,9 @@
+# GRAVITY SYNC BY VMSTAN #####################
+# gs-backup.sh ###############################
+
+# For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
+# This code is called from the main gravity-sync.sh file and should not execute directly!
+
 ## Backup Task
 function task_backup {
 	TASKTYPE='BACKUP'

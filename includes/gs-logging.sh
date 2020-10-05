@@ -1,3 +1,9 @@
+# GRAVITY SYNC BY VMSTAN #####################
+# gs-logging.sh ##############################
+
+# For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
+# This code is called from the main gravity-sync.sh file and should not execute directly!
+
 ## Logs Task
 function task_logs {
 	TASKTYPE='LOGS'

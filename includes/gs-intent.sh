@@ -1,3 +1,9 @@
+# GRAVITY SYNC BY VMSTAN #####################
+# gs-intent.sh ###############################
+
+# For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
+# This code is called from the main gravity-sync.sh file and should not execute directly!
+
 ## Validate Intent
 function intent_validate {
 	if [ "$VERIFY_PASS" == "0" ]

@@ -1,3 +1,9 @@
+# GRAVITY SYNC BY VMSTAN #####################
+# gs-validate.sh #############################
+
+# For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
+# This code is called from the main gravity-sync.sh file and should not execute directly!
+
 ## Validate GS Folders
 function validate_gs_folders {
 	MESSAGE="Validating ${PROGRAM} Folders on $HOSTNAME"

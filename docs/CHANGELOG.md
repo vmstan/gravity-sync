@@ -4,6 +4,8 @@
 
 ### The Breakout Release
 
+This release focuses on breaking out elements of the script from the main file into a collection of a dozen or so files located under the `includes/gs-*.sh` hirearchy. Seperating out allows new contributors to work on different parts of the script individually, provides an oppertunity to clean up and reorganize parts of the code, and hopefully provides less risk of breaking the entire script.
+
 ## 2.2
 
 ### The Purged Release
