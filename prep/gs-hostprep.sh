@@ -18,8 +18,7 @@ NC='\033[0m'
 
 CROSSCOUNT="0"
 
-echo -e "${YELLOW}Gravity Sync 3.0 - Deployment Scan{$NC}"
-echo -e ""
+echo -e "${YELLOW}Gravity Sync 3.0 - Deployment Scan${NC}"
 
 if [ ! "$EUID" -ne 0 ]
 then 
@@ -28,8 +27,6 @@ then
 else
     echo -e "[${GREEN}✓${NC}] Not Running as Root"
 fi
-
-echo -e "Checking for required software"
 
 if hash ssh
 then
@@ -57,8 +54,8 @@ fi
 
 if [ "$CROSSCOUNT" != "0" ]
 then
-    echo -e "Checks failed"
+    echo -e "${CROSSCOUNT} failures detected"
 else
-    echo -e "All good!"
+    echo -e "This host is prepared to use Gravity Sync"
 fi
 
