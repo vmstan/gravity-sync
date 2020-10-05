@@ -125,13 +125,13 @@ source includes/gs-exit.sh
 source includes/gs-automate.sh
 
 # Purge Functions
-source include/gs-purge.sh
+source includes/gs-purge.sh
 
 # Backup Functions
-source include/gs-backup.sh
+source includesgs-backup.sh
 
 # Root Check
-source include/gs-root.sh
+source includes/gs-root.sh
 
 # Invalid Tasks
 function task_invalid {
