@@ -8,9 +8,24 @@
 
 echo -e "Checking for required software"
 
+if hash ssh
+then
+    echo -e "SSH Client Detected"
+else
+    echo -e "SSH Client Missing"
+fi
+
+if hash rsync
+then
+    echo -e "RSYNC Detected"
+else
+    echo -e "RSYNC Missing"
+fi
+
 if hash sqlite3
 then
     echo -e "SQLITE3 Detected"
 else
     echo -e "SQLLITE3 Missing"
 fi
+
