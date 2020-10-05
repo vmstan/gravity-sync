@@ -128,7 +128,7 @@ source includes/gs-automate.sh
 source includes/gs-purge.sh
 
 # Backup Functions
-source includesgs-backup.sh
+source includes/gs-backup.sh
 
 # Root Check
 source includes/gs-root.sh
