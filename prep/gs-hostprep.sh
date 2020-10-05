@@ -6,33 +6,56 @@
 
 # Run this script on your primary Pi-hole to aid in preparing for Gravity Sync installation.
 
+# Script Colors
+RED='\033[0;91m'
+GREEN='\033[0;92m'
+CYAN='\033[0;96m'
+YELLOW='\033[0;93m'
+PURPLE='\033[0;95m'
+BLUE='\033[0;94m'
+BOLD='\033[1m'
+NC='\033[0m'
+
+CROSSCOUNT="0"
+
 if [ ! "$EUID" -ne 0 ]
 then 
-    echo -e "Running as Root"
+    echo -e "[${RED}✗${NC}] Running as Root"
+    CROSSCOUNT=$((CROSSCOUNT+1))
 else
-    echo -e "Not Running as Root"
+    echo -e "[${GREEN}✓${NC}] Not Running as Root"
 fi
 
 echo -e "Checking for required software"
 
 if hash ssh
 then
-    echo -e "SSH Detected"
+    echo -e "[${GREEN}✓${NC}] SSH Detected"
 else
-    echo -e "SSH Missing"
+    echo -e "[${RED}✗${NC}] SSH Missing"
+    CROSSCOUNT=$((CROSSCOUNT+1))
 fi
 
 if hash rsync
 then
-    echo -e "RSYNC Detected"
+    echo -e "[${GREEN}✓${NC}] RSYNC Detected"
 else
-    echo -e "RSYNC Missing"
+    echo -e "[${RED}✗${NC}] RSYNC Missing"
+    CROSSCOUNT=$((CROSSCOUNT+1))
 fi
 
 if hash sqlite3
 then
-    echo -e "SQLITE3 Detected"
+    echo -e "[${GREEN}✓${NC}] SQLITE3 Detected"
 else
-    echo -e "SQLLITE3 Missing"
+    echo -e "[${RED}✗${NC}] SQLLITE3 Missing"
+    CROSSCOUNT=$((CROSSCOUNT+1))
+fi
+
+if [ "$CROSSCOUNT" != "0" ]
+then
+    echo -e "Checks failed"
+else
+    echo -e "All good!"
 fi
 
