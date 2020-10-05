@@ -15,3 +15,34 @@ GOOD="[ ${GREEN} OK ${NC} ]"
 STAT="[ ${CYAN}EXEC${NC} ]"
 INFO="[ ${YELLOW}INFO${NC} ]"
 NEED="[ ${BLUE}NEED${NC} ]"
+
+# Echo Stack
+## Informative
+function echo_info {
+	echo -e "${INFO} ${YELLOW}${MESSAGE}${NC}"
+}
+
+## Warning
+function echo_warn {
+	echo -e "${WARN} ${PURPLE}${MESSAGE}${NC}"
+}
+
+## Executing
+function echo_stat {
+	echo -en "${STAT} ${MESSAGE}"
+} 
+
+## Success
+function echo_good {
+	echo -e "\r${GOOD} ${MESSAGE}"
+}
+
+## Failure
+function echo_fail {
+	echo -e "\r${FAIL} ${MESSAGE}"
+}
+
+## Request
+function echo_need {
+	echo -en "${NEED} ${MESSAGE}: "
+}

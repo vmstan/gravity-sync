@@ -217,3 +217,10 @@ function detect_remotersync {
 	CMD_REQUESTED="rm ~/gs.test"
 		create_sshcmd
 }
+
+function show_target {
+	MESSAGE="Targeting ${REMOTE_USER}@${REMOTE_HOST}"
+	echo_info
+
+	detect_ssh
+}

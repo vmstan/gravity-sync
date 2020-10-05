@@ -89,13 +89,6 @@ function import_gs {
 	fi
 }
 
-function show_target {
-	MESSAGE="Targeting ${REMOTE_USER}@${REMOTE_HOST}"
-	echo_info
-
-	detect_ssh
-}
-
 # Check Intent
 source includes/gs-intent.sh
 
@@ -172,73 +165,9 @@ function task_invalid {
 
 source include/gs-purge.sh
 
-## Sudo Creation Task
-function task_sudo {
-	TASKTYPE='SUDO'
-	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
-	echo_good
-
-	MESSAGE="Creating Sudoer.d Template"
-	echo_stat
-
-	NEW_SUDO_USER=$(whoami)
-	echo -e "${NEW_SUDO_USER} ALL=(ALL) NOPASSWD: ${PIHOLE_DIR}" > $HOME/${LOCAL_FOLDR}/templates/gs-nopasswd.sudo
-		error_validate
-
-	MESSAGE="Installing Sudoer.d File"
-	echo_stat
-
-	sudo install -m 0440 $HOME/${LOCAL_FOLDR}/templates/gs-nopasswd.sudo /etc/sudoers.d/gs-nopasswd
-		error_validate
-}
 
 
-
-# Echo Stack
-## Informative
-function echo_info {
-	echo -e "${INFO} ${YELLOW}${MESSAGE}${NC}"
-}
-
-## Warning
-function echo_warn {
-	echo -e "${WARN} ${PURPLE}${MESSAGE}${NC}"
-}
-
-## Executing
-function echo_stat {
-	echo -en "${STAT} ${MESSAGE}"
-} 
-
-## Success
-function echo_good {
-	echo -e "\r${GOOD} ${MESSAGE}"
-}
-
-## Failure
-function echo_fail {
-	echo -e "\r${FAIL} ${MESSAGE}"
-}
-
-## Request
-function echo_need {
-	echo -en "${NEED} ${MESSAGE}: "
-}
-
-# Root Check
-function root_check {
-	if [ ! "$EUID" -ne 0 ]
-  	then 
-		TASKTYPE='ROOT'
-		MESSAGE="${MESSAGE} ${TASKTYPE}"
-		echo_fail
-	  	
-		MESSAGE="${PROGRAM} Must Not Run as Root"
-		echo_warn
-		
-		exit_nochange
-	fi
-}
+source include/gs-backup.sh
 
 # SCRIPT EXECUTION ###########################
 
@@ -369,10 +298,6 @@ case $# in
 			dev)
 				task_devmode
 			;;
-
-			# beta)
-			# 	task_betamode
-			# ;;
 
 			devmode)
 				task_devmode
