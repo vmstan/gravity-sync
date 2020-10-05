@@ -100,6 +100,7 @@ source includes/gs-update.sh
 source includes/gs-hashing.sh
 
 # Gravity Core Functions
+source includes/gs-compare.sh
 source includes/gs-pull.sh
 source includes/gs-push.sh
 source includes/gs-smart.sh
@@ -114,6 +115,27 @@ source includes/gs-validate.sh
 # SSH Functions
 source includes/gs-ssh.sh
 
+# Configuration Management
+source includes/gs-config.sh
+
+# Exit Codes
+source includes/gs-exit.sh
+
+# Automation Functions
+source includes/gs-automate.sh
+
+# Purge Functions
+source include/gs-purge.sh
+
+# Backup Functions
+source include/gs-backup.sh
+
+# Invalid Tasks
+function task_invalid {
+	echo_fail
+	list_gs_arguments
+}
+
 ## Error Validation
 function error_validate {
 	if [ "$?" != "0" ]
@@ -124,51 +146,6 @@ function error_validate {
 		echo_good
 	fi
 }
-
-# Configuration Management
-source includes/gs-config.sh
-
-# Exit Codes
-source includes/gs-exit.sh
-
-# Task Stack
-source includes/gs-automate.sh
-
-## Compare Task
-function task_compare {
-	TASKTYPE='COMPARE'
-	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
-	echo_good
-
-	# import_gs
-	show_target
-	validate_gs_folders
-	validate_ph_folders
-	validate_os_sshpass
-	
-	previous_md5
-	md5_compare
-}
-
-## Cron Task
-function task_cron {
-	TASKTYPE='CRON'
-	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
-	echo_good
-	
-	show_crontab
-}
-
-function task_invalid {
-	echo_fail
-	list_gs_arguments
-}
-
-source include/gs-purge.sh
-
-
-
-source include/gs-backup.sh
 
 # SCRIPT EXECUTION ###########################
 
@@ -188,100 +165,29 @@ source include/gs-backup.sh
 case $# in
 	
 	0)
-		TASKTYPE='SMART'
-		MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
-		echo_good
-
-		# import_gs
-		show_target
-		validate_gs_folders
-		validate_ph_folders
-		validate_sqlite3
-		validate_os_sshpass
-
-		smart_gs
-		exit
+		task_smart
 	;;
 	
 	1)
    		case $1 in
 		   sync)
-				TASKTYPE='SMART'
-				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
-				echo_good
-
-				# import_gs
-				show_target
-				validate_gs_folders
-				validate_ph_folders
-				validate_sqlite3
-				validate_os_sshpass
-
-				smart_gs
-				exit
+				task_smart
  			;;
 
 			smart)
-				TASKTYPE='SMART'
-				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
-				echo_good
-
-				# import_gs
-				show_target
-				validate_gs_folders
-				validate_ph_folders
-				validate_sqlite3
-				validate_os_sshpass
-
-				smart_gs
-				exit
+				task_smart
  			;;
 
    	 		pull)
-				TASKTYPE='PULL'
-				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
-				echo_good
-
-				# import_gs
-				show_target
-				validate_gs_folders
-				validate_ph_folders
-				validate_sqlite3
-				validate_os_sshpass
-					
-				pull_gs
-				exit
+				task_pull
  			;;
 
 			push)	
-				TASKTYPE='PUSH'
-				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
-				echo_good
-
-				# import_gs
-				show_target
-				validate_gs_folders
-				validate_ph_folders
-				validate_sqlite3
-				validate_os_sshpass
-					
-				push_gs
-				exit
+				task_push
 			;;
 
 			restore)	
-				TASKTYPE='RESTORE'
-				MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
-				echo_good
-
-				# import_gs
-				show_target
-				validate_gs_folders
-				validate_ph_folders
-				validate_sqlite3
-
-				restore_gs
-				exit
+				task_restore
 			;;
 	
 			version)

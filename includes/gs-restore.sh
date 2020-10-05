@@ -4,6 +4,20 @@
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
 # This code is called from the main gravity-sync.sh file and should not execute directly!
 
+function task_restore {
+    TASKTYPE='RESTORE'
+    MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+    echo_good
+
+    show_target
+    validate_gs_folders
+    validate_ph_folders
+    validate_sqlite3
+
+    restore_gs
+    exit
+}
+
 function restore_gs {
 	MESSAGE="This will restore your settings on $HOSTNAME with a previous version!"
 	echo_warn

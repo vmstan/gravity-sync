@@ -4,6 +4,21 @@
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
 # This code is called from the main gravity-sync.sh file and should not execute directly!
 
+function task_push {
+    TASKTYPE='PUSH'
+    MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+    echo_good
+
+    show_target
+    validate_gs_folders
+    validate_ph_folders
+    validate_sqlite3
+    validate_os_sshpass
+        
+    push_gs
+    exit
+}
+
 ## Push Gravity
 function push_gs_grav {
 	backup_remote_gravity

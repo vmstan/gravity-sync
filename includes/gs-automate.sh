@@ -105,3 +105,12 @@ function clear_cron {
 	rm cronjob-old.tmp
 	rm cronjob-new.tmp
 }
+
+## Cron Task
+function task_cron {
+	TASKTYPE='CRON'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+	
+	show_crontab
+}

@@ -4,6 +4,21 @@
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
 # This code is called from the main gravity-sync.sh file and should not execute directly!
 
+function task_smart {
+    TASKTYPE='SMART'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+
+    show_target
+    validate_gs_folders
+    validate_ph_folders
+    validate_sqlite3
+    validate_os_sshpass
+
+    smart_gs
+    exit
+}
+
 ## Smart Sync Function
 function smart_gs {
 	previous_md5
