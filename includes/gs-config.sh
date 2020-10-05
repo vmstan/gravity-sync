@@ -1,3 +1,27 @@
+## Configure Task
+function task_configure {				
+	TASKTYPE='CONFIGURE'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+	
+	if [ -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE} ]
+	then		
+		config_delete
+	else
+		MESSAGE="No Active ${CONFIG_FILE}"
+		echo_warn
+		
+		config_generate
+	fi
+
+	backup_settime
+	backup_local_gravity
+	backup_local_custom
+	backup_cleanup
+	
+	exit_withchange
+}
+
 ## Generate New Configuration
 function config_generate {
 	task_sudo

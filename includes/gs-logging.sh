@@ -1,3 +1,12 @@
+## Logs Task
+function task_logs {
+	TASKTYPE='LOGS'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+
+	logs_gs
+}
+
 ## Core Logging
 ### Write Logs Out
 function logs_export {

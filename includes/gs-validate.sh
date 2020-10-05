@@ -126,3 +126,16 @@ function distro_check {
 		exit_nochange
 	fi
 }
+
+function dbclient_warning {
+	if hash dbclient 2>/dev/null
+	then
+		if hash ssh 2>/dev/null
+		then
+			NOEMPTYBASHIF="1"
+		else
+			MESSAGE="Dropbear support has been deprecated - please convert to OpenSSH"
+			echo_warn
+		fi
+	fi
+}
