@@ -58,19 +58,13 @@ Starting with version 2.0, Gravity Sync will attempt to sync the Adlist database
 
 Minimal preperation is required (as of version 2.2.3) on your primary Pi-hole.
 
-Login to your *primary* Pi-hole, and install a copy of the software there:
+Login to your *primary* Pi-hole, and run the following command:
 
 ```bash
-git clone https://github.com/vmstan/gravity-sync.git $HOME/gravity-sync
+curl -sSL https://raw.githubusercontent.com/vmstan/gravity-sync/3.0-dev/prep/gs-hostprep.sh | bash
 ```
 
-From your home directory, you should run `./gravity-sync/gravity-sync.sh sudo` 
-
-**Once this process has completed, you can remove the entire `gravity-sync` directory from the primary Pi-hole.**
-
-```bash
-rm $HOME/gravity-sync
-```
+This will verify you have everything necessary to use Gravity Sync.
 
 After you have completed this step, log out of the *primary* Pi-hole.
 

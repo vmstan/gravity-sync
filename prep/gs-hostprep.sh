@@ -6,13 +6,20 @@
 
 # Run this script on your primary Pi-hole to aid in preparing for Gravity Sync installation.
 
+if [ ! "$EUID" -ne 0 ]
+then 
+    echo -e "Running as Root"
+else
+    echo -e "Not Running as Root"
+fi
+
 echo -e "Checking for required software"
 
 if hash ssh
 then
-    echo -e "SSH Client Detected"
+    echo -e "SSH Detected"
 else
-    echo -e "SSH Client Missing"
+    echo -e "SSH Missing"
 fi
 
 if hash rsync
