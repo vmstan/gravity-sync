@@ -99,3 +99,30 @@ function validate_os_sshpass {
 		create_sshcmd
 	
 }
+
+## Detect Package Manager
+function distro_check { 
+	if hash apt-get 2>/dev/null
+	then
+		PKG_MANAGER="apt-get"
+		PKG_INSTALL="sudo apt-get --yes --no-install-recommends --quiet install"
+	elif hash rpm 2>/dev/null
+	then
+		if hash dnf 2>/dev/null
+		then
+			PKG_MANAGER="dnf"
+		elif hash yum 2>/dev/null
+		then
+			PKG_MANAGER="yum"
+		else
+			MESSAGE="Unable to find OS Package Manager"
+			echo_info
+			exit_nochange
+		fi
+		PKG_INSTALL="sudo ${PKG_MANAGER} install -y"
+	else
+		MESSAGE="Unable to find OS Package Manager"
+		echo_info
+		exit_nochange
+	fi
+}

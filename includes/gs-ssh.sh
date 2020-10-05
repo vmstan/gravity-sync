@@ -131,3 +131,89 @@ function export_sshkey {
 		fi
 	fi
 }
+
+## Detect SSH & RSYNC
+function detect_ssh {
+	MESSAGE="Validating SSH Client on $HOSTNAME"
+	echo_stat
+
+	if hash ssh 2>/dev/null
+	then
+		MESSAGE="${MESSAGE} (OpenSSH)"
+		echo_good
+		SSH_CMD='ssh'
+	elif hash dbclient 2>/dev/null
+	then
+		MESSAGE="${MESSAGE} (Dropbear)"
+		echo_fail
+
+		MESSAGE="Dropbear not supported in GS ${VERSION}"
+		echo_info
+			exit_nochange
+	else
+		echo_fail
+		
+		MESSAGE="Attempting to Compensate"
+		echo_warn
+		MESSAGE="Installing SSH Client with ${PKG_MANAGER}"
+		echo_stat
+		
+		${PKG_INSTALL} ssh-client >/dev/null 2>&1
+			error_validate
+	fi
+
+	MESSAGE="Validating RSYNC Installed on $HOSTNAME"
+	echo_stat
+
+	if hash rsync 2>/dev/null
+	then
+		echo_good
+	else
+		echo_fail
+		MESSAGE="RSYNC is Required"
+		echo_warn
+
+		distro_check
+
+		MESSAGE="Attempting to Compensate"
+		echo_warn
+
+		MESSAGE="Installing RSYNC with ${PKG_MANAGER}"
+		echo_stat
+		${PKG_INSTALL} rsync >/dev/null 2>&1
+			error_validate
+	fi
+}
+
+function detect_remotersync {
+	MESSAGE="Creating Test File on ${REMOTE_HOST}"
+	echo_stat
+
+		CMD_TIMEOUT='15'
+		CMD_REQUESTED="touch ~/gs.test"
+			create_sshcmd
+
+	MESSAGE="If pull test fails ensure RSYNC is installed on ${REMOTE_HOST}"
+	echo_warn
+
+	MESSAGE="Pulling Test File to $HOSTNAME"
+	echo_stat
+
+		RSYNC_REPATH="rsync"
+		RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:~/gs.test"
+		RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/gs.test"
+			create_rsynccmd
+
+	MESSAGE="Cleaning Up Local Test File"
+	echo_stat
+
+	rm $HOME/${LOCAL_FOLDR}/gs.test
+		error_validate
+
+	MESSAGE="Cleaning Up Remote Test File"
+	echo_stat
+
+	CMD_TIMEOUT='15'
+	CMD_REQUESTED="rm ~/gs.test"
+		create_sshcmd
+}
