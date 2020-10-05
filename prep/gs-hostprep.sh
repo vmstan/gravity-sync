@@ -52,10 +52,18 @@ else
     CROSSCOUNT=$((CROSSCOUNT+1))
 fi
 
+if hash git
+then
+    echo -e "[${GREEN}✓${NC}] GIT Detected"
+else
+    echo -e "[${RED}✗${NC}] GIT Missing"
+    CROSSCOUNT=$((CROSSCOUNT+1))
+fi
+
 if [ "$CROSSCOUNT" != "0" ]
 then
-    echo -e "${CROSSCOUNT} failures detected"
+    echo -e "${RED}${CROSSCOUNT}${NC} failures detected, correct these errors before deploying Gravity Sync!"
 else
-    echo -e "This host is prepared to use Gravity Sync"
+    echo -e "${CYAN}This host is prepared to deploy Gravity Sync!${NC}"
 fi
 
