@@ -130,6 +130,9 @@ source include/gs-purge.sh
 # Backup Functions
 source include/gs-backup.sh
 
+# Root Check
+source include/gs-root.sh
+
 # Invalid Tasks
 function task_invalid {
 	echo_fail
