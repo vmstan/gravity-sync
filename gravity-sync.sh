@@ -1968,13 +1968,13 @@ function task_sudo {
 	echo_stat
 
 	NEW_SUDO_USER=$(whoami)
-	echo -e "${NEW_SUDO_USER} ALL=(ALL) NOPASSWD: ${PIHOLE_DIR}" > ${LOCAL_FOLDR}/templates/gs-nopasswd.sudo
+	echo -e "${NEW_SUDO_USER} ALL=(ALL) NOPASSWD: ${PIHOLE_DIR}" > $HOME/${LOCAL_FOLDR}/templates/gs-nopasswd.sudo
 		error_validate
 
 	MESSAGE="Installing Sudoer.d File"
 	echo_stat
 
-	sudo install -m 0440 ${LOCAL_FOLDR}/templates/gs-nopasswd.sudo /etc/sudoers.d/gs-nopasswd
+	sudo install -m 0440 $HOME/${LOCAL_FOLDR}/templates/gs-nopasswd.sudo /etc/sudoers.d/gs-nopasswd
 		error_validate
 }
 
