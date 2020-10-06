@@ -126,12 +126,6 @@ function config_generate {
 				echo_stat
 				sed -i "/REMOTE_PASS=''/c\REMOTE_PASS='${INPUT_REMOTE_PASS}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 					error_validate
-			elif hash dbclient 2>/dev/null
-			then
-				MESSAGE="Dropbear SSH Detected"
-				echo_warn
-				MESSAGE="Skipping Password Setup"
-				echo_info
 			fi	
 	fi
 

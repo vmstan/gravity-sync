@@ -17,6 +17,7 @@ BOLD='\033[1m'
 NC='\033[0m'
 
 CROSSCOUNT="0"
+CURRENTUSER=$(whoami)
 
 echo -e "${YELLOW}Gravity Sync 3.0 - Deployment Scan${NC}"
 
@@ -26,6 +27,15 @@ then
     CROSSCOUNT=$((CROSSCOUNT+1))
 else
     echo -e "[${GREEN}✓${NC}] Not Running as Root"
+fi
+
+sudo --validate
+if [ "$?" != "0" ]
+then
+    echo -e "[${RED}✗${NC}] No Sudo Abilities for ${CURRENTUSER}"
+    CROSSCOUNT=$((CROSSCOUNT+1))
+else
+    echo -e "[${GREEN}✓${NC}] Sudo Abilities Detected"
 fi
 
 if hash ssh
