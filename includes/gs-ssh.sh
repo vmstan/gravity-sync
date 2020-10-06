@@ -55,24 +55,7 @@ function detect_sshkeygen {
 		MESSAGE="SSH-KEYGEN is Required"
 		echo_info
 		
-		exit_nochange
-		# MESSAGE="Attempting to Compensate"
-		# echo_warn
-
-		# if hash dropbearkey >/dev/null 2>&1
-		# then
-		#	MESSAGE="Using DROPBEARKEY Instead"
-		#	echo_info
-		#		if [ ! -d $HOME/.ssh ]
-		#		then
-		#			mkdir $HOME/.ssh >/dev/null 2>&1
-		#		fi
-		#	KEYGEN_COMMAND="dropbearkey -t rsa -f"
-		# else
-		#	MESSAGE="No Alternatives Located"
-		#	echo_info
-		#		exit_nochange
-		# fi	
+		exit_nochange	
 	fi
 }
 
@@ -91,18 +74,6 @@ function generate_sshkey {
 				
 				ssh-keygen -q -P "" -t rsa -f $HOME/${SSH_PKIF} >/dev/null 2>&1
 					error_validate
-
-			# elif hash dropbearkey >/dev/null 2>&1
-			# then
-			#	MESSAGE="Generating ~/${SSH_PKIF} (DROPBEARKEY)"
-			#	echo_stat
-			#		if [ ! -d $HOME/.ssh ]
-			#		then
-			#			mkdir $HOME/.ssh >/dev/null 2>&1
-			#		fi
-			#
-			#		dropbearkey -t rsa -f $HOME/${SSH_PKIF} >/dev/null 2>&1
-			#			error_validate
 			else
 				MESSAGE="No SSH Key Generator Located"
 				echo_warn
@@ -120,17 +91,7 @@ function export_sshkey {
 			MESSAGE="Registering Key-Pair on ${REMOTE_HOST}"
 			echo_info
 			
-			#MESSAGE="Enter ${REMOTE_USER}@${REMOTE_HOST} Password Below"
-			#echo -e "${NEED} ${MESSAGE}"
-
-			# if hash ssh-copy-id 2>/dev/null
-			# then
-				ssh-copy-id -f -p ${SSH_PORT} -i $HOME/${SSH_PKIF}.pub ${REMOTE_USER}@${REMOTE_HOST}
-			# elif hash dbclient 2>/dev/null
-			# then
-			# 	dropbearkey -y -f $HOME/${SSH_PKIF} | grep "^ssh-rsa " > $HOME/${SSH_PKIF}.pub
-			#	cat $HOME/${SSH_PKIF}.pub | dbclient -p ${SSH_PORT} ${REMOTE_USER}@${REMOTE_HOST} 'cat - >> .ssh/authorized_keys'
-			# fi
+			ssh-copy-id -f -p ${SSH_PORT} -i $HOME/${SSH_PKIF}.pub ${REMOTE_USER}@${REMOTE_HOST}
 		else
 		MESSAGE="Error Registering Key-Pair"
 		echo_warn

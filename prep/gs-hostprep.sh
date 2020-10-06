@@ -30,9 +30,9 @@ fi
 
 if hash ssh
 then
-    echo -e "[${GREEN}✓${NC}] SSH Detected"
+    echo -e "[${GREEN}✓${NC}] OpenSSH Detected"
 else
-    echo -e "[${RED}✗${NC}] SSH Missing"
+    echo -e "[${RED}✗${NC}] OpenSSH Not Installed"
     CROSSCOUNT=$((CROSSCOUNT+1))
 fi
 
@@ -40,7 +40,7 @@ if hash rsync
 then
     echo -e "[${GREEN}✓${NC}] RSYNC Detected"
 else
-    echo -e "[${RED}✗${NC}] RSYNC Missing"
+    echo -e "[${RED}✗${NC}] RSYNC Not Installed"
     CROSSCOUNT=$((CROSSCOUNT+1))
 fi
 
@@ -48,7 +48,7 @@ if hash sqlite3
 then
     echo -e "[${GREEN}✓${NC}] SQLITE3 Detected"
 else
-    echo -e "[${RED}✗${NC}] SQLLITE3 Missing"
+    echo -e "[${RED}✗${NC}] SQLITE3 Not Installed"
     CROSSCOUNT=$((CROSSCOUNT+1))
 fi
 
@@ -56,7 +56,15 @@ if hash git
 then
     echo -e "[${GREEN}✓${NC}] GIT Detected"
 else
-    echo -e "[${RED}✗${NC}] GIT Missing"
+    echo -e "[${RED}✗${NC}] GIT Not Installed"
+    CROSSCOUNT=$((CROSSCOUNT+1))
+fi
+
+if hash pihole
+then
+    echo -e "[${GREEN}✓${NC}] Pi-Hole Detected"
+else
+    echo -e "[${RED}✗${NC}] Pi-hole Not Installed"
     CROSSCOUNT=$((CROSSCOUNT+1))
 fi
 
