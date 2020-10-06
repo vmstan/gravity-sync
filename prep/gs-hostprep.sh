@@ -32,10 +32,10 @@ fi
 sudo --validate
 if [ "$?" != "0" ]
 then
-    echo -e "[${RED}✗${NC}] No Sudo Abilities for ${CURRENTUSER}"
+    echo -e "[${RED}✗${NC}] No Sudo Powers for ${CURRENTUSER}"
     CROSSCOUNT=$((CROSSCOUNT+1))
 else
-    echo -e "[${GREEN}✓${NC}] Sudo Abilities Detected"
+    echo -e "[${GREEN}✓${NC}] Sudo Powers Valid"
 fi
 
 if hash ssh
@@ -82,6 +82,7 @@ if [ "$CROSSCOUNT" != "0" ]
 then
     echo -e "${RED}${CROSSCOUNT}${NC} failures detected, correct these errors before deploying Gravity Sync!"
 else
+    touch /tmp/gs-nopasswd.sudo
     echo -e "${CYAN}This host is prepared to deploy Gravity Sync!${NC}"
 fi
 
