@@ -16,10 +16,6 @@ function create_sshcmd {
 			timeout --preserve-status ${CMD_TIMEOUT} ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} "${CMD_REQUESTED}"
 				error_validate
 		fi
-	# elif hash dbclient 2>/dev/null
-	# then
-	#	timeout --preserve-status ${CMD_TIMEOUT} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF} ${REMOTE_USER}@${REMOTE_HOST} "${CMD_REQUESTED}"
-	#		error_validate
 	fi
 }
 
@@ -35,10 +31,6 @@ function create_rsynccmd {
 			rsync --rsync-path="${RSYNC_REPATH}" -e "${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
 				error_validate
 		fi
-	# elif hash dbclient 2>/dev/null
-	# then
-	#	rsync --rsync-path="${RSYNC_REPATH}" -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
-	#		error_validate
 	fi
 }
 

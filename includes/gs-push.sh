@@ -4,6 +4,7 @@
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
 # This code is called from the main gravity-sync.sh file and should not execute directly!
 
+## Push Task
 function task_push {
     TASKTYPE='PUSH'
     MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"

@@ -133,6 +133,7 @@ function distro_check {
 	fi
 }
 
+## Dropbear Warning
 function dbclient_warning {
 	if hash dbclient 2>/dev/null
 	then

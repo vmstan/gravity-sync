@@ -47,8 +47,6 @@ function md5_compare {
 				
 				if [ "$primaryCLMD5" == "$last_primaryCLMD5" ] && [ "$secondCLMD5" == "$last_secondCLMD5" ]
 				then
-					# MESSAGE="${CUSTOM_DNS} Identical"
-					# echo_info
 					HASHMARK=$((HASHMARK+0))
 				else
 					MESSAGE="Differenced ${CUSTOM_DNS} Detected"
@@ -114,15 +112,6 @@ function md5_recheck {
 	echo_stat
 	secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI} | sed 's/\s.*$//')
 		error_validate
-	
-	# if [ "$primaryDBMD5" == "$secondDBMD5" ]
-	# then
-	#	HASHMARK=$((HASHMARK+0))
-	# else
-	#	MESSAGE="Differenced ${GRAVITY_FI} Detected"
-	#	echo_warn
-	#	HASHMARK=$((HASHMARK+1))
-	# fi
 
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then
@@ -141,17 +130,6 @@ function md5_recheck {
 				echo_stat
 				secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//')
 					error_validate
-				
-				# if [ "$primaryCLMD5" == "$secondCLMD5" ]
-				# then
-					# MESSAGE="${CUSTOM_DNS} Identical"
-					# echo_info
-				#	HASHMARK=$((HASHMARK+0))
-				# else
-				#	MESSAGE="Differenced ${CUSTOM_DNS} Detected"
-				#	echo_warn
-				#	HASHMARK=$((HASHMARK+1))
-				# fi
 			else
 				MESSAGE="No ${CUSTOM_DNS} Detected on ${REMOTE_HOST}"
 				echo_info
@@ -161,20 +139,10 @@ function md5_recheck {
 			then
 				REMOTE_CUSTOM_DNS="1"
 				MESSAGE="${REMOTE_HOST} has ${CUSTOM_DNS}"
-			#	HASHMARK=$((HASHMARK+1))
 				echo_info
 			fi	
 			MESSAGE="No ${CUSTOM_DNS} Detected on $HOSTNAME"
 			echo_info
 		fi
 	fi
-
-	# if [ "$HASHMARK" != "0" ]
-	# then
-	#	MESSAGE="Replication Checks Failed"
-	#	echo_warn
-	# else
-	#	MESSAGE="Replication Was Successful"
-	#	echo_info
-	# fi
 }

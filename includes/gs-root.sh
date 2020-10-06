@@ -24,7 +24,7 @@ function task_sudo {
 		error_validate
 }
 
-# Root Check
+## Root Check
 function root_check {
 	if [ ! "$EUID" -ne 0 ]
   	then 

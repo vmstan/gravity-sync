@@ -10,8 +10,6 @@ function task_automate {
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
 
-	# import_gs
-
 	CRON_EXIST='0'
 	CRON_CHECK=$(crontab -l | grep -q "${GS_FILENAME}"  && echo '1' || echo '0')
 	if [ ${CRON_CHECK} == 1 ]

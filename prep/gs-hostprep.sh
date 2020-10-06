@@ -16,11 +16,14 @@ BLUE='\033[0;94m'
 BOLD='\033[1m'
 NC='\033[0m'
 
+# Variables
 CROSSCOUNT="0"
 CURRENTUSER=$(whoami)
 
+# Header
 echo -e "${YELLOW}Gravity Sync 3.0 - Deployment Scan${NC}"
 
+# Check Root
 if [ ! "$EUID" -ne 0 ]
 then 
     echo -e "[${RED}✗${NC}] Running as Root"
@@ -29,6 +32,7 @@ else
     echo -e "[${GREEN}✓${NC}] Not Running as Root"
 fi
 
+# Check Sudo
 sudo --validate
 if [ "$?" != "0" ]
 then
@@ -38,6 +42,7 @@ else
     echo -e "[${GREEN}✓${NC}] Sudo Powers Valid"
 fi
 
+# Check OpenSSH
 if hash ssh
 then
     echo -e "[${GREEN}✓${NC}] OpenSSH Detected"
@@ -46,6 +51,7 @@ else
     CROSSCOUNT=$((CROSSCOUNT+1))
 fi
 
+# Check Rsync
 if hash rsync
 then
     echo -e "[${GREEN}✓${NC}] RSYNC Detected"
@@ -54,6 +60,7 @@ else
     CROSSCOUNT=$((CROSSCOUNT+1))
 fi
 
+# Check SQLITE3
 if hash sqlite3
 then
     echo -e "[${GREEN}✓${NC}] SQLITE3 Detected"
@@ -62,6 +69,7 @@ else
     CROSSCOUNT=$((CROSSCOUNT+1))
 fi
 
+# Check GIT
 if hash git
 then
     echo -e "[${GREEN}✓${NC}] GIT Detected"
@@ -70,6 +78,7 @@ else
     CROSSCOUNT=$((CROSSCOUNT+1))
 fi
 
+# Check Pihole
 if hash pihole
 then
     echo -e "[${GREEN}✓${NC}] Pi-Hole Detected"
@@ -78,6 +87,7 @@ else
     CROSSCOUNT=$((CROSSCOUNT+1))
 fi
 
+# Combine Outputs
 if [ "$CROSSCOUNT" != "0" ]
 then
     echo -e "${RED}${CROSSCOUNT}${NC} failures detected, correct these errors before deploying Gravity Sync!"
@@ -89,3 +99,4 @@ else
     echo -e "${CYAN}This host is prepared to deploy Gravity Sync!${NC}"
 fi
 
+exit

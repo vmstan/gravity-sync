@@ -4,12 +4,12 @@
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
 # This code is called from the main gravity-sync.sh file and should not execute directly!
 
+## Pull Task
 function task_pull {
     TASKTYPE='PULL'
     MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
     echo_good
 
-    # import_gs
     show_target
     validate_gs_folders
     validate_ph_folders

@@ -16,7 +16,6 @@ function task_logs {
 ## Core Logging
 ### Write Logs Out
 function logs_export {
-	
 	if [ "${TASKTYPE}" != "BACKUP" ]
 	then
 	MESSAGE="Saving File Hashes"
@@ -37,8 +36,6 @@ function logs_export {
 
 ### Output Sync Logs
 function logs_gs {
-	# import_gs
-
 	MESSAGE="Tailing ${LOG_PATH}/${SYNCING_LOG}"
 	echo_info
 
@@ -61,8 +58,6 @@ function logs_gs {
 ## Crontab Logs
 ### Core Crontab Logs
 function show_crontab {
-	# import_gs
-	
 	MESSAGE="Replaying Last Cronjob"
 	echo_stat
 	

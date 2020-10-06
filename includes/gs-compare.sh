@@ -4,7 +4,6 @@ function task_compare {
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
 
-	# import_gs
 	show_target
 	validate_gs_folders
 	validate_ph_folders

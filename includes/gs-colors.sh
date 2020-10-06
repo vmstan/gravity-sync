@@ -4,7 +4,7 @@
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
 # This code is called from the main gravity-sync.sh file and should not execute directly!
 
-# Script Colors
+## Script Colors
 RED='\033[0;91m'
 GREEN='\033[0;92m'
 CYAN='\033[0;96m'
@@ -14,7 +14,7 @@ BLUE='\033[0;94m'
 BOLD='\033[1m'
 NC='\033[0m'
 
-# Message Codes
+## Message Codes
 FAIL="[${RED}✗${NC}]"
 WARN="[${PURPLE}!${NC}]"
 GOOD="[${GREEN}✓${NC}]"
@@ -22,33 +22,33 @@ STAT="[${CYAN}e${NC}]"
 INFO="[${YELLOW}i${NC}]"
 NEED="[${BLUE}?${NC}]"
 
-# Echo Stack
-## Informative
+## Echo Stack
+### Informative
 function echo_info {
 	echo -e "${INFO} ${YELLOW}${MESSAGE}${NC}"
 }
 
-## Warning
+### Warning
 function echo_warn {
 	echo -e "${WARN} ${PURPLE}${MESSAGE}${NC}"
 }
 
-## Executing
+### Executing
 function echo_stat {
 	echo -en "${STAT} ${MESSAGE}"
 } 
 
-## Success
+### Success
 function echo_good {
 	echo -e "\r${GOOD} ${MESSAGE}"
 }
 
-## Failure
+### Failure
 function echo_fail {
 	echo -e "\r${FAIL} ${MESSAGE}"
 }
 
-## Request
+### Request
 function echo_need {
 	echo -en "${NEED} ${MESSAGE}: "
 }
