@@ -67,9 +67,12 @@ function task_purge {
 		error_validate
 
 	MESSAGE="Realigning Dilithium Matrix"
-		echo_fail
+		echo_stat
 
 	sleep 1
+
+	MESSAGE="Realigning Dilithium Matrix"
+		echo_good
 
 	update_gs
 }
