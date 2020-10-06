@@ -82,8 +82,10 @@ if [ "$CROSSCOUNT" != "0" ]
 then
     echo -e "${RED}${CROSSCOUNT}${NC} failures detected, correct these errors before deploying Gravity Sync!"
 else
+    echo -e "[${BLUE}>${NC}] Creating Sudoers.d File"
     touch /tmp/gs-nopasswd.sudo
     echo -e "${CURRENTUSER} ALL=(ALL) NOPASSWD: /etc/pihole" > /tmp/gs-nopasswd.sudo
+    sudo install -m 0440 /tmp/gs-nopasswd.sudo /etc/sudoers.d/gs-nopasswd
     echo -e "${CYAN}This host is prepared to deploy Gravity Sync!${NC}"
 fi
 
