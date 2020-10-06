@@ -83,6 +83,7 @@ then
     echo -e "${RED}${CROSSCOUNT}${NC} failures detected, correct these errors before deploying Gravity Sync!"
 else
     touch /tmp/gs-nopasswd.sudo
+    echo -e "${CURRENTUSER} ALL=(ALL) NOPASSWD: ${PIHOLE_DIR}" > /tmp/gs-nopasswd.sudo
     echo -e "${CYAN}This host is prepared to deploy Gravity Sync!${NC}"
 fi
 
