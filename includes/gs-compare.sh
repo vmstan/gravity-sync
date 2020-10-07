@@ -11,4 +11,5 @@ function task_compare {
 	
 	previous_md5
 	md5_compare
+	exit_nochange
 }
