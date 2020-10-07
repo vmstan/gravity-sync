@@ -97,17 +97,18 @@ else
     echo -e "${CURRENTUSER} ALL=(ALL) NOPASSWD: /etc/pihole" > /tmp/gs-nopasswd.sudo
     sudo install -m 0440 /tmp/gs-nopasswd.sudo /etc/sudoers.d/gs-nopasswd
 
-    echo -en "[${BLUE}?${NC}] Is this your primary or secondary Pi-hole?"
-    read INPUT_LOCATION
+    echo -e "[${BLUE}?${NC}] Is this your primary or secondary Pi-hole? "
+    read -p "(primary/secondary): " INPUT_LOCATION
 
 		if [ "${INPUT_LOCATION}" != "secondary" ]
 		then
 			echo -e "[${YELLOW}i${NC}] This host is prepared to deploy Gravity Sync, you may log off now!"
             echo -e "[${YELLOW}i${NC}] Visit https://github.com/vmstan/gravity-sync for more instructions."
         else
-            echo -en "[${BLUE}?${NC}] Would you like to install Gravity Sync now? (y/n)"
-            read INPUT_YN
-                if [ "${INPUT_LOCATION}" != "y" ]
+            echo -e "[${BLUE}?${NC}] Would you like to install Gravity Sync now?"
+            read -p "(y/n): " INPUT_YN
+
+                if [ "${INPUT_YN}" != "y" ]
                 then
                     echo -e "[${YELLOW}i${NC}] This host is prepared to deploy Gravity Sync!"
                     echo -e "[${YELLOW}i${NC}] Visit https://github.com/vmstan/gravity-sync for more instructions."

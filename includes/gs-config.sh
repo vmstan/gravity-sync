@@ -78,8 +78,6 @@ function config_generate {
 
 	if [ "${PING_AVOID}" != "1" ]
 	then
-		
-		
 		MESSAGE="Testing Network Connection (PING)"
 		echo_stat
 		ping -c 3 ${INPUT_REMOTE_HOST} >/dev/null 2>&1
