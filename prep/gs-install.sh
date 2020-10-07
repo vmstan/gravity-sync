@@ -1,10 +1,12 @@
 # GRAVITY SYNC BY VMSTAN #####################
-# gs-install.sh #############################
+# gs-install.sh ##############################
 
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
 # This code will be called from a curl call via installation instructions
 
 # Run this script on your primary Pi-hole to aid in preparing for Gravity Sync installation.
+
+set -e
 
 # Script Colors
 RED='\033[0;91m'
@@ -102,7 +104,8 @@ else
 
 		if [ "${INPUT_LOCATION}" != "secondary" ]
 		then
-			echo -e "[${YELLOW}i${NC}] This host is prepared to deploy Gravity Sync, you may log off now!"
+			echo -e "[${YELLOW}i${NC}] This host is prepared to use Gravity Sync, you may log off now!"
+            echo -e "[${YELLOW}i${NC}] Run this script again on your secondary Pi-hole host to proceed."
             echo -e "[${YELLOW}i${NC}] Visit https://github.com/vmstan/gravity-sync for more instructions."
         else
             echo -e "[${BLUE}?${NC}] Would you like to install Gravity Sync now?"
@@ -115,9 +118,9 @@ else
                 else
                     echo -e "[${CYAN}>${NC}] Creating Gravity Sync Directories"
                     git clone https://github.com/vmstan/gravity-sync.git $HOME/gravity-sync
-                    echo -e "[${YELLOW}i${NC}] This host is prepared to deploy Gravity Sync!"
-                    echo -e "[${YELLOW}i${NC}] Please run './gravity-sync configure' from $HOME/gravity-sync and"
-                    echo -e "[${YELLOW}i${NC}] visit https://github.com/vmstan/gravity-sync for more instructions."
+                    echo -e "[${YELLOW}i${NC}] This host is prepared to configure Gravity Sync!"
+                    echo -e "[${YELLOW}i${NC}] Please run './gravity-sync configure' from $HOME/gravity-sync"
+                    echo -e "[${YELLOW}i${NC}] Visit https://github.com/vmstan/gravity-sync for more instructions."
                 fi
 		fi
 fi
