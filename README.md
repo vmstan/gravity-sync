@@ -63,7 +63,7 @@ Minimal preperation is required (as of version 2.2.3) on your primary Pi-hole.
 Login to your *primary* Pi-hole, and run the following command:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/vmstan/gravity-sync/master/prep/gs-instal.sh | bash
+curl -sSL https://raw.githubusercontent.com/vmstan/gravity-sync/master/prep/gs-install.sh | bash
 ```
 This will verify you have everything necessary to use Gravity Sync.
 
@@ -78,7 +78,7 @@ From this point forward, all operations will take place on your secondary Pi-hol
 Login to your *secondary* Pi-hole, and run the following command:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/vmstan/gravity-sync/master/prep/gs-instal.sh | bash
+curl -sSL https://raw.githubusercontent.com/vmstan/gravity-sync/master/prep/gs-install.sh | bash
 ```
 
 This will verify you have everything necessary to use Gravity Sync.
