@@ -90,13 +90,35 @@ fi
 # Combine Outputs
 if [ "$CROSSCOUNT" != "0" ]
 then
-    echo -e "${RED}${CROSSCOUNT}${NC} failures detected, correct these errors before deploying Gravity Sync!"
+    echo -e "[${PURPLE}!${NC}] ${RED}${CROSSCOUNT}${NC} failures detected, correct these errors before deploying Gravity Sync!"
 else
-    echo -e "[${BLUE}>${NC}] Creating Sudoers.d File"
+    echo -e "[${CYAN}>${NC}] Creating Sudoers.d File"
     touch /tmp/gs-nopasswd.sudo
     echo -e "${CURRENTUSER} ALL=(ALL) NOPASSWD: /etc/pihole" > /tmp/gs-nopasswd.sudo
     sudo install -m 0440 /tmp/gs-nopasswd.sudo /etc/sudoers.d/gs-nopasswd
-    echo -e "${CYAN}This host is prepared to deploy Gravity Sync!${NC}"
+
+    echo -en "[${BLUE}?${NC}] Is this your primary or secondary Pi-hole?"
+    read INPUT_LOCATION
+
+		if [ "${INPUT_LOCATION}" != "secondary" ]
+		then
+			echo -e "[${YELLOW}i${NC}] This host is prepared to deploy Gravity Sync, you may log off now!"
+            echo -e "[${YELLOW}i${NC}] Visit https://github.com/vmstan/gravity-sync for more instructions."
+        else
+            echo -en "[${BLUE}?${NC}] Would you like to install Gravity Sync now? (y/n)"
+            read INPUT_YN
+                if [ "${INPUT_LOCATION}" != "y" ]
+                then
+                    echo -e "[${YELLOW}i${NC}] This host is prepared to deploy Gravity Sync!"
+                    echo -e "[${YELLOW}i${NC}] Visit https://github.com/vmstan/gravity-sync for more instructions."
+                else
+                    echo -e "[${CYAN}>${NC}] Creating Gravity Sync Directories"
+                    git clone https://github.com/vmstan/gravity-sync.git $HOME/gravity-sync
+                    echo -e "[${YELLOW}i${NC}] This host is prepared to deploy Gravity Sync!"
+                    echo -e "[${YELLOW}i${NC}] Please run './gravity-sync configure' from $HOME/gravity-sync and"
+                    echo -e "[${YELLOW}i${NC}] visit https://github.com/vmstan/gravity-sync for more instructions."
+                fi
+		fi
 fi
 
 exit

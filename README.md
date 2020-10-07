@@ -28,17 +28,19 @@ Gravity Sync is not developed by or affiliated with the Pi-hole project. This is
 ## Setup Steps
 
 1. Read the installation Requirements!
-2. Install Gravity Sync to your Pi-hole.
-3. Configure your Gravity Sync installation.
-4. Test your Gravity Sync install.
-5. Automate future synchronizations.
+2. Prepare your Pi-hole hosts.
+3. Install Gravity Sync to your secondary Pi-hole.
+4. Configure your Gravity Sync installation.
+5. Test your Gravity Sync install.
+6. Automate future synchronizations.
+7. Profit.
 
 ## Requirements
 
 - Pi-hole 5.0 (or higher) must already be installed on at least two systems, using any of the Linux distribution that Pi-hole is [certified to run on](https://docs.pi-hole.net/main/prerequesites/#supported-operating-systems).
 - While it is possible to leverage container/Docker deployments of Pi-hole and Gravity Sync, this configuration is currently not officially supported. Instructions here assume a "native" installation of Pi-hole.
-- You will need to make sure that you have `SUDO` enabled for the user accounts on both the primary and secondary Pi-hole. Most of the pre-built images available for the Raspberry Pi already have this configured. During configuration you will be prompted to enable this for your Gravity Sync user.
-- Make sure `SSH` and `RSYNC` are installed on both the primary and secondary Pi-hole prior to installation. These two binaries are what does the heavy lifting between your Pi-hole nodes. In the past, Dropbear was supported but this has proven problematic. If you're using a ultra-lightweight Pi distribution (such as DietPi) that uses Dropbear by default, you will need to convert to OpenSSH as of Gravity Sync version 2.2.
+- You will need to make sure that you have a Linux user account designated on both Pi-hole systems with `sudo` abilities on both the primary and secondary Pi-hole. Most of the pre-built images available for the Raspberry Pi already have this configured. During configuration you will be prompted to enable this for your Gravity Sync user.
+- Make sure OpenSSH `ssh` and `rsync` commands are available on both the primary and secondary Pi-hole prior to installation. These two binaries are what do the heavy lifting between your Pi-hole nodes. If you're using a ultra-lightweight Pi distribution (such as DietPi) that uses Dropbear by default, you will need to convert to OpenSSH.
 - You will need to make sure that `SQLite3` is installed on both Pi-hole systems, in order for the backup and restore functions against the databases to completely successfully. This should be covered by the installation of Pi-hole or already installed on most Linux distros.
 
 ### Pi-hole Architecture
@@ -72,7 +74,13 @@ After you have completed this step, log out of the *primary* Pi-hole.
 
 From this point forward, all operations will take place on your secondary Pi-hole.
 
-Login to your *secondary* Pi-hole, and install a copy of the software there:
+Login to your *secondary* Pi-hole, and run the following command:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/vmstan/gravity-sync/3.0-dev/prep/gs-hostprep.sh | bash
+```
+
+This will verify you have everything necessary to use Gravity Sync. Once this has completed, you will create a local copy of the application on your system in your user's home directory.
 
 ```bash
 git clone https://github.com/vmstan/gravity-sync.git $HOME/gravity-sync
@@ -93,7 +101,7 @@ cd $HOME/gravity-sync
 
 This will guide you through the process of:
 
-- Specifying the IP or xDNS name of your primary Pi-hole.
+- Specifying the IP or DNS name of your primary Pi-hole.
 - Specifying the SSH username to connect to your primary Pi-hole.
 - Selecting the SSH authentication mechanism (key-pair or password.)
 - Configuring your key-pair and applying it to your primary Pi-hole.
@@ -179,7 +187,7 @@ Your copy of the `gravity-sync.conf` file, logs and backups should not be be imp
 
 You can run a `./gravity-sync.sh config` at any time to generate a new configuration file if you're concerned that you're missing something.
 
-- If the update script fails, make sure you did your original deployment via `git clone` and not a manual install. Refer to [ADVANCED.md](https://github.com/vmstan/gravity-sync/blob/master/ADVANCED.md) for more details.
+- If the update script fails, make sure you did your original deployment via `git clone` and not a manual install. Refer to [ADVANCED.md](https://github.com/vmstan/gravity-sync/blob/master/docs/ADVANCED.md) for more details.
 
 ## Starting Over
 
@@ -207,7 +215,7 @@ If you are completely uninstalling Gravity Sync, the last step would be to remov
 
 ## Advanced Installation
 
-Please review the [Advanced Installation](https://github.com/vmstan/gravity-sync/blob/master/ADVANCED.md) guide for more assistance.
+Please review the [Advanced Installation](https://github.com/vmstan/gravity-sync/blob/master/docs/ADVANCED.md) guide for more assistance.
 
 ## Troubleshooting
 
