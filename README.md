@@ -63,10 +63,11 @@ Minimal preperation is required (as of version 2.2.3) on your primary Pi-hole.
 Login to your *primary* Pi-hole, and run the following command:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/vmstan/gravity-sync/3.0-dev/prep/gs-hostprep.sh | bash
+curl -sSL https://raw.githubusercontent.com/vmstan/gravity-sync/master/prep/gs-instal.sh | bash
 ```
-
 This will verify you have everything necessary to use Gravity Sync.
+
+When prompted, tell the installer this is your primary Pi-hole. The installer will then exit, and direct you to proceed to the secondary Pi-hole.
 
 After you have completed this step, log out of the *primary* Pi-hole.
 
@@ -77,14 +78,12 @@ From this point forward, all operations will take place on your secondary Pi-hol
 Login to your *secondary* Pi-hole, and run the following command:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/vmstan/gravity-sync/3.0-dev/prep/gs-hostprep.sh | bash
+curl -sSL https://raw.githubusercontent.com/vmstan/gravity-sync/master/prep/gs-instal.sh | bash
 ```
 
-This will verify you have everything necessary to use Gravity Sync. Once this has completed, you will create a local copy of the application on your system in your user's home directory.
+This will verify you have everything necessary to use Gravity Sync.
 
-```bash
-git clone https://github.com/vmstan/gravity-sync.git $HOME/gravity-sync
-```
+When prompted, tell the installer this is your primary Pi-hole. The installer will then use Git to make a copy of the Gravity Sync executables in your home directory, and direct you to proceed to Configuration step below. Once this has completed, you will create a local copy of the application on your system in your user's home directory.
 
 You will now have a folder called `gravity-sync` in your home directory. Everything Gravity Sync runs from there.
 
@@ -96,7 +95,7 @@ After you install Gravity Sync to your *secondary Pi-hole* you will need to crea
 
 ```bash
 cd $HOME/gravity-sync
-./gravity-sync.sh config
+./gravity-sync.sh configure
 ```
 
 This will guide you through the process of:
