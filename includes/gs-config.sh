@@ -30,8 +30,6 @@ function task_configure {
 
 ## Generate New Configuration
 function config_generate {
-	task_sudo
-	
 	detect_ssh
 	
 	MESSAGE="Creating ${CONFIG_FILE} from Template"

@@ -63,11 +63,10 @@ Minimal preperation is required (as of version 2.2.3) on your primary Pi-hole.
 Login to your *primary* Pi-hole, and run the following command:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/vmstan/gravity-sync/master/prep/gs-install.sh | bash
+export GS_INSTALL=primary && curl -sSL https://raw.githubusercontent.com/vmstan/gravity-sync/master/prep/gs-install.sh | bash
 ```
-This will verify you have everything necessary to use Gravity Sync.
 
-When prompted, tell the installer this is your primary Pi-hole. The installer will then exit, and direct you to proceed to the secondary Pi-hole.
+This will verify you have everything necessary to use Gravity Sync. It will also add a passwordless sudo configuration file for the current user to run commands in `/etc/pihole` -- The installer will then exit, and direct you to proceed to the secondary Pi-hole.
 
 After you have completed this step, log out of the *primary* Pi-hole.
 
@@ -78,14 +77,10 @@ From this point forward, all operations will take place on your secondary Pi-hol
 Login to your *secondary* Pi-hole, and run the following command:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/vmstan/gravity-sync/master/prep/gs-install.sh | bash
+export GS_INSTALL=secondary && curl -sSL https://raw.githubusercontent.com/vmstan/gravity-sync/master/prep/gs-install.sh | bash
 ```
 
-This will verify you have everything necessary to use Gravity Sync.
-
-When prompted, tell the installer this is your primary Pi-hole. The installer will then use Git to make a copy of the Gravity Sync executables in your home directory, and direct you to proceed to Configuration step below. Once this has completed, you will create a local copy of the application on your system in your user's home directory.
-
-You will now have a folder called `gravity-sync` in your home directory. Everything Gravity Sync runs from there.
+This will verify you have everything necessary to use Gravity Sync. The installer will then use Git to make a copy of the Gravity Sync executables in your home directory, and direct you to proceed to Configuration step below. Once this has completed, you will now have a folder called `gravity-sync` in your home directory. Everything Gravity Sync runs from there. 
 
 Proceed to the Configuration section.
 
