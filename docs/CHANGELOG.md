@@ -6,10 +6,11 @@
 
 This release focuses on breaking out elements of the script from the main file into a collection of a dozen or so files located under the `includes/gs-*.sh` hirearchy. Seperating out allows new contributors to work on different parts of the script individually, provides an oppertunity to clean up and reorganize parts of the code, and hopefully provides less risk of breaking the entire script.
 
-Additionally
- 
-- Brand new installation script, including a host check for the primary Pi-hole system.
-- Adopts Pi-hole style alerts such as ✓ ✗
+This release also features a brand new installation script, including a host check for both the primary and secondary Pi-hole system. This should reduce frustration of users who are missing parts of the system requirements. This will also place a file in the sudoers.d file on both systems to make sure passwordless sudo is configured as part of the installation.
+
+Lastly, we adopts Pi-hole style iconography such as `✓ ✗ e ! ?` instead of `[ GOOD ]` in command output.
+
+Enjoy!
 
 ## 2.2
 
