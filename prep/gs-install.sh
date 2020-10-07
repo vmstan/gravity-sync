@@ -1,5 +1,5 @@
 # GRAVITY SYNC BY VMSTAN #####################
-# gs-hostprep.sh #############################
+# gs-install.sh #############################
 
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
 # This code will be called from a curl call via installation instructions
@@ -21,7 +21,7 @@ CROSSCOUNT="0"
 CURRENTUSER=$(whoami)
 
 # Header
-echo -e "${YELLOW}Gravity Sync 3.0 - Deployment Scan${NC}"
+echo -e "${YELLOW}Gravity Sync 3.0 - Installation Script${NC}"
 
 # Check Root
 if [ ! "$EUID" -ne 0 ]
