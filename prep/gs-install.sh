@@ -97,6 +97,7 @@ else
     echo -e "[${CYAN}>${NC}] Creating Sudoers.d File"
     touch /tmp/gs-nopasswd.sudo
     echo -e "${CURRENTUSER} ALL=(ALL) NOPASSWD: /etc/pihole" > /tmp/gs-nopasswd.sudo
+    echo -e "${CURRENTUSER} ALL=(ALL) NOPASSWD: $HOME/gravity-sync/backup" >> /tmp/gs-nopasswd.sudo
     sudo install -m 0440 /tmp/gs-nopasswd.sudo /etc/sudoers.d/gs-nopasswd
 
 		if [ "$GS_INSTALL" != "secondary" ]
