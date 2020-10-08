@@ -138,6 +138,7 @@ function error_validate {
 
 # SCRIPT EXECUTION ###########################
 
+function start_gs {
 	MESSAGE="${PROGRAM} ${VERSION} Executing"
 	echo_info
 	
@@ -150,46 +151,68 @@ function error_validate {
 	then
 		root_check
 	fi
+}
 
 case $# in
 	0)
+		start_gs
 		task_smart ;;
 	1)
    		case $1 in
 			smart|sync)
+				start_gs
 				task_smart ;;
    	 		pull)
+				start_gs
 				task_pull ;;
-			push)	
+			push)
+				start_gs
 				task_push ;;
-			restore)	
+			restore)
+				start_gs
 				task_restore ;;
 			version)
+				start_gs
 				task_version ;;
 			update|upgrade)
+				start_gs
 				task_update ;;
 			dev|devmode|development|develop)
 				task_devmode ;;
 			logs|log)
+				start_gs
 				task_logs ;;
 			compare)
+				start_gs
 				task_compare ;;
 			cron)
+				start_gs
 				task_cron ;;
 			config|configure)
+				MESSAGE="${PROGRAM} ${VERSION} Executing"
+				echo_info
+
+				MESSAGE="Evaluating Arguments"
+				echo_stat
+
 				task_configure ;;
 			auto|automate)
+				start_gs
 				task_automate ;;
 			backup)
+				start_gs
 				task_backup ;;
 			purge)
+				start_gs
 				task_purge ;;
 			sudo)
+				start_gs
 				task_sudo
 				exit_withchange
 			;;
 
 			*)
+				start_gs
 				task_invalid ;;
 		esac
 	;;
@@ -197,6 +220,7 @@ case $# in
 	2)
    		case $1 in
 			auto|automate)
+				start_gs
 				task_automate ;;
 		esac
 	;;
@@ -204,11 +228,13 @@ case $# in
 	3)
    		case $1 in
 			auto|automate)
+				start_gs
 				task_automate $2 $3 ;;	
 		esac
 	;;
 	
 	*)
+		start_gs
 		task_invalid ;;
 esac
 
