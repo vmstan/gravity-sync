@@ -103,6 +103,12 @@ function task_devmode {
 		echo_stat
 		touch $HOME/${LOCAL_FOLDR}/dev
 			error_validate
+
+		MESSAGE="Updating Cache"
+		echo_stat
+		git fetch --all >/dev/null 2>&1
+			error_validate
+	fi
 		
 		git branch -r
 

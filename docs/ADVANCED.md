@@ -18,8 +18,8 @@ Download the latest release from [GitHub](https://github.com/vmstan/gravity-sync
 
 ```bash
 cd ~
-wget https://github.com/vmstan/gravity-sync/archive/v3.0.0.zip
-unzip v3.0.0.zip -d gravity-sync
+wget https://github.com/vmstan/gravity-sync/archive/v3.x.x.zip
+unzip v3.x.x.zip -d gravity-sync
 cd gravity-sync
 ```
 
@@ -306,3 +306,7 @@ For those who really love Pi-hole and Gravity Sync. Combining the best of both w
 Here we use `./gravity-sync pull` on the secondary Pi-hole at each side, and off-set the update intervals from the main sync.
 
 (I call this crazy, but this is what I use at home.)
+
+## Troubleshooting
+
+If you get the error `sudo: a terminal is required to read the password` or `sudo: no tty present and no askpass program specified` during your execution, make sure you have [implemented passwordless sudo](https://linuxize.com/post/how-to-run-sudo-command-without-password/), as defined in the system requirements, for the user accounts on both the local and remote systems. 
