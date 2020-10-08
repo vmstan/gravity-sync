@@ -113,8 +113,7 @@ function task_devmode {
 		echo -e "BRANCH='${INPUT_BRANCH}'" >> $HOME/${LOCAL_FOLDR}/dev
 	fi
 	
-	MESSAGE="Run UPDATE to apply changes"
-	echo_info
+	update_gs
 	
 	exit_withchange
 }

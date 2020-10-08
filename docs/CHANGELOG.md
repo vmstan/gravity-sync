@@ -12,6 +12,11 @@ Lastly, we adopts Pi-hole style iconography such as `✓ ✗ e ! ?` instead of `
 
 Enjoy!
 
+#### 3.0.1
+
+- `dev` function now automatically updates Gravity Sync after application.
+- Minor rearrange of `gravity-sync.sh` contents.
+
 ## 2.2
 
 ### The Purged Release
