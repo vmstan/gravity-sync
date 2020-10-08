@@ -108,7 +108,6 @@ function task_devmode {
 		echo_stat
 		git fetch --all >/dev/null 2>&1
 			error_validate
-	fi
 		
 		git branch -r
 
