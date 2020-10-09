@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='3.0.0'
+VERSION='3.0.1'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -90,6 +90,39 @@ function import_gs {
 	fi
 }
 
+# Invalid Tasks
+function task_invalid {
+	echo_fail
+	list_gs_arguments
+}
+
+# Error Validation
+function error_validate {
+	if [ "$?" != "0" ]
+	then
+	    echo_fail
+	    exit 1
+	else
+		echo_good
+	fi
+}
+
+# Standard Output
+function start_gs {
+	MESSAGE="${PROGRAM} ${VERSION} Executing"
+	echo_info
+	
+	import_gs
+
+	MESSAGE="Evaluating Arguments"
+	echo_stat
+
+	if [ "${ROOT_CHECK_AVOID}" != "1" ]
+	then
+		root_check
+	fi
+}
+
 # Gravity Core Functions
 source includes/gs-compare.sh
 source includes/gs-pull.sh
@@ -119,39 +152,7 @@ source includes/gs-purge.sh
 # Exit Codes
 source includes/gs-exit.sh
 
-# Invalid Tasks
-function task_invalid {
-	echo_fail
-	list_gs_arguments
-}
-
-## Error Validation
-function error_validate {
-	if [ "$?" != "0" ]
-	then
-	    echo_fail
-	    exit 1
-	else
-		echo_good
-	fi
-}
-
 # SCRIPT EXECUTION ###########################
-
-function start_gs {
-	MESSAGE="${PROGRAM} ${VERSION} Executing"
-	echo_info
-	
-	import_gs
-
-	MESSAGE="Evaluating Arguments"
-	echo_stat
-
-	if [ "${ROOT_CHECK_AVOID}" != "1" ]
-	then
-		root_check
-	fi
-}
 
 case $# in
 	0)

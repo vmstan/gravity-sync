@@ -12,6 +12,14 @@ Lastly, we adopts Pi-hole style iconography such as `✓ ✗ e ! ?` instead of `
 
 Enjoy!
 
+#### 3.0.1
+
+- `dev` function now automatically updates Gravity Sync after application.
+- `dev` function pulls new branches down before prompting to select which one to update against.
+- Minor shuffle of `gravity-sync.sh` contents.
+- Clarify installation requirements in `README.md`.
+- Fixes issues with permissions on `gravity.db` after push operations.
+
 ## 2.2
 
 ### The Purged Release

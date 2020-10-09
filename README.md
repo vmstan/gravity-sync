@@ -39,9 +39,8 @@ Gravity Sync is not developed by or affiliated with the Pi-hole project. This is
 
 - Pi-hole 5.0 (or higher) must already be installed on at least two systems, using any of the Linux distribution that Pi-hole is [certified to run on](https://docs.pi-hole.net/main/prerequesites/#supported-operating-systems).
 - While it is possible to leverage container/Docker deployments of Pi-hole and Gravity Sync, this configuration is currently not officially supported. Instructions here assume a "native" installation of Pi-hole.
-- You will need to make sure that you have a Linux user account designated on both Pi-hole systems with `sudo` abilities on both the primary and secondary Pi-hole. Most of the pre-built images available for the Raspberry Pi already have this configured. During configuration you will be prompted to enable this for your Gravity Sync user.
-- Make sure OpenSSH `ssh` and `rsync` commands are available on both the primary and secondary Pi-hole prior to installation. These two binaries are what do the heavy lifting between your Pi-hole nodes. If you're using a ultra-lightweight Pi distribution (such as DietPi) that uses Dropbear by default, you will need to convert to OpenSSH.
-- You will need to make sure that `SQLite3` is installed on both Pi-hole systems, in order for the backup and restore functions against the databases to completely successfully. This should be covered by the installation of Pi-hole or already installed on most Linux distros.
+- You will need to make sure that you have a Linux user account on both Pi-hole systems with `sudo` abilities on both the primary and secondary Pi-hole. Use of the `root` account is not permitted. Most of the pre-built images available for the Raspberry Pi already have this configured. During installation this user will be given passwordless sudo permissions to the `/etc/pihole` directory.
+- The installer will perform checks to make sure the OpenSSH `ssh` and `rsync` commands are available on both the primary and secondary Pi-hole during installation, as well as `SQLite3` and `git` -- all four of these binaries are should be installed by default on most Linux distrobutions, including Raspberry Pi OS. If they are missing you will have an oppertunity to use whatever package manager is available on your system to correct the missing dependencies. These binaries are what do the heavy lifting between your Pi-hole nodes. (Note: If you're using a ultra-lightweight Pi distribution, such as DietPi, that uses Dropbear by default - you may need to convert it to use OpenSSH.)
 
 ### Pi-hole Architecture
 
@@ -66,7 +65,7 @@ Login to your *primary* Pi-hole, and run the following command:
 export GS_INSTALL=primary && curl -sSL https://raw.githubusercontent.com/vmstan/gravity-sync/master/prep/gs-install.sh | bash
 ```
 
-This will verify you have everything necessary to use Gravity Sync. It will also add a passwordless sudo configuration file for the current user to run commands in `/etc/pihole` -- The installer will then exit, and direct you to proceed to the secondary Pi-hole.
+This will verify you have everything necessary to use Gravity Sync. It will also add a passwordless sudo configuration file for the current user. The installer will then exit, and direct you to proceed to the secondary Pi-hole.
 
 After you have completed this step, log out of the *primary* Pi-hole.
 
@@ -210,7 +209,3 @@ If you are completely uninstalling Gravity Sync, the last step would be to remov
 ## Advanced Installation
 
 Please review the [Advanced Installation](https://github.com/vmstan/gravity-sync/blob/master/docs/ADVANCED.md) guide for more assistance.
-
-## Troubleshooting
-
-If you get the error `sudo: a terminal is required to read the password` or `sudo: no tty present and no askpass program specified` during your execution, make sure you have [implemented passwordless sudo](https://linuxize.com/post/how-to-run-sudo-command-without-password/), as defined in the system requirements, for the user accounts on both the local and remote systems. 
