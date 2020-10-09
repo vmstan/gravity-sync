@@ -19,6 +19,11 @@ Enjoy!
 - Minor shuffle of `gravity-sync.sh` contents.
 - Clarify installation requirements in `README.md`.
 - Fixes issues with permissions on `gravity.db` after push operations.
+- Fixes missing script startup output during `dev` operation.
+
+#### 3.0.2
+
+
 
 ## 2.2
 
