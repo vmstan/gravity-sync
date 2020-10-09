@@ -65,7 +65,7 @@ Login to your *primary* Pi-hole, and run the following command:
 export GS_INSTALL=primary && curl -sSL https://raw.githubusercontent.com/vmstan/gravity-sync/master/prep/gs-install.sh | bash
 ```
 
-This will verify you have everything necessary to use Gravity Sync. It will also add a passwordless sudo configuration file for the current user to run commands in `/etc/pihole` -- The installer will then exit, and direct you to proceed to the secondary Pi-hole.
+This will verify you have everything necessary to use Gravity Sync. It will also add a passwordless sudo configuration file for the current user. The installer will then exit, and direct you to proceed to the secondary Pi-hole.
 
 After you have completed this step, log out of the *primary* Pi-hole.
 
