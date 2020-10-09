@@ -123,6 +123,14 @@ function start_gs {
 	fi
 }
 
+function start_gs_noconfig {
+	MESSAGE="${PROGRAM} ${VERSION} Executing"
+	echo_info
+
+	MESSAGE="Evaluating Arguments"
+	echo_stat
+}
+
 # Gravity Core Functions
 source includes/gs-compare.sh
 source includes/gs-pull.sh
@@ -159,11 +167,11 @@ case $# in
 		start_gs
 		task_smart ;;
 	1)
-   		case $1 in
+		case $1 in
 			smart|sync)
 				start_gs
 				task_smart ;;
-   	 		pull)
+			pull)
 				start_gs
 				task_pull ;;
 			push)
@@ -191,12 +199,7 @@ case $# in
 				start_gs
 				task_cron ;;
 			config|configure)
-				MESSAGE="${PROGRAM} ${VERSION} Executing"
-				echo_info
-
-				MESSAGE="Evaluating Arguments"
-				echo_stat
-
+				start_gs_noconfig
 				task_configure ;;
 			auto|automate)
 				start_gs
@@ -209,10 +212,7 @@ case $# in
 				task_purge ;;
 			sudo)
 				start_gs
-				task_sudo
-				exit_withchange
-			;;
-
+				task_sudo ;;
 			*)
 				start_gs
 				task_invalid ;;
@@ -220,7 +220,7 @@ case $# in
 	;;
 
 	2)
-   		case $1 in
+		case $1 in
 			auto|automate)
 				start_gs
 				task_automate ;;
@@ -228,7 +228,7 @@ case $# in
 	;;
 
 	3)
-   		case $1 in
+		case $1 in
 			auto|automate)
 				start_gs
 				task_automate $2 $3 ;;	

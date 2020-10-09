@@ -23,7 +23,7 @@ Enjoy!
 
 #### 3.0.2
 
-
+- Changing over to Nova.
 
 ## 2.2
 
