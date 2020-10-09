@@ -179,6 +179,7 @@ case $# in
 				start_gs
 				task_update ;;
 			dev|devmode|development|develop)
+				start_gs
 				task_devmode ;;
 			logs|log)
 				start_gs
