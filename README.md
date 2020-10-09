@@ -59,7 +59,7 @@ Starting with version 2.0, Gravity Sync will attempt to sync the Adlist database
 
 Minimal preperation is required (as of version 2.2.3) on your primary Pi-hole.
 
-Login to your *primary* Pi-hole, and run the following command:
+Login to your _primary_ Pi-hole, and run the following command:
 
 ```bash
 export GS_INSTALL=primary && curl -sSL https://raw.githubusercontent.com/vmstan/gravity-sync/master/prep/gs-install.sh | bash
@@ -67,25 +67,25 @@ export GS_INSTALL=primary && curl -sSL https://raw.githubusercontent.com/vmstan/
 
 This will verify you have everything necessary to use Gravity Sync. It will also add a passwordless sudo configuration file for the current user. The installer will then exit, and direct you to proceed to the secondary Pi-hole.
 
-After you have completed this step, log out of the *primary* Pi-hole.
+After you have completed this step, log out of the _primary_ Pi-hole.
 
 ### Secondary Pi-Hole
 
 From this point forward, all operations will take place on your secondary Pi-hole.
 
-Login to your *secondary* Pi-hole, and run the following command:
+Login to your _secondary_ Pi-hole, and run the following command:
 
 ```bash
 export GS_INSTALL=secondary && curl -sSL https://raw.githubusercontent.com/vmstan/gravity-sync/master/prep/gs-install.sh | bash
 ```
 
-This will verify you have everything necessary to use Gravity Sync. The installer will then use Git to make a copy of the Gravity Sync executables in your home directory, and direct you to proceed to Configuration step below. Once this has completed, you will now have a folder called `gravity-sync` in your home directory. Everything Gravity Sync runs from there. 
+This will verify you have everything necessary to use Gravity Sync. The installer will then use Git to make a copy of the Gravity Sync executables in your home directory, and direct you to proceed to Configuration step below. Once this has completed, you will now have a folder called `gravity-sync` in your home directory. Everything Gravity Sync runs from there.
 
 Proceed to the Configuration section.
 
 ## Configuration
 
-After you install Gravity Sync to your *secondary Pi-hole* you will need to create a configuration file.
+After you install Gravity Sync to your _secondary Pi-hole_ you will need to create a configuration file.
 
 ```bash
 cd $HOME/gravity-sync
@@ -166,9 +166,9 @@ You can verify your existing automation entry by running `crontab -l` and see it
 
 If you'd like to know what version of the script you have running, check the built in version checker. It will notify you if there are updates available.
 
- ```bash
- ./gravity-sync.sh version
- ```
+```bash
+./gravity-sync.sh version
+```
 
 You can then run the built-in updater to get the latest version of all the files. Both the `version` and `update` commands reach out to GitHub, so outbound access to GitHub.com is required.
 
