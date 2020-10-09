@@ -18,6 +18,8 @@ Enjoy!
 - `dev` function pulls new branches down before prompting to select which one to update against.
 - Minor shuffle of `gravity-sync.sh` contents.
 - Clarify installation requirements in `README.md`.
+- Fixes issues with permissions on `gravity.db` after push operations.
+- Corrects missing backup directories in sudoer.d -- run `./gravity-sync.sh sudo` to correct existing installs.
 
 ## 2.2
 
