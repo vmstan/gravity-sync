@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='3.0.1'
+VERSION='3.0.2'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -62,95 +62,41 @@ SSH_PKIF='.ssh/id_rsa'				# default local SSH key
 ##############################################
 
 # Import Color/Message Includes
-source includes/gs-colors.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-colors.sh
 
 # FUNCTION DEFINITIONS #######################
 
-# Import Settings
-function import_gs {
-	MESSAGE="Importing ${CONFIG_FILE} Settings"
-	echo -en "${STAT} $MESSAGE"
-	if [ -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE} ]
-	then
-	    source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
-			error_validate
-			
-		# MESSAGE="Targeting ${REMOTE_USER}@${REMOTE_HOST}"
-		# echo_info
+# Core Functions
+source $HOME/${LOCAL_FOLDR}/includes/gs-core.sh
 
-		# detect_ssh
-	else
-		echo_fail
-		
-		MESSAGE="${CONFIG_FILE} Missing"
-		echo_info
-
-		TASKTYPE='CONFIG'
-		config_generate
-	fi
-}
-
-# Invalid Tasks
-function task_invalid {
-	echo_fail
-	list_gs_arguments
-}
-
-# Error Validation
-function error_validate {
-	if [ "$?" != "0" ]
-	then
-	    echo_fail
-	    exit 1
-	else
-		echo_good
-	fi
-}
-
-# Standard Output
-function start_gs {
-	MESSAGE="${PROGRAM} ${VERSION} Executing"
-	echo_info
-	
-	import_gs
-
-	MESSAGE="Evaluating Arguments"
-	echo_stat
-
-	if [ "${ROOT_CHECK_AVOID}" != "1" ]
-	then
-		root_check
-	fi
-}
-
-# Gravity Core Functions
-source includes/gs-compare.sh
-source includes/gs-pull.sh
-source includes/gs-push.sh
-source includes/gs-smart.sh
-source includes/gs-restore.sh
-source includes/gs-backup.sh
+# Gravity Replication Functions
+source $HOME/${LOCAL_FOLDR}/includes/gs-compare.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-pull.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-push.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-smart.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-restore.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-backup.sh
 
 # Hashing & SSH Functions
-source includes/gs-hashing.sh
-source includes/gs-ssh.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-hashing.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-ssh.sh
 
 # Logging Functions
-source includes/gs-logging.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-logging.sh
 
 # Validation Functions
-source includes/gs-validate.sh
-source includes/gs-intent.sh
-source includes/gs-root.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-validate.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-intent.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-root.sh
 
 # Configuration Management
-source includes/gs-config.sh
-source includes/gs-update.sh
-source includes/gs-automate.sh
-source includes/gs-purge.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-config.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-update.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-automate.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-purge.sh
 
 # Exit Codes
-source includes/gs-exit.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-exit.sh
 
 # SCRIPT EXECUTION ###########################
 
@@ -159,11 +105,11 @@ case $# in
 		start_gs
 		task_smart ;;
 	1)
-   		case $1 in
+		case $1 in
 			smart|sync)
 				start_gs
 				task_smart ;;
-   	 		pull)
+			pull)
 				start_gs
 				task_pull ;;
 			push)
@@ -191,12 +137,7 @@ case $# in
 				start_gs
 				task_cron ;;
 			config|configure)
-				MESSAGE="${PROGRAM} ${VERSION} Executing"
-				echo_info
-
-				MESSAGE="Evaluating Arguments"
-				echo_stat
-
+				start_gs_noconfig
 				task_configure ;;
 			auto|automate)
 				start_gs
@@ -209,10 +150,7 @@ case $# in
 				task_purge ;;
 			sudo)
 				start_gs
-				task_sudo
-				exit_withchange
-			;;
-
+				task_sudo ;;
 			*)
 				start_gs
 				task_invalid ;;
@@ -220,7 +158,7 @@ case $# in
 	;;
 
 	2)
-   		case $1 in
+		case $1 in
 			auto|automate)
 				start_gs
 				task_automate ;;
@@ -228,7 +166,7 @@ case $# in
 	;;
 
 	3)
-   		case $1 in
+		case $1 in
 			auto|automate)
 				start_gs
 				task_automate $2 $3 ;;	

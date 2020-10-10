@@ -22,6 +22,8 @@ function task_sudo {
 
 	sudo install -m 0440 $HOME/${LOCAL_FOLDR}/templates/gs-nopasswd.sudo /etc/sudoers.d/gs-nopasswd
 		error_validate
+	
+	exit_withchange
 }
 
 ## Root Check
@@ -32,7 +34,7 @@ function root_check {
 		MESSAGE="${MESSAGE} ${TASKTYPE}"
 		echo_fail
 	  	
-		MESSAGE="${PROGRAM} Must Not Run as Root"
+		MESSAGE="${PROGRAM} Should Not Run As 'root'"
 		echo_warn
 		
 		exit_nochange
