@@ -62,41 +62,41 @@ SSH_PKIF='.ssh/id_rsa'				# default local SSH key
 ##############################################
 
 # Import Color/Message Includes
-source includes/gs-colors.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-colors.sh
 
 # FUNCTION DEFINITIONS #######################
 
 # Core Functions
-source includes/gs-core.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-core.sh
 
 # Gravity Replication Functions
-source includes/gs-compare.sh
-source includes/gs-pull.sh
-source includes/gs-push.sh
-source includes/gs-smart.sh
-source includes/gs-restore.sh
-source includes/gs-backup.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-compare.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-pull.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-push.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-smart.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-restore.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-backup.sh
 
 # Hashing & SSH Functions
-source includes/gs-hashing.sh
-source includes/gs-ssh.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-hashing.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-ssh.sh
 
 # Logging Functions
-source includes/gs-logging.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-logging.sh
 
 # Validation Functions
-source includes/gs-validate.sh
-source includes/gs-intent.sh
-source includes/gs-root.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-validate.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-intent.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-root.sh
 
 # Configuration Management
-source includes/gs-config.sh
-source includes/gs-update.sh
-source includes/gs-automate.sh
-source includes/gs-purge.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-config.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-update.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-automate.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-purge.sh
 
 # Exit Codes
-source includes/gs-exit.sh
+source $HOME/${LOCAL_FOLDR}/includes/gs-exit.sh
 
 # SCRIPT EXECUTION ###########################
 

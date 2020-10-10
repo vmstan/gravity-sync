@@ -23,7 +23,8 @@ Enjoy!
 
 #### 3.0.2
 
-- Changing over to Nova.
+- Realigned EPS conduits, they overheat if you leave them pointed the same way for too long.
+- Corrected error when running via crontab where includes directory was not properly sourced.
 
 ## 2.2
 
