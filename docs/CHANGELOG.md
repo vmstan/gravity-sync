@@ -6,6 +6,11 @@
 
 This release focuses on adding better support for Docker container instances of Pi-hole.
 
+#### Installation Script
+
+- Detects running instance of default Pi-hole Docker container image, if standard Pi-hole lookup fails.
+- Changes detection of root vs sudo users, and adapts commands to match.
+
 #### New Variables
 
 - `REMOTE_FILE_OWNER` variable renamed `RILE_OWNER` for consistency.

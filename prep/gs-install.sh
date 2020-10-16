@@ -95,9 +95,9 @@ then
 else
     if [ "$LOCALADMIN" == "sudo" ]
     then
-        FTLCHECK=$(sudo docker container ls | grep 'pihole/pihole')
+        FTLCHECK=$(sudo docker container ls | grep 'pihole/pihole') 2>/dev/null
     else
-        FTLCHECK=$(docker container ls | grep 'pihole/pihole')
+        FTLCHECK=$(docker container ls | grep 'pihole/pihole') 2>/dev/null
     fi
     
     if [ "$FTLCHECK" != "" ]
