@@ -57,7 +57,7 @@ else
         LOCALADMIN="nosudo"
     fi
     
-    if [ "$LOCALADMIN" != "sudo"]
+    if [ "$LOCALADMIN" != "sudo" ]
     then
         echo -e "[${RED}✗${NC}] Current User (${CURRENTUSER}) Cannot SUDO"
         CROSSCOUNT=$((CROSSCOUNT+1))
