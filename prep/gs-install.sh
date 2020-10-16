@@ -121,6 +121,7 @@ else
         fi
         
         if [ "$LOCALADMIN" != "nosudo" ]
+        then
             if [ "$FTLCHECK" != "" ]
             then
                 echo -e "[${GREEN}✓${NC}] Pi-Hole Docker Container Detected"
