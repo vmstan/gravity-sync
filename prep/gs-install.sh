@@ -45,7 +45,7 @@ else
 fi
 
 # Check OpenSSH
-if hash ssh
+if hash ssh 2>/dev/null
 then
     echo -e "[${GREEN}✓${NC}] OpenSSH Detected"
 else
@@ -54,7 +54,7 @@ else
 fi
 
 # Check Rsync
-if hash rsync
+if hash rsync 2>/dev/null
 then
     echo -e "[${GREEN}✓${NC}] RSYNC Detected"
 else
@@ -63,7 +63,7 @@ else
 fi
 
 # Check SQLITE3
-if hash sqlite3
+if hash sqlite3 2>/dev/null
 then
     echo -e "[${GREEN}✓${NC}] SQLITE3 Detected"
 else
@@ -72,7 +72,7 @@ else
 fi
 
 # Check GIT
-if hash git
+if hash git 2>/dev/null
 then
     echo -e "[${GREEN}✓${NC}] GIT Detected"
 else
