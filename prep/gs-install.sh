@@ -24,9 +24,9 @@ PHFAILCOUNT="0"
 CURRENTUSER=$(whoami)
 
 # Header
-echo -e "${YELLOW}Gravity Sync - Automated Installation${NC}"
+echo -e "${YELLOW}Gravity Sync by ${BLUE}@vmstan${YELLOW} - Online Installation${NC}"
 echo -e "${CYAN}https://github.com/vmstan/gravity-sync${NC}"
-# echo -e "##############################################"
+echo -e "========================================================"
 # echo -e "Initalizing Short Range Sensors"
 
 # Check Root
@@ -108,8 +108,8 @@ if hash pihole 2>/dev/null
 then
     echo -e "[${GREEN}✓${NC}] Local Pi-hole Install Detected"
 else
-    echo -e "[${PURPLE}!${NC}] No Local Pi-hole Install Detected"
-    echo -e "[${CYAN}e${NC}] Attempting To Compensate"
+    echo -e "[${PURPLE}!${NC}] ${PURPLE}No Local Pi-hole Install Detected${NC}"
+    echo -e "[${PURPLE}!${NC}] ${PURPLE}Attempting To Compensate${NC}"
     if hash docker 2>/dev/null
     then
         echo -e "[${GREEN}✓${NC}] Docker Binaries Detected"
@@ -119,7 +119,7 @@ else
             FTLCHECK=$(sudo docker container ls | grep 'pihole/pihole')
         elif [ "$LOCALADMIN" == "nosudo" ]
         then
-            echo -e "[${PURPLE}!${NC}] No Docker Pi-hole Container Detected (unable to scan)"
+            echo -e "[${PURPLE}!${NC}] ${PURPLE}No Docker Pi-hole Container Detected (unable to scan)${NC}"
             # CROSSCOUNT=$((CROSSCOUNT+1))
             PHFAILCOUNT=$((PHFAILCOUNT+1))
         else
@@ -132,14 +132,14 @@ else
             then
                 echo -e "[${GREEN}✓${NC}] Pi-Hole Docker Container Detected"
             else
-                echo -e "[${PURPLE}!${NC}] No Docker Pi-hole Container Detected"
+                echo -e "[${PURPLE}!${NC}] ${PURPLE}No Docker Pi-hole Container Detected${NC}"
                 # CROSSCOUNT=$((CROSSCOUNT+1))
                 PHFAILCOUNT=$((PHFAILCOUNT+1))
             fi
         fi
     else
         # echo -e "[${RED}✗${NC}] No Local Pi-hole Install Detected"
-        echo -e "[${PURPLE}!${NC}] No Docker Pi-hole Alternative Detected"
+        echo -e "[${PURPLE}!${NC}] ${PURPLE}No Docker Pi-hole Alternative Detected${NC}"
         # CROSSCOUNT=$((CROSSCOUNT+1))
         PHFAILCOUNT=$((PHFAILCOUNT+1))
     fi
@@ -156,10 +156,10 @@ echo -e "[${YELLOW}i${NC}] ${YELLOW}Status Report${NC}"
 if [ "$CROSSCOUNT" != "0" ]
 then
     echo -e "[${PURPLE}!${NC}] ${RED}${CROSSCOUNT}${NC} Critical Issues Detected"
-    echo -e "[${PURPLE}!${NC}] Please Correct Failed Components"
-    echo -e "[${YELLOW}i${NC}] Installation Exiting (without changes)"
+    echo -e "[${PURPLE}!${NC}] ${PURPLE}Please Correct Failed Components${NC}"
+    echo -e "[${YELLOW}i${NC}] ${PURPLE}Installation Exiting (without changes)${NC}"
 else
-    echo -e "[${YELLOW}i${NC}] Executing Gravity Sync Deployment"
+    echo -e "[${YELLOW}i${NC}] ${YELLOW}Executing Gravity Sync Deployment${NC}"
     
     if [ "$LOCALADMIN" == "sudo" ]
     then
@@ -179,6 +179,7 @@ else
             echo -e "[${BLUE}>${NC}] Creating Gravity Sync Directories"
             git clone https://github.com/vmstan/gravity-sync.git
 			echo -e "[${BLUE}>${NC}] Starting Gravity Sync Configuration"
+			echo -e "========================================================"
 			sh ./gravity-sync/gravity-sync.sh configure < /dev/tty
             # echo -e "[${YELLOW}i${NC}] This host is now prepared to configure Gravity Sync!"
             # echo -e "[${YELLOW}i${NC}] Please run './gravity-sync configure' from $HOME/gravity-sync"

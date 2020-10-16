@@ -14,9 +14,8 @@ function task_configure {
 	then		
 		config_delete
 	else
-		MESSAGE="No Active ${CONFIG_FILE}"
-		echo_warn
-		
+		# MESSAGE="${CONFIG_FILE}"
+		# echo_warn
 		config_generate
 	fi
 
@@ -30,41 +29,24 @@ function task_configure {
 
 ## Generate New Configuration
 function config_generate {
-	detect_ssh
+	# detect_ssh
 	
 	MESSAGE="Creating ${CONFIG_FILE} from Template"
 	echo_stat
 	cp $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}.example $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 	error_validate
 
-	MESSAGE="Environment Customization"
+	MESSAGE="Environment Configuration"
 	echo_info
-
-	MESSAGE="Enter a custom SSH port if required (Leave blank for default '22')"
+	
+	MESSAGE="Use Advanced Installation Options (Leave blank for default 'No')"
 	echo_need
-	read INPUT_SSH_PORT
-	INPUT_SSH_PORT="${INPUT_SSH_PORT:-22}"
-
-	if [ "${INPUT_SSH_PORT}" != "22" ]
+	read INPUT_ADVANCED_INSTALL
+	INPUT_ADVANCED_INSTALL="${INPUT_ADVANCED_INSTALL:-N}"
+	
+	if [ "${INPUT_ADVANCED_INSTALL}" != "Y" ]
 	then
-		MESSAGE="Saving Custom SSH Port to ${CONFIG_FILE}"
-		echo_stat
-		sed -i "/# SSH_PORT=''/c\SSH_PORT='${INPUT_SSH_PORT}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
-		error_validate
-	fi
-
-	MESSAGE="Perform PING tests between Pi-holes? (Leave blank for default 'Yes')"
-	echo_need
-	read INPUT_PING_AVOID
-	INPUT_PING_AVOID="${INPUT_PING_AVOID:-Y}"
-
-	if [ "${INPUT_PING_AVOID}" != "Y" ]
-	then
-		MESSAGE="Saving Ping Avoidance to ${CONFIG_FILE}"
-		echo_stat
-		sed -i "/# PING_AVOID=''/c\PING_AVOID='1'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
-		error_validate
-		PING_AVOID=1
+		advanced_config_generate
 	fi
 	
 	MESSAGE="Standard Settings"
@@ -141,6 +123,36 @@ function config_generate {
 	validate_sqlite3
 
 	detect_remotersync
+}
+
+## Advanced Configuration Options
+function advanced_config_generate {
+	MESSAGE="Enter a custom SSH port if required (Leave blank for default '22')"
+		echo_need
+		read INPUT_SSH_PORT
+		INPUT_SSH_PORT="${INPUT_SSH_PORT:-22}"
+	
+		if [ "${INPUT_SSH_PORT}" != "22" ]
+		then
+			MESSAGE="Saving Custom SSH Port to ${CONFIG_FILE}"
+			echo_stat
+			sed -i "/# SSH_PORT=''/c\SSH_PORT='${INPUT_SSH_PORT}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+			error_validate
+		fi
+	
+		MESSAGE="Perform PING tests between Pi-holes? (Leave blank for default 'Yes')"
+		echo_need
+		read INPUT_PING_AVOID
+		INPUT_PING_AVOID="${INPUT_PING_AVOID:-Y}"
+	
+		if [ "${INPUT_PING_AVOID}" != "Y" ]
+		then
+			MESSAGE="Saving Ping Avoidance to ${CONFIG_FILE}"
+			echo_stat
+			sed -i "/# PING_AVOID=''/c\PING_AVOID='1'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+			error_validate
+			PING_AVOID=1
+		fi
 }
 
 ## Delete Existing Configuration
