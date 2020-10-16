@@ -81,7 +81,7 @@ else
 fi
 
 # Check Pihole
-if hash pihole
+if hash pihole 2>/dev/null
 then
     echo -e "[${GREEN}✓${NC}] Pi-Hole Detected"
 else
