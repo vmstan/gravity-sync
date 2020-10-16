@@ -31,28 +31,28 @@ function task_configure {
 function config_generate {
 	# detect_ssh
 	
-	MESSAGE="Creating ${CONFIG_FILE} from Template"
+	MESSAGE="Creating New ${CONFIG_FILE} from Template"
 	echo_stat
 	cp $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}.example $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 	error_validate
 
-	MESSAGE="Environment Configuration"
-	echo_info
-	
 	MESSAGE="Use Advanced Installation Options (Leave blank for default 'No')"
 	echo_need
 	read INPUT_ADVANCED_INSTALL
 	INPUT_ADVANCED_INSTALL="${INPUT_ADVANCED_INSTALL:-N}"
 	
-	if [ "${INPUT_ADVANCED_INSTALL}" != "Y" ]
+	if [ "${INPUT_ADVANCED_INSTALL}" == "Y" ]
 	then
+		MESSAGE="Advanced Configuration"
+		echo_info
+		
 		advanced_config_generate
 	fi
 	
 	MESSAGE="Standard Settings"
 	echo_info
 
-	MESSAGE="IP or DNS of Primary Pi-hole"
+	MESSAGE="Primary Pi-hole Address (IP or DNS)"
 	echo_need
 	read INPUT_REMOTE_HOST
 
