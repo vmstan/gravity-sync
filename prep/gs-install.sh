@@ -34,7 +34,7 @@ echo -e "Initalizing Short Range Sensors"
 echo -e "[${YELLOW}i${NC}] Validating System Authorization"
 if [ ! "$EUID" -ne 0 ]
 then 
-    echo -e "[${GREEN}✓${NC}] Current User (${CURRENTUSER}) is root"
+    echo -e "[${GREEN}✓${NC}] Current User (${CURRENTUSER}) is ROOT"
     LOCALADMIN="root"
 else
     if hash sudo 2>/dev/null
@@ -44,11 +44,11 @@ else
         sudo --validate
         if [ "$?" != "0" ]
         then
-            echo -e "[${RED}✗${NC}] Current User (${CURRENTUSER}) cannot sudo"
+            echo -e "[${RED}✗${NC}] Current User (${CURRENTUSER}) Cannot SUDO"
             CROSSCOUNT=$((CROSSCOUNT+1))
             LOCALADMIN="nosudo"
         else
-            echo -e "[${GREEN}✓${NC}] Current User (${CURRENTUSER}) has sudo powers"
+            echo -e "[${GREEN}✓${NC}] Current User (${CURRENTUSER}) Has SUDO Powers"
             LOCALADMIN="sudo"
         fi
     else
@@ -56,7 +56,7 @@ else
         CROSSCOUNT=$((CROSSCOUNT+1))
         LOCALADMIN="nosudo"
     fi
-    echo -e "[${RED}✗${NC}] Current User (${CURRENTUSER}) cannot sudo"
+    echo -e "[${RED}✗${NC}] Current User (${CURRENTUSER}) Cannot SUDO"
     CROSSCOUNT=$((CROSSCOUNT+1))
     LOCALADMIN="nosudo"
 fi
