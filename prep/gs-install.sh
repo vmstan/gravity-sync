@@ -104,9 +104,11 @@ if hash pihole 2>/dev/null
 then
     echo -e "[${GREEN}✓${NC}] Local Pi-hole Install Detected"
 else
+    echo -e "[${RED}✗${NC}] No Local Pi-hole Install Detected"
+    echo -e "[${PURPLE}*${NC}] Attempting To Compensate"
     if hash docker 2>/dev/null
     then
-        echo -e "[${GREEN}✓${NC}] Docker Binaries  Detected"
+        echo -e "[${GREEN}✓${NC}] Docker Binaries Detected"
         
         if [ "$LOCALADMIN" == "sudo" ]
         then
@@ -132,7 +134,7 @@ else
             fi
         fi
     else
-        echo -e "[${RED}✗${NC}] No Local Pi-hole Install Detected"
+        # echo -e "[${RED}✗${NC}] No Local Pi-hole Install Detected"
         echo -e "[${PURPLE}!${NC}] No Docker Pi-hole Alternative Detected"
         CROSSCOUNT=$((CROSSCOUNT+1))
         PHFAILCOUNT=$((PHFAILCOUNT+1))
