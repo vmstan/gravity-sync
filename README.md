@@ -2,8 +2,6 @@
 	<img src="https://raw.githubusercontent.com/vmstan/gravity-sync/3.1.0/docs/gravity-header.svg" alt="Gravity Sync">
 </p>
 
-# Gravity Sync
-
 What is better than a [Pi-hole](https://github.com/pi-hole/pi-hole) blocking ads via DNS on your network? That's right, Two Pi-hole! (Redundancy is key in any network infrastructure.) But if you have more than one Pi-hole in your network you'll want a simple way to keep the list configurations and local DNS settings identical between the two. That's where Gravity Sync comes in.
 
 ## Features
