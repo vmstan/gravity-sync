@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='3.0.2'
+VERSION='3.1.0'
 
 # Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -38,13 +38,16 @@ ROOT_CHECK_AVOID='0'				# replace in gravity-sync.conf to overwrite
 BACKUP_RETAIN='7'					# replace in gravity-sync.conf to overwrite
 
 # Pi-hole Folder/File Locations
-PIHOLE_DIR='/etc/pihole' 			# default Pi-hole data directory
+PIHOLE_DIR='/etc/pihole' 			# default Pi-hole data directory (local)
+RIHOLE_DIR='/etc/pihole'			# default Pi-hole data directory (remote)
 GRAVITY_FI='gravity.db' 			# default Pi-hole database file
 CUSTOM_DNS='custom.list'			# default Pi-hole local DNS lookups
 PIHOLE_BIN='/usr/local/bin/pihole' 	# default Pi-hole binary directory (local)
 RIHOLE_BIN='/usr/local/bin/pihole' 	# default Pi-hole binary directory (remote)
 FILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (local)
-REMOTE_FILE_OWNER='pihole:pihole'	# default Pi-hole file owner and group (remote)
+RILE_OWNER='pihole:pihole'				# default Pi-hole file owner and group (remote)
+DOCKER_CON='pihole/pihole'			# default Pi-hole Docker container name (local)
+ROCKER_CON='pihole/pihole'			# default Pi-hole Docker container name (remote)
 
 # OS Settings
 BASH_PATH='/bin/bash'				# default OS bash path

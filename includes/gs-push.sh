@@ -48,7 +48,7 @@ function push_gs_grav {
 	MESSAGE="Setting Ownership on ${GRAVITY_FI}"
 	echo_stat
 		CMD_TIMEOUT='15'
-		CMD_REQUESTED="sudo chown ${REMOTE_FILE_OWNER} ${PIHOLE_DIR}/${GRAVITY_FI}"
+		CMD_REQUESTED="sudo chown ${RILE_OWNER} ${PIHOLE_DIR}/${GRAVITY_FI}"
 			create_sshcmd
 }
 

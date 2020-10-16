@@ -1,5 +1,17 @@
 # The Changelog
 
+## 3.1
+
+### The Container Release
+
+This release focuses on adding better support for Docker container instances of Pi-hole.
+
+#### New Variables
+
+- `REMOTE_FILE_OWNER` variable renamed `RILE_OWNER` for consistency.
+- `RIHOLE_DIR` variable added to set different Pi-hole directory for remote host than local.
+- `DOCKER_CON` and `ROCKER_CON` variables added to specify different names for local and remote Pi-hole Docker containers.
+
 ## 3.0
 
 ### The Breakout Release

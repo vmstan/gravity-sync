@@ -23,7 +23,7 @@ CROSSCOUNT="0"
 CURRENTUSER=$(whoami)
 
 # Header
-echo -e "${YELLOW}Gravity Sync 3.0 - Installation Script${NC}"
+echo -e "${YELLOW}Gravity Sync - Installation Script${NC}"
 
 # Check Root
 if [ ! "$EUID" -ne 0 ]
@@ -83,10 +83,16 @@ fi
 # Check Pihole
 if hash pihole
 then
-    echo -e "[${GREEN}✓${NC}] Pi-Hole Detected"
+    echo -e "[${GREEN}✓${NC}] Pi-Hole Local Install Detected"
 else
-    echo -e "[${RED}✗${NC}] Pi-hole Not Installed"
-    CROSSCOUNT=$((CROSSCOUNT+1))
+    FTLCHECK=$(sudo docker container ls | grep 'pihole/pihole')
+        if [ "$FTLCHECK" != "" ]
+        then
+            echo -e "[${GREEN}✓${NC}] Pi-Hole Docker Container Detected"
+        else
+            echo -e "[${RED}✗${NC}] Pi-hole Not Installed"
+            CROSSCOUNT=$((CROSSCOUNT+1))
+        fi
 fi
 
 # Combine Outputs
