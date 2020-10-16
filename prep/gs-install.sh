@@ -40,6 +40,7 @@ else
         then
             echo -e "[${RED}✗${NC}] No Sudo Powers for ${CURRENTUSER}"
             CROSSCOUNT=$((CROSSCOUNT+1))
+            LOCALADMIN="nosudo"
         else
             echo -e "[${GREEN}✓${NC}] Sudo Powers Valid"
             LOCALADMIN="sudo"
@@ -93,16 +94,27 @@ if hash pihole 2>/dev/null
 then
     echo -e "[${GREEN}✓${NC}] Pi-Hole Local Install Detected"
 else
-    if [ "$LOCALADMIN" == "sudo" ]
+    if hash docker 2>/dev/null
     then
-        FTLCHECK=$(sudo docker container ls | grep 'pihole/pihole') 2>/dev/null
-    else
-        FTLCHECK=$(docker container ls | grep 'pihole/pihole') 2>/dev/null
-    fi
-    
-    if [ "$FTLCHECK" != "" ]
-    then
-        echo -e "[${GREEN}✓${NC}] Pi-Hole Docker Container Detected"
+        echo -e "[${GREEN}✓${NC}] Docker Binary Install Detected"
+        
+        if [ "$LOCALADMIN" == "sudo" ]
+        then
+            FTLCHECK=$(sudo docker container ls | grep 'pihole/pihole')
+        elif [ "$LOCALADMIN" == "nosudo" ]
+            echo -e "[${RED}✗${NC}] Unable to Detect Pi-hole Install"
+            CROSSCOUNT=$((CROSSCOUNT+1))
+        else
+            FTLCHECK=$(docker container ls | grep 'pihole/pihole')
+        fi
+        
+        if [ "$FTLCHECK" != "" ]
+        then
+            echo -e "[${GREEN}✓${NC}] Pi-Hole Docker Container Detected"
+        else
+            echo -e "[${RED}✗${NC}] Unable to Detect Pi-hole Install"
+            CROSSCOUNT=$((CROSSCOUNT+1))
+        fi
     else
         echo -e "[${RED}✗${NC}] Unable to Detect Pi-hole Install"
         CROSSCOUNT=$((CROSSCOUNT+1))
