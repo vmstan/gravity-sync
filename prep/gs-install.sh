@@ -20,6 +20,7 @@ NC='\033[0m'
 
 # Variables
 CROSSCOUNT="0"
+PHFAILCOUNT="0"
 CURRENTUSER=$(whoami)
 
 # Header
@@ -97,7 +98,7 @@ fi
 # Check Pihole
 if hash pihole 2>/dev/null
 then
-    echo -e "[${GREEN}✓${NC}] Pi-Hole Local Install Detected"
+    echo -e "[${GREEN}✓${NC}] Local Pi-hole Install Detected"
 else
     if hash docker 2>/dev/null
     then
@@ -108,8 +109,9 @@ else
             FTLCHECK=$(sudo docker container ls | grep 'pihole/pihole')
         elif [ "$LOCALADMIN" == "nosudo" ]
         then
-            echo -e "[${RED}✗${NC}] Unable to Detect Pi-hole Install"
+            echo -e "[${RED}✗${NC}] No Docker Pi-hole Container Detected (unable to scan)"
             CROSSCOUNT=$((CROSSCOUNT+1))
+            PHFAILCOUNT=$((PHFAILCOUNT+1))
         else
             FTLCHECK=$(docker container ls | grep 'pihole/pihole')
         fi
@@ -118,13 +120,22 @@ else
         then
             echo -e "[${GREEN}✓${NC}] Pi-Hole Docker Container Detected"
         else
-            echo -e "[${RED}✗${NC}] Unable to Detect Pi-hole Install"
+            echo -e "[${RED}✗${NC}] No Docker Pi-hole Container Detected"
             CROSSCOUNT=$((CROSSCOUNT+1))
+            PHFAILCOUNT=$((PHFAILCOUNT+1))
         fi
     else
-        echo -e "[${RED}✗${NC}] Unable to Detect Pi-hole Install"
+        echo -e "[${RED}✗${NC}] No Local Pi-hole Install Detected"
+        echo -e "[${PURPLE}!${NC}] No Docker Pi-hole Alternative Detected"
         CROSSCOUNT=$((CROSSCOUNT+1))
+        PHFAILCOUNT=$((PHFAILCOUNT+1))
     fi
+fi
+
+if [ "$PHFAILCOUNT" != "0" ]
+then
+    echo -e "[${RED}✗${NC}] No Usable Pi-hole Install Detected"
+    CROSSCOUNT=$((CROSSCOUNT+1))
 fi
 
 # Combine Outputs
