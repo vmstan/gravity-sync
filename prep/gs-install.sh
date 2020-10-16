@@ -30,9 +30,11 @@ echo -e "Visit ${CYAN}https://github.com/vmstan/gravity-sync${NC} for assistance
 echo -e "Initalizing Short Range Sensors"
 
 # Check Root
+
+echo -e "[${YELLOW}i${NC}] Validating System Authorization"
 if [ ! "$EUID" -ne 0 ]
 then 
-    echo -e "[${GREEN}✓${NC}] Running as Root"
+    echo -e "[${GREEN}✓${NC}] Current User (${CURRENTUSER}) is root"
     LOCALADMIN=""
 else
     if hash sudo 2>/dev/null
@@ -42,23 +44,24 @@ else
         sudo --validate
         if [ "$?" != "0" ]
         then
-            echo -e "[${RED}✗${NC}] No Sudo Powers for ${CURRENTUSER}"
+            echo -e "[${RED}✗${NC}] Current User (${CURRENTUSER}) cannot sudo"
             CROSSCOUNT=$((CROSSCOUNT+1))
             LOCALADMIN="nosudo"
         else
-            echo -e "[${GREEN}✓${NC}] Sudo Powers Valid"
+            echo -e "[${GREEN}✓${NC}] Current User (${CURRENTUSER}) has sudo powers"
             LOCALADMIN="sudo"
         fi
     else
-        echo -e "[${RED}✗${NC}] Sudo Utility Not Installed"
+        echo -e "[${RED}✗${NC}] Sudo Utility Not Detected"
         CROSSCOUNT=$((CROSSCOUNT+1))
         LOCALADMIN="nosudo"
     fi
-    echo -e "[${RED}✗${NC}] No Administrator Powers Detected"
+    echo -e "[${RED}✗${NC}] Current User (${CURRENTUSER}) cannot sudo"
     CROSSCOUNT=$((CROSSCOUNT+1))
     LOCALADMIN="nosudo"
 fi
 
+echo -e "[${YELLOW}i${NC}] Scanning for Required Components"
 # Check OpenSSH
 if hash ssh 2>/dev/null
 then
@@ -95,6 +98,7 @@ else
     CROSSCOUNT=$((CROSSCOUNT+1))
 fi
 
+echo -e "[${YELLOW}i${NC}] Performing Warp Core Diagnostics"
 # Check Pihole
 if hash pihole 2>/dev/null
 then
@@ -138,15 +142,21 @@ then
     CROSSCOUNT=$((CROSSCOUNT+1))
 fi
 
+echo -e "[${YELLOW}i${NC}] Status Report"
 # Combine Outputs
 if [ "$CROSSCOUNT" != "0" ]
 then
     echo -e "[${PURPLE}!${NC}] ${RED}${CROSSCOUNT}${NC} failures detected, correct these errors before deploying Gravity Sync!"
 else
-    echo -e "[${CYAN}>${NC}] Creating Sudoers.d File"
-    touch /tmp/gs-nopasswd.sudo
-    echo -e "${CURRENTUSER} ALL=(ALL) NOPASSWD: ALL" > /tmp/gs-nopasswd.sudo
-    sudo install -m 0440 /tmp/gs-nopasswd.sudo /etc/sudoers.d/gs-nopasswd
+    echo -e "[${YELLOW}i${NC}] Executing Gravity Sync Deployment"
+    
+    if [ "$LOCALADMIN" == "sudo" ]
+    then
+        echo -e "[${CYAN}>${NC}] Creating Sudoers.d File"
+        touch /tmp/gs-nopasswd.sudo
+        echo -e "${CURRENTUSER} ALL=(ALL) NOPASSWD: ALL" > /tmp/gs-nopasswd.sudo
+        sudo install -m 0440 /tmp/gs-nopasswd.sudo /etc/sudoers.d/gs-nopasswd
+    fi
 
 		if [ "$GS_INSTALL" != "secondary" ]
 		then
