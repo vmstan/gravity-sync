@@ -102,6 +102,7 @@ else
         then
             FTLCHECK=$(sudo docker container ls | grep 'pihole/pihole')
         elif [ "$LOCALADMIN" == "nosudo" ]
+        then
             echo -e "[${RED}✗${NC}] Unable to Detect Pi-hole Install"
             CROSSCOUNT=$((CROSSCOUNT+1))
         else
