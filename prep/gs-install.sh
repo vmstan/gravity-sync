@@ -104,8 +104,8 @@ if hash pihole 2>/dev/null
 then
     echo -e "[${GREEN}✓${NC}] Local Pi-hole Install Detected"
 else
-    echo -e "[${RED}*${NC}] No Local Pi-hole Install Detected"
-    echo -e "[${PURPLE}*${NC}] Attempting To Compensate"
+    echo -e "[${PURPLE}!${NC}] No Local Pi-hole Install Detected"
+    echo -e "[${CYAN}e${NC}] Attempting To Compensate"
     if hash docker 2>/dev/null
     then
         echo -e "[${GREEN}✓${NC}] Docker Binaries Detected"
@@ -115,7 +115,7 @@ else
             FTLCHECK=$(sudo docker container ls | grep 'pihole/pihole')
         elif [ "$LOCALADMIN" == "nosudo" ]
         then
-            echo -e "[${RED}*${NC}] No Docker Pi-hole Container Detected (unable to scan)"
+            echo -e "[${PURPLE}!${NC}] No Docker Pi-hole Container Detected (unable to scan)"
             # CROSSCOUNT=$((CROSSCOUNT+1))
             PHFAILCOUNT=$((PHFAILCOUNT+1))
         else
@@ -128,14 +128,14 @@ else
             then
                 echo -e "[${GREEN}✓${NC}] Pi-Hole Docker Container Detected"
             else
-                echo -e "[${RED}*${NC}] No Docker Pi-hole Container Detected"
+                echo -e "[${PURPLE}!${NC}] No Docker Pi-hole Container Detected"
                 # CROSSCOUNT=$((CROSSCOUNT+1))
                 PHFAILCOUNT=$((PHFAILCOUNT+1))
             fi
         fi
     else
         # echo -e "[${RED}✗${NC}] No Local Pi-hole Install Detected"
-        echo -e "[${RED}*${NC}] No Docker Pi-hole Alternative Detected"
+        echo -e "[${PURPLE}!${NC}] No Docker Pi-hole Alternative Detected"
         # CROSSCOUNT=$((CROSSCOUNT+1))
         PHFAILCOUNT=$((PHFAILCOUNT+1))
     fi
@@ -159,7 +159,7 @@ else
     
     if [ "$LOCALADMIN" == "sudo" ]
     then
-        echo -e "[${CYAN}>${NC}] Creating Sudoers.d File"
+        echo -e "[${BLUE}>${NC}] Creating Sudoers.d File"
         touch /tmp/gs-nopasswd.sudo
         echo -e "${CURRENTUSER} ALL=(ALL) NOPASSWD: ALL" > /tmp/gs-nopasswd.sudo
         sudo install -m 0440 /tmp/gs-nopasswd.sudo /etc/sudoers.d/gs-nopasswd
@@ -171,7 +171,7 @@ else
             echo -e "[${YELLOW}i${NC}] Run this script again on your secondary Pi-hole host to proceed."
             echo -e "[${YELLOW}i${NC}] Visit https://github.com/vmstan/gravity-sync for more instructions."
         else
-            echo -e "[${CYAN}>${NC}] Creating Gravity Sync Directories"
+            echo -e "[${BLUE}>${NC}] Creating Gravity Sync Directories"
             git clone https://github.com/vmstan/gravity-sync.git $HOME/gravity-sync
             echo -e "[${YELLOW}i${NC}] This host is now prepared to configure Gravity Sync!"
             echo -e "[${YELLOW}i${NC}] Please run './gravity-sync configure' from $HOME/gravity-sync"
