@@ -25,7 +25,7 @@ CURRENTUSER=$(whoami)
 
 # Header
 echo -e "${YELLOW}Gravity Sync - Automated Installation${NC}"
-echo -e "Visit ${CYAN}https://github.com/vmstan/gravity-sync${NC} for assistance"
+echo -e "${CYAN}https://github.com/vmstan/gravity-sync${NC}"
 # echo -e "##############################################"
 # echo -e "Initalizing Short Range Sensors"
 
