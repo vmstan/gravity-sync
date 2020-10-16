@@ -29,7 +29,7 @@ echo -e "${YELLOW}Gravity Sync - Installation Script${NC}"
 if [ ! "$EUID" -ne 0 ]
 then 
     echo -e "[${GREEN}✓${NC}] Running as Root"
-    LOCALADMIN="root"
+    LOCALADMIN=""
 else
     if hash sudo 2>/dev/null
     then
@@ -42,6 +42,7 @@ else
             CROSSCOUNT=$((CROSSCOUNT+1))
         else
             echo -e "[${GREEN}✓${NC}] Sudo Powers Valid"
+            LOCALADMIN="sudo"
         fi
     else
         echo -e "[${RED}✗${NC}] Sudo Utility Not Installed"
@@ -92,14 +93,20 @@ if hash pihole 2>/dev/null
 then
     echo -e "[${GREEN}✓${NC}] Pi-Hole Local Install Detected"
 else
-    FTLCHECK=$(sudo docker container ls | grep 'pihole/pihole')
-        if [ "$FTLCHECK" != "" ]
-        then
-            echo -e "[${GREEN}✓${NC}] Pi-Hole Docker Container Detected"
-        else
-            echo -e "[${RED}✗${NC}] Pi-hole Not Installed"
-            CROSSCOUNT=$((CROSSCOUNT+1))
-        fi
+    if [ "$LOCALADMIN" == "sudo" ]
+    then
+        FTLCHECK=$(sudo docker container ls | grep 'pihole/pihole')
+    else
+        FTLCHECK=$(docker container ls | grep 'pihole/pihole')
+    fi
+    
+    if [ "$FTLCHECK" != "" ]
+    then
+        echo -e "[${GREEN}✓${NC}] Pi-Hole Docker Container Detected"
+    else
+        echo -e "[${RED}✗${NC}] Unable to Detect Pi-hole Install"
+        CROSSCOUNT=$((CROSSCOUNT+1))
+    fi
 fi
 
 # Combine Outputs
