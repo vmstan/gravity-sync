@@ -25,7 +25,7 @@ CURRENTUSER=$(whoami)
 # Header
 echo -e "${YELLOW}Gravity Sync - Automated Installation${NC}"
 echo -e "Visit ${CYAN}https://github.com/vmstan/gravity-sync${NC} for assistance"
-echo -e "##############################################"
+# echo -e "##############################################"
 echo -e "Initalizing Short Range Sensors"
 
 # Check Root
@@ -51,9 +51,11 @@ else
     else
         echo -e "[${RED}✗${NC}] Sudo Utility Not Installed"
         CROSSCOUNT=$((CROSSCOUNT+1))
+        LOCALADMIN="nosudo"
     fi
     echo -e "[${RED}✗${NC}] No Administrator Powers Detected"
     CROSSCOUNT=$((CROSSCOUNT+1))
+    LOCALADMIN="nosudo"
 fi
 
 # Check OpenSSH
