@@ -104,7 +104,7 @@ if hash pihole 2>/dev/null
 then
     echo -e "[${GREEN}✓${NC}] Local Pi-hole Install Detected"
 else
-    echo -e "[${RED}✗${NC}] No Local Pi-hole Install Detected"
+    echo -e "[${RED}*${NC}] No Local Pi-hole Install Detected"
     echo -e "[${PURPLE}*${NC}] Attempting To Compensate"
     if hash docker 2>/dev/null
     then
@@ -115,8 +115,8 @@ else
             FTLCHECK=$(sudo docker container ls | grep 'pihole/pihole')
         elif [ "$LOCALADMIN" == "nosudo" ]
         then
-            echo -e "[${RED}✗${NC}] No Docker Pi-hole Container Detected (unable to scan)"
-            CROSSCOUNT=$((CROSSCOUNT+1))
+            echo -e "[${RED}*${NC}] No Docker Pi-hole Container Detected (unable to scan)"
+            # CROSSCOUNT=$((CROSSCOUNT+1))
             PHFAILCOUNT=$((PHFAILCOUNT+1))
         else
             FTLCHECK=$(docker container ls | grep 'pihole/pihole')
@@ -128,15 +128,15 @@ else
             then
                 echo -e "[${GREEN}✓${NC}] Pi-Hole Docker Container Detected"
             else
-                echo -e "[${RED}✗${NC}] No Docker Pi-hole Container Detected"
-                CROSSCOUNT=$((CROSSCOUNT+1))
+                echo -e "[${RED}*${NC}] No Docker Pi-hole Container Detected"
+                # CROSSCOUNT=$((CROSSCOUNT+1))
                 PHFAILCOUNT=$((PHFAILCOUNT+1))
             fi
         fi
     else
         # echo -e "[${RED}✗${NC}] No Local Pi-hole Install Detected"
-        echo -e "[${PURPLE}!${NC}] No Docker Pi-hole Alternative Detected"
-        CROSSCOUNT=$((CROSSCOUNT+1))
+        echo -e "[${RED}*${NC}] No Docker Pi-hole Alternative Detected"
+        # CROSSCOUNT=$((CROSSCOUNT+1))
         PHFAILCOUNT=$((PHFAILCOUNT+1))
     fi
 fi
@@ -151,7 +151,7 @@ echo -e "[${YELLOW}i${NC}] ${YELLOW}Status Report${NC}"
 # Combine Outputs
 if [ "$CROSSCOUNT" != "0" ]
 then
-    echo -e "[${PURPLE}!${NC}] ${RED}${CROSSCOUNT}${NC} Issues Detected"
+    echo -e "[${PURPLE}!${NC}] ${RED}${CROSSCOUNT}${NC} Critical Issues Detected"
     echo -e "[${PURPLE}!${NC}] Please Correct Failed Components"
     echo -e "[${YELLOW}i${NC}] Installation Exiting (without changes)"
 else
