@@ -56,9 +56,13 @@ else
         CROSSCOUNT=$((CROSSCOUNT+1))
         LOCALADMIN="nosudo"
     fi
-    echo -e "[${RED}✗${NC}] Current User (${CURRENTUSER}) Cannot SUDO"
-    CROSSCOUNT=$((CROSSCOUNT+1))
-    LOCALADMIN="nosudo"
+    
+    if [ "$LOCALADMIN" != "sudo"]
+    then
+        echo -e "[${RED}✗${NC}] Current User (${CURRENTUSER}) Cannot SUDO"
+        CROSSCOUNT=$((CROSSCOUNT+1))
+        LOCALADMIN="nosudo"
+    fi
 fi
 
 echo -e "[${YELLOW}i${NC}] ${YELLOW}Scanning for Required Components${NC}"
