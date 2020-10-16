@@ -31,7 +31,7 @@ echo -e "${CYAN}https://github.com/vmstan/gravity-sync${NC}"
 
 # Check Root
 
-echo -e "[${YELLOW}i${NC}] Validating System Authorization"
+echo -e "[${YELLOW}i${NC}] ${YELLOW}Validating System Authorization${NC}"
 if [ ! "$EUID" -ne 0 ]
 then 
     echo -e "[${GREEN}✓${NC}] Current User (${CURRENTUSER}) is ROOT"
@@ -61,7 +61,7 @@ else
     LOCALADMIN="nosudo"
 fi
 
-echo -e "[${YELLOW}i${NC}] Scanning for Required Components"
+echo -e "[${YELLOW}i${NC}] ${YELLOW}Scanning for Required Components${NC}"
 # Check OpenSSH
 if hash ssh 2>/dev/null
 then
@@ -98,7 +98,7 @@ else
     CROSSCOUNT=$((CROSSCOUNT+1))
 fi
 
-echo -e "[${YELLOW}i${NC}] Performing Warp Core Diagnostics"
+echo -e "[${YELLOW}i${NC}] ${YELLOW}Performing Warp Core Diagnostics${NC}"
 # Check Pihole
 if hash pihole 2>/dev/null
 then
@@ -147,7 +147,7 @@ then
     CROSSCOUNT=$((CROSSCOUNT+1))
 fi
 
-echo -e "[${YELLOW}i${NC}] Status Report"
+echo -e "[${YELLOW}i${NC}] ${YELLOW}Status Report${NC}"
 # Combine Outputs
 if [ "$CROSSCOUNT" != "0" ]
 then
