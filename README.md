@@ -1,3 +1,5 @@
+<img src="https://user-images.githubusercontent.com/3002053/96293656-b9280300-0fb0-11eb-90c2-95cc418851e8.png" width="170" height="170" alt="Gravity Sync">
+
 # Gravity Sync
 
 ## Features
