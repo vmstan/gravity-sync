@@ -171,15 +171,18 @@ else
 
 		if [ "$GS_INSTALL" != "secondary" ]
 		then
-			echo -e "[${YELLOW}i${NC}] This host is prepared to use Gravity Sync, you may log off now!"
-            echo -e "[${YELLOW}i${NC}] Run this script again on your secondary Pi-hole host to proceed."
-            echo -e "[${YELLOW}i${NC}] Visit https://github.com/vmstan/gravity-sync for more instructions."
+			echo -e "[${YELLOW}i${NC}] Gravity Sync Preperation Complete"
+            echo -e "[${YELLOW}i${NC}] Execute on Installer on Secondary"
+            echo -e "[${YELLOW}i${NC}] Check Documentation for Instructions"
+			echo -e "[${YELLOW}i${NC}] Installation Exiting (without changes)"
         else
             echo -e "[${BLUE}>${NC}] Creating Gravity Sync Directories"
-            git clone https://github.com/vmstan/gravity-sync.git $HOME/gravity-sync
-            echo -e "[${YELLOW}i${NC}] This host is now prepared to configure Gravity Sync!"
-            echo -e "[${YELLOW}i${NC}] Please run './gravity-sync configure' from $HOME/gravity-sync"
-            echo -e "[${YELLOW}i${NC}] Visit https://github.com/vmstan/gravity-sync for more instructions."
+            git clone https://github.com/vmstan/gravity-sync.git
+			echo -e "[${BLUE}>${NC}] Starting Gravity Sync Configuration"
+			sh ./gravity-sync/gravity-sync.sh configure
+            # echo -e "[${YELLOW}i${NC}] This host is now prepared to configure Gravity Sync!"
+            # echo -e "[${YELLOW}i${NC}] Please run './gravity-sync configure' from $HOME/gravity-sync"
+            # echo -e "[${YELLOW}i${NC}] Visit https://github.com/vmstan/gravity-sync for more instructions."
 		fi
         
 fi

@@ -10,12 +10,19 @@ This release focuses on adding better support for Docker container instances of 
 
 - Detects running instance of default Pi-hole Docker container image, if standard Pi-hole lookup fails.
 - Changes detection of root vs sudo users, and adapts commands to match.
+- Only deploys passwordless SUDO components if deemed necessary.
+- Now automatically runs local configuration on secondary Pi-hole after execution.
+- Git repository clone now happens directly in executed directory.
 
 #### New Variables
 
 - `REMOTE_FILE_OWNER` variable renamed `RILE_OWNER` for consistency.
 - `RIHOLE_DIR` variable added to set different Pi-hole directory for remote host than local.
 - `DOCKER_CON` and `ROCKER_CON` variables added to specify different names for local and remote Pi-hole Docker containers.
+
+#### Deprecation
+
+- Support for `sshpass` has been removed, the only valid authentication method going forward will be ssh-key based.
 
 ## 3.0
 
