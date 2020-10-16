@@ -28,24 +28,31 @@ echo -e "${YELLOW}Gravity Sync - Installation Script${NC}"
 # Check Root
 if [ ! "$EUID" -ne 0 ]
 then 
-    echo -e "[${RED}✗${NC}] Running as Root"
-    CROSSCOUNT=$((CROSSCOUNT+1))
+    echo -e "[${GREEN}✓${NC}] Running as Root"
+    LOCALADMIN="root"
 else
-    echo -e "[${GREEN}✓${NC}] Not Running as Root"
-fi
-
-# Check Sudo
-sudo --validate
-if [ "$?" != "0" ]
-then
-    echo -e "[${RED}✗${NC}] No Sudo Powers for ${CURRENTUSER}"
+    if hash sudo 2>/dev/null
+    then
+        echo -e "[${GREEN}✓${NC}] Sudo Utility Detected"
+        # Check Sudo
+        sudo --validate
+        if [ "$?" != "0" ]
+        then
+            echo -e "[${RED}✗${NC}] No Sudo Powers for ${CURRENTUSER}"
+            CROSSCOUNT=$((CROSSCOUNT+1))
+        else
+            echo -e "[${GREEN}✓${NC}] Sudo Powers Valid"
+        fi
+    elif
+        echo -e "[${RED}✗${NC}] Sudo Utility Not Installed"
+        CROSSCOUNT=$((CROSSCOUNT+1))
+    fi    
+    echo -e "[${RED}✗${NC}] No Administrator Powers Detected"
     CROSSCOUNT=$((CROSSCOUNT+1))
-else
-    echo -e "[${GREEN}✓${NC}] Sudo Powers Valid"
 fi
 
 # Check OpenSSH
-if hash ssh
+if hash ssh 2>/dev/null
 then
     echo -e "[${GREEN}✓${NC}] OpenSSH Detected"
 else
@@ -54,7 +61,7 @@ else
 fi
 
 # Check Rsync
-if hash rsync
+if hash rsync 2>/dev/null
 then
     echo -e "[${GREEN}✓${NC}] RSYNC Detected"
 else
@@ -63,7 +70,7 @@ else
 fi
 
 # Check SQLITE3
-if hash sqlite3
+if hash sqlite3 2>/dev/null
 then
     echo -e "[${GREEN}✓${NC}] SQLITE3 Detected"
 else
@@ -72,7 +79,7 @@ else
 fi
 
 # Check GIT
-if hash git
+if hash git 2>/dev/null
 then
     echo -e "[${GREEN}✓${NC}] GIT Detected"
 else
@@ -81,7 +88,7 @@ else
 fi
 
 # Check Pihole
-if hash pihole
+if hash pihole 2>/dev/null
 then
     echo -e "[${GREEN}✓${NC}] Pi-Hole Local Install Detected"
 else
