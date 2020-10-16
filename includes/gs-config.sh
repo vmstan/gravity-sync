@@ -36,12 +36,12 @@ function config_generate {
 	cp $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}.example $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 	error_validate
 
-	MESSAGE="Use Advanced Installation Options (Leave blank for default 'No')"
+	MESSAGE="Use Advanced Installation Options? (Leave blank for default 'No')"
 	echo_need
 	read INPUT_ADVANCED_INSTALL
 	INPUT_ADVANCED_INSTALL="${INPUT_ADVANCED_INSTALL:-N}"
 	
-	if [ "${INPUT_ADVANCED_INSTALL}" == "Y" ]
+	if [ "${INPUT_ADVANCED_INSTALL}" != "N" ]
 	then
 		MESSAGE="Advanced Configuration"
 		echo_info
