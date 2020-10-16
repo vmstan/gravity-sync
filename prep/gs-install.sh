@@ -27,7 +27,7 @@ CURRENTUSER=$(whoami)
 echo -e "${YELLOW}Gravity Sync - Automated Installation${NC}"
 echo -e "Visit ${CYAN}https://github.com/vmstan/gravity-sync${NC} for assistance"
 # echo -e "##############################################"
-echo -e "Initalizing Short Range Sensors"
+# echo -e "Initalizing Short Range Sensors"
 
 # Check Root
 
@@ -149,7 +149,9 @@ echo -e "[${YELLOW}i${NC}] Status Report"
 # Combine Outputs
 if [ "$CROSSCOUNT" != "0" ]
 then
-    echo -e "[${PURPLE}!${NC}] ${RED}${CROSSCOUNT}${NC} failures detected, correct these errors before deploying Gravity Sync!"
+    echo -e "[${PURPLE}!${NC}] ${RED}${CROSSCOUNT}${NC} Issues Detected"
+    echo -e "[${PURPLE}!${NC}] Please Correct Failed Components"
+    echo -e "[${YELLOW}i${NC}] Installation Exiting (without changes)"
 else
     echo -e "[${YELLOW}i${NC}] Executing Gravity Sync Deployment"
     
