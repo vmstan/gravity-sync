@@ -127,7 +127,7 @@ function config_generate {
 
 ## Advanced Configuration Options
 function advanced_config_generate {
-	MESSAGE="Enter a custom SSH port if required (Leave blank for default '22')"
+	MESSAGE="Primary Pi-hole SSH Port (Leave blank for default '22')"
 		echo_need
 		read INPUT_SSH_PORT
 		INPUT_SSH_PORT="${INPUT_SSH_PORT:-22}"
@@ -140,7 +140,7 @@ function advanced_config_generate {
 			error_validate
 		fi
 	
-		MESSAGE="Perform PING tests between Pi-holes? (Leave blank for default 'Yes')"
+		MESSAGE="Enable Connectivity Checking (Leave blank for default 'Yes')"
 		echo_need
 		read INPUT_PING_AVOID
 		INPUT_PING_AVOID="${INPUT_PING_AVOID:-Y}"
@@ -152,6 +152,19 @@ function advanced_config_generate {
 			sed -i "/# PING_AVOID=''/c\PING_AVOID='1'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
 			error_validate
 			PING_AVOID=1
+		fi
+		
+		MESSAGE="Custom SSH PKIF Location (Leave blank for default '.ssh/id_rsa')"
+		echo_need
+		read INPUT_CUSTOM_PKIF
+		INPUT_CUSTOM_PKIF="${INPUT_CUSTOM_PKIF:-.ssh/id_rsa}"
+		
+		if [ "${INPUT_CUSTOM_PKIF}" != ".ssh/id_rsa" ]
+		then
+			MESSAGE="Saving Custom PKIF to ${CONFIG_FILE}"
+			echo_stat
+			sed -i "/# SSH_PKIF=''/c\SSH_PKIF='${INPUT_CUSTOM_PKIF}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+			error_validate
 		fi
 }
 
