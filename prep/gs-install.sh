@@ -35,7 +35,7 @@ echo -e "[${YELLOW}i${NC}] Validating System Authorization"
 if [ ! "$EUID" -ne 0 ]
 then 
     echo -e "[${GREEN}✓${NC}] Current User (${CURRENTUSER}) is root"
-    LOCALADMIN=""
+    LOCALADMIN="root"
 else
     if hash sudo 2>/dev/null
     then
@@ -65,36 +65,36 @@ echo -e "[${YELLOW}i${NC}] Scanning for Required Components"
 # Check OpenSSH
 if hash ssh 2>/dev/null
 then
-    echo -e "[${GREEN}✓${NC}] OpenSSH Detected"
+    echo -e "[${GREEN}✓${NC}] OpenSSH Binaries Detected"
 else
-    echo -e "[${RED}✗${NC}] OpenSSH Not Installed"
+    echo -e "[${RED}✗${NC}] OpenSSH Binaries Not Installed"
     CROSSCOUNT=$((CROSSCOUNT+1))
 fi
 
 # Check Rsync
 if hash rsync 2>/dev/null
 then
-    echo -e "[${GREEN}✓${NC}] RSYNC Detected"
+    echo -e "[${GREEN}✓${NC}] RSYNC Binaries Detected"
 else
-    echo -e "[${RED}✗${NC}] RSYNC Not Installed"
+    echo -e "[${RED}✗${NC}] RSYNC Binaries Not Installed"
     CROSSCOUNT=$((CROSSCOUNT+1))
 fi
 
 # Check SQLITE3
 if hash sqlite3 2>/dev/null
 then
-    echo -e "[${GREEN}✓${NC}] SQLITE3 Detected"
+    echo -e "[${GREEN}✓${NC}] SQLITE3 Binaries Detected"
 else
-    echo -e "[${RED}✗${NC}] SQLITE3 Not Installed"
+    echo -e "[${RED}✗${NC}] SQLITE3 Binaries Not Installed"
     CROSSCOUNT=$((CROSSCOUNT+1))
 fi
 
 # Check GIT
 if hash git 2>/dev/null
 then
-    echo -e "[${GREEN}✓${NC}] GIT Detected"
+    echo -e "[${GREEN}✓${NC}] GIT Binaries Detected"
 else
-    echo -e "[${RED}✗${NC}] GIT Not Installed"
+    echo -e "[${RED}✗${NC}] GIT Binaries Not Installed"
     CROSSCOUNT=$((CROSSCOUNT+1))
 fi
 
@@ -106,7 +106,7 @@ then
 else
     if hash docker 2>/dev/null
     then
-        echo -e "[${GREEN}✓${NC}] Docker Binary Install Detected"
+        echo -e "[${GREEN}✓${NC}] Docker Binaries  Detected"
         
         if [ "$LOCALADMIN" == "sudo" ]
         then
@@ -120,13 +120,15 @@ else
             FTLCHECK=$(docker container ls | grep 'pihole/pihole')
         fi
         
-        if [ "$FTLCHECK" != "" ]
-        then
-            echo -e "[${GREEN}✓${NC}] Pi-Hole Docker Container Detected"
-        else
-            echo -e "[${RED}✗${NC}] No Docker Pi-hole Container Detected"
-            CROSSCOUNT=$((CROSSCOUNT+1))
-            PHFAILCOUNT=$((PHFAILCOUNT+1))
+        if [ "$LOCALADMIN" != "nosudo" ]
+            if [ "$FTLCHECK" != "" ]
+            then
+                echo -e "[${GREEN}✓${NC}] Pi-Hole Docker Container Detected"
+            else
+                echo -e "[${RED}✗${NC}] No Docker Pi-hole Container Detected"
+                CROSSCOUNT=$((CROSSCOUNT+1))
+                PHFAILCOUNT=$((PHFAILCOUNT+1))
+            fi
         fi
     else
         echo -e "[${RED}✗${NC}] No Local Pi-hole Install Detected"
