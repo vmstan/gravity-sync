@@ -43,10 +43,10 @@ else
         else
             echo -e "[${GREEN}✓${NC}] Sudo Powers Valid"
         fi
-    elif
+    else
         echo -e "[${RED}✗${NC}] Sudo Utility Not Installed"
         CROSSCOUNT=$((CROSSCOUNT+1))
-    fi    
+    fi
     echo -e "[${RED}✗${NC}] No Administrator Powers Detected"
     CROSSCOUNT=$((CROSSCOUNT+1))
 fi
