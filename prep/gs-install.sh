@@ -23,7 +23,10 @@ CROSSCOUNT="0"
 CURRENTUSER=$(whoami)
 
 # Header
-echo -e "${YELLOW}Gravity Sync - Installation Script${NC}"
+echo -e "${YELLOW}Gravity Sync - Automated Installation${NC}"
+echo -e "Visit ${CYAN}https://github.com/vmstan/gravity-sync${NC} for assistance"
+echo -e "##############################################"
+echo -e "Initalizing Short Range Sensors"
 
 # Check Root
 if [ ! "$EUID" -ne 0 ]
