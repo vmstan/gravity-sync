@@ -31,8 +31,9 @@ This release focuses on adding better support for Docker container instances of 
 - `RIHOLE_DIR` variable added to set different Pi-hole directory for remote host than local.
 - `DOCKER_CON` and `ROCKER_CON` variables added to specify different names for local and remote Pi-hole Docker containers.
 - `PH_IN_TYPE` and `RH_IN_TYPE` variables allow you to to either standard or Docker deployments of Pi-hole, per side.
+- `DOCKER_BIN` and `ROCKER_BIN` variables allow you to set non-standard locations for Docker binary files, per side.
 
-#### Deprecation
+#### Removals
 
 - Support for `sshpass` has been removed, the only valid authentication method going forward will be ssh-key based.
 
