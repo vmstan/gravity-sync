@@ -14,8 +14,6 @@ function task_configure {
 	then		
 		config_delete
 	else
-		# MESSAGE="${CONFIG_FILE}"
-		# echo_warn
 		config_generate
 	fi
 
@@ -35,18 +33,24 @@ function config_generate {
 	echo_stat
 	cp ${LOCAL_FOLDR}/${CONFIG_FILE}.example ${LOCAL_FOLDR}/${CONFIG_FILE}
 	error_validate
-
-	MESSAGE="Use Advanced Installation Options? (Leave blank for default 'No')"
-	echo_need
-	read INPUT_ADVANCED_INSTALL
-	INPUT_ADVANCED_INSTALL="${INPUT_ADVANCED_INSTALL:-N}"
 	
-	if [ "${INPUT_ADVANCED_INSTALL}" != "N" ]
+	docker_detect
+	if [ "${DOCKERREADY}" == "1" ]
 	then
-		MESSAGE="Advanced Configuration"
-		echo_info
-		
 		advanced_config_generate
+	else
+		MESSAGE="Use Advanced Installation Options? (Leave blank for default 'No')"
+		echo_need
+		read INPUT_ADVANCED_INSTALL
+		INPUT_ADVANCED_INSTALL="${INPUT_ADVANCED_INSTALL:-N}"
+	
+		if [ "${INPUT_ADVANCED_INSTALL}" != "N" ]
+		then
+			MESSAGE="Advanced Configuration"
+			echo_info
+		
+			advanced_config_generate
+		fi
 	fi
 	
 	MESSAGE="Standard Settings"
@@ -67,7 +71,7 @@ function config_generate {
 		echo_warn
 	fi
 	
-	MESSAGE="SSH User with SUDO rights"
+	MESSAGE="SSH User for ${INPUT_REMOTE_HOST}"
 	echo_need
 	read INPUT_REMOTE_USER
 	
@@ -80,32 +84,6 @@ function config_generate {
 	echo_stat
 	sed -i "/REMOTE_USER='pi'/c\REMOTE_USER='${INPUT_REMOTE_USER}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
 	error_validate
-
-	if hash sshpass 2>/dev/null
-	then
-		MESSAGE="SSHPASS Utility Detected"
-		echo_warn
-			if hash ssh 2>/dev/null
-			then
-				MESSAGE="Please Reference Documentation"
-				echo_info
-
-				MESSAGE="${BLUE}https://github.com/vmstan/gravity-sync/blob/master/ADVANCED.md#ssh-configuration${NC}"
-				echo_info
-
-				MESSAGE="Leave password blank to use key-pair! (reccomended)"
-				echo_warn
-				
-				MESSAGE="SSH User Password"
-				echo_need
-				read INPUT_REMOTE_PASS
-				
-				MESSAGE="Saving Password to ${CONFIG_FILE}"
-				echo_stat
-				sed -i "/REMOTE_PASS=''/c\REMOTE_PASS='${INPUT_REMOTE_PASS}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
-					error_validate
-			fi	
-	fi
 
 	generate_sshkey
 	
@@ -127,45 +105,141 @@ function config_generate {
 
 ## Advanced Configuration Options
 function advanced_config_generate {
-	MESSAGE="Primary Pi-hole SSH Port (Leave blank for default '22')"
+	MESSAGE="Local Pi-hole in Docker Container? (Leave blank for default 'No')"
+	echo_need
+	read INPUT_PH_IN_TYPE
+	INPUT_PH_IN_TYPE="${INPUT_PH_IN_TYPE:-N}"
+	
+	if [ "${INPUT_PH_IN_TYPE}" != "N" ]
+	then
+		MESSAGE="Saving Local Docker Setting to ${CONFIG_FILE}"
+		echo_stat
+		sed -i "/# PH_IN_TYPE=''/c\PH_IN_TYPE='docker'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+		error_validate
+		
+		MESSAGE="Local Docker Container Name? (Leave blank for default 'pihole')"
 		echo_need
-		read INPUT_SSH_PORT
-		INPUT_SSH_PORT="${INPUT_SSH_PORT:-22}"
-	
-		if [ "${INPUT_SSH_PORT}" != "22" ]
+		read INPUT_DOCKER_CON
+		INPUT_DOCKER_CON="${INPUT_DOCKER_CON:-pihole}"
+		
+		if [ "${INPUT_DOCKER_CON}" != "pihole" ]
 		then
-			MESSAGE="Saving Custom SSH Port to ${CONFIG_FILE}"
+			MESSAGE="Saving Local Container Name to ${CONFIG_FILE}"
 			echo_stat
-			sed -i "/# SSH_PORT=''/c\SSH_PORT='${INPUT_SSH_PORT}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+			sed -i "/# DOCKER_CON=''/c\DOCKER_CON='${INPUT_DOCKER_CON}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
 			error_validate
-		fi
-	
-		MESSAGE="Enable Connectivity Checking (Leave blank for default 'Yes')"
-		echo_need
-		read INPUT_PING_AVOID
-		INPUT_PING_AVOID="${INPUT_PING_AVOID:-Y}"
-	
-		if [ "${INPUT_PING_AVOID}" != "Y" ]
-		then
-			MESSAGE="Saving Ping Avoidance to ${CONFIG_FILE}"
-			echo_stat
-			sed -i "/# PING_AVOID=''/c\PING_AVOID='1'" ${LOCAL_FOLDR}/${CONFIG_FILE}
-			error_validate
-			PING_AVOID=1
 		fi
 		
-		MESSAGE="Custom SSH PKIF Location (Leave blank for default '.ssh/id_rsa')"
+		MESSAGE="Local Pi-hole 'etc' Volume Path? (Required, no trailing slash)"
 		echo_need
-		read INPUT_CUSTOM_PKIF
-		INPUT_CUSTOM_PKIF="${INPUT_CUSTOM_PKIF:-.ssh/id_rsa}"
+		read INPUT_PIHOLE_DIR
+		# INPUT_DOCKER_CON="${INPUT_DOCKER_CON:-pihole}"
 		
-		if [ "${INPUT_CUSTOM_PKIF}" != ".ssh/id_rsa" ]
+		if [ "${INPUT_PIHOLE_DIR}" != "" ]
 		then
-			MESSAGE="Saving Custom PKIF to ${CONFIG_FILE}"
+			MESSAGE="Saving Local Pi-hole Volume to ${CONFIG_FILE}"
 			echo_stat
-			sed -i "/# SSH_PKIF=''/c\SSH_PKIF='${INPUT_CUSTOM_PKIF}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+			sed -i "/# PIHOLE_DIR=''/c\PIHOLE_DIR='${INPUT_PIHOLE_DIR}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+			error_validate
+		else
+			MESSAGE="This setting is required!"
+			echo_warn
+			exit_withchanges
+		fi
+		
+		MESSAGE="Saving Local Volume Ownership to ${CONFIG_FILE}"
+		echo_stat
+		sed -i "/# FILE_OWNER=''/c\FILE_OWNER='999:999'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+		error_validate
+	fi
+	
+	MESSAGE="Remote Pi-hole in Docker Container? (Leave blank for default 'No')"
+	echo_need
+	read INPUT_RH_IN_TYPE
+	INPUT_RH_IN_TYPE="${INPUT_RH_IN_TYPE:-N}"
+	
+	if [ "${INPUT_RH_IN_TYPE}" != "N" ]
+	then
+		MESSAGE="Saving Remote Docker Setting to ${CONFIG_FILE}"
+		echo_stat
+		sed -i "/# RH_IN_TYPE=''/c\RH_IN_TYPE='docker'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+		error_validate
+		
+		MESSAGE="Remote Docker Container Name? (Leave blank for default 'pihole')"
+		echo_need
+		read INPUT_ROCKER_CON
+		INPUT_ROCKER_CON="${INPUT_ROCKER_CON:-pihole}"
+		
+		if [ "${INPUT_ROCKER_CON}" != "pihole" ]
+		then
+			MESSAGE="Saving Remote Container Name to ${CONFIG_FILE}"
+			echo_stat
+			sed -i "/# ROCKER_CON=''/c\ROCKER_CON='${INPUT_ROCKER_CON}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
 			error_validate
 		fi
+		
+		MESSAGE="Remote Pi-hole 'etc' Volume Path? (Required, no trailing slash)"
+		echo_need
+		read INPUT_RIHOLE_DIR
+		# INPUT_DOCKER_CON="${INPUT_DOCKER_CON:-pihole}"
+		
+		if [ "${INPUT_RIHOLE_DIR}" != "" ]
+		then
+			MESSAGE="Saving Remote Pi-hole Volume to ${CONFIG_FILE}"
+			echo_stat
+			sed -i "/# RIHOLE_DIR=''/c\RIHOLE_DIR='${INPUT_RIHOLE_DIR}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+			error_validate
+		else
+			MESSAGE="This setting is required!"
+			echo_warn
+			exit_withchanges
+		fi
+		
+		MESSAGE="Saving Remote Volume Ownership to ${CONFIG_FILE}"
+		echo_stat
+		sed -i "/# RILE_OWNER=''/c\RILE_OWNER='999:999'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+		error_validate
+	fi
+	
+	MESSAGE="Custom SSH Port? (Leave blank for default '22')"
+	echo_need
+	read INPUT_SSH_PORT
+	INPUT_SSH_PORT="${INPUT_SSH_PORT:-22}"
+	
+	if [ "${INPUT_SSH_PORT}" != "22" ]
+	then
+		MESSAGE="Saving Custom SSH Port to ${CONFIG_FILE}"
+		echo_stat
+		sed -i "/# SSH_PORT=''/c\SSH_PORT='${INPUT_SSH_PORT}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+		error_validate
+	fi
+	
+	MESSAGE="Enable ICMP Check? (Leave blank for default 'Yes')"
+	echo_need
+	read INPUT_PING_AVOID
+	INPUT_PING_AVOID="${INPUT_PING_AVOID:-Y}"
+	
+	if [ "${INPUT_PING_AVOID}" != "Y" ]
+	then
+		MESSAGE="Saving ICMP Avoidance to ${CONFIG_FILE}"
+		echo_stat
+		sed -i "/# PING_AVOID=''/c\PING_AVOID='1'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+		error_validate
+		PING_AVOID=1
+	fi
+		
+	MESSAGE="Custom SSH PKIF Location? (Leave blank for default '.ssh/id_rsa')"
+	echo_need
+	read INPUT_CUSTOM_PKIF
+	INPUT_CUSTOM_PKIF="${INPUT_CUSTOM_PKIF:-.ssh/id_rsa}"
+		
+	if [ "${INPUT_CUSTOM_PKIF}" != ".ssh/id_rsa" ]
+	then
+		MESSAGE="Saving Custom PKIF to ${CONFIG_FILE}"
+		echo_stat
+		sed -i "/# SSH_PKIF=''/c\SSH_PKIF='${INPUT_CUSTOM_PKIF}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+		error_validate
+	fi
 }
 
 ## Delete Existing Configuration
@@ -192,5 +266,12 @@ function config_delete {
 }
 
 function docker_detect {
-	AREYOUDOCKER='YES'
+	if hash docker 2>/dev/null
+	then
+		FTLCHECK=$(sudo docker container ls | grep 'pihole/pihole')
+		if [ "$FTLCHECK" != "" ]
+		then
+			DOCKERREADY="1"
+		fi
+	fi
 }

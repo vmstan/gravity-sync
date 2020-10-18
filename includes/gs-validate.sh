@@ -39,7 +39,7 @@ function validate_ph_folders {
 			fi
 		elif [ "$PH_IN_TYPE" == "docker" ]
 		then
-			FTLCHECK=$(sudo docker container ls | grep 'pihole/pihole')
+			FTLCHECK=$(sudo docker container ls | grep '${DOCKER_CON}')
 			if [ "$FTLCHECK" == "" ]
 			then
 				MESSAGE="Unable to Validate Pi-Hole is Installed"
