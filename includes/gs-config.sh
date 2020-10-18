@@ -190,3 +190,7 @@ function config_delete {
 
 	config_generate
 }
+
+function docker_detect {
+	
+}
