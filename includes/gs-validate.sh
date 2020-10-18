@@ -8,16 +8,16 @@
 function validate_gs_folders {
 	MESSAGE="Validating ${PROGRAM} Folders on $HOSTNAME"
 	echo_stat
-		if [ ! -d $HOME/${LOCAL_FOLDR} ]
+		if [ ! -d ${LOCAL_FOLDR} ]
 		then
-			MESSAGE="Unable to Find $HOME/${LOCAL_FOLDR}"
+			MESSAGE="Unable to Find ${LOCAL_FOLDR}"
 			echo_fail
 			exit_nochange
 		fi
 	
-		if [ ! -d $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} ]
+		if [ ! -d ${LOCAL_FOLDR}/${BACKUP_FOLD} ]
 		then
-			MESSAGE="Unable to Find $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}"
+			MESSAGE="Unable to Find ${LOCAL_FOLDR}/${BACKUP_FOLD}"
 			echo_fail
 			exit_nochange
 		fi

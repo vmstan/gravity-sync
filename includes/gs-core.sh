@@ -8,9 +8,9 @@
 function import_gs {
 	MESSAGE="Importing ${CONFIG_FILE} Settings"
 	echo -en "${STAT} $MESSAGE"
-	if [ -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE} ]
+	if [ -f ${LOCAL_FOLDR}/${CONFIG_FILE} ]
 	then
-		source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+		source ${LOCAL_FOLDR}/${CONFIG_FILE}
 			error_validate
 			
 		# MESSAGE="Targeting ${REMOTE_USER}@${REMOTE_HOST}"

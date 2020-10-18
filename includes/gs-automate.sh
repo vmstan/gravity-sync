@@ -56,7 +56,7 @@ function task_automate {
 
 		MESSAGE="Saving New Sync Automation"
 		echo_stat
-		(crontab -l 2>/dev/null; echo "*/${INPUT_AUTO_FREQ} * * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/${GS_FILENAME} smart > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
+		(crontab -l 2>/dev/null; echo "*/${INPUT_AUTO_FREQ} * * * * ${BASH_PATH} ${LOCAL_FOLDR}/${GS_FILENAME} smart > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
 			error_validate
 	fi
 
@@ -84,7 +84,7 @@ function task_automate {
 	else
 		MESSAGE="Saving New Backup Automation"
 		echo_stat
-		(crontab -l 2>/dev/null; echo "0 ${INPUT_AUTO_BACKUP} * * * ${BASH_PATH} $HOME/${LOCAL_FOLDR}/${GS_FILENAME} backup >/dev/null 2>&1") | crontab -
+		(crontab -l 2>/dev/null; echo "0 ${INPUT_AUTO_BACKUP} * * * ${BASH_PATH} ${LOCAL_FOLDR}/${GS_FILENAME} backup >/dev/null 2>&1") | crontab -
 			error_validate
 	fi
 

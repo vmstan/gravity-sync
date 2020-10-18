@@ -160,13 +160,13 @@ function detect_remotersync {
 
 		RSYNC_REPATH="rsync"
 		RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:~/gs.test"
-		RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/gs.test"
+		RSYNC_TARGET="${LOCAL_FOLDR}/gs.test"
 			create_rsynccmd
 
 	MESSAGE="Cleaning Up Local Test File"
 	echo_stat
 
-	rm $HOME/${LOCAL_FOLDR}/gs.test
+	rm ${LOCAL_FOLDR}/gs.test
 		error_validate
 
 	MESSAGE="Cleaning Up Remote Test File"

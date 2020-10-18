@@ -10,7 +10,7 @@ function task_configure {
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
 	
-	if [ -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE} ]
+	if [ -f ${LOCAL_FOLDR}/${CONFIG_FILE} ]
 	then		
 		config_delete
 	else
@@ -33,7 +33,7 @@ function config_generate {
 	
 	MESSAGE="Creating New ${CONFIG_FILE} from Template"
 	echo_stat
-	cp $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}.example $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+	cp ${LOCAL_FOLDR}/${CONFIG_FILE}.example ${LOCAL_FOLDR}/${CONFIG_FILE}
 	error_validate
 
 	MESSAGE="Use Advanced Installation Options? (Leave blank for default 'No')"
@@ -73,12 +73,12 @@ function config_generate {
 	
 	MESSAGE="Saving Host to ${CONFIG_FILE}"
 	echo_stat
-	sed -i "/REMOTE_HOST='192.168.1.10'/c\REMOTE_HOST='${INPUT_REMOTE_HOST}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+	sed -i "/REMOTE_HOST='192.168.1.10'/c\REMOTE_HOST='${INPUT_REMOTE_HOST}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
 	error_validate
 	
 	MESSAGE="Saving User to ${CONFIG_FILE}"
 	echo_stat
-	sed -i "/REMOTE_USER='pi'/c\REMOTE_USER='${INPUT_REMOTE_USER}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+	sed -i "/REMOTE_USER='pi'/c\REMOTE_USER='${INPUT_REMOTE_USER}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
 	error_validate
 
 	if hash sshpass 2>/dev/null
@@ -102,7 +102,7 @@ function config_generate {
 				
 				MESSAGE="Saving Password to ${CONFIG_FILE}"
 				echo_stat
-				sed -i "/REMOTE_PASS=''/c\REMOTE_PASS='${INPUT_REMOTE_PASS}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+				sed -i "/REMOTE_PASS=''/c\REMOTE_PASS='${INPUT_REMOTE_PASS}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
 					error_validate
 			fi	
 	fi
@@ -111,7 +111,7 @@ function config_generate {
 	
 	MESSAGE="Importing New ${CONFIG_FILE}"
 	echo_stat
-	source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+	source ${LOCAL_FOLDR}/${CONFIG_FILE}
 	error_validate
 
 	export_sshkey	
@@ -136,7 +136,7 @@ function advanced_config_generate {
 		then
 			MESSAGE="Saving Custom SSH Port to ${CONFIG_FILE}"
 			echo_stat
-			sed -i "/# SSH_PORT=''/c\SSH_PORT='${INPUT_SSH_PORT}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+			sed -i "/# SSH_PORT=''/c\SSH_PORT='${INPUT_SSH_PORT}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
 			error_validate
 		fi
 	
@@ -149,7 +149,7 @@ function advanced_config_generate {
 		then
 			MESSAGE="Saving Ping Avoidance to ${CONFIG_FILE}"
 			echo_stat
-			sed -i "/# PING_AVOID=''/c\PING_AVOID='1'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+			sed -i "/# PING_AVOID=''/c\PING_AVOID='1'" ${LOCAL_FOLDR}/${CONFIG_FILE}
 			error_validate
 			PING_AVOID=1
 		fi
@@ -163,19 +163,19 @@ function advanced_config_generate {
 		then
 			MESSAGE="Saving Custom PKIF to ${CONFIG_FILE}"
 			echo_stat
-			sed -i "/# SSH_PKIF=''/c\SSH_PKIF='${INPUT_CUSTOM_PKIF}'" $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+			sed -i "/# SSH_PKIF=''/c\SSH_PKIF='${INPUT_CUSTOM_PKIF}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
 			error_validate
 		fi
 }
 
 ## Delete Existing Configuration
 function config_delete {
-	source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+	source ${LOCAL_FOLDR}/${CONFIG_FILE}
 	MESSAGE="Configuration File Exists"
 	echo_warn
 	
 	echo -e "========================================================"
-	cat $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+	cat ${LOCAL_FOLDR}/${CONFIG_FILE}
 	echo -e "========================================================"
 	
 	MESSAGE="Are you sure you want to erase this configuration?"
@@ -185,7 +185,7 @@ function config_delete {
 
 	MESSAGE="Erasing Existing Configuration"
 	echo_stat
-	rm -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+	rm -f ${LOCAL_FOLDR}/${CONFIG_FILE}
 		error_validate
 
 	config_generate

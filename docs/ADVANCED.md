@@ -12,9 +12,9 @@ The purpose of this guide is to break out the manual install instructions, and a
 
 If you don't trust `git` to install your software, or just like doing things by hand, that's fine.
 
-*Keep in mind that installing via this method means you won't be able to use Gravity Sync's built-in update mechanism.*
+_Keep in mind that installing via this method means you won't be able to use Gravity Sync's built-in update mechanism._
 
-Download the latest release from [GitHub](https://github.com/vmstan/gravity-sync/releases) and extract the files to your *secondary* Pi-hole server.
+Download the latest release from [GitHub](https://github.com/vmstan/gravity-sync/releases) and extract the files to your _secondary_ Pi-hole server.
 
 ```bash
 cd ~
@@ -34,7 +34,7 @@ cp gravity-sync.conf.example gravity-sync.conf
 vi gravity-sync.conf
 ```
 
-*Note: If you don't like VI or don't have VIM on your system, use NANO, or if you don't like any of those substitute for your text editor of choice. I'm not here to start a war.*
+_Note: If you don't like VI or don't have VIM on your system, use NANO, or if you don't like any of those substitute for your text editor of choice. I'm not here to start a war._
 
 Make sure you've set the REMOTE_HOST and REMOTE_USER variables with the IP (or DNS name) and user account to authenticate to the primary Pi. This account will need to have sudo permissions on the remote system.
 
@@ -43,7 +43,7 @@ REMOTE_HOST='192.168.1.10'
 REMOTE_USER='pi'
 ```
 
-*Do not set the `REMOTE_PASS` variable until you've read the next section on SSH.*
+_Do not set the `REMOTE_PASS` variable until you've read the next section on SSH._
 
 ### SSH Configuration
 
@@ -55,7 +55,7 @@ This is the preferred option, as it's more reliable and less dependent on third 
 
 You'll need to generate an SSH key for your secondary Pi-hole user and copy it to your primary Pi-hole. This will allow you to connect to and copy the necessary files without needing a password each time. When generating the SSH key, accept all the defaults and do not put a passphrase on your key file.
 
-*Note: If you already have this setup on your systems for other purposes, you can skip this step.*
+_Note: If you already have this setup on your systems for other purposes, you can skip this step._
 
 ```bash
 ssh-keygen -t rsa
@@ -116,7 +116,7 @@ Gravity Sync can also `restore` the database on the secondary Pi-hole in the eve
 ./gravity-sync.sh restore
 ```
 
-This will copy your last `gravity.db.backup` and  `custom.list.backup` to the running copy on the secondary Pi-hole.
+This will copy your last `gravity.db.backup` and `custom.list.backup` to the running copy on the secondary Pi-hole.
 
 This function purposefully asks for user interaction to avoid being accidentally automated.
 
@@ -132,7 +132,7 @@ Default setting in Gravity Sync is 22.
 
 #### `SSH_PKIF=''`
 
-Gravity Sync is configured by default to use the `.ssh/id_rsa` key-file that is generated using the `ssh-keygen` command. If you have an existing key-file stored somewhere else that you'd like to use, you can configure that here. The key-file will still need to be in the users $HOME directory.
+Gravity Sync is configured by default to use the `.ssh/id_rsa` key-file that is generated using the `ssh-keygen` command. If you have an existing key-file stored somewhere else that you'd like to use, you can configure that here. The key-file will still need to be in the users \$HOME directory.
 
 At this time Gravity Sync does not support using a passphrase in RSA key-files. If you have a passphrase applied to your standard `.ssh/id_rsa` either remove it, or generate a new file and specify that key for use only by Gravity Sync.
 
@@ -142,7 +142,7 @@ Default setting in Gravity Sync is `.ssh/id_rsa`
 
 Gravity Sync will place logs in the same folder as the script (identified as .cron and .log) but if you'd like to place these in a another location, you can do that by identifying the full path to the directory. (ex: `/full/path/to/logs`)
 
-Default setting in Gravity Sync is `$HOME/${LOCAL_FOLDR}`
+Default setting in Gravity Sync is `${LOCAL_FOLDR}`
 
 #### `SYNCING_LOG=''`
 
@@ -178,7 +178,7 @@ Default setting in Gravity Sync is 0, change to 1 to exempt `custom.list` from r
 
 #### `DATE_OUTPUT=''`
 
-*This feature has not been fully implemented, but the intent is to provide the ability to add timestamped output to each status indicator in the script output (ex: [2020-05-28 19:46:54] [EXEC] $MESSAGE).*
+_This feature has not been fully implemented, but the intent is to provide the ability to add timestamped output to each status indicator in the script output (ex: [2020-05-28 19:46:54] [EXEC] \$MESSAGE)._
 
 Default setting in Gravity Sync is 0, change to 1 to print timestamped output.
 
@@ -297,7 +297,7 @@ You make your configuration changes to the active VIP address and they will be s
 
 ![Crazy Town](https://user-images.githubusercontent.com/3002053/87058406-aa6dcb00-c1cd-11ea-8f64-59c529b00166.png)
 
-For those who really love Pi-hole and Gravity Sync. Combining the best of both worlds.  
+For those who really love Pi-hole and Gravity Sync. Combining the best of both worlds.
 
 1. Client requests an IP address from a DHCP server on the network and receives it along with DNS and gateway information back. Two DNS servers (VIPs) are returned to the client.
 2. The VIPs are managed by the keepalived service on each side and will determine which of two Pi-hole responds. You can make your configuration changes to the active VIP address on either side.
@@ -309,4 +309,4 @@ Here we use `./gravity-sync pull` on the secondary Pi-hole at each side, and off
 
 ## Troubleshooting
 
-If you get the error `sudo: a terminal is required to read the password` or `sudo: no tty present and no askpass program specified` during your execution, make sure you have [implemented passwordless sudo](https://linuxize.com/post/how-to-run-sudo-command-without-password/), as defined in the system requirements, for the user accounts on both the local and remote systems. 
+If you get the error `sudo: a terminal is required to read the password` or `sudo: no tty present and no askpass program specified` during your execution, make sure you have [implemented passwordless sudo](https://linuxize.com/post/how-to-run-sudo-command-without-password/), as defined in the system requirements, for the user accounts on both the local and remote systems.
