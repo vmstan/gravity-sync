@@ -4,47 +4,51 @@
 REMOTE_HOST='192.168.1.10'
 
 # User account on primary with SUDO rights
-REMOTE_USER='pi'	
+REMOTE_USER='pi'
 
-# OPTIONAL SETTINGS ######################
+# STANDARD VARIABLES #########################
 
-# Password for REMOTE_USER account
-# Requires 'SSHPASS' installed on server
-# (ex: sudo apt install sshpass)
-# Less secure and possibly less reliable
-# Leave blank to use (preferred) key-pair
+### Installation Types
+# PH_IN_TYPE=''				# Pi-hole install type, `default` or `docker` (local)
+# RH_IN_TYPE=''				# Pi-hole install type, `default` or `docker` (remote)
 
-REMOTE_PASS=''
+### Pi-hole Folder/File Customization
+# PIHOLE_DIR='' 			# default Pi-hole data directory (local)
+# RIHOLE_DIR=''				# default Pi-hole data directory (remote)
+# PIHOLE_BIN='' 			# default Pi-hole binary directory (local)
+# RIHOLE_BIN='' 			# default Pi-hole binary directory (remote)
+# DOCKER_BIN=''				# default Docker binary directory (local)
+# ROCKER_BIN=''				# default Docker binary directory (remote)
+# FILE_OWNER=''				# default Pi-hole file owner and group (local)
+# RILE_OWNER=''				# default Pi-hole file owner and group (remote)
+# DOCKER_CON=''				# default Pi-hole Docker container name (local)
+# ROCKER_CON=''				# default Pi-hole Docker container name (remote)
 
-# ADVANCED SETTINGS ######################
+# GRAVITY_FI='' 			# default Pi-hole database file
+# CUSTOM_DNS=''				# default Pi-hole local DNS lookups
 
-# Uncomment and set for auxiliary control
-# Overrides gravity-sync.sh defaults
-# See ADVANCED.md for more information
+### Interaction Customization
+# VERIFY_PASS=''			# replace in gravity-sync.conf to overwrite
+# SKIP_CUSTOM=''			# replace in gravity-sync.conf to overwrite
+# DATE_OUTPUT=''			# replace in gravity-sync.conf to overwrite
+# PING_AVOID=''				# replace in gravity-sync.conf to overwrite
+# ROOT_CHECK_AVOID=''		# replace in gravity-sync.conf to overwrite
 
-# SSH_PORT=''
-# SSH_PKIF=''
-# LOG_PATH=''
-# SYNCING_LOG=''
-# CRONJOB_LOG=''
-# HISTORY_MD5=''
+### Backup Customization
+# BACKUP_RETAIN=''			# replace in gravity-sync.conf to overwrite
 
-# VERIFY_PASS=''
-# SKIP_CUSTOM=''
-# DATE_OUTPUT=''
-# PING_AVOID=''
-# ROOT_CHECK_AVOID=''
+### SSH Customization
+# SSH_PORT='' 				# default SSH port
+# SSH_PKIF=''				# default local SSH key
 
-# BACKUP_RETAIN=''
+### GS Folder/File Locations
+# CONFIG_FILE='' 			# must exist with primary host/user configured
+# GS_FILENAME=''			# must exist because it's this script
+# BACKUP_FOLD='' 			# must exist as subdirectory in LOCAL_FOLDR
+# LOG_PATH=''				# replace in gravity-sync.conf to overwrite
+# SYNCING_LOG='' 			# replace in gravity-sync.conf to overwrite
+# CRONJOB_LOG='' 			# replace in gravity-sync.conf to overwrite
+# HISTORY_MD5=''			# replace in gravity-sync.conf to overwrite
 
-# PIHOLE DEFAULTS ########################
-
-# Have a very good reason to change these!
-
-# PIHOLE_DIR=''
-# GRAVITY_FI=''
-# CUSTOM_DNS=''
-# PIHOLE_BIN=''
-# RIHOLE_BIN=''
-# FILE_OWNER=''
-# RILE_OWNER=''
+### OS Settings
+# BASH_PATH=''				# default OS bash path
