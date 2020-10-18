@@ -16,7 +16,8 @@ VERSION='3.1.0'
 # STANDARD VARIABLES #########################
 
 # GS Folder/File Locations
-LOCAL_FOLDR=$(realpath $0)			# must exist in running user home folder
+GS_FILEPATH=$(realpath $0)
+LOCAL_FOLDR=$(dirname $GS_FILEPATH)
 CONFIG_FILE='gravity-sync.conf' 	# must exist with primary host/user configured
 GS_FILENAME='gravity-sync.sh'		# must exist because it's this script
 BACKUP_FOLD='backup' 				# must exist as subdirectory in LOCAL_FOLDR
