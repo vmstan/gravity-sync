@@ -12,10 +12,17 @@ This release focuses on adding better support for Docker container instances of 
 - Changes detection of root vs sudo users, and adapts commands to match.
 - Only deploys passwordless SUDO components if deemed necessary.
 - Now automatically runs local configuration on secondary Pi-hole after execution.
+- Deploys script to whatever directory the installer runs in.
+- Gravity Sync no longer requires that it be run from the user's `$HOME` directory.
+
+#### Sync Improvements
+
+- Smart Sync, and the associated push/pull operations, now will send exec commands to run Pi-hole restart commands within the Docker container.
 
 #### Configuration Workflow
 
-- Prompts on install to configure advanced variables (default is to bypass)
+- Simpler configuration function, as installer now checks for the dependencies.
+- Prompts on install to configure advanced variables if required (default is to bypass.)
 - Advanced users can set more options for non-standard deployments at installation.
 
 #### New Variables
@@ -23,6 +30,7 @@ This release focuses on adding better support for Docker container instances of 
 - `REMOTE_FILE_OWNER` variable renamed `RILE_OWNER` for consistency.
 - `RIHOLE_DIR` variable added to set different Pi-hole directory for remote host than local.
 - `DOCKER_CON` and `ROCKER_CON` variables added to specify different names for local and remote Pi-hole Docker containers.
+- `PH_IN_TYPE` and `RH_IN_TYPE` variables allow you to to either standard or Docker deployments of Pi-hole, per side.
 
 #### Deprecation
 

@@ -23,7 +23,7 @@ GS_FILENAME='gravity-sync.sh'		# must exist because it's this script
 BACKUP_FOLD='backup' 				# must exist as subdirectory in LOCAL_FOLDR
 
 # Logging Folder/File Locations
-LOG_PATH="${LOCAL_FOLDR}"		# replace in gravity-sync.conf to overwrite
+LOG_PATH="${LOCAL_FOLDR}"			# replace in gravity-sync.conf to overwrite
 SYNCING_LOG='gravity-sync.log' 		# replace in gravity-sync.conf to overwrite
 CRONJOB_LOG='gravity-sync.cron' 	# replace in gravity-sync.conf to overwrite
 HISTORY_MD5='gravity-sync.md5'		# replace in gravity-sync.conf to overwrite
@@ -38,13 +38,19 @@ ROOT_CHECK_AVOID='0'				# replace in gravity-sync.conf to overwrite
 # Backup Customization
 BACKUP_RETAIN='7'					# replace in gravity-sync.conf to overwrite
 
+# Installation Types
+PH_IN_TYPE="default"				# Pi-hole install type, `default` or `docker` (local)
+RH_IN_TYPE="default"				# Pi-hole install type, `default` or `docker` (remote)
+
 # Pi-hole Folder/File Locations
-PIHOLE_DIR='/etc/pihole' 			# default Pi-hole data directory (local)
-RIHOLE_DIR='/etc/pihole'			# default Pi-hole data directory (remote)
 GRAVITY_FI='gravity.db' 			# default Pi-hole database file
 CUSTOM_DNS='custom.list'			# default Pi-hole local DNS lookups
+PIHOLE_DIR='/etc/pihole' 			# default Pi-hole data directory (local)
+RIHOLE_DIR='/etc/pihole'			# default Pi-hole data directory (remote)
 PIHOLE_BIN='/usr/local/bin/pihole' 	# default Pi-hole binary directory (local)
 RIHOLE_BIN='/usr/local/bin/pihole' 	# default Pi-hole binary directory (remote)
+DOCKER_BIN='/usr/bin/docker'		# default Docker binary directory (local)
+ROCKER_BIN='/usr/bin/docker'		# default Docker binary directory (remote)
 FILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (local)
 RILE_OWNER='pihole:pihole'				# default Pi-hole file owner and group (remote)
 DOCKER_CON='pihole/pihole'			# default Pi-hole Docker container name (local)
