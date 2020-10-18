@@ -123,13 +123,13 @@ case $# in
 				start_gs
 				task_restore ;;
 			version)
-				start_gs
+				start_gs_noconfig
 				task_version ;;
 			update|upgrade)
 				start_gs
 				task_update ;;
 			dev|devmode|development|develop)
-				start_gs
+				start_gs_noconfig
 				task_devmode ;;
 			logs|log)
 				start_gs
