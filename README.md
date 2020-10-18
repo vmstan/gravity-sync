@@ -2,7 +2,9 @@
 	<img src="https://raw.githubusercontent.com/vmstan/gravity-sync/3.1.0/docs/gravity-header.svg" alt="Gravity Sync">
 </p>
 
-What is better than a [Pi-hole](https://github.com/pi-hole/pi-hole) blocking ads via DNS on your network? That's right, Two Pi-hole! (Redundancy is key in any network infrastructure.) But if you have more than one Pi-hole in your network you'll want a simple way to keep the list configurations and local DNS settings identical between the two. That's where Gravity Sync comes in.
+What is better than a [Pi-hole](https://github.com/pi-hole/pi-hole) blocking ads via DNS on your network? That's right, two Pi-hole blocking ads on your network! 
+
+But if you have more than one Pi-hole in your network you'll want a simple way to keep the list configurations and local DNS settings identical between the two. That's  Gravity Sync.
 
 ## Features
 
@@ -21,11 +23,9 @@ Gravity Sync will **not**:
 - Overwrite individual Pi-hole specific settings such as the device's network configuration, admin/API passwords/keys, upstream DNS resolvers, etc.
 - Keep DHCP settings or device leases synchronized.
 
-It is suggested that you use an external DHCP server on your network (such as your router) when using multiple Pi-hole.
-
 ### Disclaimer
 
-Gravity Sync is not developed by or affiliated with the Pi-hole project. This is a community effort that seeks to implement replication, which is currently not a part of the core Pi-hole product. The code has been well tested across multiple user environments but there always is an element of risk involved with running any arbitrary software you find on the Internet.
+Gravity Sync is not developed by or affiliated with the Pi-hole project. This is an effort that seeks to implement replication, which is currently not a part of the core Pi-hole product. The code has been tested across multiple user environments but there always is an element of risk involved with running any arbitrary software you find on the Internet.
 
 ## Setup Steps
 
@@ -39,10 +39,11 @@ Gravity Sync is not developed by or affiliated with the Pi-hole project. This is
 
 ## Requirements
 
-- Pi-hole 5.0 (or higher) must already be installed on at least two systems, using any of the Linux distribution that Pi-hole is [certified to run on](https://docs.pi-hole.net/main/prerequesites/#supported-operating-systems).
-- While it is possible to leverage container/Docker deployments of Pi-hole and Gravity Sync, this configuration is currently not officially supported. Instructions here assume a "native" installation of Pi-hole.
+- Pi-hole 5.0 (or higher) must already be installed on at least two systems, using any of the Linux distributions that Pi-hole is [certified to run on](https://docs.pi-hole.net/main/prerequesites/#supported-operating-systems).
+- As of Gravity Sync 3.1, your Pi-hole installs can be a standard installation of Pi-hole, a Docker container deployment, or a both. In either case, Gravity Sync will run directly on the host OS, and not inside of a container image.
+- If you are using containerized deployments of Pi-hole, only the official Pi-hole team maintained Docker image is supported.
 - You will need to make sure that you have a Linux user account on both Pi-hole systems with `sudo` abilities on both the primary and secondary Pi-hole. Use of the `root` account is not permitted. Most of the pre-built images available for the Raspberry Pi already have this configured. During installation this user will be given passwordless sudo permissions to the `/etc/pihole` directory.
-- The installer will perform checks to make sure the OpenSSH `ssh` and `rsync` commands are available on both the primary and secondary Pi-hole during installation, as well as `SQLite3` and `git` -- all four of these binaries are should be installed by default on most Linux distrobutions, including Raspberry Pi OS. If they are missing you will have an oppertunity to use whatever package manager is available on your system to correct the missing dependencies. These binaries are what do the heavy lifting between your Pi-hole nodes. (Note: If you're using a ultra-lightweight Pi distribution, such as DietPi, that uses Dropbear by default - you may need to convert it to use OpenSSH.)
+- The installer will perform checks to make sure the OpenSSH `ssh` and `rsync` commands are available on both the primary and secondary Pi-hole during installation, as well as `SQLite3` and `git` -- all four of these binaries are should be installed by default, on most Linux distrobutions, including Raspberry Pi OS. If they are missing you will have an oppertunity to use whatever package manager is available on your system to correct the missing dependencies. These binaries are what do the heavy lifting between your Pi-hole nodes. (Note: If you're using a ultra-lightweight Pi distribution, such as DietPi, that uses Dropbear by default - you may need to convert it to use OpenSSH.)
 
 ### Pi-hole Architecture
 
