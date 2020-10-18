@@ -44,29 +44,28 @@ function root_check {
 function new_root_check {
 	CURRENTUSER=$(whoami)
 	if [ ! "$EUID" -ne 0 ]
-	then 
-		MESSAGE="${CURRENTUSER} Is ROOT"
-		echo_info
+	then
 		LOCALADMIN=""
 	else
 		# Check Sudo
 		SUDOCHECK=$(groups ${CURRENTUSER} | grep 'sudo')
 		if [ "$SUDOCHECK" == "" ]
 		then
-			MESSAGE="${CURRENTUSER} Cannot Use SUDO"
-			echo_info
 			LOCALADMIN="nosudo"
 		else
-			MESSAGE="${CURRENTUSER} Has SUDO Powers"
 			LOCALADMIN="sudo"
 		fi
 	fi
 		
 	if [ "$LOCALADMIN" == "nosudo" ]
 	then
-		MESSAGE="Insufficent User Rights"
+		TASKTYPE='ROOT'
+		MESSAGE="${MESSAGE} ${TASKTYPE}"
 		echo_fail
-		
+			  
+		MESSAGE="Insufficent User Rights"
+		echo_warn
+				
 		exit_nochange
 	fi
 }
