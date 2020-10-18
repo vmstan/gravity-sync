@@ -192,5 +192,5 @@ function config_delete {
 }
 
 function docker_detect {
-	
+	AREYOUDOCKER='YES'
 }
