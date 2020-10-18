@@ -99,13 +99,13 @@ function push_gs_reload {
 	MESSAGE="Updating Remote FTLDNS Configuration"
 	echo_stat
 		CMD_TIMEOUT='15'
-		CMD_REQUESTED="${RIHOLE_BIN} restartdns reloadlists"
+		CMD_REQUESTED="${RH_EXEC} restartdns reloadlists"
 			create_sshcmd
 	
 	MESSAGE="Reloading Remote FTLDNS Services"
 	echo_stat
 		CMD_TIMEOUT='15'
-		CMD_REQUESTED="${RIHOLE_BIN} restartdns"
+		CMD_REQUESTED="${RH_EXEC} restartdns"
 			create_sshcmd
 }
 

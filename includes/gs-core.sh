@@ -45,12 +45,31 @@ function error_validate {
 	fi
 }
 
+function ph_type {
+	if [ "$PH_IN_TYPE" == "default" ]
+	then
+		PH_EXEC = '${PIHOLE_BIN}'
+	elif [ "$PH_IN_TYPE" == "docker" ]
+	then
+		PH_EXEC = '${DOCKER_BIN} exec -it ${DOCKER_CON} pihole'
+	fi
+	
+	if [ "$RH_IN_TYPE" == "default" ]
+	then
+		RH_EXEC = '${RIHOLE_BIN}'
+	elif [ "$RH_IN_TYPE" == "docker" ]
+	then
+		RH_EXEC = '${ROCKER_BIN} exec -it ${DOCKER_CON} pihole'
+	fi
+}
+
 # Standard Output
 function start_gs {
 	MESSAGE="${PROGRAM} ${VERSION} Executing"
 	echo_info
 	
 	import_gs
+	ph_type
 
 	MESSAGE="Evaluating Arguments"
 	echo_stat

@@ -173,20 +173,7 @@ function restore_gs {
 		fi
 	fi
 
-	MESSAGE="Evacuating Saucer Section"
-	echo_info
-		sleep 1	
-
-	MESSAGE="Restarting FTLDNS Services"
-	echo_stat
-		sudo service pihole-FTL start >/dev/null 2>&1
-		error_validate
-	
-	MESSAGE="Updating FTLDNS Configuration"
-	echo_stat
-		${PIHOLE_BIN} restartdns reloadlists >/dev/null 2>&1
-		error_validate
-	
+	pull_gs_reload
 
 	MESSAGE="Do you want to push the restored configuration to the primary Pi-hole? (yes/no)"
 	echo_need

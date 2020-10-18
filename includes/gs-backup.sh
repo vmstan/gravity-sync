@@ -50,7 +50,7 @@ function backup_remote_gravity {
 	echo_stat
 	
 	CMD_TIMEOUT='60'
-	CMD_REQUESTED="sudo sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} \".backup '${PIHOLE_DIR}/${GRAVITY_FI}.backup'\""
+	CMD_REQUESTED="sudo sqlite3 ${RIHOLE_DIR}/${GRAVITY_FI} \".backup '${RIHOLE_DIR}/${GRAVITY_FI}.backup'\""
 		create_sshcmd
 }
 
@@ -61,7 +61,7 @@ function backup_remote_custom {
 			echo_stat
 	
 			CMD_TIMEOUT='15'
-			CMD_REQUESTED="sudo cp ${PIHOLE_DIR}/${CUSTOM_DNS} ${PIHOLE_DIR}/${CUSTOM_DNS}.backup"
+			CMD_REQUESTED="sudo cp ${RIHOLE_DIR}/${CUSTOM_DNS} ${RIHOLE_DIR}/${CUSTOM_DNS}.backup"
 				create_sshcmd
 	fi
 }

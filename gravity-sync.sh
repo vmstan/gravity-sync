@@ -16,8 +16,8 @@ VERSION='3.1.0'
 # STANDARD VARIABLES #########################
 
 # GS Folder/File Locations
-GS_FILEPATH=$(realpath $0)
-LOCAL_FOLDR=$(dirname $GS_FILEPATH)
+GS_FILEPATH=$(realpath $0)			# auto determined - do not change!
+LOCAL_FOLDR=$(dirname $GS_FILEPATH) # auto determined - do not change!
 CONFIG_FILE='gravity-sync.conf' 	# must exist with primary host/user configured
 GS_FILENAME='gravity-sync.sh'		# must exist because it's this script
 BACKUP_FOLD='backup' 				# must exist as subdirectory in LOCAL_FOLDR
@@ -53,8 +53,8 @@ DOCKER_BIN='/usr/bin/docker'		# default Docker binary directory (local)
 ROCKER_BIN='/usr/bin/docker'		# default Docker binary directory (remote)
 FILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (local)
 RILE_OWNER='pihole:pihole'				# default Pi-hole file owner and group (remote)
-DOCKER_CON='pihole/pihole'			# default Pi-hole Docker container name (local)
-ROCKER_CON='pihole/pihole'			# default Pi-hole Docker container name (remote)
+DOCKER_CON='pihole'					# default Pi-hole Docker container name (local)
+ROCKER_CON='pihole'					# default Pi-hole Docker container name (remote)
 
 # OS Settings
 BASH_PATH='/bin/bash'				# default OS bash path

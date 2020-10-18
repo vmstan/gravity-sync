@@ -153,12 +153,12 @@ function pull_gs_reload {
 	
 	MESSAGE="Updating FTLDNS Configuration"
 	echo_stat
-		${PIHOLE_BIN} restartdns reloadlists >/dev/null 2>&1
+		${PH_EXEC} restartdns reloadlists >/dev/null 2>&1
 		error_validate
 	
 	MESSAGE="Reloading FTLDNS Services"
 	echo_stat
-		${PIHOLE_BIN} restartdns >/dev/null 2>&1
+		${PH_EXEC} restartdns >/dev/null 2>&1
 		error_validate
 }
 
