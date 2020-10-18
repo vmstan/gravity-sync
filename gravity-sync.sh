@@ -16,13 +16,13 @@ VERSION='3.1.0'
 # STANDARD VARIABLES #########################
 
 # GS Folder/File Locations
-LOCAL_FOLDR='gravity-sync' 			# must exist in running user home folder
+LOCAL_FOLDR=$(realpath $0)			# must exist in running user home folder
 CONFIG_FILE='gravity-sync.conf' 	# must exist with primary host/user configured
 GS_FILENAME='gravity-sync.sh'		# must exist because it's this script
 BACKUP_FOLD='backup' 				# must exist as subdirectory in LOCAL_FOLDR
 
 # Logging Folder/File Locations
-LOG_PATH="$HOME/${LOCAL_FOLDR}"		# replace in gravity-sync.conf to overwrite
+LOG_PATH="${LOCAL_FOLDR}"		# replace in gravity-sync.conf to overwrite
 SYNCING_LOG='gravity-sync.log' 		# replace in gravity-sync.conf to overwrite
 CRONJOB_LOG='gravity-sync.cron' 	# replace in gravity-sync.conf to overwrite
 HISTORY_MD5='gravity-sync.md5'		# replace in gravity-sync.conf to overwrite
@@ -65,41 +65,41 @@ SSH_PKIF='.ssh/id_rsa'				# default local SSH key
 ##############################################
 
 # Import Color/Message Includes
-source $HOME/${LOCAL_FOLDR}/includes/gs-colors.sh
+source ${LOCAL_FOLDR}/includes/gs-colors.sh
 
 # FUNCTION DEFINITIONS #######################
 
 # Core Functions
-source $HOME/${LOCAL_FOLDR}/includes/gs-core.sh
+source ${LOCAL_FOLDR}/includes/gs-core.sh
 
 # Gravity Replication Functions
-source $HOME/${LOCAL_FOLDR}/includes/gs-compare.sh
-source $HOME/${LOCAL_FOLDR}/includes/gs-pull.sh
-source $HOME/${LOCAL_FOLDR}/includes/gs-push.sh
-source $HOME/${LOCAL_FOLDR}/includes/gs-smart.sh
-source $HOME/${LOCAL_FOLDR}/includes/gs-restore.sh
-source $HOME/${LOCAL_FOLDR}/includes/gs-backup.sh
+source ${LOCAL_FOLDR}/includes/gs-compare.sh
+source ${LOCAL_FOLDR}/includes/gs-pull.sh
+source ${LOCAL_FOLDR}/includes/gs-push.sh
+source ${LOCAL_FOLDR}/includes/gs-smart.sh
+source ${LOCAL_FOLDR}/includes/gs-restore.sh
+source ${LOCAL_FOLDR}/includes/gs-backup.sh
 
 # Hashing & SSH Functions
-source $HOME/${LOCAL_FOLDR}/includes/gs-hashing.sh
-source $HOME/${LOCAL_FOLDR}/includes/gs-ssh.sh
+source ${LOCAL_FOLDR}/includes/gs-hashing.sh
+source ${LOCAL_FOLDR}/includes/gs-ssh.sh
 
 # Logging Functions
-source $HOME/${LOCAL_FOLDR}/includes/gs-logging.sh
+source ${LOCAL_FOLDR}/includes/gs-logging.sh
 
 # Validation Functions
-source $HOME/${LOCAL_FOLDR}/includes/gs-validate.sh
-source $HOME/${LOCAL_FOLDR}/includes/gs-intent.sh
-source $HOME/${LOCAL_FOLDR}/includes/gs-root.sh
+source ${LOCAL_FOLDR}/includes/gs-validate.sh
+source ${LOCAL_FOLDR}/includes/gs-intent.sh
+source ${LOCAL_FOLDR}/includes/gs-root.sh
 
 # Configuration Management
-source $HOME/${LOCAL_FOLDR}/includes/gs-config.sh
-source $HOME/${LOCAL_FOLDR}/includes/gs-update.sh
-source $HOME/${LOCAL_FOLDR}/includes/gs-automate.sh
-source $HOME/${LOCAL_FOLDR}/includes/gs-purge.sh
+source ${LOCAL_FOLDR}/includes/gs-config.sh
+source ${LOCAL_FOLDR}/includes/gs-update.sh
+source ${LOCAL_FOLDR}/includes/gs-automate.sh
+source ${LOCAL_FOLDR}/includes/gs-purge.sh
 
 # Exit Codes
-source $HOME/${LOCAL_FOLDR}/includes/gs-exit.sh
+source ${LOCAL_FOLDR}/includes/gs-exit.sh
 
 # SCRIPT EXECUTION ###########################
 
