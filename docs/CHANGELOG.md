@@ -6,34 +6,33 @@
 
 The premise of this release was to focus on adding better support for Docker container instances of Pi-hole. This release also changes a lot of things about the requirements that Gravity Sync has always had, which were not running as the root user, and requiring that the script be run from the user's home directory. Those two restrictions are gone.
 
-You can use a standard Pi-hole install as your primary, and your secondary. You can use a Docker install of Pi-hole as your primary, and your secondary. Or you can mix and match. You can have Pi-hole installed in different directories at each side, either as standard installs or with container configuration files in different locations. It's much more flexible.
+You can now use a standard Pi-hole install as your primary, or your secondary. You can use a Docker install of Pi-hole as your primary, or your secondary. You can mix and match between the two however you choose. You can have Pi-hole installed in different directories at each side, either as standard installs or with container configuration files in different locations. Overall it's much more flexible.
 
 #### Docker Support
 
 - Only the [official Pi-hole managed Docker image](https://hub.docker.com/r/pihole/pihole) is supported. Other builds may work, but they have not been tested.
-- If you are using a container name other than the default `pihole` in your Docker configuration, you must specify this in your `gravity-sync.conf` file.
+- If you are using a name for your container other than the default `pihole` in your Docker configuration, you must specify this in your `gravity-sync.conf` file.
+- Smart Sync, and the associated push/pull operations, now will send exec commands to run Pi-hole restart commands within the Docker container.
 - Your container configuration must expose access to the virtual `/etc/pihole` location to the host's file system, and be configured in your `gravity-sync.conf` file.
 
-**Example:** if your container configuration looked something like like `-v /home/vmstan/pihole/etc-pihole/:/etc/pihole` then the location `/home/vmstan/pihole/etc-pihole` would need to be accessible by the user running Gravity Sync, and be configured as the `PIHOLE_DIR` (or `RIHOLE_DIR`) in your `gravity-sync.conf` file.
+**Example:** if your container configuration looked something like like `-v /home/vmstan/etc-pihole/:/etc/pihole` then the location `/home/vmstan/etc-pihole` would need to be accessible by the user running Gravity Sync, and be configured as the `PIHOLE_DIR` (or `RIHOLE_DIR`) in your `gravity-sync.conf` file.
 
 #### Installation Script
 
-- Detects running instance of default Pi-hole Docker container image, if standard Pi-hole lookup fails.
-- Changes detection of root vs sudo users, and adapts commands to match.
-- Only deploys passwordless SUDO components if deemed necessary. (i.e. Not running as root.)
-- Now automatically runs local configuration on secondary Pi-hole after execution.
-- Deploys script to whatever directory the installer runs in.
+- Detects the running instance of default Pi-hole Docker container image, if standard Pi-hole lookup fails. Pi-hole must still be installed prior to Gravity Sync.
+- Changes detection of root vs sudo users, and adapts commands to match. You no longer need to avoid running the script as  `root`.
+- Only deploys passwordless SUDO components if deemed necessary. (i.e. Not running as `root`.)
+- Now automatically runs the local configuration function on the secondary Pi-hole after execution.
+- Deploys script via `git` to whatever directory the installer runs in, instead of defaulting to the user's `$HOME` directory. 
 - Gravity Sync no longer requires that it be run from the user's `$HOME` directory.
-
-#### Sync Improvements
-
-- Smart Sync, and the associated push/pull operations, now will send exec commands to run Pi-hole restart commands within the Docker container.
+- Creates a BASH environment alias to run the command `gravity-sync` from anywhere on the system. If you use a different shell (such as zsh or fish) as your default this may need to be added manually.
 
 #### Configuration Workflow
 
 - Simpler configuration function, as installer now checks for the dependencies.
 - Prompts on install to configure advanced variables if required (default is to bypass.)
 - Advanced users can set more options for non-standard deployments at installation.
+- Existing users with defaukt setups should not need to run the config utility again after upgrading, but those with custom installs (especially existing container users) should consider it to adopt new variable names and options in your config files.
 
 #### New Variables
 
@@ -56,7 +55,7 @@ You can use a standard Pi-hole install as your primary, and your secondary. You 
 
 - I made a logo.
 
-<img src="https://raw.githubusercontent.com/vmstan/gravity-sync/3.1.0/docs/gravity-logo.svg" height="150" width="150" alt="Gravity Sync">
+<img src="https://raw.githubusercontent.com/vmstan/gravity-sync/3.1.0/docs/gs-logo.svg" height="150" width="150" alt="Gravity Sync">
 
 ## 3.0
 
