@@ -4,13 +4,23 @@
 
 ### The Container Release
 
-This release focuses on adding better support for Docker container instances of Pi-hole.
+The premise of this release was to focus on adding better support for Docker container instances of Pi-hole. This release also changes a lot of things about the requirements that Gravity Sync has always had, which were not running as the root user, and requiring that the script be run from the user's home directory. Those two restrictions are gone.
+
+You can use a standard Pi-hole install as your primary, and your secondary. You can use a Docker install of Pi-hole as your primary, and your secondary. Or you can mix and match. You can have Pi-hole installed in different directories at each side, either as standard installs or with container configuration files in different locations. It's much more flexible.
+
+#### Docker Support
+
+- Only the [official Pi-hole managed Docker image](https://hub.docker.com/r/pihole/pihole) is supported. Other builds may work, but they have not been tested.
+- If you are using a container name other than the default `pihole` in your Docker configuration, you must specify this in your `gravity-sync.conf` file.
+- Your container configuration must expose access to the virtual `/etc/pihole` location to the host's file system, and be configured in your `gravity-sync.conf` file.
+
+**Example:** if your container configuration looked something like like `-v /home/vmstan/pihole/etc-pihole/:/etc/pihole` then the location `/home/vmstan/pihole/etc-pihole` would need to be accessible by the user running Gravity Sync, and be configured as the `PIHOLE_DIR` (or `RIHOLE_DIR`) in your `gravity-sync.conf` file.
 
 #### Installation Script
 
 - Detects running instance of default Pi-hole Docker container image, if standard Pi-hole lookup fails.
 - Changes detection of root vs sudo users, and adapts commands to match.
-- Only deploys passwordless SUDO components if deemed necessary.
+- Only deploys passwordless SUDO components if deemed necessary. (i.e. Not running as root.)
 - Now automatically runs local configuration on secondary Pi-hole after execution.
 - Deploys script to whatever directory the installer runs in.
 - Gravity Sync no longer requires that it be run from the user's `$HOME` directory.
@@ -32,10 +42,21 @@ This release focuses on adding better support for Docker container instances of 
 - `DOCKER_CON` and `ROCKER_CON` variables added to specify different names for local and remote Pi-hole Docker containers.
 - `PH_IN_TYPE` and `RH_IN_TYPE` variables allow you to to either standard or Docker deployments of Pi-hole, per side.
 - `DOCKER_BIN` and `ROCKER_BIN` variables allow you to set non-standard locations for Docker binary files, per side.
+- Adds all variables to `gravity-sync.conf.example` for easy customization.
 
 #### Removals
 
 - Support for `sshpass` has been removed, the only valid authentication method going forward will be ssh-key based.
+
+#### Bug Killer
+
+- Lots of long standing little buggles have been squashed.
+
+#### Branding
+
+- I made a logo.
+
+<img src="https://raw.githubusercontent.com/vmstan/gravity-sync/3.1.0/docs/gravity-logo.svg" height="150" width="150" alt="Gravity Sync">
 
 ## 3.0
 
