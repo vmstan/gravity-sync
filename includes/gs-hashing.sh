@@ -123,7 +123,7 @@ function md5_recheck {
 				MESSAGE="Reanalyzing ${CUSTOM_DNS} on ${REMOTE_HOST}"
 				echo_stat
 
-				primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//'") 
+				primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//'") 
 					error_validate
 				
 				MESSAGE="Reanalyzing ${CUSTOM_DNS} on $HOSTNAME"
