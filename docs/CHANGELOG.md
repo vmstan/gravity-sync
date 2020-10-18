@@ -12,7 +12,11 @@ This release focuses on adding better support for Docker container instances of 
 - Changes detection of root vs sudo users, and adapts commands to match.
 - Only deploys passwordless SUDO components if deemed necessary.
 - Now automatically runs local configuration on secondary Pi-hole after execution.
-- Git repository clone now happens directly in executed directory.
+
+#### Configuration Workflow
+
+- Prompts on install to configure advanced variables (default is to bypass)
+- Advanced users can set more options for non-standard deployments at installation.
 
 #### New Variables
 
