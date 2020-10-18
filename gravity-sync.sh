@@ -126,7 +126,7 @@ case $# in
 				start_gs_noconfig
 				task_version ;;
 			update|upgrade)
-				start_gs
+				start_gs_noconfig
 				task_update ;;
 			dev|devmode|development|develop)
 				start_gs_noconfig
