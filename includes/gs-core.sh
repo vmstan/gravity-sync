@@ -57,7 +57,7 @@ function start_gs {
 
 	if [ "${ROOT_CHECK_AVOID}" != "1" ]
 	then
-		root_check
+		new_root_check
 	fi
 }
 

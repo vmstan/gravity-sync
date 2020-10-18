@@ -40,3 +40,31 @@ function root_check {
 		exit_nochange
 	fi
 }
+
+function new_root_check {
+	CURRENTUSER=$(whoami)
+	if [ ! "$EUID" -ne 0 ]
+	then 
+		MESSAGE="{$CURRENTUSER} Is ROOT"
+		echo_info
+		LOCALADMIN=""
+	else
+		# Check Sudo
+		sudo --validate
+		if [ "$?" != "0" ]
+		then
+			MESSAGE="{$CURRENTUSER} Cannot SUDO"
+			echo_info
+			LOCALADMIN="nosudo"
+		else
+			MESSAGE="{$CURRENTUSER} Has SUDO"
+			LOCALADMIN="sudo"
+		fi
+	fi
+		
+	if [ "$LOCALADMIN" == "nosudo" ]
+	then
+		MESSAGE="Insufficent User Rights"
+		echo_warn
+	fi
+}
