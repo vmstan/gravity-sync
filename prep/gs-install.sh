@@ -127,7 +127,7 @@ then
     echo -e "[${GREEN}✓${NC}] Local Pi-hole Install Detected"
 else
     echo -e "[${PURPLE}!${NC}] ${PURPLE}No Local Pi-hole Install Detected${NC}"
-    echo -e "[${PURPLE}!${NC}] ${PURPLE}Attempting To Compensate${NC}"
+    # echo -e "[${PURPLE}!${NC}] ${PURPLE}Attempting To Compensate${NC}"
     if hash docker 2>/dev/null
     then
         echo -e "[${GREEN}✓${NC}] Docker Binaries Detected"

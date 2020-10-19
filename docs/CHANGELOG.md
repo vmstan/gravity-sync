@@ -20,19 +20,20 @@ You can now use a standard Pi-hole install as your primary, or your secondary. Y
 #### Installation Script
 
 - Detects the running instance of default Pi-hole Docker container image, if standard Pi-hole lookup fails. Pi-hole must still be installed prior to Gravity Sync.
-- Changes detection of root vs sudo users, and adapts commands to match. You no longer need to avoid running the script as  `root`.
+- Changes detection of root vs sudo users, and adapts commands to match. You no longer need to avoid running the script as `root`.
 - Only deploys passwordless SUDO components if deemed necessary. (i.e. Not running as `root`.)
 - Now automatically runs the local configuration function on the secondary Pi-hole after execution.
-- Deploys script via `git` to whatever directory the installer runs in, instead of defaulting to the user's `$HOME` directory. 
+- Deploys script via `git` to whatever directory the installer runs in, instead of defaulting to the user's `$HOME` directory.
 - Gravity Sync no longer requires that it be run from the user's `$HOME` directory.
-- Creates a BASH environment alias to run the command `gravity-sync` from anywhere on the system. If you use a different shell (such as zsh or fish) as your default this may need to be added manually.
 
 #### Configuration Workflow
 
-- Simpler configuration function, as installer now checks for the dependencies.
-- Prompts on install to configure advanced variables if required (default is to bypass.)
-- Advanced users can set more options for non-standard deployments at installation.
-- Existing users with defaukt setups should not need to run the config utility again after upgrading, but those with custom installs (especially existing container users) should consider it to adopt new variable names and options in your config files.
+- Overall, a simpler configuration function, as the online installer now checks for the dependencies prior to execution.
+- New users with basic Pi-hole installs will only be prompted for the address of the primary (remote) Pi-hole, an SSH user and then the SSH password to establish a trusted relationship and share the keyfiles.
+- Automatically prompts on during setup to configure advanced variables if a Docker installation is detected on the secondary (local) Pi-hole.
+- Advanced users can set more options for non-standard deployments at installation. If you are using a Docker deployment of Pi-hole on your primary (remote) Pi-hole, but not the system running Gravity Sync, you will need to enter this advanced mode when prompted.
+- Existing users with default setups should not need to run the config utility again after upgrading, but those with custom installs (especially existing container users) should consider it to adopt new variable names and options in your config files.
+- Creates a BASH environment alias to run the command `gravity-sync` from anywhere on the system. If you use a different shell (such as zsh or fish) as your default this may need to be added manually.
 
 #### New Variables
 
@@ -46,6 +47,7 @@ You can now use a standard Pi-hole install as your primary, or your secondary. Y
 #### Removals
 
 - Support for `sshpass` has been removed, the only valid authentication method going forward will be ssh-key based.
+- If you've previously configured Gravity Sync using `sshpass` you will need to run `./gravity-sync.sh config` again to create a new configuration file.
 
 #### Bug Killer
 
