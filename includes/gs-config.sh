@@ -39,6 +39,8 @@ function config_generate {
 	docker_detect
 	if [ "${DOCKERREADY}" == "1" ]
 	then
+		MESSAGE="Advanced Configuration Required"
+		echo_info
 		advanced_config_generate
 	else
 		MESSAGE="Use Advanced Installation Options? (Leave blank for default 'No')"
@@ -48,7 +50,7 @@ function config_generate {
 	
 		if [ "${INPUT_ADVANCED_INSTALL}" != "N" ]
 		then
-			MESSAGE="Advanced Configuration"
+			MESSAGE="Advanced Configuration Selected"
 			echo_info
 		
 			advanced_config_generate
@@ -100,7 +102,7 @@ function config_generate {
 	echo_info
 
 	validate_os_sshpass
-	validate_sqlite3
+	# validate_sqlite3
 
 	detect_remotersync
 }
@@ -142,6 +144,7 @@ function advanced_config_generate {
 			echo_stat
 			sed -i "/# PIHOLE_DIR=''/c\PIHOLE_DIR='${INPUT_PIHOLE_DIR}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
 			error_validate
+			SKIP_PIHOLE_DIR="1"
 		else
 			MESSAGE="This setting is required!"
 			echo_warn
@@ -189,6 +192,7 @@ function advanced_config_generate {
 			echo_stat
 			sed -i "/# RIHOLE_DIR=''/c\RIHOLE_DIR='${INPUT_RIHOLE_DIR}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
 			error_validate
+			SKIP_RIHOLE_DIR="1"
 		else
 			MESSAGE="This setting is required!"
 			echo_warn
@@ -201,10 +205,44 @@ function advanced_config_generate {
 		error_validate
 	fi
 	
+		
+	if [ $SKIP_PIHOLE_DIR == "1" ]
+	then
+		MESSAGE="Local Pi-hole Settings Directory Path? (Leave blank for default '/etc/pihole')"
+		echo_need
+		read INPUT_PIHOLE_DIR
+		INPUT_PIHOLE_DIR="${INPUT_PIHOLE_DIR:-/etc/pihole}"
+		
+		if [ "${INPUT_PIHOLE_DIR}" != "/etc/pihole" ]
+		then
+			MESSAGE="Saving Local Pi-hole Settings Directory Path to ${CONFIG_FILE}"
+			echo_stat
+			sed -i "/# PIHOLE_DIR=''/c\PIHOLE_DIR='${INPUT_PIHOLE_DIR}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+			error_validate
+		fi
+	fi
+	
+	if [ $SKIP_RIHOLE_DIR == "1" ]
+	then
+		MESSAGE="Remote Pi-hole Settings Directory Path? (Leave blank for default '/etc/pihole')"
+		echo_need
+		read INPUT_RIHOLE_DIR
+		INPUT_RIHOLE_DIR="${INPUT_RIHOLE_DIR:-/etc/pihole}"
+		
+		if [ "${INPUT_RIHOLE_DIR}" != "/etc/pihole" ]
+		then
+			MESSAGE="Saving Remote Pi-hole Settings Directory Path to ${CONFIG_FILE}"
+			echo_stat
+			sed -i "/# RIHOLE_DIR=''/c\RIHOLE_DIR='${INPUT_RIHOLE_DIR}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+			error_validate
+		fi
+	fi
+	
 	MESSAGE="Custom SSH Port? (Leave blank for default '22')"
 	echo_need
 	read INPUT_SSH_PORT
 	INPUT_SSH_PORT="${INPUT_SSH_PORT:-22}"
+	SSH_PORT="${INPUT_SSH_PORT}"
 	
 	if [ "${INPUT_SSH_PORT}" != "22" ]
 	then

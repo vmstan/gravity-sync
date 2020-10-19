@@ -79,36 +79,36 @@ function validate_sqlite3 {
 
 ## Validate SSHPASS
 function validate_os_sshpass {
-	SSHPASSWORD=''
+	# SSHPASSWORD=''
 
-	if hash sshpass 2>/dev/null
-    then
-		MESSAGE="SSHPASS Utility Detected"
-		echo_warn
-			if [ -z "$REMOTE_PASS" ]
-			then
-				MESSAGE="Using SSH Key-Pair Authentication"
-				echo_info
-			else
-				MESSAGE="Testing Authentication Options"
-				echo_stat
+	# if hash sshpass 2>/dev/null
+    # then
+	#	MESSAGE="SSHPASS Utility Detected"
+	#	echo_warn
+	#		if [ -z "$REMOTE_PASS" ]
+	#		then
+	#			MESSAGE="Using SSH Key-Pair Authentication"
+	#			echo_info
+	#		else
+	#			MESSAGE="Testing Authentication Options"
+	#			echo_stat
 
-				timeout 5 ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
-				if [ "$?" != "0" ]
-				then
-					SSHPASSWORD="sshpass -p ${REMOTE_PASS}"
-					MESSAGE="Using SSH Password Authentication"
-					echo_warn
-				else
-					MESSAGE="Valid Key-Pair Detected ${NC}(${RED}Password Ignored${NC})"
-					echo_info
-				fi
-			fi
-    else
-        SSHPASSWORD=''
-		MESSAGE="Using SSH Key-Pair Authentication"
-		echo_info
-    fi
+	#			timeout 5 ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
+	#			if [ "$?" != "0" ]
+	#			then
+	#				SSHPASSWORD="sshpass -p ${REMOTE_PASS}"
+	#				MESSAGE="Using SSH Password Authentication"
+	#				echo_warn
+	#			else
+	#				MESSAGE="Valid Key-Pair Detected ${NC}(${RED}Password Ignored${NC})"
+	#				echo_info
+	#			fi
+	#		fi
+    # else
+    #    SSHPASSWORD=''
+	#	MESSAGE="Using SSH Key-Pair Authentication"
+	#	echo_info
+    # fi
 	
 	MESSAGE="Validating Connection to ${REMOTE_HOST}"
 	echo_stat
