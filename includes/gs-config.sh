@@ -17,10 +17,10 @@ function task_configure {
 		config_generate
 	fi
 
-	backup_settime
-	backup_local_gravity
-	backup_local_custom
-	backup_cleanup
+	# backup_settime
+	# backup_local_gravity
+	# backup_local_custom
+	# backup_cleanup
 	
 	create_alias
 	
@@ -66,12 +66,12 @@ function config_generate {
 
 	if [ "${PING_AVOID}" != "1" ]
 	then
-		MESSAGE="Testing Network Connection (PING)"
+		MESSAGE="Testing Network Connection (ICMP)"
 		echo_stat
 		ping -c 3 ${INPUT_REMOTE_HOST} >/dev/null 2>&1
 			error_validate
 	else
-		MESSAGE="Bypassing Network Testing (PING)"
+		MESSAGE="Bypassing Network Testing (ICMP)"
 		echo_warn
 	fi
 	
@@ -98,13 +98,13 @@ function config_generate {
 
 	export_sshkey	
 	
-	MESSAGE="Testing Configuration"
-	echo_info
+	# MESSAGE="Testing Configuration"
+	# echo_info
 
-	validate_os_sshpass
+	# validate_os_sshpass
 	# validate_sqlite3
 
-	detect_remotersync
+	# detect_remotersync
 }
 
 ## Advanced Configuration Options
