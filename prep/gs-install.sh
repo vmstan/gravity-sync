@@ -24,13 +24,13 @@ PHFAILCOUNT="0"
 CURRENTUSER=$(whoami)
 
 # Header
+echo -e "========================================================"
 echo -e "${YELLOW}Gravity Sync by ${BLUE}@vmstan${YELLOW} - Online Installation${NC}"
 echo -e "${CYAN}https://github.com/vmstan/gravity-sync${NC}"
 echo -e "========================================================"
 # echo -e "Initalizing Short Range Sensors"
 
 # Check Root
-
 echo -e "[${YELLOW}i${NC}] ${YELLOW}Validating System Authorization${NC}"
 if [ ! "$EUID" -ne 0 ]
 then 
@@ -90,6 +90,15 @@ then
     echo -e "[${GREEN}✓${NC}] SUDO Binaries Detected"
 else
     echo -e "[${RED}✗${NC}] SUDO Binaries Not Installed"
+    CROSSCOUNT=$((CROSSCOUNT+1))
+fi
+
+# Check Crontab
+if hash crontab 2>/dev/null
+then
+    echo -e "[${GREEN}✓${NC}] CRONTAB Binaries Detected"
+else
+    echo -e "[${RED}✗${NC}] CRONTAB Binaries Not Installed"
     CROSSCOUNT=$((CROSSCOUNT+1))
 fi
 
@@ -164,7 +173,7 @@ echo -e "[${YELLOW}i${NC}] ${YELLOW}Status Report${NC}"
 # Combine Outputs
 if [ "$CROSSCOUNT" != "0" ]
 then
-    echo -e "[${PURPLE}!${NC}] ${RED}${CROSSCOUNT}${NC} Critical Issues Detected"
+    echo -e "[${RED}⬣${NC}] ${RED}${CROSSCOUNT}${NC} Critical Issues Detected"
     echo -e "[${PURPLE}!${NC}] ${PURPLE}Please Correct Failed Components${NC}"
     echo -e "[${YELLOW}i${NC}] ${PURPLE}Installation Exiting (without changes)${NC}"
 else

@@ -42,9 +42,9 @@ Gravity Sync is not developed by or affiliated with the Pi-hole project. This is
 - Pi-hole 5.0 (or higher) must already be installed on at least two systems, using any of the Linux distributions that Pi-hole is [certified to run on](https://docs.pi-hole.net/main/prerequesites/#supported-operating-systems).
 - As of Gravity Sync 3.1, your Pi-hole installs can be a standard installation of Pi-hole or a Docker container deployment. In either case, Gravity Sync will run directly on the host OS, and not inside of a container image.
 - If you are using containerized deployments of Pi-hole, only the [official Pi-hole Docker image](https://hub.docker.com/r/pihole/pihole) is supported.
-- You will need a user account with local administrator privilages on the host OS at each side. This can be a dedicated account or the system's `root` account
-- If youre using a non-root user, make sure that the account is a member of the `sudo` group on both the primary and secondary Pi-hole. Most of the pre-built images available for the Raspberry Pi already have this configured. During installation this user will be given passwordless sudo permissions to the system.
-- The installer will perform checks to make sure the OpenSSH `ssh`, `SQLite3`, `git`and `rsync` commands are available on both the primary and secondary Pi-hole during installation. If they are missing you will have an oppertunity to use whatever package manager is available on your system to correct the missing dependencies. These binaries are what do the heavy lifting between your Pi-hole nodes.
+- You will need a user account with local administrator privileges on the host OS at each side. This can be a dedicated account or the system's `root` account
+- If you're using a non-root user, make sure that the account is a member of the `sudo` group on both the primary and secondary Pi-hole. Most of the pre-built images available for the Raspberry Pi already have this configured. During installation this user will be given passwordless sudo permissions to the system.
+- The installer will perform checks to make sure the required components to use Gravity Sync such as OpenSSH `ssh`, `SQLite3`, and `rsync` (plus a few others) are available on both the primary and secondary Pi-hole during installation. If they are missing you will have an opportunity to use whatever package manager is available on your system to correct the missing dependencies. These binaries are what do the heavy lifting between your Pi-hole nodes.
 
 ### Pi-hole Architecture
 
@@ -94,8 +94,6 @@ This will guide you through the process of:
 - Specifying the IP or DNS name of your primary Pi-hole.
 - Specifying the SSH username to connect to your primary Pi-hole.
 - Configuring your key-pair and applying it to your primary Pi-hole.
-- Testing your authentication method, and testing connections to the primary.
-- Perform a backup of the existing Pi-hole database.
 
 The configuration will be saved as `gravity-sync.conf` in the same folder as the script. If you need to make adjustments to your settings in the future, you can edit this file or run the configuration tool to generate a new one.
 
