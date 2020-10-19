@@ -26,23 +26,23 @@ function validate_gs_folders {
 
 ## Validate Pi-hole Folders
 function validate_ph_folders {
-	MESSAGE="Validating Pi-hole Configuration on $HOSTNAME"
+	MESSAGE="Validating Pi-hole Configuration"
 	echo_stat
 	
 		if [ "$PH_IN_TYPE" == "default" ]
 		then
 			if [ ! -f ${PIHOLE_BIN} ]
 			then
-				MESSAGE="Unable to Validate Pi-Hole is Installed"
+				MESSAGE="Unable to Validate that Pi-Hole is Installed"
 				echo_fail
 				exit_nochange
 			fi
 		elif [ "$PH_IN_TYPE" == "docker" ]
 		then
-			FTLCHECK=$(sudo docker container ls | grep '${DOCKER_CON}')
+			FTLCHECK=$(sudo docker container ls | grep 'pihole/pihole')
 			if [ "$FTLCHECK" == "" ]
 			then
-				MESSAGE="Unable to Validate Pi-Hole is Installed"
+				MESSAGE="Unable to Validate that Pi-Hole is Installed"
 				echo_fail
 				exit_nochange
 			fi
