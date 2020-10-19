@@ -48,7 +48,7 @@ function smart_gs {
 			MESSAGE="Both ${GRAVITY_FI} Changed"
 			echo_warn
 
-			PRIDBDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${PIHOLE_DIR}/${GRAVITY_FI}")
+			PRIDBDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${RIHOLE_DIR}/${GRAVITY_FI}")
 			SECDBDATE=$(stat -c %Y ${PIHOLE_DIR}/${GRAVITY_FI})
 
 				if (( "$PRIDBDATE" >= "$SECDBDATE" ))
@@ -101,7 +101,7 @@ function smart_gs {
 					MESSAGE="Both ${CUSTOM_DNS} Changed"
 					echo_warn
 
-					PRICLDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${PIHOLE_DIR}/${CUSTOM_DNS}")
+					PRICLDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${RIHOLE_DIR}/${CUSTOM_DNS}")
 					SECCLDATE=$(stat -c %Y ${PIHOLE_DIR}/${CUSTOM_DNS})
 
 						if (( "$PRICLDATE" >= "$SECCLDATE" ))
