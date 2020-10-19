@@ -22,6 +22,8 @@ function task_configure {
 	backup_local_custom
 	backup_cleanup
 	
+	create_alias
+	
 	exit_withchange
 }
 
@@ -289,6 +291,7 @@ function config_delete {
 	config_generate
 }
 
+## Detect Docker
 function docker_detect {
 	if hash docker 2>/dev/null
 	then
@@ -298,4 +301,13 @@ function docker_detect {
 			DOCKERREADY="1"
 		fi
 	fi
+}
+
+## Create Bash Alias
+function create_alias {
+	MESSAGE="Creating Bash Alias"
+	echo_stat
+	
+	echo -e "alias gravity-sync='${GS_FILEPATH}'" | sudo tee -a /etc/bash.bashrc > /dev/null
+		error_validate
 }

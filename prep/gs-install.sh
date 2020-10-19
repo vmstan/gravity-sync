@@ -187,12 +187,9 @@ else
         else
             echo -e "[${BLUE}>${NC}] Creating Gravity Sync Directories"
             git clone https://github.com/vmstan/gravity-sync.git
-            GS_FILEPATH=$(realpath $0)
-            echo -e "[${BLUE}>${NC}] Creating Bash Aliases"
-            echo -e "alias gravity-sync='${GS_FILEPATH}'" | sudo tee -a /etc/bash.bashrc > /dev/null
 			echo -e "[${BLUE}>${NC}] Starting Gravity Sync Configuration"
 			echo -e "========================================================"
-			sh ${GS_FILEPATH} configure < /dev/tty
+			sh gravity-sync/gravity-sync configure < /dev/tty
             # echo -e "[${YELLOW}i${NC}] This host is now prepared to configure Gravity Sync!"
             # echo -e "[${YELLOW}i${NC}] Please run './gravity-sync configure' from $HOME/gravity-sync"
             # echo -e "[${YELLOW}i${NC}] Visit https://github.com/vmstan/gravity-sync for more instructions."
