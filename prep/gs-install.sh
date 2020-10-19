@@ -173,9 +173,9 @@ echo -e "[${YELLOW}i${NC}] ${YELLOW}Status Report${NC}"
 # Combine Outputs
 if [ "$CROSSCOUNT" != "0" ]
 then
-    echo -e "[${RED}⬣${NC}] ${RED}${CROSSCOUNT} Critical Issues Detected${NC}"
-    echo -e "[${PURPLE}!${NC}] ${PURPLE}Please Correct Failed Components${NC}"
-    echo -e "[${YELLOW}i${NC}] ${PURPLE}Installation Exiting (without changes)${NC}"
+    echo -e "[${RED}*${NC}] ${RED}${CROSSCOUNT} Critical Issue(s) Detected${NC}"
+    echo -e "[${PURPLE}!${NC}] ${PURPLE}Please Correct Failures and Re-Execute${NC}"
+    echo -e "[${YELLOW}i${NC}] ${YELLOW}Installation Exiting (without changes)${NC}"
 else
     echo -e "[${YELLOW}i${NC}] ${YELLOW}Executing Gravity Sync Deployment${NC}"
     
