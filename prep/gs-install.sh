@@ -194,11 +194,15 @@ else
             echo -e "[${YELLOW}i${NC}] Check Documentation for Instructions"
 			echo -e "[${YELLOW}i${NC}] Installation Exiting (without changes)"
         else
+            echo -en "[${BLUE}?${NC}] Path to install Gravity Sync (default is $HOME)?"
+            read INPUT_GS_DIR
+            INPUT_GS_DIR="${INPUT_GS_DIR:-~}"
+            
             echo -e "[${BLUE}>${NC}] Creating Gravity Sync Directories"
-            git clone https://github.com/vmstan/gravity-sync.git
+            git clone https://github.com/vmstan/gravity-sync.git $INPUT_GS_DIR
 			echo -e "[${BLUE}>${NC}] Starting Gravity Sync Configuration"
 			echo -e "========================================================"
-			sh gravity-sync/gravity-sync.sh configure < /dev/tty
+			sh $INPUT_GS_DIR/gravity-sync/gravity-sync.sh configure < /dev/tty
             # echo -e "[${YELLOW}i${NC}] This host is now prepared to configure Gravity Sync!"
             # echo -e "[${YELLOW}i${NC}] Please run './gravity-sync configure' from $HOME/gravity-sync"
             # echo -e "[${YELLOW}i${NC}] Visit https://github.com/vmstan/gravity-sync for more instructions."
