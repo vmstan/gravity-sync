@@ -133,7 +133,6 @@ function advanced_config_generate {
 		MESSAGE="Local Pi-hole 'etc' Volume Path? (Required, no trailing slash)"
 		echo_need
 		read INPUT_PIHOLE_DIR
-		# INPUT_DOCKER_CON="${INPUT_DOCKER_CON:-pihole}"
 		
 		if [ "${INPUT_PIHOLE_DIR}" != "" ]
 		then
@@ -181,7 +180,6 @@ function advanced_config_generate {
 		MESSAGE="Remote Pi-hole 'etc' Volume Path? (Required, no trailing slash)"
 		echo_need
 		read INPUT_RIHOLE_DIR
-		# INPUT_DOCKER_CON="${INPUT_DOCKER_CON:-pihole}"
 		
 		if [ "${INPUT_RIHOLE_DIR}" != "" ]
 		then
@@ -238,6 +236,32 @@ function advanced_config_generate {
 		MESSAGE="Saving Custom PKIF to ${CONFIG_FILE}"
 		echo_stat
 		sed -i "/# SSH_PKIF=''/c\SSH_PKIF='${INPUT_CUSTOM_PKIF}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+		error_validate
+	fi
+	
+	MESSAGE="Replicate 'Local DNS Records' Feature? (Leave blank for default 'Yes')"
+	echo_need
+	read INPUT_SKIP_CUSTOM
+	INPUT_SKIP_CUSTOM="${INPUT_SKIP_CUSTOM:-Y}"
+	
+	if [ "${INPUT_SKIP_CUSTOM}" != "Y" ]
+	then
+		MESSAGE="Saving Local DNS Preference to ${CONFIG_FILE}"
+		echo_stat
+		sed -i "/# SKIP_CUSTOM=''/c\SKIP_CUSTOM='1'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+		error_validate
+	fi
+	
+	MESSAGE="Backup Retention in Days? (Leave blank for default '7')"
+	echo_need
+	read INPUT_BACKUP_RETAIN
+	INPUT_BACKUP_RETAIN="${INPUT_BACKUP_RETAIN:-7}"
+	
+	if [ "${INPUT_BACKUP_RETAIN}" != "7" ]
+	then
+		MESSAGE="Saving Backup Retention to ${CONFIG_FILE}"
+		echo_stat
+		sed -i "/# BACKUP_RETAIN=''/c\BACKUP_RETAIN='1'" ${LOCAL_FOLDR}/${CONFIG_FILE}
 		error_validate
 	fi
 }
