@@ -38,7 +38,7 @@ function pull_gs_grav {
 		sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 		error_validate
 	
-	if [ "$FILE_OWNER" != 'named:docker' ]
+	if [ "$FILE_OWNER" != "named:docker" ]
 	then
 		MESSAGE="Validating Settings of ${GRAVITY_FI}"
 		echo_stat
