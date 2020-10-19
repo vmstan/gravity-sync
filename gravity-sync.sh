@@ -3,29 +3,37 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='3.0.2'
+VERSION='3.1.0'
 
-# Execute from the home folder of the user who owns it (ex: 'cd ~/gravity-sync')
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
 # Requires Pi-Hole 5.x or higher already be installed, for help visit https://pi-hole.net
 
 # REQUIRED SETTINGS ##########################
 
-# Run './gravity-sync.sh config' to get started
+# Run './gravity-sync.sh config' to get started, it will customize the script for your environment
+# You should not to change the values of any variables here here to customize your install
+# Add replacement variables to gravity-sync.conf, which will overwrite these defaults.
 
 # STANDARD VARIABLES #########################
 
-# GS Folder/File Locations
-LOCAL_FOLDR='gravity-sync' 			# must exist in running user home folder
-CONFIG_FILE='gravity-sync.conf' 	# must exist with primary host/user configured
-GS_FILENAME='gravity-sync.sh'		# must exist because it's this script
-BACKUP_FOLD='backup' 				# must exist as subdirectory in LOCAL_FOLDR
+# Installation Types
+PH_IN_TYPE='default'				# Pi-hole install type, `default` or `docker` (local)
+RH_IN_TYPE='default'				# Pi-hole install type, `default` or `docker` (remote)
 
-# Logging Folder/File Locations
-LOG_PATH="$HOME/${LOCAL_FOLDR}"		# replace in gravity-sync.conf to overwrite
-SYNCING_LOG='gravity-sync.log' 		# replace in gravity-sync.conf to overwrite
-CRONJOB_LOG='gravity-sync.cron' 	# replace in gravity-sync.conf to overwrite
-HISTORY_MD5='gravity-sync.md5'		# replace in gravity-sync.conf to overwrite
+# Pi-hole Folder/File Customization
+PIHOLE_DIR='/etc/pihole' 			# default Pi-hole data directory (local)
+RIHOLE_DIR='/etc/pihole'			# default Pi-hole data directory (remote)
+PIHOLE_BIN='/usr/local/bin/pihole' 	# default Pi-hole binary directory (local)
+RIHOLE_BIN='/usr/local/bin/pihole' 	# default Pi-hole binary directory (remote)
+DOCKER_BIN='/usr/bin/docker'		# default Docker binary directory (local)
+ROCKER_BIN='/usr/bin/docker'		# default Docker binary directory (remote)
+FILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (local)
+RILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (remote)
+DOCKER_CON='pihole'					# default Pi-hole Docker container name (local)
+ROCKER_CON='pihole'					# default Pi-hole Docker container name (remote)
+
+GRAVITY_FI='gravity.db' 			# default Pi-hole database file
+CUSTOM_DNS='custom.list'			# default Pi-hole local DNS lookups
 
 # Interaction Customization
 VERIFY_PASS='0'						# replace in gravity-sync.conf to overwrite
@@ -37,66 +45,64 @@ ROOT_CHECK_AVOID='0'				# replace in gravity-sync.conf to overwrite
 # Backup Customization
 BACKUP_RETAIN='7'					# replace in gravity-sync.conf to overwrite
 
-# Pi-hole Folder/File Locations
-PIHOLE_DIR='/etc/pihole' 			# default Pi-hole data directory
-GRAVITY_FI='gravity.db' 			# default Pi-hole database file
-CUSTOM_DNS='custom.list'			# default Pi-hole local DNS lookups
-PIHOLE_BIN='/usr/local/bin/pihole' 	# default Pi-hole binary directory (local)
-RIHOLE_BIN='/usr/local/bin/pihole' 	# default Pi-hole binary directory (remote)
-FILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (local)
-REMOTE_FILE_OWNER='pihole:pihole'	# default Pi-hole file owner and group (remote)
+# SSH Customization
+SSH_PORT='22' 						# default SSH port
+SSH_PKIF='.ssh/id_rsa'				# default local SSH key
+
+# GS Folder/File Locations
+GS_FILEPATH=$(realpath $0)			# auto determined - do not change!
+LOCAL_FOLDR=$(dirname $GS_FILEPATH) # auto determined - do not change!
+CONFIG_FILE='gravity-sync.conf' 	# must exist with primary host/user configured
+GS_FILENAME='gravity-sync.sh'		# must exist because it's this script
+BACKUP_FOLD='backup' 				# must exist as subdirectory in LOCAL_FOLDR
+LOG_PATH="${LOCAL_FOLDR}"			# replace in gravity-sync.conf to overwrite
+SYNCING_LOG='gravity-sync.log' 		# replace in gravity-sync.conf to overwrite
+CRONJOB_LOG='gravity-sync.cron' 	# replace in gravity-sync.conf to overwrite
+HISTORY_MD5='gravity-sync.md5'		# replace in gravity-sync.conf to overwrite
 
 # OS Settings
 BASH_PATH='/bin/bash'				# default OS bash path
 
-# SSH CONFIGURATION ##########################
-
-# Suggested not to replace these values here
-# Add replacement variables to gravity-sync.conf
-
-SSH_PORT='22' 						# default SSH port
-SSH_PKIF='.ssh/id_rsa'				# default local SSH key
-
 ##############################################
-### DO NOT CHANGE ANYTHING BELOW THIS LINE ###
+### NEVER CHANGE ANYTHING BELOW THIS LINE! ###
 ##############################################
 
 # Import Color/Message Includes
-source $HOME/${LOCAL_FOLDR}/includes/gs-colors.sh
+source ${LOCAL_FOLDR}/includes/gs-colors.sh
 
 # FUNCTION DEFINITIONS #######################
 
 # Core Functions
-source $HOME/${LOCAL_FOLDR}/includes/gs-core.sh
+source ${LOCAL_FOLDR}/includes/gs-core.sh
 
 # Gravity Replication Functions
-source $HOME/${LOCAL_FOLDR}/includes/gs-compare.sh
-source $HOME/${LOCAL_FOLDR}/includes/gs-pull.sh
-source $HOME/${LOCAL_FOLDR}/includes/gs-push.sh
-source $HOME/${LOCAL_FOLDR}/includes/gs-smart.sh
-source $HOME/${LOCAL_FOLDR}/includes/gs-restore.sh
-source $HOME/${LOCAL_FOLDR}/includes/gs-backup.sh
+source ${LOCAL_FOLDR}/includes/gs-compare.sh
+source ${LOCAL_FOLDR}/includes/gs-pull.sh
+source ${LOCAL_FOLDR}/includes/gs-push.sh
+source ${LOCAL_FOLDR}/includes/gs-smart.sh
+source ${LOCAL_FOLDR}/includes/gs-restore.sh
+source ${LOCAL_FOLDR}/includes/gs-backup.sh
 
 # Hashing & SSH Functions
-source $HOME/${LOCAL_FOLDR}/includes/gs-hashing.sh
-source $HOME/${LOCAL_FOLDR}/includes/gs-ssh.sh
+source ${LOCAL_FOLDR}/includes/gs-hashing.sh
+source ${LOCAL_FOLDR}/includes/gs-ssh.sh
 
 # Logging Functions
-source $HOME/${LOCAL_FOLDR}/includes/gs-logging.sh
+source ${LOCAL_FOLDR}/includes/gs-logging.sh
 
 # Validation Functions
-source $HOME/${LOCAL_FOLDR}/includes/gs-validate.sh
-source $HOME/${LOCAL_FOLDR}/includes/gs-intent.sh
-source $HOME/${LOCAL_FOLDR}/includes/gs-root.sh
+source ${LOCAL_FOLDR}/includes/gs-validate.sh
+source ${LOCAL_FOLDR}/includes/gs-intent.sh
+source ${LOCAL_FOLDR}/includes/gs-root.sh
 
 # Configuration Management
-source $HOME/${LOCAL_FOLDR}/includes/gs-config.sh
-source $HOME/${LOCAL_FOLDR}/includes/gs-update.sh
-source $HOME/${LOCAL_FOLDR}/includes/gs-automate.sh
-source $HOME/${LOCAL_FOLDR}/includes/gs-purge.sh
+source ${LOCAL_FOLDR}/includes/gs-config.sh
+source ${LOCAL_FOLDR}/includes/gs-update.sh
+source ${LOCAL_FOLDR}/includes/gs-automate.sh
+source ${LOCAL_FOLDR}/includes/gs-purge.sh
 
 # Exit Codes
-source $HOME/${LOCAL_FOLDR}/includes/gs-exit.sh
+source ${LOCAL_FOLDR}/includes/gs-exit.sh
 
 # SCRIPT EXECUTION ###########################
 
@@ -119,13 +125,13 @@ case $# in
 				start_gs
 				task_restore ;;
 			version)
-				start_gs
+				start_gs_noconfig
 				task_version ;;
 			update|upgrade)
-				start_gs
+				start_gs_noconfig
 				task_update ;;
 			dev|devmode|development|develop)
-				start_gs
+				start_gs_noconfig
 				task_devmode ;;
 			logs|log)
 				start_gs

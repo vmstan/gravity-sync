@@ -26,13 +26,13 @@ function restore_gs {
 
 	MESSAGE="PREVIOUS BACKUPS AVAILABLE FOR RESTORATION"
 	echo_info
-	ls $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${GRAVITY_FI} | colrm 18
+	ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${GRAVITY_FI} | colrm 18
 
 	MESSAGE="Select backup date to restore ${GRAVITY_FI} from"
 	echo_need
 	read INPUT_BACKUP_DATE
 
-	if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${GRAVITY_FI}.backup ]
+	if [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${GRAVITY_FI}.backup ]
 	then
 		MESSAGE="Backup File Selected"
 	else
@@ -47,13 +47,13 @@ function restore_gs {
 
 		if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
 		then
-			ls $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${CUSTOM_DNS} | colrm 18
+			ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${CUSTOM_DNS} | colrm 18
 
 			MESSAGE="Select backup date to restore ${CUSTOM_DNS} from"
 			echo_need
 			read INPUT_DNSBACKUP_DATE
 
-			if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ]
+			if [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ]
 			then
 				MESSAGE="Backup File Selected"
 			else
@@ -83,7 +83,7 @@ function restore_gs {
 
 	MESSAGE="Restoring ${GRAVITY_FI} on $HOSTNAME"
 	echo_stat	
-		sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${GRAVITY_FI}.backup ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+		sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${GRAVITY_FI}.backup ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 		error_validate
 	
 	MESSAGE="Validating Ownership on ${GRAVITY_FI}"
@@ -126,11 +126,11 @@ function restore_gs {
 
 	if [ "$SKIP_CUSTOM" != '1' ]
 	then	
-		if [ -f $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ]
+		if [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ]
 		then
 			MESSAGE="Restoring ${CUSTOM_DNS} on $HOSTNAME"
 			echo_stat
-				sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+				sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
 				error_validate
 				
 			MESSAGE="Validating Ownership on ${CUSTOM_DNS}"
@@ -173,20 +173,7 @@ function restore_gs {
 		fi
 	fi
 
-	MESSAGE="Evacuating Saucer Section"
-	echo_info
-		sleep 1	
-
-	MESSAGE="Restarting FTLDNS Services"
-	echo_stat
-		sudo service pihole-FTL start >/dev/null 2>&1
-		error_validate
-	
-	MESSAGE="Updating FTLDNS Configuration"
-	echo_stat
-		${PIHOLE_BIN} restartdns reloadlists >/dev/null 2>&1
-		error_validate
-	
+	pull_gs_reload
 
 	MESSAGE="Do you want to push the restored configuration to the primary Pi-hole? (yes/no)"
 	echo_need

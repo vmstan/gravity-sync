@@ -1,8 +1,12 @@
-# Gravity Sync
+<p align="center">
+	<img src="https://raw.githubusercontent.com/vmstan/gravity-sync/master/docs/gravity-header.svg" alt="Gravity Sync">
+</p>
+
+What is better than a [Pi-hole](https://github.com/pi-hole/pi-hole) blocking ads via DNS on your network? That's right, two Pi-hole blocking ads on your network!
+
+But if you have more than one Pi-hole in your network you'll want a simple way to keep the list configurations and local DNS settings identical between the two. That's Gravity Sync.
 
 ## Features
-
-What is better than a [Pi-hole](https://github.com/pi-hole/pi-hole) blocking ads via DNS on your network? That's right, Two Pi-hole! (Redundency is key in any network infrastucture.) But if you have more than one Pi-hole in your network you'll want a simple way to keep the list configurations and local DNS settings identical between the two. That's where Gravity Sync comes in.
 
 Gravity Sync will:
 
@@ -19,11 +23,9 @@ Gravity Sync will **not**:
 - Overwrite individual Pi-hole specific settings such as the device's network configuration, admin/API passwords/keys, upstream DNS resolvers, etc.
 - Keep DHCP settings or device leases synchronized.
 
-It is suggested that you use an external DHCP server on your network (such as your router) when using multiple Pi-hole.
-
 ### Disclaimer
 
-Gravity Sync is not developed by or affiliated with the Pi-hole project. This is a community effort that seeks to implement replication, which is currently not a part of the core Pi-hole product. The code has been well tested across multiple user environments but there always is an element of risk involved with running any arbitrary software you find on the Internet.
+Gravity Sync is not developed by or affiliated with the Pi-hole project. This is an effort that seeks to implement replication, which is currently not a part of the core Pi-hole product. The code has been tested across multiple user environments but there always is an element of risk involved with running any arbitrary software you find on the Internet.
 
 ## Setup Steps
 
@@ -37,10 +39,12 @@ Gravity Sync is not developed by or affiliated with the Pi-hole project. This is
 
 ## Requirements
 
-- Pi-hole 5.0 (or higher) must already be installed on at least two systems, using any of the Linux distribution that Pi-hole is [certified to run on](https://docs.pi-hole.net/main/prerequesites/#supported-operating-systems).
-- While it is possible to leverage container/Docker deployments of Pi-hole and Gravity Sync, this configuration is currently not officially supported. Instructions here assume a "native" installation of Pi-hole.
-- You will need to make sure that you have a Linux user account on both Pi-hole systems with `sudo` abilities on both the primary and secondary Pi-hole. Use of the `root` account is not permitted. Most of the pre-built images available for the Raspberry Pi already have this configured. During installation this user will be given passwordless sudo permissions to the `/etc/pihole` directory.
-- The installer will perform checks to make sure the OpenSSH `ssh` and `rsync` commands are available on both the primary and secondary Pi-hole during installation, as well as `SQLite3` and `git` -- all four of these binaries are should be installed by default on most Linux distrobutions, including Raspberry Pi OS. If they are missing you will have an oppertunity to use whatever package manager is available on your system to correct the missing dependencies. These binaries are what do the heavy lifting between your Pi-hole nodes. (Note: If you're using a ultra-lightweight Pi distribution, such as DietPi, that uses Dropbear by default - you may need to convert it to use OpenSSH.)
+- Pi-hole 5.0 (or higher) must already be installed on at least two systems, using any of the Linux distributions that Pi-hole is [certified to run on](https://docs.pi-hole.net/main/prerequesites/#supported-operating-systems).
+- As of Gravity Sync 3.1, your Pi-hole installs can be a standard installation of Pi-hole or a Docker container deployment. In either case, Gravity Sync will run directly on the host OS, and not inside of a container image.
+- If you are using containerized deployments of Pi-hole, only the [official Pi-hole Docker image](https://hub.docker.com/r/pihole/pihole) is supported.
+- You will need a user account with local administrator privileges on the host OS at each side. This can be a dedicated account or the system's `root` account
+- If you're using a non-root user, make sure that the account is a member of the `sudo` group on both the primary and secondary Pi-hole. Most of the pre-built images available for the Raspberry Pi already have this configured. During installation this user will be given passwordless sudo permissions to the system.
+- The installer will perform checks to make sure the required components to use Gravity Sync such as OpenSSH `ssh`, `SQLite3`, and `rsync` (plus a few others) are available on both the primary and secondary Pi-hole during installation. If they are missing you will have an opportunity to use whatever package manager is available on your system to correct the missing dependencies. These binaries are what do the heavy lifting between your Pi-hole nodes.
 
 ### Pi-hole Architecture
 
@@ -49,15 +53,13 @@ You will want to designate one Pi-Hole as primary and at least one as secondary.
 - The primary Pi-hole is where you'll make most of your configuration changes through the Web UI, doing things such as; manual allow-listing, adding block-lists, device/group management, configuring custom/local network DNS, and changing other list settings.
 - The secondary Pi-hole(s) are where you will install and configure Gravity Sync.
 
-For more information and for reference architectures, please [refer to this document](https://github.com/vmstan/gravity-sync/blob/master/ADVANCED.md#reference-architectures)
-
-Starting with version 2.0, Gravity Sync will attempt to sync the Adlist database and Local DNS Settings on each Pi-hole regardless of where the data was changed. Previous versions only pulled data one way as the standard operation.
+For more information and for reference architectures, please [refer to this document](https://github.com/vmstan/gravity-sync/blob/master/docs/ADVANCED.md#reference-architectures)
 
 ## Installation
 
 ### Primary Pi-Hole
 
-Minimal preperation is required (as of version 2.2.3) on your primary Pi-hole.
+Minimal preperation is required on your primary Pi-hole, the installer will mostly check that all dependencies have been met for use.
 
 Login to your _primary_ Pi-hole, and run the following command:
 
@@ -79,32 +81,25 @@ Login to your _secondary_ Pi-hole, and run the following command:
 export GS_INSTALL=secondary && curl -sSL https://raw.githubusercontent.com/vmstan/gravity-sync/master/prep/gs-install.sh | bash
 ```
 
-This will verify you have everything necessary to use Gravity Sync. The installer will then use Git to make a copy of the Gravity Sync executables in your home directory, and direct you to proceed to Configuration step below. Once this has completed, you will now have a folder called `gravity-sync` in your home directory. Everything Gravity Sync runs from there.
+This will verify you have everything necessary to use Gravity Sync. The installer will then use Git to make a copy of the Gravity Sync executables in the folder the installer was executed in, and direct you to proceed to Configuration step below. Once this has completed, you will now have a folder called `gravity-sync` in your installed directory. Everything Gravity Sync runs from there.
 
 Proceed to the Configuration section.
 
 ## Configuration
 
-After you install Gravity Sync to your _secondary Pi-hole_ you will need to create a configuration file.
-
-```bash
-cd $HOME/gravity-sync
-./gravity-sync.sh configure
-```
+After you install Gravity Sync to your _secondary Pi-hole_ you will need to create a configuration file. This will run automatically by the installer.
 
 This will guide you through the process of:
 
 - Specifying the IP or DNS name of your primary Pi-hole.
 - Specifying the SSH username to connect to your primary Pi-hole.
-- Selecting the SSH authentication mechanism (key-pair or password.)
 - Configuring your key-pair and applying it to your primary Pi-hole.
-- Testing your authentication method, and testing RSYNC to the primary.
-- Perform a backup of the existing Pi-hole database.
-- Adding your Gravity Sync user to the local SUDO configuration to run passwordless.
 
 The configuration will be saved as `gravity-sync.conf` in the same folder as the script. If you need to make adjustments to your settings in the future, you can edit this file or run the configuration tool to generate a new one.
 
-After you're pleased your configuration, proceed to the Execution phase.
+If you are deploying Gravity Sync to a system using Docker containers, the script should detect this and prompt for additional configuration. You can also choose to perform an advanced installation when prompted.
+
+After you're pleased with your configuration, proceed to the Execution phase.
 
 ## Execution
 
@@ -184,7 +179,7 @@ You can run a `./gravity-sync.sh config` at any time to generate a new configura
 
 ## Starting Over
 
-Starting in version 2.2, Gravity Sync has a built in tool to purge everything custom about itself from the system.
+Gravity Sync has a built in tool to purge everything custom about itself from the system.
 
 ```bash
 ./gravity-sync.sh purge
@@ -204,7 +199,7 @@ This function will totally wipe out your existing Gravity Sync installation and 
 
 ### Uninstalling
 
-If you are completely uninstalling Gravity Sync, the last step would be to remove the `gravity-sync` folder from your user's home directory.
+If you are completely uninstalling Gravity Sync, the last step would be to remove the `gravity-sync` folder from your installation directory.
 
 ## Advanced Installation
 

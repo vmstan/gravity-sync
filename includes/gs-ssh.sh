@@ -6,32 +6,32 @@
 
 ## Determine SSH Pathways
 function create_sshcmd {
-	if hash ssh 2>/dev/null
-	then
-		if [ -z "$SSHPASSWORD" ]
-		then
+	# if hash ssh 2>/dev/null
+	# then
+	#	if [ -z "$SSHPASSWORD" ]
+	#	then
 			timeout --preserve-status ${CMD_TIMEOUT} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} "${CMD_REQUESTED}"
 				error_validate
-		else
-			timeout --preserve-status ${CMD_TIMEOUT} ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} "${CMD_REQUESTED}"
-				error_validate
-		fi
-	fi
+	#	else
+	#		timeout --preserve-status ${CMD_TIMEOUT} ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} "${CMD_REQUESTED}"
+	#			error_validate
+	#	fi
+	# fi
 }
 
 ## Determine SSH Pathways
 function create_rsynccmd {
-	if hash ssh 2>/dev/null
-	then
-		if [ -z "$SSHPASSWORD" ]
-		then
+	# if hash ssh 2>/dev/null
+	# then
+	#	if [ -z "$SSHPASSWORD" ]
+	#	then
 			rsync --rsync-path="${RSYNC_REPATH}" -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
 				error_validate		
-		else
-			rsync --rsync-path="${RSYNC_REPATH}" -e "${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
-				error_validate
-		fi
-	fi
+	#	else
+	#		rsync --rsync-path="${RSYNC_REPATH}" -e "${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
+	#			error_validate
+	#	fi
+	# fi
 }
 
 ## Detect SSH-KEYGEN
@@ -160,13 +160,13 @@ function detect_remotersync {
 
 		RSYNC_REPATH="rsync"
 		RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:~/gs.test"
-		RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/gs.test"
+		RSYNC_TARGET="${LOCAL_FOLDR}/gs.test"
 			create_rsynccmd
 
 	MESSAGE="Cleaning Up Local Test File"
 	echo_stat
 
-	rm $HOME/${LOCAL_FOLDR}/gs.test
+	rm ${LOCAL_FOLDR}/gs.test
 		error_validate
 
 	MESSAGE="Cleaning Up Remote Test File"
