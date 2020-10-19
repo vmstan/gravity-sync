@@ -57,7 +57,7 @@ You can now use a standard Pi-hole install as your primary, or your secondary. Y
 
 - I made a logo.
 
-<img src="https://raw.githubusercontent.com/vmstan/gravity-sync/3.1.0/docs/gs-logo.svg" height="150" width="150" alt="Gravity Sync">
+<img src="https://raw.githubusercontent.com/vmstan/gravity-sync/master/docs/gs-logo.svg" height="150" width="150" alt="Gravity Sync">
 
 ## 3.0
 
