@@ -206,7 +206,7 @@ function advanced_config_generate {
 	fi
 	
 		
-	if [ $SKIP_PIHOLE_DIR == "1" ]
+	if [ $SKIP_PIHOLE_DIR != "1" ]
 	then
 		MESSAGE="Local Pi-hole Settings Directory Path? (Leave blank for default '/etc/pihole')"
 		echo_need
@@ -222,7 +222,7 @@ function advanced_config_generate {
 		fi
 	fi
 	
-	if [ $SKIP_RIHOLE_DIR == "1" ]
+	if [ "$SKIP_RIHOLE_DIR" != "1" ]
 	then
 		MESSAGE="Remote Pi-hole Settings Directory Path? (Leave blank for default '/etc/pihole')"
 		echo_need
