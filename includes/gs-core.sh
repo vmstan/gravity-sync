@@ -67,6 +67,7 @@ function ph_type {
 function start_gs {
 	MESSAGE="${PROGRAM} ${VERSION} Executing"
 	echo_info
+	cd ${LOCAL_FOLDR}
 	
 	import_gs
 	ph_type
@@ -84,6 +85,7 @@ function start_gs {
 function start_gs_noconfig {
 	MESSAGE="${PROGRAM} ${VERSION} Executing"
 	echo_info
+	cd ${LOCAL_FOLDR}
 
 	MESSAGE="Evaluating Arguments"
 	echo_stat

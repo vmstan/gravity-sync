@@ -180,7 +180,7 @@ else
             git clone https://github.com/vmstan/gravity-sync.git
 			echo -e "[${BLUE}>${NC}] Starting Gravity Sync Configuration"
 			echo -e "========================================================"
-			sh ./gravity-sync/gravity-sync.sh configure < /dev/tty
+			sh cd gravity-sync/gravity-sync.sh configure < /dev/tty
             # echo -e "[${YELLOW}i${NC}] This host is now prepared to configure Gravity Sync!"
             # echo -e "[${YELLOW}i${NC}] Please run './gravity-sync configure' from $HOME/gravity-sync"
             # echo -e "[${YELLOW}i${NC}] Visit https://github.com/vmstan/gravity-sync for more instructions."
