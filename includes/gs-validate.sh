@@ -10,14 +10,14 @@ function validate_gs_folders {
 	echo_stat
 		if [ ! -d ${LOCAL_FOLDR} ]
 		then
-			MESSAGE="Unable to Find ${LOCAL_FOLDR}"
+			MESSAGE="Unable to Validate ${PROGRAM} Folders on $HOSTNAME"
 			echo_fail
 			exit_nochange
 		fi
 	
 		if [ ! -d ${LOCAL_FOLDR}/${BACKUP_FOLD} ]
 		then
-			MESSAGE="Unable to Find ${LOCAL_FOLDR}/${BACKUP_FOLD}"
+			MESSAGE="Unable to Validate ${PROGRAM} Backup Folder on $HOSTNAME"
 			echo_fail
 			exit_nochange
 		fi
@@ -63,10 +63,10 @@ function validate_sqlite3 {
 	echo_stat
 		if hash sqlite3 2>/dev/null
 		then
-			MESSAGE="SQLITE3 Utility Detected"
+			# MESSAGE="SQLITE3 Utility Detected"
 			echo_good
 		else
-			MESSAGE="SQLITE3 Utility Missing"
+			MESSAGE="Unable to Validate SQLITE Install on $HOSTNAME"
 			echo_warn
 
 			MESSAGE="Installing SQLLITE3 with ${PKG_MANAGER}"
