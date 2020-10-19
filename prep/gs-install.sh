@@ -84,6 +84,15 @@ else
     CROSSCOUNT=$((CROSSCOUNT+1))
 fi
 
+# Check Sudo
+if hash sudo 2>/dev/null
+then
+    echo -e "[${GREEN}✓${NC}] SUDO Binaries Detected"
+else
+    echo -e "[${RED}✗${NC}] SUDO Binaries Not Installed"
+    CROSSCOUNT=$((CROSSCOUNT+1))
+fi
+
 # Check SQLITE3
 if hash sqlite3 2>/dev/null
 then
@@ -178,9 +187,12 @@ else
         else
             echo -e "[${BLUE}>${NC}] Creating Gravity Sync Directories"
             git clone https://github.com/vmstan/gravity-sync.git
+            GS_FILEPATH=$(realpath $0)
+            echo -e "[${BLUE}>${NC}] Creating Bash Aliases"
+            echo -e "alias gravity-sync='${GS_FILEPATH}'" | sudo tee -a /etc/bash.bashrc > /dev/null
 			echo -e "[${BLUE}>${NC}] Starting Gravity Sync Configuration"
 			echo -e "========================================================"
-			sh cd gravity-sync/gravity-sync.sh configure < /dev/tty
+			sh ${GS_FILEPATH} configure < /dev/tty
             # echo -e "[${YELLOW}i${NC}] This host is now prepared to configure Gravity Sync!"
             # echo -e "[${YELLOW}i${NC}] Please run './gravity-sync configure' from $HOME/gravity-sync"
             # echo -e "[${YELLOW}i${NC}] Visit https://github.com/vmstan/gravity-sync for more instructions."
