@@ -51,7 +51,7 @@ function smart_gs {
 			PRIDBDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${PIHOLE_DIR}/${GRAVITY_FI}")
 			SECDBDATE=$(stat -c %Y ${PIHOLE_DIR}/${GRAVITY_FI})
 
-				if [ "${PRIDBDATE}" -gt "$SECDBDATE" ]
+				if (( "$PRIDBDATE" >= "$SECDBDATE" ))
 				then
 					MESSAGE="Primary ${GRAVITY_FI} Last Changed"
 					echo_info
@@ -104,7 +104,7 @@ function smart_gs {
 					PRICLDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${PIHOLE_DIR}/${CUSTOM_DNS}")
 					SECCLDATE=$(stat -c %Y ${PIHOLE_DIR}/${CUSTOM_DNS})
 
-						if [ "${PRICLDATE}" -gt "${SECCLDATE}" ]
+						if (( "$PRICLDATE" >= "$SECCLDATE" ))
 						then
 							MESSAGE="Primary ${CUSTOM_DNS} Last Changed"
 							echo_info

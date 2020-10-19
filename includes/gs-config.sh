@@ -238,7 +238,7 @@ function advanced_config_generate {
 		fi
 	fi
 	
-	MESSAGE="Custom SSH Port? (Leave blank for default '22')"
+	MESSAGE="Use Custom SSH Port? (Leave blank for default '22')"
 	echo_need
 	read INPUT_SSH_PORT
 	INPUT_SSH_PORT="${INPUT_SSH_PORT:-22}"
@@ -266,7 +266,7 @@ function advanced_config_generate {
 		PING_AVOID=1
 	fi
 		
-	MESSAGE="Custom SSH PKIF Location? (Leave blank for default '.ssh/id_rsa')"
+	MESSAGE="Use Custom SSH PKIF Location? (Leave blank for default '.ssh/id_rsa')"
 	echo_need
 	read INPUT_CUSTOM_PKIF
 	INPUT_CUSTOM_PKIF="${INPUT_CUSTOM_PKIF:-.ssh/id_rsa}"
@@ -279,7 +279,7 @@ function advanced_config_generate {
 		error_validate
 	fi
 	
-	MESSAGE="Replicate 'Local DNS Records' Feature? (Leave blank for default 'Yes')"
+	MESSAGE="Enable Replicate 'Local DNS Records' Feature? (Leave blank for default 'Yes')"
 	echo_need
 	read INPUT_SKIP_CUSTOM
 	INPUT_SKIP_CUSTOM="${INPUT_SKIP_CUSTOM:-Y}"
@@ -292,7 +292,7 @@ function advanced_config_generate {
 		error_validate
 	fi
 	
-	MESSAGE="Backup Retention in Days? (Leave blank for default '7')"
+	MESSAGE="Change Backup Retention in Days? (Leave blank for default '7')"
 	echo_need
 	read INPUT_BACKUP_RETAIN
 	INPUT_BACKUP_RETAIN="${INPUT_BACKUP_RETAIN:-7}"
