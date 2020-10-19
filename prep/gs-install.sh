@@ -173,7 +173,7 @@ echo -e "[${YELLOW}i${NC}] ${YELLOW}Status Report${NC}"
 # Combine Outputs
 if [ "$CROSSCOUNT" != "0" ]
 then
-    echo -e "[${RED}⬣${NC}] ${RED}${CROSSCOUNT}${NC} Critical Issues Detected"
+    echo -e "[${RED}⬣${NC}] ${RED}${CROSSCOUNT} Critical Issues Detected${NC}"
     echo -e "[${PURPLE}!${NC}] ${PURPLE}Please Correct Failed Components${NC}"
     echo -e "[${YELLOW}i${NC}] ${PURPLE}Installation Exiting (without changes)${NC}"
 else
