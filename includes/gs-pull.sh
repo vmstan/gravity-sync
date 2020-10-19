@@ -38,26 +38,35 @@ function pull_gs_grav {
 		sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 		error_validate
 	
-	MESSAGE="Validating Settings of ${GRAVITY_FI}"
-	echo_stat
-
-		GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk 'OFS=":" {print $3,$4}')
-		if [ "$GRAVDB_OWN" != "$FILE_OWNER" ]
-		then
-			MESSAGE="Validating Ownership on ${GRAVITY_FI}"
-			echo_fail
-			
-			MESSAGE="Attempting to Compensate"
-			echo_warn
-			
-			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
-			echo_stat	
-				sudo chown ${FILE_OWNER} ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
-				error_validate
-
-			MESSAGE="Continuing Validation of ${GRAVITY_FI}"
-			echo_stat
-		fi
+	if [ "$FILE_OWNER" != 'named:docker']
+	then
+		MESSAGE="Validating Settings of ${GRAVITY_FI}"
+		echo_stat
+	
+			GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk 'OFS=":" {print $3,$4}')
+			if [ "$GRAVDB_OWN" != "$FILE_OWNER" ]
+			then
+				MESSAGE="Validating Ownership on ${GRAVITY_FI}"
+				echo_fail
+				
+				MESSAGE="Attempting to Compensate"
+				echo_warn
+				
+				MESSAGE="Setting Ownership on ${GRAVITY_FI}"
+				echo_stat	
+					sudo chown ${FILE_OWNER} ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+					error_validate
+	
+				MESSAGE="Continuing Validation of ${GRAVITY_FI}"
+				echo_stat
+			fi
+	else
+		MESSAGE="Setting Ownership on ${GRAVITY_FI}"
+		echo_stat	
+			sudo chown ${FILE_OWNER} ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+			error_validate
+	fi
+		
 		
 		GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | awk '{print $1}')
 		if [ "$GRAVDB_RWE" != "-rw-rw-r--" ]
