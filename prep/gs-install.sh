@@ -184,7 +184,7 @@ then
     fi
 fi
 
-if [ ! -d gravity-sync ]
+if [ -d gravity-sync ]
 then
     echo -e "[${RED}✗${NC}] Folder gravity-sync Already Exists"
     CROSSCOUNT=$((CROSSCOUNT+1))
