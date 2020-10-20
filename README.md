@@ -1,5 +1,5 @@
 <p align="center">
-	<img src="https://raw.githubusercontent.com/vmstan/gravity-sync/master/docs/gravity-header.svg" width="50%" alt="Gravity Sync">
+	<img src="https://raw.githubusercontent.com/vmstan/gravity-sync/master/docs/gravity-header.svg" width="80%" alt="Gravity Sync">
 </p>
 
 What is better than a [Pi-hole](https://github.com/pi-hole/pi-hole) blocking ads via DNS on your network? That's right, two Pi-hole blocking ads on your network!
