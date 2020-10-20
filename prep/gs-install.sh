@@ -216,7 +216,7 @@ else
 			echo -e "[${YELLOW}i${NC}] Installation Exiting (without changes)"
         else
             echo -e "[${BLUE}>${NC}] Creating Gravity Sync Directories"
-            sudo git clone https://github.com/vmstan/gravity-sync.git
+            git clone https://github.com/vmstan/gravity-sync.git
 			echo -e "[${BLUE}>${NC}] Starting Gravity Sync Configuration"
 			echo -e "========================================================"
 			./gravity-sync/gravity-sync.sh configure <&1
