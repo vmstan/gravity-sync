@@ -169,6 +169,7 @@ then
     CROSSCOUNT=$((CROSSCOUNT+1))
 fi
 
+# echo -e "[${YELLOW}i${NC}] ${YELLOW}Target Folder Analysis${NC}"
 if [ "$GS_INSTALL" == "secondary" ]
 then
     if [ "$LOCALADMIN" == "sudo" ]
@@ -177,10 +178,16 @@ then
         if [ "$THISDIR" != "$HOME" ]
         then
             echo -e "[${RED}✗${NC}] ${CURRENTUSER} Must Install to $HOME"
-            echo -e "[${PURPLE}!${NC}] ${PURPLE}Use root account to install to $THISDIR${NC}"
+            echo -e "[${PURPLE}!${NC}] ${PURPLE}Use 'root' Account to Install in $THISDIR${NC}"
             CROSSCOUNT=$((CROSSCOUNT+1))
         fi
     fi
+fi
+
+if [ ! -d gravity-sync ]
+then
+    echo -e "[${RED}✗${NC}] Folder gravity-sync Already Exists"
+    CROSSCOUNT=$((CROSSCOUNT+1))
 fi
 
 echo -e "[${YELLOW}i${NC}] ${YELLOW}Status Report${NC}"
