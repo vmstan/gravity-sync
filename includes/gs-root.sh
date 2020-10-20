@@ -48,7 +48,7 @@ function new_root_check {
 		LOCALADMIN=""
 	else
 		# Check Sudo
-		SUDOCHECK=$(groups ${CURRENTUSER} | grep 'sudo')
+		SUDOCHECK=$(groups ${CURRENTUSER} | grep -e 'sudo' -e 'wheel')
 		if [ "$SUDOCHECK" == "" ]
 		then
 			LOCALADMIN="nosudo"
