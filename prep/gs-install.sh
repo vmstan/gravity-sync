@@ -169,6 +169,19 @@ then
     CROSSCOUNT=$((CROSSCOUNT+1))
 fi
 
+if [ "$GS_INSTALL" == "secondary" ]
+then
+    if [ "$LOCALADMIN" == "sudo" ]
+    then
+        THISDIR=$(pwd)
+        if [ "$THISDIR" != "$HOME" ]
+        then
+            echo -e "[${RED}✗${NC}] ${CURRENTUSER} Must Install to $HOME"
+            echo -e "[${PURPLE}!${NC}] ${PURPLE}Use root account to install to $THISDIR${NC}"
+            CROSSCOUNT=$((CROSSCOUNT+1))
+    fi
+fi
+
 echo -e "[${YELLOW}i${NC}] ${YELLOW}Status Report${NC}"
 # Combine Outputs
 if [ "$CROSSCOUNT" != "0" ]
@@ -195,7 +208,7 @@ else
 			echo -e "[${YELLOW}i${NC}] Installation Exiting (without changes)"
         else
             echo -e "[${BLUE}>${NC}] Creating Gravity Sync Directories"
-            git clone https://github.com/vmstan/gravity-sync.git
+            sudo git clone https://github.com/vmstan/gravity-sync.git
 			echo -e "[${BLUE}>${NC}] Starting Gravity Sync Configuration"
 			echo -e "========================================================"
 			./gravity-sync/gravity-sync.sh configure <&1
