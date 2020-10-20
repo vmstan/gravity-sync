@@ -179,6 +179,7 @@ then
             echo -e "[${RED}✗${NC}] ${CURRENTUSER} Must Install to $HOME"
             echo -e "[${PURPLE}!${NC}] ${PURPLE}Use root account to install to $THISDIR${NC}"
             CROSSCOUNT=$((CROSSCOUNT+1))
+        fi
     fi
 fi
 
