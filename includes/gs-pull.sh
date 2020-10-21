@@ -29,35 +29,44 @@ function pull_gs_grav {
 	MESSAGE="Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo_stat
 		RSYNC_REPATH="rsync"
-		RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}.backup"
-		RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull"
+		RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${GRAVITY_FI}.backup"
+		RSYNC_TARGET="${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull"
 			create_rsynccmd
 		
 	MESSAGE="Replacing ${GRAVITY_FI} on $HOSTNAME"
 	echo_stat	
-		sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+		sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
 		error_validate
 	
-	MESSAGE="Validating Settings of ${GRAVITY_FI}"
-	echo_stat
-
-		GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk 'OFS=":" {print $3,$4}')
-		if [ "$GRAVDB_OWN" != "$FILE_OWNER" ]
-		then
-			MESSAGE="Validating Ownership on ${GRAVITY_FI}"
-			echo_fail
-			
-			MESSAGE="Attempting to Compensate"
-			echo_warn
-			
-			MESSAGE="Setting Ownership on ${GRAVITY_FI}"
-			echo_stat	
-				sudo chown ${FILE_OWNER} ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
-				error_validate
-
-			MESSAGE="Continuing Validation of ${GRAVITY_FI}"
-			echo_stat
-		fi
+	if [ "$FILE_OWNER" != "named:docker" ]
+	then
+		MESSAGE="Validating Settings of ${GRAVITY_FI}"
+		echo_stat
+	
+			GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk 'OFS=":" {print $3,$4}')
+			if [ "$GRAVDB_OWN" != "$FILE_OWNER" ]
+			then
+				MESSAGE="Validating Ownership on ${GRAVITY_FI}"
+				echo_fail
+				
+				MESSAGE="Attempting to Compensate"
+				echo_warn
+				
+				MESSAGE="Setting Ownership on ${GRAVITY_FI}"
+				echo_stat	
+					sudo chown ${FILE_OWNER} ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+					error_validate
+	
+				MESSAGE="Continuing Validation of ${GRAVITY_FI}"
+				echo_stat
+			fi
+	else
+		MESSAGE="Setting Ownership on ${GRAVITY_FI}"
+		echo_stat	
+			sudo chown ${FILE_OWNER} ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+			error_validate
+	fi
+		
 		
 		GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | awk '{print $1}')
 		if [ "$GRAVDB_RWE" != "-rw-rw-r--" ]
@@ -92,13 +101,13 @@ function pull_gs_cust {
 			MESSAGE="Pulling ${CUSTOM_DNS} from ${REMOTE_HOST}"
 			echo_stat
 				RSYNC_REPATH="rsync"
-				RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS}.backup"
-				RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull"
+				RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${CUSTOM_DNS}.backup"
+				RSYNC_TARGET="${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull"
 					create_rsynccmd
 				
 			MESSAGE="Replacing ${CUSTOM_DNS} on $HOSTNAME"
 			echo_stat	
-				sudo cp $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+				sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
 				error_validate
 			
 			MESSAGE="Validating Settings on ${CUSTOM_DNS}"
@@ -153,12 +162,12 @@ function pull_gs_reload {
 	
 	MESSAGE="Updating FTLDNS Configuration"
 	echo_stat
-		${PIHOLE_BIN} restartdns reloadlists >/dev/null 2>&1
+		${PH_EXEC} restartdns reloadlists >/dev/null 2>&1
 		error_validate
 	
 	MESSAGE="Reloading FTLDNS Services"
 	echo_stat
-		${PIHOLE_BIN} restartdns >/dev/null 2>&1
+		${PH_EXEC} restartdns >/dev/null 2>&1
 		error_validate
 }
 

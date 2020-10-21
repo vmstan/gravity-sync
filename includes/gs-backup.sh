@@ -27,7 +27,7 @@ function backup_local_gravity {
 	MESSAGE="Performing Backup of Local ${GRAVITY_FI}"
 	echo_stat
 	
-	sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} ".backup '$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${GRAVITY_FI}.backup'"
+	sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} ".backup '${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${GRAVITY_FI}.backup'"
 		error_validate
 }
 
@@ -39,7 +39,7 @@ function backup_local_custom {
 			MESSAGE="Performing Backup Up Local ${CUSTOM_DNS}"
 			echo_stat
 
-			cp ${PIHOLE_DIR}/${CUSTOM_DNS} $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CUSTOM_DNS}.backup
+			cp ${PIHOLE_DIR}/${CUSTOM_DNS} ${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CUSTOM_DNS}.backup
 			error_validate
 		fi
 	fi
@@ -50,7 +50,7 @@ function backup_remote_gravity {
 	echo_stat
 	
 	CMD_TIMEOUT='60'
-	CMD_REQUESTED="sudo sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} \".backup '${PIHOLE_DIR}/${GRAVITY_FI}.backup'\""
+	CMD_REQUESTED="sudo sqlite3 ${RIHOLE_DIR}/${GRAVITY_FI} \".backup '${RIHOLE_DIR}/${GRAVITY_FI}.backup'\""
 		create_sshcmd
 }
 
@@ -61,7 +61,7 @@ function backup_remote_custom {
 			echo_stat
 	
 			CMD_TIMEOUT='15'
-			CMD_REQUESTED="sudo cp ${PIHOLE_DIR}/${CUSTOM_DNS} ${PIHOLE_DIR}/${CUSTOM_DNS}.backup"
+			CMD_REQUESTED="sudo cp ${RIHOLE_DIR}/${CUSTOM_DNS} ${RIHOLE_DIR}/${CUSTOM_DNS}.backup"
 				create_sshcmd
 	fi
 }
@@ -70,6 +70,6 @@ function backup_cleanup {
 	MESSAGE="Cleaning Up Old Backups"
 	echo_stat
 
-	find $HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/$(date +%Y)*.backup -mtime +${BACKUP_RETAIN} -type f -delete 
+	find ${LOCAL_FOLDR}/${BACKUP_FOLD}/$(date +%Y)*.backup -mtime +${BACKUP_RETAIN} -type f -delete 
 		error_validate
 }

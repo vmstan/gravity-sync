@@ -28,27 +28,27 @@ function push_gs_grav {
 	MESSAGE="Copying ${GRAVITY_FI} from ${REMOTE_HOST}"
 	echo_stat
 		RSYNC_REPATH="rsync"
-		RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}.backup"
-		RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push"
+		RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${GRAVITY_FI}.backup"
+		RSYNC_TARGET="${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push"
 			create_rsynccmd
 
 	MESSAGE="Pushing ${GRAVITY_FI} to ${REMOTE_HOST}"
 	echo_stat
 		RSYNC_REPATH="sudo rsync"
-		RSYNC_SOURCE="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${GRAVITY_FI}.backup"
-		RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${GRAVITY_FI}"
+		RSYNC_SOURCE="${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${GRAVITY_FI}.backup"
+		RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${GRAVITY_FI}"
 			create_rsynccmd
 
 	MESSAGE="Setting Permissions on ${GRAVITY_FI}"
 	echo_stat
 		CMD_TIMEOUT='15'
-		CMD_REQUESTED="sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI}"
+		CMD_REQUESTED="sudo chmod 664 ${RIHOLE_DIR}/${GRAVITY_FI}"
 			create_sshcmd	
 
 	MESSAGE="Setting Ownership on ${GRAVITY_FI}"
 	echo_stat
 		CMD_TIMEOUT='15'
-		CMD_REQUESTED="sudo chown ${REMOTE_FILE_OWNER} ${PIHOLE_DIR}/${GRAVITY_FI}"
+		CMD_REQUESTED="sudo chown ${RILE_OWNER} ${RIHOLE_DIR}/${GRAVITY_FI}"
 			create_sshcmd
 }
 
@@ -64,27 +64,27 @@ function push_gs_cust {
 			MESSAGE="Copying ${CUSTOM_DNS} from ${REMOTE_HOST}"
 			echo_stat
 				RSYNC_REPATH="rsync"
-				RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS}.backup"
-				RSYNC_TARGET="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.push"
+				RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${CUSTOM_DNS}.backup"
+				RSYNC_TARGET="${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.push"
 					create_rsynccmd
 
 			MESSAGE="Pushing ${CUSTOM_DNS} to ${REMOTE_HOST}"
 			echo_stat
 				RSYNC_REPATH="sudo rsync"
-				RSYNC_SOURCE="$HOME/${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CUSTOM_DNS}.backup"
-				RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${PIHOLE_DIR}/${CUSTOM_DNS}"
+				RSYNC_SOURCE="${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CUSTOM_DNS}.backup"
+				RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${CUSTOM_DNS}"
 					create_rsynccmd
 
 			MESSAGE="Setting Permissions on ${CUSTOM_DNS}"
 			echo_stat
 				CMD_TIMEOUT='15'
-				CMD_REQUESTED="sudo chmod 644 ${PIHOLE_DIR}/${CUSTOM_DNS}"
+				CMD_REQUESTED="sudo chmod 644 ${RIHOLE_DIR}/${CUSTOM_DNS}"
 					create_sshcmd
 
 			MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
 			echo_stat
 				CMD_TIMEOUT='15'
-				CMD_REQUESTED="sudo chown root:root ${PIHOLE_DIR}/${CUSTOM_DNS}"
+				CMD_REQUESTED="sudo chown root:root ${RIHOLE_DIR}/${CUSTOM_DNS}"
 					create_sshcmd	
 		fi	
 	fi
@@ -99,13 +99,13 @@ function push_gs_reload {
 	MESSAGE="Updating Remote FTLDNS Configuration"
 	echo_stat
 		CMD_TIMEOUT='15'
-		CMD_REQUESTED="${RIHOLE_BIN} restartdns reloadlists"
+		CMD_REQUESTED="${RH_EXEC} restartdns reloadlists"
 			create_sshcmd
 	
 	MESSAGE="Reloading Remote FTLDNS Services"
 	echo_stat
 		CMD_TIMEOUT='15'
-		CMD_REQUESTED="${RIHOLE_BIN} restartdns"
+		CMD_REQUESTED="${RH_EXEC} restartdns"
 			create_sshcmd
 }
 

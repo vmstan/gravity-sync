@@ -22,6 +22,9 @@ function task_smart {
 
 ## Smart Sync Function
 function smart_gs {
+	MESSAGE="Starting ${TASKTYPE} Analysis"
+	echo_info
+	
 	previous_md5
 	md5_compare
 	backup_settime
@@ -45,22 +48,22 @@ function smart_gs {
 	then
 		if [ "${PRIDBCHANGE}" != "0" ]
 		then
-			MESSAGE="Both ${GRAVITY_FI} Changed"
+			MESSAGE="Both ${GRAVITY_FI} Have Changed"
 			echo_warn
 
-			PRIDBDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${PIHOLE_DIR}/${GRAVITY_FI}")
+			PRIDBDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${RIHOLE_DIR}/${GRAVITY_FI}")
 			SECDBDATE=$(stat -c %Y ${PIHOLE_DIR}/${GRAVITY_FI})
 
-				if [ "${PRIDBDATE}" -gt "$SECDBDATE" ]
+				if (( "$PRIDBDATE" >= "$SECDBDATE" ))
 				then
 					MESSAGE="Primary ${GRAVITY_FI} Last Changed"
-					echo_info
+					echo_warn
 
 					pull_gs_grav
 					PULLRESTART="1"
 				else
 					MESSAGE="Secondary ${GRAVITY_FI} Last Changed"
-					echo_info
+					echo_warn
 
 					push_gs_grav
 					PUSHRESTART="1"
@@ -98,22 +101,22 @@ function smart_gs {
 			then
 				if [ "${PRICLCHANGE}" != "0" ]
 				then
-					MESSAGE="Both ${CUSTOM_DNS} Changed"
+					MESSAGE="Both ${CUSTOM_DNS} Have Changed"
 					echo_warn
 
-					PRICLDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${PIHOLE_DIR}/${CUSTOM_DNS}")
+					PRICLDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${RIHOLE_DIR}/${CUSTOM_DNS}")
 					SECCLDATE=$(stat -c %Y ${PIHOLE_DIR}/${CUSTOM_DNS})
 
-						if [ "${PRICLDATE}" -gt "${SECCLDATE}" ]
+						if (( "$PRICLDATE" >= "$SECCLDATE" ))
 						then
 							MESSAGE="Primary ${CUSTOM_DNS} Last Changed"
-							echo_info
+							echo_warn
 
 							pull_gs_cust
 							PULLRESTART="1"
 						else
 							MESSAGE="Secondary ${CUSTOM_DNS} Last Changed"
-							echo_info
+							echo_warn
 
 							push_gs_cust
 							PUSHRESTART="1"

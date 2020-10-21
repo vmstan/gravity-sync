@@ -19,10 +19,10 @@ function task_purge {
 	MESSAGE="- Your ${CONFIG_FILE} file."
 	echo_warn
 
-	if [ -f "$HOME/${LOCAL_FOLDR}/dev" ]
+	if [ -f "${LOCAL_FOLDR}/dev" ]
 	then
 		MESSAGE="- Your development branch updater."
-	elif [ -f "$HOME/${LOCAL_FOLDR}/beta" ]
+	elif [ -f "${LOCAL_FOLDR}/beta" ]
 	then
 		MESSAGE="- Your beta branch updater."
 	fi

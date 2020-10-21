@@ -8,9 +8,9 @@
 function import_gs {
 	MESSAGE="Importing ${CONFIG_FILE} Settings"
 	echo -en "${STAT} $MESSAGE"
-	if [ -f $HOME/${LOCAL_FOLDR}/${CONFIG_FILE} ]
+	if [ -f ${LOCAL_FOLDR}/${CONFIG_FILE} ]
 	then
-		source $HOME/${LOCAL_FOLDR}/${CONFIG_FILE}
+		source ${LOCAL_FOLDR}/${CONFIG_FILE}
 			error_validate
 			
 		# MESSAGE="Targeting ${REMOTE_USER}@${REMOTE_HOST}"
@@ -45,19 +45,39 @@ function error_validate {
 	fi
 }
 
+function ph_type {
+	if [ "$PH_IN_TYPE" == "default" ]
+	then
+		PH_EXEC="${PIHOLE_BIN}"
+	elif [ "$PH_IN_TYPE" == "docker" ]
+	then
+		PH_EXEC="${DOCKER_BIN} exec ${DOCKER_CON} pihole"
+	fi
+	
+	if [ "$RH_IN_TYPE" == "default" ]
+	then
+		RH_EXEC="${RIHOLE_BIN}"
+	elif [ "$RH_IN_TYPE" == "docker" ]
+	then
+		RH_EXEC="${ROCKER_BIN} exec ${DOCKER_CON} pihole"
+	fi
+}
+
 # Standard Output
 function start_gs {
 	MESSAGE="${PROGRAM} ${VERSION} Executing"
 	echo_info
+	cd ${LOCAL_FOLDR}
 	
 	import_gs
+	ph_type
 
 	MESSAGE="Evaluating Arguments"
 	echo_stat
 
 	if [ "${ROOT_CHECK_AVOID}" != "1" ]
 	then
-		root_check
+		new_root_check
 	fi
 }
 
@@ -65,6 +85,7 @@ function start_gs {
 function start_gs_noconfig {
 	MESSAGE="${PROGRAM} ${VERSION} Executing"
 	echo_info
+	cd ${LOCAL_FOLDR}
 
 	MESSAGE="Evaluating Arguments"
 	echo_stat

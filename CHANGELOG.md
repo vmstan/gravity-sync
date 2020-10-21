@@ -59,10 +59,6 @@ You can now use a standard Pi-hole install as your primary, or your secondary. Y
 
 <img src="https://raw.githubusercontent.com/vmstan/gravity-sync/master/docs/gs-logo.svg" height="150" width="150" alt="Gravity Sync">
 
-#### 3.1.1
-
-- Fixes issue where Docker based Pi-hole restarts may not complete. [#109](https://github.com/vmstan/gravity-sync/issues/109)
-
 ## 3.0
 
 ### The Breakout Release

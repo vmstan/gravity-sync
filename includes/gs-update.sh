@@ -6,9 +6,9 @@
 
 ## Master Branch
 function update_gs {
-	if [ -f "$HOME/${LOCAL_FOLDR}/dev" ]
+	if [ -f "${LOCAL_FOLDR}/dev" ]
 	then
-		source $HOME/${LOCAL_FOLDR}/dev
+		source ${LOCAL_FOLDR}/dev
 	else
 		BRANCH='origin/master'
 	fi
@@ -46,10 +46,10 @@ function show_version {
 	MESSAGE="${BLUE}https://github.com/vmstan/gravity-sync${NC}"
 	echo_info
 
-	if [ -f $HOME/${LOCAL_FOLDR}/dev ]
+	if [ -f ${LOCAL_FOLDR}/dev ]
 	then
 		DEVVERSION="dev"
-	elif [ -f $HOME/${LOCAL_FOLDR}/beta ]
+	elif [ -f ${LOCAL_FOLDR}/beta ]
 	then 
 		DEVVERSION="beta"
 	else
@@ -81,27 +81,27 @@ function task_devmode {
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	echo_good
 	
-	if [ -f $HOME/${LOCAL_FOLDR}/dev ]
+	if [ -f ${LOCAL_FOLDR}/dev ]
 	then
 		MESSAGE="Disabling ${TASKTYPE}"
 		echo_stat
-		rm -f $HOME/${LOCAL_FOLDR}/dev
+		rm -f ${LOCAL_FOLDR}/dev
 			error_validate
-	elif [ -f $HOME/${LOCAL_FOLDR}/beta ]
+	elif [ -f ${LOCAL_FOLDR}/beta ]
 	then
 		MESSAGE="Disabling BETA"
 		echo_stat
-		rm -f $HOME/${LOCAL_FOLDR}/beta
+		rm -f ${LOCAL_FOLDR}/beta
 			error_validate
 		
 		MESSAGE="Enabling ${TASKTYPE}"
 		echo_stat
-		touch $HOME/${LOCAL_FOLDR}/dev
+		touch ${LOCAL_FOLDR}/dev
 			error_validate
 	else
 		MESSAGE="Enabling ${TASKTYPE}"
 		echo_stat
-		touch $HOME/${LOCAL_FOLDR}/dev
+		touch ${LOCAL_FOLDR}/dev
 			error_validate
 
 		MESSAGE="Updating Cache"
@@ -115,7 +115,7 @@ function task_devmode {
 		echo_need
 		read INPUT_BRANCH
 
-		echo -e "BRANCH='${INPUT_BRANCH}'" >> $HOME/${LOCAL_FOLDR}/dev
+		echo -e "BRANCH='${INPUT_BRANCH}'" >> ${LOCAL_FOLDR}/dev
 	fi
 	
 	update_gs
