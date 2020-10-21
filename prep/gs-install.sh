@@ -187,6 +187,7 @@ fi
 if [ -d gravity-sync ]
 then
     echo -e "[${RED}✗${NC}] Folder gravity-sync Already Exists"
+    echo -e "[${PURPLE}!${NC}] ${PURPLE}Use './gravity-sync.sh update' to Update Instead${NC}"
     CROSSCOUNT=$((CROSSCOUNT+1))
 fi
 

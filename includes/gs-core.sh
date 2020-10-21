@@ -51,7 +51,7 @@ function ph_type {
 		PH_EXEC="${PIHOLE_BIN}"
 	elif [ "$PH_IN_TYPE" == "docker" ]
 	then
-		PH_EXEC="${DOCKER_BIN} exec -it ${DOCKER_CON} pihole"
+		PH_EXEC="${DOCKER_BIN} exec ${DOCKER_CON} pihole"
 	fi
 	
 	if [ "$RH_IN_TYPE" == "default" ]
@@ -59,7 +59,7 @@ function ph_type {
 		RH_EXEC="${RIHOLE_BIN}"
 	elif [ "$RH_IN_TYPE" == "docker" ]
 	then
-		RH_EXEC="${ROCKER_BIN} exec -it ${DOCKER_CON} pihole"
+		RH_EXEC="${ROCKER_BIN} exec ${DOCKER_CON} pihole"
 	fi
 }
 
