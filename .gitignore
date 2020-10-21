@@ -10,3 +10,4 @@ backup/*.pull
 dev
 .vscode
 .DS_Store
+.nova
