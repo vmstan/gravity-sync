@@ -148,7 +148,7 @@ function task_version {
 
 ## Info Task
 
-function task_info() {
+function task_info {
 	TASKTYPE='INFO'
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
 	
