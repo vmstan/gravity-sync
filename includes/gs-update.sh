@@ -75,6 +75,11 @@ function show_version {
 	echo -e "========================================================"
 }
 
+function show_info() {
+	echo -e "========================================================"
+	echo -e "========================================================"
+}
+
 ## Devmode Task
 function task_devmode {
 	TASKTYPE='DEV'
@@ -148,9 +153,12 @@ function task_version {
 
 ## Info Task
 
-function task_info {
+function task_info() {
 	TASKTYPE='INFO'
 	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	echo_good
+	
+	show_info
 	
 	exit_nochange
 }
