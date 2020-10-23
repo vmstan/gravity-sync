@@ -145,3 +145,12 @@ function task_version {
 	show_version
 	exit_nochange
 }
+
+## Info Task
+
+function task_info() {
+	TASKTYPE='INFO'
+	MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+	
+	exit_nochange
+}

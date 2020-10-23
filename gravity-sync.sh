@@ -157,6 +157,9 @@ case $# in
 			sudo)
 				start_gs
 				task_sudo ;;
+			info)
+				start_gs
+				task_info ;;
 			*)
 				start_gs
 				task_invalid ;;
