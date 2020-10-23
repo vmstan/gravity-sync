@@ -59,6 +59,14 @@ You can now use a standard Pi-hole install as your primary, or your secondary. Y
 
 <img src="https://raw.githubusercontent.com/vmstan/gravity-sync/master/docs/gs-logo.svg" height="150" width="150" alt="Gravity Sync">
 
+#### 3.1.1
+
+- Corrected an error where Docker exec commands would not run correctly on some distributions.
+
+#### 3.1.2
+
+- Adds `./gravity-sync.sh info` screen to show output of settings and component versions.
+
 ## 3.0
 
 ### The Breakout Release
