@@ -77,6 +77,21 @@ function show_version {
 
 function show_info() {
 	echo -e "========================================================"
+	echo -e "${YELLOW}Local Pi-hole Settings${NC}"
+	echo -e "Local Pi-hole Type: ${PH_IN_TYPE}"
+	echo -e "Local Pi-hole Config Directory: ${PIHOLE_DIR}"
+	echo -e "Local Pi-hole Binary Directory: ${PIHOLE_BIN}"
+	echo -e "Local Docker Binary Directory: ${DOCKER_BIN}"
+	echo -e "Local File Owner Settings: ${DOCKER_BIN}"
+	echo -e "Local Docker Container Name: ${DOCKER_CON}"
+	echo -e ""
+	echo -e "${YELLOW}Remote Pi-hole Settings${NC}"
+	echo -e "Remote Pi-hole Type: ${RH_IN_TYPE}"
+	echo -e "Remote Pi-hole Config Directory: ${RIHOLE_DIR}"
+	echo -e "Remote Pi-hole Binary Directory: ${RIHOLE_BIN}"
+	echo -e "Remote Docker Binary Directory: ${DOCKER_BIN}"
+	echo -e "Remote File Owner Settings: ${DOCKER_BIN}"
+	echo -e "Remote Docker Container Name: ${DOCKER_CON}"
 	echo -e "========================================================"
 }
 
