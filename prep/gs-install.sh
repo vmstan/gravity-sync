@@ -33,7 +33,7 @@ echo -e "========================================================"
 # Check Root
 echo -e "[${YELLOW}i${NC}] ${YELLOW}Validating System Authorization${NC}"
 if [ ! "$EUID" -ne 0 ]
-then 
+then
     echo -e "[${GREEN}✓${NC}] Current User (${CURRENTUSER}) is ROOT"
     LOCALADMIN="root"
 else
@@ -208,24 +208,24 @@ else
         echo -e "${CURRENTUSER} ALL=(ALL) NOPASSWD: ALL" > /tmp/gs-nopasswd.sudo
         sudo install -m 0440 /tmp/gs-nopasswd.sudo /etc/sudoers.d/gs-nopasswd
     fi
-
-		if [ "$GS_INSTALL" != "secondary" ]
-		then
-			echo -e "[${YELLOW}i${NC}] Gravity Sync Preperation Complete"
-            echo -e "[${YELLOW}i${NC}] Execute on Installer on Secondary"
-            echo -e "[${YELLOW}i${NC}] Check Documentation for Instructions"
-			echo -e "[${YELLOW}i${NC}] Installation Exiting (without changes)"
-        else
-            echo -e "[${BLUE}>${NC}] Creating Gravity Sync Directories"
-            git clone https://github.com/vmstan/gravity-sync.git
-			echo -e "[${BLUE}>${NC}] Starting Gravity Sync Configuration"
-			echo -e "========================================================"
-			./gravity-sync/gravity-sync.sh configure <&1
-            # echo -e "[${YELLOW}i${NC}] This host is now prepared to configure Gravity Sync!"
-            # echo -e "[${YELLOW}i${NC}] Please run './gravity-sync configure' from $HOME/gravity-sync"
-            # echo -e "[${YELLOW}i${NC}] Visit https://github.com/vmstan/gravity-sync for more instructions."
-		fi
-        
+    
+    if [ "$GS_INSTALL" != "secondary" ]
+    then
+        echo -e "[${YELLOW}i${NC}] Gravity Sync Preperation Complete"
+        echo -e "[${YELLOW}i${NC}] Execute on Installer on Secondary"
+        echo -e "[${YELLOW}i${NC}] Check Documentation for Instructions"
+        echo -e "[${YELLOW}i${NC}] Installation Exiting (without changes)"
+    else
+        echo -e "[${BLUE}>${NC}] Creating Gravity Sync Directories"
+        git clone https://github.com/vmstan/gravity-sync.git
+        echo -e "[${BLUE}>${NC}] Starting Gravity Sync Configuration"
+        echo -e "========================================================"
+        ./gravity-sync/gravity-sync.sh configure <&1
+        # echo -e "[${YELLOW}i${NC}] This host is now prepared to configure Gravity Sync!"
+        # echo -e "[${YELLOW}i${NC}] Please run './gravity-sync configure' from $HOME/gravity-sync"
+        # echo -e "[${YELLOW}i${NC}] Visit https://github.com/vmstan/gravity-sync for more instructions."
+    fi
+    
 fi
 
 exit

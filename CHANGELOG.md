@@ -59,6 +59,15 @@ You can now use a standard Pi-hole install as your primary, or your secondary. Y
 
 <img src="https://raw.githubusercontent.com/vmstan/gravity-sync/master/docs/gs-logo.svg" height="150" width="150" alt="Gravity Sync">
 
+#### 3.1.1
+
+- Corrected an error where Docker exec commands would not run correctly on some distributions.
+
+#### 3.1.2
+
+- Fix variable missing quotes error in configuration screen.
+- Convert all bash files from mix of tabs and spaces to 4 space indentation.
+
 ## 3.0
 
 ### The Breakout Release

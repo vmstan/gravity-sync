@@ -25,30 +25,30 @@ NEED="[${BLUE}?${NC}]"
 ## Echo Stack
 ### Informative
 function echo_info {
-	echo -e "${INFO} ${YELLOW}${MESSAGE}${NC}"
+    echo -e "${INFO} ${YELLOW}${MESSAGE}${NC}"
 }
 
 ### Warning
 function echo_warn {
-	echo -e "${WARN} ${PURPLE}${MESSAGE}${NC}"
+    echo -e "${WARN} ${PURPLE}${MESSAGE}${NC}"
 }
 
 ### Executing
 function echo_stat {
-	echo -en "${STAT} ${MESSAGE}"
-} 
+    echo -en "${STAT} ${MESSAGE}"
+}
 
 ### Success
 function echo_good {
-	echo -e "\r${GOOD} ${MESSAGE}"
+    echo -e "\r${GOOD} ${MESSAGE}"
 }
 
 ### Failure
 function echo_fail {
-	echo -e "\r${FAIL} ${MESSAGE}"
+    echo -e "\r${FAIL} ${MESSAGE}"
 }
 
 ### Request
 function echo_need {
-	echo -en "${NEED} ${MESSAGE}: "
+    echo -en "${NEED} ${MESSAGE}: "
 }
