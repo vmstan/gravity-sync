@@ -57,6 +57,20 @@ function validate_ph_folders {
     echo_good
 }
 
+## Validate DNSMASQ Folders
+function validate_dns_folders {
+    MESSAGE="Validating DNSMASQ Configuration"
+    echo_stat
+    
+    if [ ! -d ${DNSMAQ_DIR} ]
+    then
+        MESSAGE="Unable to Validate DNSMASQ Configuration Directory"
+        echo_fail
+        exit_nochange
+    fi
+    echo_good
+}
+
 ## Validate SQLite3
 function validate_sqlite3 {
     MESSAGE="Validating SQLITE Installed on $HOSTNAME"

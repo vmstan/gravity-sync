@@ -100,6 +100,7 @@ function task_compare {
     show_target
     validate_gs_folders
     validate_ph_folders
+    validate_dns_folders
     validate_os_sshpass
     
     previous_md5
