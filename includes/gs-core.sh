@@ -11,18 +11,18 @@ function import_gs {
     if [ -f ${LOCAL_FOLDR}/${CONFIG_FILE} ]
     then
         source ${LOCAL_FOLDR}/${CONFIG_FILE}
-            error_validate
-            
+        error_validate
+        
         # MESSAGE="Targeting ${REMOTE_USER}@${REMOTE_HOST}"
         # echo_info
-
+        
         # detect_ssh
     else
         echo_fail
         
         MESSAGE="${CONFIG_FILE} Missing"
         echo_info
-
+        
         TASKTYPE='CONFIG'
         config_generate
     fi
@@ -71,10 +71,10 @@ function start_gs {
     
     import_gs
     ph_type
-
+    
     MESSAGE="Evaluating Arguments"
     echo_stat
-
+    
     if [ "${ROOT_CHECK_AVOID}" != "1" ]
     then
         new_root_check
@@ -86,7 +86,7 @@ function start_gs_noconfig {
     MESSAGE="${PROGRAM} ${VERSION} Executing"
     echo_info
     cd ${LOCAL_FOLDR}
-
+    
     MESSAGE="Evaluating Arguments"
     echo_stat
 }

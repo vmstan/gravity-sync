@@ -7,16 +7,16 @@
 ## Validate Sync Required
 function md5_compare {
     HASHMARK='0'
-
+    
     MESSAGE="Analyzing ${GRAVITY_FI} on ${REMOTE_HOST}"
     echo_stat
-    primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${GRAVITY_FI}" | sed 's/\s.*$//') 
-        error_validate
+    primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${GRAVITY_FI}" | sed 's/\s.*$//')
+    error_validate
     
     MESSAGE="Analyzing ${GRAVITY_FI} on $HOSTNAME"
     echo_stat
     secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI} | sed 's/\s.*$//')
-        error_validate
+    error_validate
     
     if [ "$primaryDBMD5" == "$last_primaryDBMD5" ] && [ "$secondDBMD5" == "$last_secondDBMD5" ]
     then
@@ -26,7 +26,7 @@ function md5_compare {
         echo_warn
         HASHMARK=$((HASHMARK+1))
     fi
-
+    
     if [ "$SKIP_CUSTOM" != '1' ]
     then
         if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
@@ -36,14 +36,14 @@ function md5_compare {
                 REMOTE_CUSTOM_DNS="1"
                 MESSAGE="Analyzing ${CUSTOM_DNS} on ${REMOTE_HOST}"
                 echo_stat
-
-                primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//'") 
-                    error_validate
+                
+                primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//'")
+                error_validate
                 
                 MESSAGE="Analyzing ${CUSTOM_DNS} on $HOSTNAME"
                 echo_stat
                 secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//')
-                    error_validate
+                error_validate
                 
                 if [ "$primaryCLMD5" == "$last_primaryCLMD5" ] && [ "$secondCLMD5" == "$last_secondCLMD5" ]
                 then
@@ -64,12 +64,12 @@ function md5_compare {
                 MESSAGE="${REMOTE_HOST} has ${CUSTOM_DNS}"
                 HASHMARK=$((HASHMARK+1))
                 echo_info
-            fi	
+            fi
             MESSAGE="No ${CUSTOM_DNS} Detected on $HOSTNAME"
             echo_info
         fi
     fi
-
+    
     if [ "$HASHMARK" != "0" ]
     then
         MESSAGE="Replication Required"
@@ -78,7 +78,7 @@ function md5_compare {
     else
         MESSAGE="No Replication Required"
         echo_info
-            exit_nochange
+        exit_nochange
     fi
 }
 
@@ -102,17 +102,17 @@ function md5_recheck {
     echo_info
     
     HASHMARK='0'
-
+    
     MESSAGE="Reanalyzing ${GRAVITY_FI} on ${REMOTE_HOST}"
     echo_stat
-    primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${GRAVITY_FI}" | sed 's/\s.*$//') 
-        error_validate
+    primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${GRAVITY_FI}" | sed 's/\s.*$//')
+    error_validate
     
     MESSAGE="Reanalyzing ${GRAVITY_FI} on $HOSTNAME"
     echo_stat
     secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI} | sed 's/\s.*$//')
-        error_validate
-
+    error_validate
+    
     if [ "$SKIP_CUSTOM" != '1' ]
     then
         if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
@@ -122,14 +122,14 @@ function md5_recheck {
                 REMOTE_CUSTOM_DNS="1"
                 MESSAGE="Reanalyzing ${CUSTOM_DNS} on ${REMOTE_HOST}"
                 echo_stat
-
-                primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//'") 
-                    error_validate
+                
+                primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//'")
+                error_validate
                 
                 MESSAGE="Reanalyzing ${CUSTOM_DNS} on $HOSTNAME"
                 echo_stat
                 secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//')
-                    error_validate
+                error_validate
             else
                 MESSAGE="No ${CUSTOM_DNS} Detected on ${REMOTE_HOST}"
                 echo_info
@@ -140,7 +140,7 @@ function md5_recheck {
                 REMOTE_CUSTOM_DNS="1"
                 MESSAGE="${REMOTE_HOST} has ${CUSTOM_DNS}"
                 echo_info
-            fi	
+            fi
             MESSAGE="No ${CUSTOM_DNS} Detected on $HOSTNAME"
             echo_info
         fi

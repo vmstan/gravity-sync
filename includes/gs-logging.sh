@@ -9,7 +9,7 @@ function task_logs {
     TASKTYPE='LOGS'
     MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
     echo_good
-
+    
     logs_gs
 }
 
@@ -18,40 +18,40 @@ function task_logs {
 function logs_export {
     if [ "${TASKTYPE}" != "BACKUP" ]
     then
-    MESSAGE="Saving File Hashes"
-    echo_stat
+        MESSAGE="Saving File Hashes"
+        echo_stat
         rm -f ${LOG_PATH}/${HISTORY_MD5}
         echo -e ${primaryDBMD5} >> ${LOG_PATH}/${HISTORY_MD5}
         echo -e ${secondDBMD5} >> ${LOG_PATH}/${HISTORY_MD5}
         echo -e ${primaryCLMD5} >> ${LOG_PATH}/${HISTORY_MD5}
         echo -e ${secondCLMD5} >> ${LOG_PATH}/${HISTORY_MD5}
-            error_validate
+        error_validate
     fi
-
+    
     MESSAGE="Logging Successful ${TASKTYPE}"
     echo_stat
-        echo -e $(date) "[${TASKTYPE}]" >> ${LOG_PATH}/${SYNCING_LOG}
-        error_validate
+    echo -e $(date) "[${TASKTYPE}]" >> ${LOG_PATH}/${SYNCING_LOG}
+    error_validate
 }
 
 ### Output Sync Logs
 function logs_gs {
     MESSAGE="Tailing ${LOG_PATH}/${SYNCING_LOG}"
     echo_info
-
+    
     echo -e "========================================================"
     echo -e "Recent Complete ${YELLOW}SMART${NC} Executions"
-        tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep SMART
+    tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep SMART
     echo -e "Recent Complete ${YELLOW}PULL${NC} Executions"
-        tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PULL
+    tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PULL
     echo -e "Recent Complete ${YELLOW}PUSH${NC} Executions"
-        tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PUSH
+    tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PUSH
     echo -e "Recent Complete ${YELLOW}BACKUP${NC} Executions"
-        tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep BACKUP
+    tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep BACKUP
     echo -e "Recent Complete ${YELLOW}RESTORE${NC} Executions"
-        tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep RESTORE
+    tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep RESTORE
     echo -e "========================================================"
-
+    
     exit_nochange
 }
 
@@ -64,31 +64,31 @@ function show_crontab {
     if [ -f ${LOG_PATH}/${CRONJOB_LOG} ]
     then
         if [ -s ${LOG_PATH}/${CRONJOB_LOG} ]
-            echo_good
-            
-            MESSAGE="Tailing ${LOG_PATH}/${CRONJOB_LOG}"
-            echo_info
-
-            echo -e "========================================================"
-            date -r ${LOG_PATH}/${CRONJOB_LOG}
-            cat ${LOG_PATH}/${CRONJOB_LOG}
-            echo -e "========================================================"
-
-            exit_nochange
+        echo_good
+        
+        MESSAGE="Tailing ${LOG_PATH}/${CRONJOB_LOG}"
+        echo_info
+        
+        echo -e "========================================================"
+        date -r ${LOG_PATH}/${CRONJOB_LOG}
+        cat ${LOG_PATH}/${CRONJOB_LOG}
+        echo -e "========================================================"
+        
+        exit_nochange
         then
             echo_fail
-
+            
             MESSAGE="${LOG_PATH}/${CRONJOB_LOG} is Empty"
             echo_info
-
+            
             exit_nochange
         fi
     else
         echo_fail
-
+        
         MESSAGE="${LOG_PATH}/${CRONJOB_LOG} is Missing"
         echo_info
-
+        
         exit_nochange
     fi
 }

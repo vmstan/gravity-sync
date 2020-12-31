@@ -25,9 +25,9 @@ function intent_validate {
         
         MESSAGE="Type ${INTENT} to Confirm"
         echo_need
-
+        
         read INPUT_INTENT
-
+        
         if [ "${INPUT_INTENT}" != "${INTENT}" ]
         then
             MESSAGE="${TASKTYPE} Aborted"

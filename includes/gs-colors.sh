@@ -36,7 +36,7 @@ function echo_warn {
 ### Executing
 function echo_stat {
     echo -en "${STAT} ${MESSAGE}"
-} 
+}
 
 ### Success
 function echo_good {

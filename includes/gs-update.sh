@@ -12,28 +12,28 @@ function update_gs {
     else
         BRANCH='origin/master'
     fi
-
+    
     if [ "$BRANCH" != "origin/master" ]
     then
         MESSAGE="Pulling from ${BRANCH}"
         echo_info
     fi
-
+    
     GIT_CHECK=$(git status | awk '{print $1}')
     if [ "$GIT_CHECK" == "fatal:" ]
     then
-        MESSAGE="Requires GitHub Installation" 
+        MESSAGE="Requires GitHub Installation"
         echo_warn
         exit_nochange
     else
         MESSAGE="Updating Cache"
         echo_stat
         git fetch --all >/dev/null 2>&1
-            error_validate
+        error_validate
         MESSAGE="Applying Update"
         echo_stat
         git reset --hard ${BRANCH} >/dev/null 2>&1
-            error_validate
+        error_validate
     fi
 }
 
@@ -42,15 +42,15 @@ function show_version {
     echo -e "========================================================"
     MESSAGE="${BOLD}${PROGRAM}${NC} by ${CYAN}@vmstan${NC}"
     echo_info
-
+    
     MESSAGE="${BLUE}https://github.com/vmstan/gravity-sync${NC}"
     echo_info
-
+    
     if [ -f ${LOCAL_FOLDR}/dev ]
     then
         DEVVERSION="dev"
     elif [ -f ${LOCAL_FOLDR}/beta ]
-    then 
+    then
         DEVVERSION="beta"
     else
         DEVVERSION=""
@@ -58,7 +58,7 @@ function show_version {
     
     MESSAGE="Running Version: ${GREEN}${VERSION}${NC} ${DEVVERSION}"
     echo_info
-
+    
     GITVERSION=$(curl -sf https://raw.githubusercontent.com/vmstan/gravity-sync/master/VERSION)
     if [ -z "$GITVERSION" ]
     then
@@ -66,9 +66,9 @@ function show_version {
     else
         if [ "$GITVERSION" != "$VERSION" ]
         then
-        MESSAGE="Update Available: ${PURPLE}${GITVERSION}${NC}"
+            MESSAGE="Update Available: ${PURPLE}${GITVERSION}${NC}"
         else
-        MESSAGE="Latest Version: ${GREEN}${GITVERSION}${NC}"
+            MESSAGE="Latest Version: ${GREEN}${GITVERSION}${NC}"
         fi
     fi
     echo_info
@@ -106,35 +106,35 @@ function task_devmode {
         MESSAGE="Disabling ${TASKTYPE}"
         echo_stat
         rm -f ${LOCAL_FOLDR}/dev
-            error_validate
+        error_validate
     elif [ -f ${LOCAL_FOLDR}/beta ]
     then
         MESSAGE="Disabling BETA"
         echo_stat
         rm -f ${LOCAL_FOLDR}/beta
-            error_validate
+        error_validate
         
         MESSAGE="Enabling ${TASKTYPE}"
         echo_stat
         touch ${LOCAL_FOLDR}/dev
-            error_validate
+        error_validate
     else
         MESSAGE="Enabling ${TASKTYPE}"
         echo_stat
         touch ${LOCAL_FOLDR}/dev
-            error_validate
-
+        error_validate
+        
         MESSAGE="Updating Cache"
         echo_stat
         git fetch --all >/dev/null 2>&1
-            error_validate
+        error_validate
         
         git branch -r
-
+        
         MESSAGE="Select Branch to Update Against"
         echo_need
         read INPUT_BRANCH
-
+        
         echo -e "BRANCH='${INPUT_BRANCH}'" >> ${LOCAL_FOLDR}/dev
     fi
     
@@ -148,11 +148,11 @@ function task_update {
     TASKTYPE='UPDATE'
     MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
     echo_good
-
+    
     dbclient_warning
     
     update_gs
-
+    
     exit_withchange
 }
 
@@ -161,7 +161,7 @@ function task_version {
     TASKTYPE='VERSION'
     MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
     echo_good
-
+    
     show_version
     exit_nochange
 }
