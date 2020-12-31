@@ -107,84 +107,84 @@ source ${LOCAL_FOLDR}/includes/gs-exit.sh
 # SCRIPT EXECUTION ###########################
 
 case $# in
-	0)
-		start_gs
-		task_smart ;;
-	1)
-		case $1 in
-			smart|sync)
-				start_gs
-				task_smart ;;
-			pull)
-				start_gs
-				task_pull ;;
-			push)
-				start_gs
-				task_push ;;
-			restore)
-				start_gs
-				task_restore ;;
-			version)
-				start_gs_noconfig
-				task_version ;;
-			update|upgrade)
-				start_gs_noconfig
-				task_update ;;
-			dev|devmode|development|develop)
-				start_gs_noconfig
-				task_devmode ;;
-			logs|log)
-				start_gs
-				task_logs ;;
-			compare)
-				start_gs
-				task_compare ;;
-			cron)
-				start_gs
-				task_cron ;;
-			config|configure)
-				start_gs_noconfig
-				task_configure ;;
-			auto|automate)
-				start_gs
-				task_automate ;;
-			backup)
-				start_gs
-				task_backup ;;
-			purge)
-				start_gs
-				task_purge ;;
-			sudo)
-				start_gs
-				task_sudo ;;
-			info)
-				start_gs
-				task_info ;;
-			*)
-				start_gs
-				task_invalid ;;
-		esac
-	;;
+    0)
+        start_gs
+        task_smart ;;
+    1)
+        case $1 in
+            smart|sync)
+                start_gs
+                task_smart ;;
+            pull)
+                start_gs
+                task_pull ;;
+            push)
+                start_gs
+                task_push ;;
+            restore)
+                start_gs
+                task_restore ;;
+            version)
+                start_gs_noconfig
+                task_version ;;
+            update|upgrade)
+                start_gs_noconfig
+                task_update ;;
+            dev|devmode|development|develop)
+                start_gs_noconfig
+                task_devmode ;;
+            logs|log)
+                start_gs
+                task_logs ;;
+            compare)
+                start_gs
+                task_compare ;;
+            cron)
+                start_gs
+                task_cron ;;
+            config|configure)
+                start_gs_noconfig
+                task_configure ;;
+            auto|automate)
+                start_gs
+                task_automate ;;
+            backup)
+                start_gs
+                task_backup ;;
+            purge)
+                start_gs
+                task_purge ;;
+            sudo)
+                start_gs
+                task_sudo ;;
+            info)
+                start_gs
+                task_info ;;
+            *)
+                start_gs
+                task_invalid ;;
+        esac
+    ;;
 
-	2)
-		case $1 in
-			auto|automate)
-				start_gs
-				task_automate ;;
-		esac
-	;;
+    2)
+        case $1 in
+            auto|automate)
+                start_gs
+                task_automate ;;
+        esac
+    ;;
 
-	3)
-		case $1 in
-			auto|automate)
-				start_gs
-				task_automate $2 $3 ;;	
-		esac
-	;;
-	
-	*)
-		start_gs
-		task_invalid ;;
+    3)
+        case $1 in
+            auto|automate)
+                start_gs
+                task_automate $2 $3 ;;	
+        esac
+    ;;
+    
+    *)
+        start_gs
+        task_invalid ;;
 esac
 
 # END OF SCRIPT ##############################
