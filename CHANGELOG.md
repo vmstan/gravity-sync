@@ -6,6 +6,12 @@
 
 This release now fully supports Pi-hole 5.2, specifically the CNAME replication features that were added. Because the location of these settings is in a new directory that was not previously monitored by Gravity Sync, you will need to opt-in to replication by updating your configuration file to enable support for replicating this.
 
+- New setups will be prompted to enable this during configuration.
+- Existing installs wishing to make sure of this feature, should either re-run the `./gravity-sync config` command, or manually edit the `gravity-sync.conf` to set `INCLUDE_CNAME='1'`
+- Existing installs using Docker, or otherwise using a non-standard location for dnsmasq configuration files (default is `/etc/dnsmasq.d`) will also need to manually specify the location of these files.
+- See the Hidden Figures document for more details.
+- The files required for this feature to replicate do not exist until a CNAME instance has been created within the Pi-hole interface of the primary Pi-hole.
+
 ## 3.1
 
 ### The Container Release
