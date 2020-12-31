@@ -196,4 +196,41 @@ function md5_recheck {
             echo_info
         fi
     fi
+    
+    if [ "${SKIP_CUSTOM}" != '1' ]
+    then
+        if [ "${INCLUDE_CNAME}" == "1" ]
+        then
+            if [ -f ${DNSMAQ_DIR}/${CNAME_CONF} ]
+            then
+                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RNSMAQ_DIR}/${CNAME_CONF}
+                then
+                    REMOTE_CNAME_DNS="1"
+                    MESSAGE="Reanalyzing ${CNAME_CONF} on ${REMOTE_HOST}"
+                    echo_stat
+                    
+                    primaryCNMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//'")
+                    error_validate
+                    
+                    MESSAGE="Reanalyzing ${CNAME_DNS} on $HOSTNAME"
+                    echo_stat
+                    secondCNMD5=$(md5sum ${DNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//')
+                    error_validate
+                else
+                    MESSAGE="No ${CNAME_CONF} Detected on ${REMOTE_HOST}"
+                    echo_info
+                fi
+            else
+                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RNSMAQ_DIR}/${CNAME_CONF}
+                then
+                    REMOTE_CNAME_DNS="1"
+                    MESSAGE="${REMOTE_HOST} has ${CNAME_CONF}"
+                    echo_info
+                fi
+                
+                MESSAGE="No ${CNAME_CONF} Detected on $HOSTNAME"
+                echo_info
+            fi
+        fi
+    fi
 }
