@@ -65,7 +65,7 @@ You can now use a standard Pi-hole install as your primary, or your secondary. Y
 
 #### 3.1.2
 
-- Adds `./gravity-sync.sh info` screen to show output of settings and component versions.
+- Fix variable missing quotes error in configuration screen.
 - Convert all bash files from mix of tabs and spaces to 4 space indentation.
 
 ## 3.0
