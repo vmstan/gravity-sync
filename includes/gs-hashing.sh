@@ -70,6 +70,53 @@ function md5_compare {
         fi
     fi
     
+    if [ "${SKIP_CUSTOM}" != '1' ]
+    then
+        if [ "${INCLUDE_CNAME}" == "1" ]
+        then
+            if [ -f ${DNSMAQ_DIR}/${CNAME_CONF} ]
+            then
+                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RNSMAQ_DIR}/${CNAME_CONF}
+                then
+                    REMOTE_CNAME_DNS="1"
+                    MESSAGE="Analyzing ${CNAME_CONF} on ${REMOTE_HOST}"
+                    echo_stat
+                    
+                    primaryCNMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//'")
+                    error_validate
+                    
+                    MESSAGE="Analyzing ${CNAME_DNS} on $HOSTNAME"
+                    echo_stat
+                    secondCNMD5=$(md5sum ${DNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//')
+                    error_validate
+                    
+                    if [ "$primaryCNMD5" == "$last_primaryCNMD5" ] && [ "$secondCNMD5" == "$last_secondCNMD5" ]
+                    then
+                        HASHMARK=$((HASHMARK+0))
+                    else
+                        MESSAGE="Differenced ${CNAME_CONF} Detected"
+                        echo_warn
+                        HASHMARK=$((HASHMARK+1))
+                    fi
+                else
+                    MESSAGE="No ${CNAME_CONF} Detected on ${REMOTE_HOST}"
+                    echo_info
+                fi
+            else
+                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RNSMAQ_DIR}/${CNAME_CONF}
+                then
+                    REMOTE_CNAME_DNS="1"
+                    MESSAGE="${REMOTE_HOST} has ${CNAME_CONF}"
+                    HASHMARK=$((HASHMARK+1))
+                    echo_info
+                fi
+                
+                MESSAGE="No ${CNAME_CONF} Detected on $HOSTNAME"
+                echo_info
+            fi
+        fi
+    fi
+    
     if [ "$HASHMARK" != "0" ]
     then
         MESSAGE="Replication Required"
