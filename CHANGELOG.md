@@ -1,5 +1,11 @@
 # The Changelog
 
+## 3.2
+
+### The Alias Release
+
+This release now fully supports Pi-hole 5.2, specifically the CNAME replication features that were added. Because the location of these settings is in a new directory that was not previously monitored by Gravity Sync, you will need to opt-in to replication by updating your configuration file to enable support for replicating this.
+
 ## 3.1
 
 ### The Container Release

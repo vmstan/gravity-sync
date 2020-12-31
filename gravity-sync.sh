@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='3.1.2'
+VERSION='3.2.0'
 
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
 # Requires Pi-Hole 5.x or higher already be installed, for help visit https://pi-hole.net
@@ -23,6 +23,8 @@ RH_IN_TYPE='default'				# Pi-hole install type, `default` or `docker` (remote)
 # Pi-hole Folder/File Customization
 PIHOLE_DIR='/etc/pihole' 			# default Pi-hole data directory (local)
 RIHOLE_DIR='/etc/pihole'			# default Pi-hole data directory (remote)
+DNSMAQ_DIR='/etc/dnsmasq.d'         # default DNSMASQ data directory (local)
+RNSMAQ_DIR='/etc/dnsmasq.d'         # default DNSMASQ data directory (remote)
 PIHOLE_BIN='/usr/local/bin/pihole' 	# default Pi-hole binary directory (local)
 RIHOLE_BIN='/usr/local/bin/pihole' 	# default Pi-hole binary directory (remote)
 DOCKER_BIN='/usr/bin/docker'		# default Docker binary directory (local)
@@ -34,10 +36,12 @@ ROCKER_CON='pihole'					# default Pi-hole Docker container name (remote)
 
 GRAVITY_FI='gravity.db' 			# default Pi-hole database file
 CUSTOM_DNS='custom.list'			# default Pi-hole local DNS lookups
+CNAME_CONF='05-pihole-custom-cname.conf'    # default DNSMASQ CNAME alias files
 
 # Interaction Customization
 VERIFY_PASS='0'						# replace in gravity-sync.conf to overwrite
 SKIP_CUSTOM='0'						# replace in gravity-sync.conf to overwrite
+INCLUDE_CNAME='0'					# replace in gravity-sync.conf to overwrite
 DATE_OUTPUT='0'						# replace in gravity-sync.conf to overwrite
 PING_AVOID='0'						# replace in gravity-sync.conf to overwrite
 ROOT_CHECK_AVOID='0'				# replace in gravity-sync.conf to overwrite
