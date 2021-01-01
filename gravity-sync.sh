@@ -34,9 +34,10 @@ RILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (remote)
 DOCKER_CON='pihole'					# default Pi-hole Docker container name (local)
 ROCKER_CON='pihole'					# default Pi-hole Docker container name (remote)
 
-GRAVITY_FI='gravity.db' 			# default Pi-hole database file
-CUSTOM_DNS='custom.list'			# default Pi-hole local DNS lookups
-CNAME_CONF='05-pihole-custom-cname.conf'    # default DNSMASQ CNAME alias files
+GRAVITY_FI='gravity.db' 			        # default Pi-hole database file
+CUSTOM_DNS='custom.list'			        # default Pi-hole local DNS lookups
+CNAME_CONF='05-pihole-custom-cname.conf'    # default DNSMASQ CNAME alias file
+GSLAN_CONF='08-gs-lan.conf'                 # default DNSMASQ GS managed file
 
 # Interaction Customization
 VERIFY_PASS='0'						# replace in gravity-sync.conf to overwrite

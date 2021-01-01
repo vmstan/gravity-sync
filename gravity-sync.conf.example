@@ -15,8 +15,8 @@ REMOTE_USER='pi'
 ### Pi-hole Folder/File Customization
 # PIHOLE_DIR='' 			# default Pi-hole data directory (local)
 # RIHOLE_DIR=''				# default Pi-hole data directory (remote)
-DNSMAQ_DIR=''               # default DNSMASQ data directory (local)
-RNSMAQ_DIR=''               # default DNSMASQ data directory (remote)
+# DNSMAQ_DIR=''             # default DNSMASQ data directory (local)
+# RNSMAQ_DIR=''             # default DNSMASQ data directory (remote)
 # PIHOLE_BIN='' 			# default Pi-hole binary directory (local)
 # RIHOLE_BIN='' 			# default Pi-hole binary directory (remote)
 # DOCKER_BIN=''				# default Docker binary directory (local)
@@ -28,11 +28,12 @@ RNSMAQ_DIR=''               # default DNSMASQ data directory (remote)
 
 # GRAVITY_FI='' 			# default Pi-hole database file
 # CUSTOM_DNS=''				# default Pi-hole local DNS lookups
-# CNAME_CONF=''
+# CNAME_CONF=''             # default DNSMASQ CNAME alias files
 
 ### Interaction Customization
 # VERIFY_PASS=''			# replace in gravity-sync.conf to overwrite
 # SKIP_CUSTOM=''			# replace in gravity-sync.conf to overwrite
+# INCLUDE_CNAME=''			# replace in gravity-sync.conf to overwrite
 # DATE_OUTPUT=''			# replace in gravity-sync.conf to overwrite
 # PING_AVOID=''				# replace in gravity-sync.conf to overwrite
 # ROOT_CHECK_AVOID=''		# replace in gravity-sync.conf to overwrite
