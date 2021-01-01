@@ -12,6 +12,12 @@ This release now fully supports Pi-hole 5.2, specifically the CNAME replication 
 - See the Hidden Figures document for more details.
 - The files required for this feature to replicate do not exist until a CNAME instance has been created within the Pi-hole interface of the primary Pi-hole.
 
+#### More DNSMASQ Syncing
+
+Even before the Pi-hole team added the CNAME feature and implemented in such a way that the `/etc/dnsmasq.d` would need to be seen by Gravity Sync, I have had a desire to replicate additional custom files here for my own selfish needs. More people asked for a similar function, and now that it's required to be built into the core script, it's easier to include these additional files. Gravity Sync will now monitor a custom file of your creation in this folder (default is `08-gs-lan.conf`) which can contain additional configuration options for DNSMASQ.
+
+An example would be setting different caching options for Pi-hole, or specifying the lookup targets for additional networks. Similar requirements as above for the CNAME syncing must be met for existing installs to leverage this functionality.
+
 ## 3.1
 
 ### The Container Release
