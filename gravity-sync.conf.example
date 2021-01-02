@@ -28,7 +28,8 @@ REMOTE_USER='pi'
 
 # GRAVITY_FI='' 			# default Pi-hole database file
 # CUSTOM_DNS=''				# default Pi-hole local DNS lookups
-# CNAME_CONF=''             # default DNSMASQ CNAME alias files
+# CNAME_CONF=''             # default DNSMASQ CNAME alias file
+# GSLAN_CONF=''             # default DNSMASQ GS managed file
 
 ### Interaction Customization
 # VERIFY_PASS=''			# replace in gravity-sync.conf to overwrite
