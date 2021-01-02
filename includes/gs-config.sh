@@ -153,7 +153,7 @@ function advanced_config_generate {
         
         MESSAGE="Saving Local Volume Ownership to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# FILE_OWNER=''/c\FILE_OWNER='named:docker'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+        sed -i "/# FILE_OWNER=''/c\FILE_OWNER='999:999'" ${LOCAL_FOLDR}/${CONFIG_FILE}
         error_validate
     fi
     
@@ -201,7 +201,7 @@ function advanced_config_generate {
         
         MESSAGE="Saving Remote Volume Ownership to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# RILE_OWNER=''/c\RILE_OWNER='named:docker'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+        sed -i "/# RILE_OWNER=''/c\RILE_OWNER='999:999'" ${LOCAL_FOLDR}/${CONFIG_FILE}
         error_validate
     fi
     
