@@ -88,6 +88,7 @@ function show_info() {
     fi
     
     echo -e "========================================================"
+    echo -e "${YELLOW}Local Software Versions${NC}"
     echo -e "${RED}Gravity Sync${NC} Version: ${VERSION}${DEVVERSION}"
     echo -e "${BLUE}pihole -v${NC} Output:"
     if [ "${PH_IN_TYPE}" == "default" ]
