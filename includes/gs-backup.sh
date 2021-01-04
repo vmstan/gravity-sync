@@ -13,6 +13,7 @@ function task_backup {
     backup_settime
     backup_local_gravity
     backup_local_custom
+    backup_local_cname
     backup_cleanup
     
     logs_export
@@ -45,6 +46,20 @@ function backup_local_custom {
     fi
 }
 
+function backup_local_cname {
+    if [ "$INCLUDE_CNAME" == '1' ]
+    then
+        if [ -f ${DNSMAQ_DIR}/${CNAME_CONF} ]
+        then
+            MESSAGE="Performing Backup Up Local ${CNAME_CONF}"
+            echo_stat
+            
+            cp ${DNSMAQ_DIR}/${CNAME_CONF} ${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CNAME_CONF}.backup
+            error_validate
+        fi
+    fi
+}
+
 function backup_remote_gravity {
     MESSAGE="Performing Backup of Remote ${GRAVITY_FI}"
     echo_stat
@@ -62,6 +77,18 @@ function backup_remote_custom {
         
         CMD_TIMEOUT='15'
         CMD_REQUESTED="sudo cp ${RIHOLE_DIR}/${CUSTOM_DNS} ${RIHOLE_DIR}/${CUSTOM_DNS}.backup"
+        create_sshcmd
+    fi
+}
+
+function backup_remote_cname {
+    if [ "$INCLUDE_CNAME" == '1' ]
+    then
+        MESSAGE="Performing Backup of Remote ${CNAME_CONF}"
+        echo_stat
+        
+        CMD_TIMEOUT='15'
+        CMD_REQUESTED="sudo cp ${RNSMAQ_DIRR}/${CNAME_CONF} ${RNSMAQ_DIR}/${CNAME_CONF}.backup"
         create_sshcmd
     fi
 }
