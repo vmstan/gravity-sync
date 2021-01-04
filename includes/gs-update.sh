@@ -140,7 +140,7 @@ function show_info() {
     if [ ${VERIFY_PASS} == '1' ]
     then
         echo -e "Verify Operations: Enabled (default)"
-    elif [ ${INCLUDE_CNAME} == '0' ]
+    elif [ ${VERIFY_PASS} == '0' ]
     then
         echo -e "Verify Operations: Disabled (custom)"
     else
