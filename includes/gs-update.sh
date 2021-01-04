@@ -101,7 +101,7 @@ function show_info() {
     echo -e "Bash Version: $BASH_VERSION"
     echo -e ""
     
-    echo -e "${YELLOW}Local Pi-hole Settings${NC}"
+    echo -e "${YELLOW}Local Gravity Sync Settings${NC}"
     echo -e "Local Pi-hole Type: ${PH_IN_TYPE}"
     echo -e "Local Pi-hole Config Directory: ${PIHOLE_DIR}"
     echo -e "Local DNSMASQ Config Directory: ${DNSMAQ_DIR}"
@@ -168,13 +168,21 @@ function show_info() {
     fi
         
     echo -e ""
-    echo -e "${YELLOW}Remote Pi-hole Settings${NC}"
+    echo -e "${YELLOW}Remote Gravity Sync Settings${NC}"
     echo -e "Remote Pi-hole Type: ${RH_IN_TYPE}"
     echo -e "Remote Pi-hole Config Directory: ${RIHOLE_DIR}"
-    echo -e "Remote Pi-hole Binary Directory: ${RIHOLE_BIN}"
-    echo -e "Remote Docker Binary Directory: ${DOCKER_BIN}"
-    echo -e "Remote File Owner Settings: ${DOCKER_BIN}"
-    echo -e "Remote Docker Container Name: ${DOCKER_CON}"
+    echo -e "Remote DNSMASQ Config Directory: ${RNSMAQ_DIR}"
+
+    if [ "${RH_IN_TYPE}" == "default" ]
+    then
+        echo -e "Remote Pi-hole Binary Directory: ${RIHOLE_BIN}"
+    elif [ "${RH_IN_TYPE}" == "docker" ]
+    then 
+        echo -e "Remote Pi-hole Container Name: ${ROCKER_CON}"
+        echo -e "Remote Docker Binary Directory: ${ROCKER_BIN}"
+    fi
+
+    echo -e "Remote File Owner Settings: ${RILE_OWNER}"
     echo -e "========================================================"
 }
 
