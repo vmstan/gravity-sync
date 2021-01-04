@@ -90,25 +90,3 @@ function start_gs_noconfig {
     MESSAGE="Evaluating Arguments"
     echo_stat
 }
-
-# Compare Task
-function task_compare {
-    TASKTYPE='COMPARE'
-    MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
-    echo_good
-    
-    show_target
-    validate_gs_folders
-    validate_ph_folders
-    
-    if [ "${INCLUDE_CNAME}" == "1" ]
-    then
-        validate_dns_folders
-    fi
-    
-    validate_os_sshpass
-    
-    previous_md5
-    md5_compare
-    exit_withchange
-}
