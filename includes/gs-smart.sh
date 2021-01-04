@@ -39,6 +39,8 @@ function smart_gs {
     SECDBCHANGE="0"
     PRICLCHANGE="0"
     SECCLCHANGE="0"
+    PRICNCHANGE="0"
+    SECCNCHANGE="0"
     
     if [ "${primaryDBMD5}" != "${last_primaryDBMD5}" ]
     then
@@ -99,10 +101,8 @@ function smart_gs {
     
     if [ "$SKIP_CUSTOM" != '1' ]
     then
-        
         if [ -f "${PIHOLE_DIR}/${CUSTOM_DNS}" ]
         then
-            
             if [ "${PRICLCHANGE}" == "${SECCLCHANGE}" ]
             then
                 if [ "${PRICLCHANGE}" != "0" ]
@@ -141,6 +141,62 @@ function smart_gs {
             fi
         else
             pull_gs_cust
+            PULLRESTART="1"
+        fi
+    fi
+    
+    if [ "${primaryCNMD5}" != "${last_primaryCNMD5}" ]
+    then
+        PRICNCHANGE="1"
+    fi
+    
+    if [ "${secondCNMD5}" != "${last_secondCNMD5}" ]
+    then
+        SECCNCHANGE="1"
+    fi
+    
+    if [ "${INCLUDE_ALIAS}" == '0' ]
+    then
+        if [ -f "${DNSMAQ_DIR}/${CNAME_CONF}" ]
+        then
+            if [ "${PRICNCHANGE}" == "${SECCNCHANGE}" ]
+            then
+                if [ "${PRICNCHANGE}" != "0" ]
+                then
+                    MESSAGE="Both ${CNAME_CONF} Have Changed"
+                    echo_warn
+                    
+                    PRICNDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${RNSMAQ_DIR}/${CNAME_CONF}")
+                    SECCNDATE=$(stat -c %Y ${DNSMAQ_DIR}/${CNAME_CONF})
+                    
+                    if (( "$PRICNDATE" >= "$SECCNDATE" ))
+                    then
+                        MESSAGE="Primary ${CNAME_CONF} Last Changed"
+                        echo_warn
+                        
+                        pull_gs_cname
+                        PULLRESTART="1"
+                    else
+                        MESSAGE="Secondary ${CNAME_CONF} Last Changed"
+                        echo_warn
+                        
+                        push_gs_cname
+                        PUSHRESTART="1"
+                    fi
+                fi
+            else
+                if [ "${PRICNCHANGE}" != "0" ]
+                then
+                    pull_gs_cname
+                    PULLRESTART="1"
+                elif [ "${SECCNCHANGE}" != "0" ]
+                then
+                    push_gs_cname
+                    PUSHRESTART="1"
+                fi
+            fi
+        else
+            pull_gs_cname
             PULLRESTART="1"
         fi
     fi
