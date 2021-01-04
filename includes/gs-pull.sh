@@ -216,6 +216,7 @@ function pull_gs {
     backup_settime
     pull_gs_grav
     pull_gs_cust
+    pull_gs_cname
     pull_gs_reload
     md5_recheck
     
