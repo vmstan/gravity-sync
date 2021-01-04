@@ -99,9 +99,11 @@ function show_info() {
     fi
     
     echo -e "Bash Version: $BASH_VERSION"
+    echo -e "SSH Version: " && ssh -V
     echo -e ""
     
-    echo -e "${YELLOW}Local Gravity Sync Settings${NC}"
+    echo -e "${YELLOW}Local/Secondary Instance Settings${NC}"
+    echo -e "Local Hostname: $HOSTNAME"
     echo -e "Local Pi-hole Type: ${PH_IN_TYPE}"
     echo -e "Local Pi-hole Config Directory: ${PIHOLE_DIR}"
     echo -e "Local DNSMASQ Config Directory: ${DNSMAQ_DIR}"
@@ -119,12 +121,12 @@ function show_info() {
     
     if [ ${SKIP_CUSTOM} == '0' ]
     then
-        echo -e "Local DNS Replication: Enabled (default)"
+        echo -e "DNS Replication: Enabled (default)"
     elif [ ${SKIP_CUSTOM} == '1' ]
     then
-        echo -e "Local DNS Replication: Disabled (custom)"
+        echo -e "DNS Replication: Disabled (custom)"
     else
-        echo -e "Local DNS Replication: Invalid Configuration"
+        echo -e "DNS Replication: Invalid Configuration"
     fi
     
     if [ ${INCLUDE_CNAME} == '1' ]
@@ -168,7 +170,9 @@ function show_info() {
     fi
         
     echo -e ""
-    echo -e "${YELLOW}Remote Gravity Sync Settings${NC}"
+    echo -e "${YELLOW}Remote/Primary Instance Settings${NC}"
+    echo -e "Remote Hostname/IP: ${REMOTE_HOST}"
+    echo -e "Remote Username: ${REMOTE_USER}"
     echo -e "Remote Pi-hole Type: ${RH_IN_TYPE}"
     echo -e "Remote Pi-hole Config Directory: ${RIHOLE_DIR}"
     echo -e "Remote DNSMASQ Config Directory: ${RNSMAQ_DIR}"
