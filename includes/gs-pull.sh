@@ -172,7 +172,7 @@ function pull_gs_cname {
             MESSAGE="Pulling ${CNAME_CONF} from ${REMOTE_HOST}"
             echo_stat
             RSYNC_REPATH="rsync"
-            RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RNSMAQ_DIR}/${CNAME_CONF}.backup"
+            RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/dnsmasq.d-${CNAME_CONF}.backup"
             RSYNC_TARGET="${LOCAL_FOLDR}/${BACKUP_FOLD}/${CNAME_CONF}.pull"
             create_rsynccmd
             
