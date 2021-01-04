@@ -87,11 +87,8 @@ function show_info() {
         DEVVERSION=""
     fi
     
-    MESSAGE="Running Version: ${GREEN}${VERSION}${NC} ${DEVVERSION}"
-    echo_info
-    
     echo -e "========================================================"
-    echo -e "Gravity Sync Version: ${GREEN}${VERSION}${NC} ${DEVVERSION}"
+    echo -e "Gravity Sync Version: ${VERSION} ${DEVVERSION}"
     echo -e "${BLUE}pihole -v${NC} Output:"
     if [ "${PH_IN_TYPE}" == "default" ]
     then
