@@ -160,6 +160,37 @@ function pull_gs_cust {
     fi
 }
 
+## Pull CNAME
+function pull_gs_cname {
+    if [ "${INCLUDE_CNAME}" == '1' ]
+    then
+        if [ "$REMOTE_CNAME_DNS" == "1" ]
+        then
+            backup_local_cname
+            backup_remote_cname
+            
+            MESSAGE="Pulling ${CNAME_CONF} from ${REMOTE_HOST}"
+            echo_stat
+            RSYNC_REPATH="rsync"
+            RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RNSMAQ_DIR}/${CNAME_CONF}.backup"
+            RSYNC_TARGET="${LOCAL_FOLDR}/${BACKUP_FOLD}/${CNAME_CONF}.pull"
+            create_rsynccmd
+            
+            MESSAGE="Replacing ${CNAME_CONF} on $HOSTNAME"
+            echo_stat
+            sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${CNAME_CONF}.pull ${DNSMAQ_DIR}/${CNAME_CONF} >/dev/null 2>&1
+            error_validate
+            
+            MESSAGE="Validating Settings on ${CNAME_CONF}"
+            echo_stat
+            
+            validate_cname_permissions
+            
+            echo_good
+        fi
+    fi
+}
+
 ## Pull Reload
 function pull_gs_reload {
     MESSAGE="Isolating Regeneration Pathways"
