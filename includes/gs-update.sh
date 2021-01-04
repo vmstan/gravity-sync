@@ -80,6 +80,7 @@ function show_info() {
     echo -e "${YELLOW}Local Pi-hole Settings${NC}"
     echo -e "Local Pi-hole Type: ${PH_IN_TYPE}"
     echo -e "Local Pi-hole Config Directory: ${PIHOLE_DIR}"
+    echo -e "Local DNSMASQ Config Directory: ${DNSMAQ_DIR}"
     
     if [ "${PH_IN_TYPE}" == "default" ]
     then
@@ -87,10 +88,10 @@ function show_info() {
     elif [ "${PH_IN_TYPE}" == "docker" ]
     then 
         echo -e "Local Pi-hole Container Name: ${DOCKER_CON}"
+        echo -e "Local Docker Binary Directory: ${DOCKER_BIN}"
     fi
     
-    echo -e "Local Docker Binary Directory: ${DOCKER_BIN}"
-    echo -e "Local File Owner Settings: ${DOCKER_BIN}"
+    echo -e "Local File Owner Settings: ${FILE_OWNER}"
     
     echo -e "${BLUE}pihole -v${NC} Output"
     if [ "${PH_IN_TYPE}" == "default" ]
