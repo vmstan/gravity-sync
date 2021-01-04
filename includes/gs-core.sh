@@ -79,6 +79,14 @@ function start_gs {
     then
         new_root_check
     fi
+    
+    if [ "${INCLUDE_CNAME}" == "1" ] && [ "${SKIP_CUSTOM}" == "1" ]
+    then
+        MESSAGE="Invalid Local DNS Settings in ${CONFIG_FILE}"
+        echo_fail
+        
+        exit_nochange
+    fi
 }
 
 # Standard Output No Config

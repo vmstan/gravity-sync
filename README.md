@@ -2,7 +2,7 @@
     <img src="https://raw.githubusercontent.com/vmstan/gravity-sync/master/docs/gravity-header.svg" width="80%" alt="Gravity Sync">
 </p>
 
-What is better than a [Pi-hole](https://github.com/pi-hole/pi-hole) blocking ads via DNS on your network? That's right, **two** Pi-hole blocking ads on your network! 
+What is better than a [Pi-hole](https://github.com/pi-hole/pi-hole) blocking ads via DNS on your network? That's right, **two** Pi-hole blocking ads on your network!
 
 - [Seriously. Why two Pi-hole?](https://github.com/vmstan/gravity-sync/wiki/Frequent-Questions#why-do-i-need-more-than-one-pi-hole)
 
@@ -11,11 +11,16 @@ But if you have more than one Pi-hole in your network you'll want a simple way t
 # Features
 
 Gravity Sync replicates the `gravity.db` database, which includes:
+
 - Blocklist settings with status and comments.
 - Domain whitelist and blacklist along with status with comments.
 - Custom RegEx whitelist and blacklists.
 - Clients and groups along with any list assignments.
-- Local DNS Settings (These are stored in a separate `custom.list` file and can optionally be disabled.)
+
+Gravity Sync can also (optionally) replicate FTLDNS/DNSMASQ configuration files, including:
+
+- Local DNS (A Records) which are stored in a separate `custom.list` file within the `/etc/pihole` directory.
+- CNAME Records which are stored in a separate `05-pihole-custom-cname.conf` file in the `/etc/dnsmasq.d` directory.
 
 ### Limitations
 
