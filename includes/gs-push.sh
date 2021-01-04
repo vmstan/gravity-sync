@@ -98,7 +98,7 @@ function push_gs_cust {
 
 ## Push Custom
 function push_gs_cname {
-    if [ "${INCLUDE_ALIAS}" == '1' ]
+    if [ "${INCLUDE_CNAME}" == '1' ]
     then
         if [ "$REMOTE_CNAME_DNS" == "1" ]
         then
