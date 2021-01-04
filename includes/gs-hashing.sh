@@ -70,6 +70,53 @@ function md5_compare {
         fi
     fi
     
+    if [ "${SKIP_CUSTOM}" != '1' ]
+    then
+        if [ "${INCLUDE_CNAME}" == "1" ]
+        then
+            if [ -f ${DNSMAQ_DIR}/${CNAME_CONF} ]
+            then
+                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RNSMAQ_DIR}/${CNAME_CONF}
+                then
+                    REMOTE_CNAME_DNS="1"
+                    MESSAGE="Analyzing ${CNAME_CONF} on ${REMOTE_HOST}"
+                    echo_stat
+                    
+                    primaryCNMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//'")
+                    error_validate
+                    
+                    MESSAGE="Analyzing ${CNAME_CONF} on $HOSTNAME"
+                    echo_stat
+                    secondCNMD5=$(md5sum ${DNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//')
+                    error_validate
+                    
+                    if [ "$primaryCNMD5" == "$last_primaryCNMD5" ] && [ "$secondCNMD5" == "$last_secondCNMD5" ]
+                    then
+                        HASHMARK=$((HASHMARK+0))
+                    else
+                        MESSAGE="Differenced ${CNAME_CONF} Detected"
+                        echo_warn
+                        HASHMARK=$((HASHMARK+1))
+                    fi
+                else
+                    MESSAGE="No ${CNAME_CONF} Detected on ${REMOTE_HOST}"
+                    echo_info
+                fi
+            else
+                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RNSMAQ_DIR}/${CNAME_CONF}
+                then
+                    REMOTE_CNAME_DNS="1"
+                    MESSAGE="${REMOTE_HOST} has ${CNAME_CONF}"
+                    HASHMARK=$((HASHMARK+1))
+                    echo_info
+                fi
+                
+                MESSAGE="No ${CNAME_CONF} Detected on $HOSTNAME"
+                echo_info
+            fi
+        fi
+    fi
+    
     if [ "$HASHMARK" != "0" ]
     then
         MESSAGE="Replication Required"
@@ -89,11 +136,15 @@ function previous_md5 {
         last_secondDBMD5=$(sed "2q;d" ${LOG_PATH}/${HISTORY_MD5})
         last_primaryCLMD5=$(sed "3q;d" ${LOG_PATH}/${HISTORY_MD5})
         last_secondCLMD5=$(sed "4q;d" ${LOG_PATH}/${HISTORY_MD5})
+        last_primaryCNMD5=$(sed "5q;d" ${LOG_PATH}/${HISTORY_MD5})
+        last_secondCNMD5=$(sed "6q;d" ${LOG_PATH}/${HISTORY_MD5})
     else
         last_primaryDBMD5="0"
         last_secondDBMD5="0"
         last_primaryCLMD5="0"
         last_secondCLMD5="0"
+        last_primaryCNMD5="0"
+        last_secondCNMD5="0"
     fi
 }
 
@@ -143,6 +194,43 @@ function md5_recheck {
             fi
             MESSAGE="No ${CUSTOM_DNS} Detected on $HOSTNAME"
             echo_info
+        fi
+    fi
+    
+    if [ "${SKIP_CUSTOM}" != '1' ]
+    then
+        if [ "${INCLUDE_CNAME}" == "1" ]
+        then
+            if [ -f ${DNSMAQ_DIR}/${CNAME_CONF} ]
+            then
+                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RNSMAQ_DIR}/${CNAME_CONF}
+                then
+                    REMOTE_CNAME_DNS="1"
+                    MESSAGE="Reanalyzing ${CNAME_CONF} on ${REMOTE_HOST}"
+                    echo_stat
+                    
+                    primaryCNMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//'")
+                    error_validate
+                    
+                    MESSAGE="Reanalyzing ${CNAME_CONF} on $HOSTNAME"
+                    echo_stat
+                    secondCNMD5=$(md5sum ${DNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//')
+                    error_validate
+                else
+                    MESSAGE="No ${CNAME_CONF} Detected on ${REMOTE_HOST}"
+                    echo_info
+                fi
+            else
+                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RNSMAQ_DIR}/${CNAME_CONF}
+                then
+                    REMOTE_CNAME_DNS="1"
+                    MESSAGE="${REMOTE_HOST} has ${CNAME_CONF}"
+                    echo_info
+                fi
+                
+                MESSAGE="No ${CNAME_CONF} Detected on $HOSTNAME"
+                echo_info
+            fi
         fi
     fi
 }

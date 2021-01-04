@@ -1,5 +1,26 @@
 # The Changelog
 
+## 3.2
+
+### The Alias Release
+
+This release now fully supports Pi-hole 5.2, specifically the CNAME replication features that were added. Because the location of these settings is in a new directory that was not previously monitored by Gravity Sync, you will need to opt-in to replication by updating your configuration file to enable support for replicating this.
+
+- New setups can be prompted to enable this during configuration using the Advanced Configuration options.
+- Existing installs wishing to make sure of this feature, should either re-run the `./gravity-sync config` command, or manually edit the `gravity-sync.conf` to set `INCLUDE_CNAME='1'`.
+- Before you enable `INCLUDE_CNAME` make sure you've created at least one entry from within the primary Pi-hole interface, otherwise Gravity Sync will have nothing to replicate as the files will not yet exist.
+- You cannot enable `INCLUDE_CNAME` if you've also enabled `SKIP_CUSTOM` as the CNAME function is dependent on Local DNS records. You can, however, only replicate the Local DNS Records if you do not intend to leverage CNAME records.
+- Existing installs using Docker, or otherwise using a non-standard location for dnsmasq configuration files (default is `/etc/dnsmasq.d`) will also need to manually specify the location of these files.
+- See the [Hidden Figures](https://github.com/vmstan/gravity-sync/wiki/Hidden-Figures) document for more details.
+
+#### More Syncing Coming
+
+Even before the Pi-hole team added the CNAME feature and implemented in such a way that the `/etc/dnsmasq.d` would need to be seen by Gravity Sync, I have had a desire to replicate additional custom files here for my own selfish needs. More people asked for a similar function, and now that it's required to be built into the core script, it's easier to include these additional files.
+
+Not implemented in 3.2.0, but coming within this release, Gravity Sync will be configured to monitor a custom file of your creation in this folder (default is `08-gs-lan.conf`) which can contain additional configuration options for DNSMASQ.
+
+An example would be setting different caching options for Pi-hole, or specifying the lookup targets for additional networks. Similar requirements as above for the CNAME syncing must be met for existing installs to leverage this functionality.
+
 ## 3.1
 
 ### The Container Release

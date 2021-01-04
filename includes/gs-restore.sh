@@ -13,6 +13,12 @@ function task_restore {
     show_target
     validate_gs_folders
     validate_ph_folders
+    
+    if [ "${INCLUDE_CNAME}" == "1" ]
+    then
+        validate_dns_folders
+    fi
+    
     validate_sqlite3
     
     restore_gs
@@ -65,9 +71,34 @@ function restore_gs {
         fi
     fi
     
+    if [ "$INCLUDE_CNAME" == '1' ]
+    then
+        
+        if [ -f ${DNSMAQ_DIR}/${CNAME_CONF} ]
+        then
+            ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${CNAME_CONF} | colrm 18
+            
+            MESSAGE="Select backup date to restore ${CNAME_CONF} from"
+            echo_need
+            read INPUT_CNAMEBACKUP_DATE
+            
+            if [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_CNAMEBACKUP_DATE}-${CNAME_CONF}.backup ]
+            then
+                MESSAGE="Backup File Selected"
+            else
+                MESSAGE="Invalid Request"
+                echo_info
+                
+                exit_nochange
+            fi
+        fi
+    fi
+    
     MESSAGE="${GRAVITY_FI} from ${INPUT_BACKUP_DATE} Selected"
     echo_info
     MESSAGE="${CUSTOM_DNS} from ${INPUT_DNSBACKUP_DATE} Selected"
+    echo_info
+    MESSAGE="${CNAME_CONF} from ${INPUT_CNAMEBACKUP_DATE} Selected"
     echo_info
     
     intent_validate
@@ -170,6 +201,22 @@ function restore_gs {
                 sudo chmod 644 ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
                 error_validate
             fi
+        fi
+    fi
+    
+    if [ "$INCLUDE_CNAME" == '1' ]
+    then
+        if [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_CNAMEBACKUP_DATE}-${CNAME_CONF}.backup ]
+        then
+            MESSAGE="Restoring ${CNAME_CONF} on $HOSTNAME"
+            echo_stat
+            sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_CNAMEBACKUP_DATE}-${CNAME_CONF}.backup ${DNSMAQ_DIR}/${CNAME_CONF} >/dev/null 2>&1
+            error_validate
+            
+            MESSAGE="Validating Ownership on ${CNAME_CONF}"
+            echo_stat
+            
+            validate_cname_permissions
         fi
     fi
     

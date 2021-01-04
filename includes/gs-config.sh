@@ -151,6 +151,23 @@ function advanced_config_generate {
             exit_withchanges
         fi
         
+        MESSAGE="Local DNSMASQ 'etc' Volume Path? (Required, no trailing slash)"
+        echo_need
+        read INPUT_DNSMAQ_DIR
+        
+        if [ "${INPUT_DNSMAQ_DIR}" != "" ]
+        then
+            MESSAGE="Saving Local DNSMASQ Volume to ${CONFIG_FILE}"
+            echo_stat
+            sed -i "/# DNSMAQ_DIR=''/c\DNSMAQ_DIR='${INPUT_DNSMAQ_DIR}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+            error_validate
+            SKIP_DNSMAQ_DIR="1"
+        else
+            MESSAGE="This setting is required!"
+            echo_warn
+            exit_withchanges
+        fi
+        
         MESSAGE="Saving Local Volume Ownership to ${CONFIG_FILE}"
         echo_stat
         sed -i "/# FILE_OWNER=''/c\FILE_OWNER='named:docker'" ${LOCAL_FOLDR}/${CONFIG_FILE}
@@ -199,6 +216,23 @@ function advanced_config_generate {
             exit_withchanges
         fi
         
+        MESSAGE="Remote DNSMASQ 'etc' Volume Path? (Required, no trailing slash)"
+        echo_need
+        read INPUT_RNSMAQ_DIR
+        
+        if [ "${INPUT_RNSMAQ_DIR}" != "" ]
+        then
+            MESSAGE="Saving Remote DNSMASQ Volume to ${CONFIG_FILE}"
+            echo_stat
+            sed -i "/# RNSMAQ_DIR=''/c\RNSMAQ_DIR='${INPUT_RNSMAQ_DIR}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+            error_validate
+            SKIP_RNSMAQ_DIR="1"
+        else
+            MESSAGE="This setting is required!"
+            echo_warn
+            exit_withchanges
+        fi
+        
         MESSAGE="Saving Remote Volume Ownership to ${CONFIG_FILE}"
         echo_stat
         sed -i "/# RILE_OWNER=''/c\RILE_OWNER='named:docker'" ${LOCAL_FOLDR}/${CONFIG_FILE}
@@ -234,6 +268,38 @@ function advanced_config_generate {
             MESSAGE="Saving Remote Pi-hole Settings Directory Path to ${CONFIG_FILE}"
             echo_stat
             sed -i "/# RIHOLE_DIR=''/c\RIHOLE_DIR='${INPUT_RIHOLE_DIR}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+            error_validate
+        fi
+    fi
+    
+    if [ "$SKIP_DNSMASQ_DIR" != "1" ]
+    then
+        MESSAGE="Local DNSMASQ Settings Directory Path? (Leave blank for default '/etc/dnsmasq.d')"
+        echo_need
+        read INPUT_DNSMASQ_DIR
+        INPUT_DNSMASQ_DIR="${INPUT_DNSMASQ_DIR:-/etc/dnsmasq.d}"
+        
+        if [ "${INPUT_DNSMASQ_DIR}" != "/etc/dnsmasq.d" ]
+        then
+            MESSAGE="Saving Local DNSMASQ Settings Directory Path to ${CONFIG_FILE}"
+            echo_stat
+            sed -i "/# DNSMASQ_DIR=''/c\DNSMASQ_DIR='${INPUT_DNSMASQ_DIR}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+            error_validate
+        fi
+    fi
+    
+    if [ "$SKIP_RNSMASQ_DIR" != "1" ]
+    then
+        MESSAGE="Remote DNSMASQ Settings Directory Path? (Leave blank for default '/etc/dnsmasq.d')"
+        echo_need
+        read INPUT_RNSMASQ_DIR
+        INPUT_RNSMASQ_DIR="${INPUT_RNSMASQ_DIR:-/etc/dnsmasq.d}"
+        
+        if [ "${INPUT_RNSMASQ_DIR}" != "/etc/dnsmasq.d" ]
+        then
+            MESSAGE="Saving Remote DNSMASQ Settings Directory Path to ${CONFIG_FILE}"
+            echo_stat
+            sed -i "/# RNSMASQ_DIR=''/c\RNSMASQ_DIR='${INPUT_RNSMASQ_DIR}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
             error_validate
         fi
     fi
@@ -290,6 +356,22 @@ function advanced_config_generate {
         echo_stat
         sed -i "/# SKIP_CUSTOM=''/c\SKIP_CUSTOM='1'" ${LOCAL_FOLDR}/${CONFIG_FILE}
         error_validate
+    fi
+    
+    if [ "${INPUT_SKIP_CUSTOM}" == "Y" ]
+    then
+        MESSAGE="Enable Replicate 'Local CNAME Records' Feature? (Leave blank for default 'Yes')"
+        echo_need
+        read INPUT_INCLUDE_CNAME
+        INPUT_INCLUDE_CNAME="${INPUT_INCLUDE_CNAME:-Y}"
+        
+        if [ "${INPUT_INCLUDE_CNAME}" == "Y" ]
+        then
+            MESSAGE="Saving Local CNAME Preference to ${CONFIG_FILE}"
+            echo_stat
+            sed -i "/# INCLUDE_CNAME=''/c\INCLUDE_CNAME='1'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+            error_validate
+        fi
     fi
     
     MESSAGE="Change Backup Retention in Days? (Leave blank for default '7')"
