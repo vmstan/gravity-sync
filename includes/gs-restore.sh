@@ -216,40 +216,7 @@ function restore_gs {
             MESSAGE="Validating Ownership on ${CNAME_CONF}"
             echo_stat
             
-            CNAMELS_OWN=$(ls -ld ${DNSMAQ_DIR}/${CNAME_CONF} | awk '{print $3 $4}')
-            if [ "$CNAMELS_OWN" == "rootroot" ]
-            then
-                echo_good
-            else
-                echo_fail
-                
-                MESSAGE="Attempting to Compensate"
-                echo_warn
-                
-                MESSAGE="Setting Ownership on ${CNAME_CONF}"
-                echo_stat
-                sudo chown root:root ${DNSMAQ_DIR}/${CNAME_CONF} >/dev/null 2>&1
-                error_validate
-            fi
-            
-            MESSAGE="Validating Permissions on ${CNAME_CONF}"
-            echo_stat
-            
-            CNAMELS_RWE=$(namei -m ${DNSMAQ_DIR}/${CNAME_CONF} | grep -v f: | grep ${CNAME_CONF} | awk '{print $1}')
-            if [ "$CNAMELS_RWE" == "-rw-r--r--" ]
-            then
-                echo_good
-            else
-                echo_fail
-                
-                MESSAGE="Attempting to Compensate"
-                echo_warn
-                
-                MESSAGE="Setting Ownership on ${CNAME_CONF}"
-                echo_stat
-                sudo chmod 644 ${DNSMAQ_DIR}/${CNAME_CONF} >/dev/null 2>&1
-                error_validate
-            fi
+            validate_cname_permissions
         fi
     fi
     
