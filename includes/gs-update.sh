@@ -89,7 +89,7 @@ function show_info() {
     if [ "${PH_IN_TYPE}" == "default" ]
     then
         pihole version
-    elif [ "${PH_IN_TYPE}" == "default" ]
+    elif [ "${PH_IN_TYPE}" == "docker" ]
     then 
         docker exec -it pihole pihole -v
     fi
