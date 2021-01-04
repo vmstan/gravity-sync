@@ -85,7 +85,7 @@ function md5_compare {
                     primaryCNMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//'")
                     error_validate
                     
-                    MESSAGE="Analyzing ${CNAME_DNS} on $HOSTNAME"
+                    MESSAGE="Analyzing ${CNAME_CONF} on $HOSTNAME"
                     echo_stat
                     secondCNMD5=$(md5sum ${DNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//')
                     error_validate
