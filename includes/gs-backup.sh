@@ -42,6 +42,9 @@ function backup_local_custom {
             
             cp ${PIHOLE_DIR}/${CUSTOM_DNS} ${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CUSTOM_DNS}.backup
             error_validate
+        else
+            MESSAGE="No Local ${CUSTOM_DNS} Detected"
+            echo_info
         fi
     fi
 }
@@ -56,6 +59,9 @@ function backup_local_cname {
             
             cp ${DNSMAQ_DIR}/${CNAME_CONF} ${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CNAME_CONF}.backup
             error_validate
+        else
+            MESSAGE="No Local ${CNAME_CONF} Detected"
+            echo_info
         fi
     fi
 }
