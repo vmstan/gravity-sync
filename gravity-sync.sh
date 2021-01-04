@@ -119,55 +119,55 @@ case $# in
         case $1 in
             smart|sync)
                 start_gs
-            task_smart ;;
+                task_smart ;;
             pull)
                 start_gs
-            task_pull ;;
+                task_pull ;;
             push)
                 start_gs
-            task_push ;;
+                task_push ;;
             restore)
                 start_gs
-            task_restore ;;
+                task_restore ;;
             version)
                 start_gs_noconfig
-            task_version ;;
+                task_version ;;
             update|upgrade)
                 start_gs_noconfig
-            task_update ;;
+                task_update ;;
             dev|devmode|development|develop)
                 start_gs_noconfig
-            task_devmode ;;
+                task_devmode ;;
             logs|log)
                 start_gs
-            task_logs ;;
+                task_logs ;;
             compare)
                 start_gs
-            task_compare ;;
+                task_compare ;;
             cron)
                 start_gs
-            task_cron ;;
+                task_cron ;;
             config|configure)
                 start_gs_noconfig
-            task_configure ;;
+                task_configure ;;
             auto|automate)
                 start_gs
-            task_automate ;;
+                task_automate ;;
             backup)
                 start_gs
-            task_backup ;;
+                task_backup ;;
             purge)
                 start_gs
-            task_purge ;;
+                task_purge ;;
             sudo)
                 start_gs
-            task_sudo ;;
+                task_sudo ;;
             info)
                 start_gs
-            task_info ;;
+                task_info ;;
             *)
                 start_gs
-            task_invalid ;;
+                task_invalid ;;
         esac
     ;;
     
@@ -175,7 +175,7 @@ case $# in
         case $1 in
             auto|automate)
                 start_gs
-            task_automate ;;
+                task_automate ;;
         esac
     ;;
     
@@ -183,13 +183,13 @@ case $# in
         case $1 in
             auto|automate)
                 start_gs
-            task_automate $2 $3 ;;
+                task_automate $2 $3 ;;
         esac
     ;;
     
     *)
         start_gs
-    task_invalid ;;
+        task_invalid ;;
 esac
 
 # END OF SCRIPT ##############################
