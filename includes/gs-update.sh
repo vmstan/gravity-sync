@@ -99,8 +99,8 @@ function show_info() {
     fi
     
     echo -e "Bash Version: $BASH_VERSION"
-    echo ssh -V
-    echo rsync --version | grep version
+    ssh -V
+    rsync --version | grep version
     echo -e ""
     
     echo -e "${YELLOW}Local/Secondary Instance Settings${NC}"
