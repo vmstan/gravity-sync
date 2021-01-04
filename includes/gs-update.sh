@@ -76,7 +76,33 @@ function show_version {
 }
 
 function show_info() {
+        
+    if [ -f ${LOCAL_FOLDR}/dev ]
+    then
+        DEVVERSION="dev"
+    elif [ -f ${LOCAL_FOLDR}/beta ]
+    then
+        DEVVERSION="beta"
+    else
+        DEVVERSION=""
+    fi
+    
+    MESSAGE="Running Version: ${GREEN}${VERSION}${NC} ${DEVVERSION}"
+    echo_info
+    
     echo -e "========================================================"
+    echo -e "Gravity Sync Version: ${GREEN}${VERSION}${NC} ${DEVVERSION}"
+    echo -e "${BLUE}pihole -v${NC} Output:"
+    if [ "${PH_IN_TYPE}" == "default" ]
+    then
+        pihole version
+    elif [ "${PH_IN_TYPE}" == "docker" ]
+    then 
+        docker exec -it pihole pihole -v
+    fi
+    
+    echo -e "Bash Version: $BASH_VERSION"
+    
     echo -e "${YELLOW}Local Pi-hole Settings${NC}"
     echo -e "Local Pi-hole Type: ${PH_IN_TYPE}"
     echo -e "Local Pi-hole Config Directory: ${PIHOLE_DIR}"
@@ -92,18 +118,7 @@ function show_info() {
     fi
     
     echo -e "Local File Owner Settings: ${FILE_OWNER}"
-    
-    echo -e "${BLUE}pihole -v${NC} Output"
-    if [ "${PH_IN_TYPE}" == "default" ]
-    then
-        pihole version
-    elif [ "${PH_IN_TYPE}" == "docker" ]
-    then 
-        docker exec -it pihole pihole -v
-    fi
-    
-    echo -e "Bash Version: $BASH_VERSION"
-    
+        
     echo -e ""
     echo -e "${YELLOW}Remote Pi-hole Settings${NC}"
     echo -e "Remote Pi-hole Type: ${RH_IN_TYPE}"
