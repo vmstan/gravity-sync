@@ -79,16 +79,16 @@ function show_info() {
         
     if [ -f ${LOCAL_FOLDR}/dev ]
     then
-        DEVVERSION="dev"
+        DEVVERSION="-dev"
     elif [ -f ${LOCAL_FOLDR}/beta ]
     then
-        DEVVERSION="beta"
+        DEVVERSION="-beta"
     else
         DEVVERSION=""
     fi
     
     echo -e "========================================================"
-    echo -e "Gravity Sync Version: ${VERSION} ${DEVVERSION}"
+    echo -e "${RED}Gravity Sync${NC} Version: ${VERSION}${DEVVERSION}"
     echo -e "${BLUE}pihole -v${NC} Output:"
     if [ "${PH_IN_TYPE}" == "default" ]
     then
@@ -99,6 +99,7 @@ function show_info() {
     fi
     
     echo -e "Bash Version: $BASH_VERSION"
+    echo -e ""
     
     echo -e "${YELLOW}Local Pi-hole Settings${NC}"
     echo -e "Local Pi-hole Type: ${PH_IN_TYPE}"
@@ -115,6 +116,56 @@ function show_info() {
     fi
     
     echo -e "Local File Owner Settings: ${FILE_OWNER}"
+    
+    if [ ${SKIP_CUSTOM} == '0' ]
+    then
+        echo -e "Local DNS Replication: Enabled (default)"
+    elif [ ${SKIP_CUSTOM} == '1' ]
+    then
+        echo -e "Local DNS Replication: Disabled (custom)"
+    else
+        echo -e "Local DNS Replication: Invalid Configuration"
+    fi
+    
+    if [ ${INCLUDE_CNAME} == '1' ]
+    then
+        echo -e "CNAME Replication: Enabled (custom)"
+    elif [ ${INCLUDE_CNAME} == '0' ]
+    then
+        echo -e "CNAME Replication: Disabled (default)"
+    else
+        echo -e "CNAME Replication: Invalid Configuration"
+    fi
+    
+    if [ ${VERIFY_PASS} == '1' ]
+    then
+        echo -e "Verify Operations: Enabled (default)"
+    elif [ ${INCLUDE_CNAME} == '0' ]
+    then
+        echo -e "Verify Operations: Disabled (custom)"
+    else
+        echo -e "Verify Operations: Invalid Configuration"
+    fi
+    
+    if [ ${PING_AVOID} == '0' ]
+    then
+        echo -e "Ping Test: Enabled (default)"
+    elif [ ${PING_AVOID} == '1' ]
+    then
+        echo -e "Ping Test: Disabled (custom)"
+    else
+        echo -e "Ping Test: Invalid Configuration"
+    fi
+    
+    if [ ${BACKUP_RETAIN} == '7' ]
+    then
+        echo -e "Backup Retention: 7 days (default)"
+    elif [ ${BACKUP_RETAIN} == '1' ]
+    then
+        echo -e "Backup Retention: 1 day (custom)"
+    else
+        echo -e "Backup Retention: ${BACKUP_RETAIN} days (custom)"
+    fi
         
     echo -e ""
     echo -e "${YELLOW}Remote Pi-hole Settings${NC}"
