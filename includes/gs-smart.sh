@@ -155,7 +155,7 @@ function smart_gs {
         SECCNCHANGE="1"
     fi
     
-    if [ "$INCLUDE_ALIAS" == '1' ]
+    if [ "$INCLUDE_ALIAS" == "1" ]
     then
         if [ -f "${DNSMAQ_DIR}/${CNAME_CONF}" ]
         then
