@@ -47,7 +47,7 @@ function backup_local_custom {
 }
 
 function backup_local_cname {
-    if [ "$INCLUDE_CNAME" == '1' ]
+    if [ "${INCLUDE_CNAME}" == '1' ]
     then
         if [ -f ${DNSMAQ_DIR}/${CNAME_CONF} ]
         then
