@@ -24,6 +24,7 @@ An example would be setting different caching options for Pi-hole, or specifying
 #### 3.2.1
 
 - Changes application of permissions for Docker instances to UID:GID instead of names. (#99/#128)
+- Adds `./gravity-sync info` function to help with troubleshooting installation/configuration settings.
 
 ## 3.1
 
