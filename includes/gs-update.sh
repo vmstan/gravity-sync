@@ -84,8 +84,16 @@ function show_info() {
     echo -e "Local Docker Binary Directory: ${DOCKER_BIN}"
     echo -e "Local File Owner Settings: ${DOCKER_BIN}"
     echo -e "Local Docker Container Name: ${DOCKER_CON}"
+    
     echo -e "${BLUE}pihole -v${NC} Output"
-    pihole version
+    if [ "${PH_IN_TYPE}" == "default" ]
+    then
+        pihole version
+    elif 
+    then [ "${PH_IN_TYPE}" == "default" ]
+        docker exec -it pihole pihole -v
+    fi
+    
     echo -e ""
     echo -e "${YELLOW}Remote Pi-hole Settings${NC}"
     echo -e "Remote Pi-hole Type: ${RH_IN_TYPE}"
