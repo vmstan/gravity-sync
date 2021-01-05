@@ -1,25 +1,13 @@
 ---
-name: Bug report
-about: Create a report to help us improve
+name: Bug Report
+about: Help improve Gravity Sync
 title: ''
 labels: ''
 assignees: ''
 
 ---
+_Unless you are unable to update, please make sure you're running the latest versions of Pi-hole and Gravity Sync before filing a ticket. Also please include the output of `./gravity-sync.sh info` in your report, as a text-file or screenshot attachment._
 
-**Describe the Issue**
-A clear and concise description of what the bug is.
+**Issue Description**
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
-
-**Configuration:**
- - OS for Primary/Secondary: [e.g. Ubuntu/DietPi]
- - Platform for Primary/Secondary: [e.g. VMware ESXi/Raspberry Pi 4]
- - SSH Server/Client: [e.g. OpenSSH/Dropbear]
- - SSH Authentication: [e.g. Keypair, Password]
- - Gravity Sync Version: [e.g. 1.7.6]
- - Pi-hole Versions: [e.g. v5.0]
-
-**Additional Context**
-Add any other context about the problem here. If you have any advanced flags set in your `gravity-sync.conf` please list them here.
+**Configuration Details**
