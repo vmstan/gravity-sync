@@ -99,6 +99,7 @@ function show_info() {
         docker exec -it pihole pihole -v
     fi
     
+    uname -srm
     echo -e "bash $BASH_VERSION"
     ssh -V
     rsync --version | grep version
