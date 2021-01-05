@@ -89,8 +89,8 @@ function show_info() {
     
     echo -e "========================================================"
     echo -e "${YELLOW}Local Software Versions${NC}"
-    echo -e "${RED}Gravity Sync${NC} Version: ${VERSION}${DEVVERSION}"
-    echo -e "${BLUE}pihole -v${NC} Output:"
+    echo -e "${RED}Gravity Sync${NC} ${VERSION}${DEVVERSION}"
+    echo -e "${BLUE}Pi-hole${NC}"
     if [ "${PH_IN_TYPE}" == "default" ]
     then
         pihole version
@@ -105,6 +105,13 @@ function show_info() {
     SQLITE3_VERSION=$(sqlite3 --version)
     echo -e "sqlite3 ${SQLITE3_VERSION}"
     echo -e ""
+    sudo --version | grep "Sudo version"
+    git --version
+    
+    if hash docker 2>/dev/null
+    then
+        docker --version
+    fi
     
     echo -e "${YELLOW}Local/Secondary Instance Settings${NC}"
     echo -e "Local Hostname: $HOSTNAME"
