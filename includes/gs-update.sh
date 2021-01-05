@@ -104,7 +104,6 @@ function show_info() {
     rsync --version | grep version
     SQLITE3_VERSION=$(sqlite3 --version)
     echo -e "sqlite3 ${SQLITE3_VERSION}"
-    echo -e ""
     sudo --version | grep "Sudo version"
     git --version
     
@@ -112,6 +111,7 @@ function show_info() {
     then
         docker --version
     fi
+    echo -e ""
     
     echo -e "${YELLOW}Local/Secondary Instance Settings${NC}"
     echo -e "Local Hostname: $HOSTNAME"
