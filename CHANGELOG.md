@@ -21,6 +21,11 @@ Not implemented in 3.2.0, but coming within this release, Gravity Sync will be c
 
 An example would be setting different caching options for Pi-hole, or specifying the lookup targets for additional networks. Similar requirements as above for the CNAME syncing must be met for existing installs to leverage this functionality.
 
+#### 3.2.1
+
+- Changes application of permissions for Docker instances to UID:GID instead of names. (#99/#128)
+- Adds `./gravity-sync info` function to help with troubleshooting installation/configuration settings.
+
 ## 3.1
 
 ### The Container Release
