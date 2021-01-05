@@ -99,9 +99,11 @@ function show_info() {
         docker exec -it pihole pihole -v
     fi
     
-    echo -e "Bash Version: $BASH_VERSION"
+    echo -e "bash $BASH_VERSION"
     ssh -V
     rsync --version | grep version
+    SQLITE3_VERSION=$(sqlite3 --version)
+    echo -e "sqlite3 ${SQLITE3_VERSION}"
     echo -e ""
     
     echo -e "${YELLOW}Local/Secondary Instance Settings${NC}"
