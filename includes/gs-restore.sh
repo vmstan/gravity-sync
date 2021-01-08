@@ -53,20 +53,29 @@ function restore_gs {
         
         if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
         then
-            ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${CUSTOM_DNS} | colrm 18
+            CUSTOM_DATE_LIST=$(ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${CUSTOM_DNS} | colrm 18)
             
-            MESSAGE="Select backup date to restore ${CUSTOM_DNS} from"
-            echo_need
-            read INPUT_DNSBACKUP_DATE
-            
-            if [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ]
+            if [ -n $CUSTOM_DATE_LIST ]
             then
-                MESSAGE="Backup File Selected"
-            else
-                MESSAGE="Invalid Request"
-                echo_info
+                ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${CUSTOM_DNS} | colrm 18
                 
-                exit_nochange
+                MESSAGE="Select backup date to restore ${CUSTOM_DNS} from"
+                echo_need
+                read INPUT_DNSBACKUP_DATE
+                
+                if [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ]
+                then
+                    MESSAGE="Backup File Selected"
+                    DO_CUSTOM_RESTORE='1'
+                else
+                    MESSAGE="Invalid Request"
+                    echo_info
+                    
+                    exit_nochange
+                fi
+            else
+                MESSAGE="No ${CUSTOM_DNS} Backups"
+                echo_info
             fi
         fi
     fi
@@ -96,8 +105,16 @@ function restore_gs {
     
     MESSAGE="${GRAVITY_FI} from ${INPUT_BACKUP_DATE} Selected"
     echo_info
-    MESSAGE="${CUSTOM_DNS} from ${INPUT_DNSBACKUP_DATE} Selected"
-    echo_info
+    
+    if [ $DO_CUSTOM_RESTORE == "1" ]
+    then
+        MESSAGE="${CUSTOM_DNS} from ${INPUT_DNSBACKUP_DATE} Selected"
+        echo_info
+    else
+        MESSAGE="${CUSTOM_DNS} Restore Unavailable"
+        echo_info
+    fi
+    
     MESSAGE="${CNAME_CONF} from ${INPUT_CNAMEBACKUP_DATE} Selected"
     echo_info
     
@@ -155,7 +172,7 @@ function restore_gs {
         error_validate
     fi
     
-    if [ "$SKIP_CUSTOM" != '1' ]
+    if [ "$DO_CUSTOM_RESTORE" == '1' ]
     then
         if [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ]
         then
