@@ -110,7 +110,7 @@ function restore_gs {
     MESSAGE="${GRAVITY_FI} from ${INPUT_BACKUP_DATE} Selected"
     echo_info
     
-    if [ $DO_CUSTOM_RESTORE == "1" ]
+    if [ "$DO_CUSTOM_RESTORE" == "1" ]
     then
         MESSAGE="${CUSTOM_DNS} from ${INPUT_DNSBACKUP_DATE} Selected"
         echo_info
@@ -130,7 +130,7 @@ function restore_gs {
     MESSAGE="Stopping Pi-hole Services"
     echo_stat
     
-    sudo service pihole-FTL stop >/dev/null 2>&1
+    ${PH_EXEC} stop >/dev/null 2>&1
     error_validate
     
     MESSAGE="Restoring ${GRAVITY_FI} on $HOSTNAME"
