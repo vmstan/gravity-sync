@@ -55,7 +55,7 @@ function restore_gs {
         then
             CUSTOM_DATE_LIST=$(ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${CUSTOM_DNS} | colrm 18)
             
-            if [ -n $CUSTOM_DATE_LIST ]
+            if [ -z ${CUSTOM_DATE_LIST} ]
             then
                 ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${CUSTOM_DNS} | colrm 18
                 
