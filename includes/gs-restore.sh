@@ -30,7 +30,7 @@ function restore_gs {
     MESSAGE="This will restore your settings on $HOSTNAME with a previous version!"
     echo_warn
     
-    MESSAGE="PREVIOUS BACKUPS AVAILABLE FOR RESTORATION"
+    MESSAGE="Previous ${GRAVITY_FI} Available to Restore"
     echo_info
     ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${GRAVITY_FI} | colrm 18
     
@@ -57,6 +57,8 @@ function restore_gs {
             
             if [ "${CUSTOM_DATE_LIST}" != "" ]
             then
+                MESSAGE="Previous ${CUSTOM_DNS} Available to Restore"
+                echo_info
                 ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${CUSTOM_DNS} | colrm 18
                 
                 MESSAGE="Select backup date to restore ${CUSTOM_DNS} from"
@@ -85,6 +87,8 @@ function restore_gs {
         
         if [ -f ${DNSMAQ_DIR}/${CNAME_CONF} ]
         then
+            MESSAGE="Previous ${CNAME_CONF} Available to Restore"
+            echo_info
             ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${CNAME_CONF} | colrm 18
             
             MESSAGE="Select backup date to restore ${CNAME_CONF} from"
