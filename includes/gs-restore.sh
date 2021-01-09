@@ -30,7 +30,7 @@ function restore_gs {
     MESSAGE="This will restore your settings on $HOSTNAME with a previous version!"
     echo_warn
     
-    MESSAGE="Previous ${GRAVITY_FI} Available to Restore"
+    MESSAGE="Previous ${GRAVITY_FI} Versions Available to Restore"
     echo_info
     ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${GRAVITY_FI} | colrm 18
     
@@ -50,14 +50,13 @@ function restore_gs {
     
     if [ "$SKIP_CUSTOM" != '1' ]
     then
-        
         if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
         then
             CUSTOM_DATE_LIST=$(ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${CUSTOM_DNS} | colrm 18)
             
             if [ "${CUSTOM_DATE_LIST}" != "" ]
             then
-                MESSAGE="Previous ${CUSTOM_DNS} Available to Restore"
+                MESSAGE="Previous ${CUSTOM_DNS} Versions Available to Restore"
                 echo_info
                 ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${CUSTOM_DNS} | colrm 18
                 
@@ -84,25 +83,33 @@ function restore_gs {
     
     if [ "$INCLUDE_CNAME" == '1' ]
     then
-        
         if [ -f ${DNSMAQ_DIR}/${CNAME_CONF} ]
         then
-            MESSAGE="Previous ${CNAME_CONF} Available to Restore"
-            echo_info
-            ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${CNAME_CONF} | colrm 18
+            CNAME_DATE_LIST=$(ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${CNAME_CONF} | colrm 18)
             
-            MESSAGE="Select backup date to restore ${CNAME_CONF} from"
-            echo_need
-            read INPUT_CNAMEBACKUP_DATE
-            
-            if [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_CNAMEBACKUP_DATE}-${CNAME_CONF}.backup ]
+            if [ "${CNAME_DATE_LIST}" != "" ]
             then
-                MESSAGE="Backup File Selected"
-            else
-                MESSAGE="Invalid Request"
+                MESSAGE="Previous ${CNAME_CONF} Versions Available to Restore"
                 echo_info
+                ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${CNAME_CONF} | colrm 18
                 
-                exit_nochange
+                MESSAGE="Select backup date to restore ${CNAME_CONF} from"
+                echo_need
+                read INPUT_CNAMEBACKUP_DATE
+                
+                if [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_CNAMEBACKUP_DATE}-${CNAME_CONF}.backup ]
+                then
+                    MESSAGE="Backup File Selected"
+                    DO_CNAME_RESTORE='1'
+                else
+                    MESSAGE="Invalid Request"
+                    echo_info
+                    
+                    exit_nochange
+                fi
+            else
+                MESSAGE="No ${CNAME_CONF} Backups"
+                echo_info
             fi
         fi
     fi
@@ -119,8 +126,14 @@ function restore_gs {
         echo_info
     fi
     
-    MESSAGE="${CNAME_CONF} from ${INPUT_CNAMEBACKUP_DATE} Selected"
-    echo_info
+    if [ "$DO_CNAME_RESTORE" == "1" ]
+    then
+        MESSAGE="${CNAME_CONF} from ${INPUT_CNAMEBACKUP_DATE} Selected"
+        echo_info
+    else
+        MESSAGE="${CNAME_CONF} Restore Unavailable"
+        echo_info
+    fi
     
     intent_validate
     
@@ -225,7 +238,7 @@ function restore_gs {
         fi
     fi
     
-    if [ "$INCLUDE_CNAME" == '1' ]
+    if [ "$DO_CNAME_RESTORE" == '1' ]
     then
         if [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_CNAMEBACKUP_DATE}-${CNAME_CONF}.backup ]
         then
