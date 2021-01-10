@@ -46,11 +46,11 @@ function restore_gs {
         
         if [ "$INPUT_BACKUP_DATE" == "IGNORE-GRAVITY" ]
         then
-            MESSAGE="Skipping ${GRAVITY_FI}"
-            echo_info
+            MESSAGE="Skipping Gravity"
+            echo_warn
         elif [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${GRAVITY_FI}.backup ]
         then
-            MESSAGE="Backup File Selected"
+            MESSAGE="Backup Selected"
             echo_info
             
             DO_GRAVITY_RESTORE='1'
@@ -81,17 +81,17 @@ function restore_gs {
                 
                 if [ "$INPUT_DNSBACKUP_DATE" == "IGNORE-CUSTOM" ]
                 then
-                    MESSAGE="Skipping ${CUSTOM_DNS}"
-                    echo_info
+                    MESSAGE="Skipping DNS"
+                    echo_warn
                 elif [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ]
                 then
-                    MESSAGE="Backup File Selected"
+                    MESSAGE="Backup Selected"
                     echo_info
                     
                     DO_CUSTOM_RESTORE='1'
                 else
                     MESSAGE="Invalid Request"
-                    echo_info
+                    echo_fail
                     
                     exit_nochange
                 fi
@@ -121,17 +121,17 @@ function restore_gs {
                 
                 if [ "$INPUT_CNAMEBACKUP_DATE" == "IGNORE-CNAME" ]
                 then
-                    MESSAGE="Skipping ${CNAME_CONF}"
-                    echo_info
+                    MESSAGE="Skipping CNAME"
+                    echo_warn
                 elif [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_CNAMEBACKUP_DATE}-${CNAME_CONF}.backup ]
                 then
-                    MESSAGE="Backup File Selected"
+                    MESSAGE="Backup Selected"
                     echo_info
                     
                     DO_CNAME_RESTORE='1'
                 else
                     MESSAGE="Invalid Request"
-                    echo_info
+                    echo_fail
                     
                     exit_nochange
                 fi
