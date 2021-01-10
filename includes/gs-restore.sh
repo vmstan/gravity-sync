@@ -142,7 +142,7 @@ function restore_gs {
         fi
     fi
     
-    if [ "$DO_CUSTOM_RESTORE" == "1" ]
+    if [ "$DO_GRAVITY_RESTORE" == "1" ]
     then
         MESSAGE="${GRAVITY_FI} from ${INPUT_BACKUP_DATE} Selected"
         echo_info
