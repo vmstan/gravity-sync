@@ -32,7 +32,7 @@ function restore_gs {
     
     GRAVITY_DATE_LIST=$(ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${GRAVITY_FI} | colrm 18)
     
-    if [ "${CUSTOM_DATE_LIST}" != "" ]
+    if [ "${GRAVITY_DATE_LIST}" != "" ]
     then
         MESSAGE="Previous ${GRAVITY_FI} Versions Available to Restore"
         echo_info
