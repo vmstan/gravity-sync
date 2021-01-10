@@ -51,7 +51,7 @@ function restore_gs {
         elif [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${GRAVITY_FI}.backup ]
         then
             MESSAGE="Backup Selected"
-            echo_info
+            echo_good
             
             DO_GRAVITY_RESTORE='1'
         else
@@ -86,7 +86,7 @@ function restore_gs {
                 elif [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ]
                 then
                     MESSAGE="Backup Selected"
-                    echo_info
+                    echo_good
                     
                     DO_CUSTOM_RESTORE='1'
                 else
@@ -126,7 +126,7 @@ function restore_gs {
                 elif [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_CNAMEBACKUP_DATE}-${CNAME_CONF}.backup ]
                 then
                     MESSAGE="Backup Selected"
-                    echo_info
+                    echo_good
                     
                     DO_CNAME_RESTORE='1'
                 else
