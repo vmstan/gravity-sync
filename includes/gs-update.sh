@@ -39,7 +39,7 @@ function update_gs {
 
 ## Show Version
 function show_version {
-    echo -e "========================================================"
+    echo_lines
     MESSAGE="${BOLD}${PROGRAM}${NC} by ${CYAN}@vmstan${NC}"
     echo_info
     
@@ -72,7 +72,7 @@ function show_version {
         fi
     fi
     echo_info
-    echo -e "========================================================"
+    echo_lines
 }
 
 function show_info() {
@@ -87,7 +87,7 @@ function show_info() {
         DEVVERSION=""
     fi
     
-    echo -e "========================================================"
+    echo_lines
     echo -e "${YELLOW}Local Software Versions${NC}"
     echo -e "${RED}Gravity Sync${NC} ${VERSION}${DEVVERSION}"
     echo -e "${BLUE}Pi-hole${NC}"
@@ -199,7 +199,7 @@ function show_info() {
     fi
 
     echo -e "Remote File Owner Settings: ${RILE_OWNER}"
-    echo -e "========================================================"
+    echo_lines
 }
 
 ## Devmode Task

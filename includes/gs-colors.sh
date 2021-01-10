@@ -52,3 +52,8 @@ function echo_fail {
 function echo_need {
     echo -en "${NEED} ${MESSAGE}: "
 }
+
+### Lines
+function echo_lines {
+    echo -e "========================================================"
+}

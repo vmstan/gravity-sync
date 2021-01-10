@@ -394,9 +394,9 @@ function config_delete {
     MESSAGE="Configuration File Exists"
     echo_warn
     
-    echo -e "========================================================"
+    echo_lines
     cat ${LOCAL_FOLDR}/${CONFIG_FILE}
-    echo -e "========================================================"
+    echo_lines
     
     MESSAGE="Are you sure you want to erase this configuration?"
     echo_warn

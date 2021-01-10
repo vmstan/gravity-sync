@@ -26,6 +26,10 @@ An example would be setting different caching options for Pi-hole, or specifying
 - Changes application of permissions for Docker instances to UID:GID instead of names. (#99/#128)
 - Adds `./gravity-sync info` function to help with troubleshooting installation/configuration settings.
 
+#### 3.2.2
+
+- Restore process completely revamped. You can now choose to ignore any of the three elements during restore. The prompts are clearer and more consistent with Gravity Sync script styling. Importantly, lack of backup files in an element will not cause the restoration to fail.
+
 ## 3.1
 
 ### The Container Release
