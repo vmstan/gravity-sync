@@ -30,23 +30,36 @@ function restore_gs {
     MESSAGE="This will restore your settings on $HOSTNAME with a previous version!"
     echo_warn
     
-    MESSAGE="Previous ${GRAVITY_FI} Versions Available to Restore"
-    echo_info
-    ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${GRAVITY_FI} | colrm 18
-    echo -e "IGNORE-GRAVITY"
+    GRAVITY_DATE_LIST=$(ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${GRAVITY_FI} | colrm 18)
     
-    MESSAGE="Select backup date to restore ${GRAVITY_FI} from"
-    echo_need
-    read INPUT_BACKUP_DATE
-    
-    if [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${GRAVITY_FI}.backup ]
+    if [ "${CUSTOM_DATE_LIST}" != "" ]
     then
-        MESSAGE="Backup File Selected"
-    else
-        MESSAGE="Invalid Request"
+        MESSAGE="Previous ${GRAVITY_FI} Versions Available to Restore"
         echo_info
         
-        exit_nochange
+        ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${GRAVITY_FI} | colrm 18
+        echo -e "IGNORE-GRAVITY"
+        
+        MESSAGE="Select backup date to restore ${GRAVITY_FI} from"
+        echo_need
+        read INPUT_BACKUP_DATE
+        
+        if [ "$INPUT_DNSBACKUP_DATE" = "IGNORE-GRAVITY" ]
+        then
+            MESSAGE="Skipping ${GRAVITY_FI}"
+            echo_info
+        elif [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${GRAVITY_FI}.backup ]
+        then
+            MESSAGE="Backup File Selected"
+            echo_info
+            
+            DO_GRAVITY_RESTORE='1'
+        else
+            MESSAGE="Invalid Request"
+            echo_info
+            
+            exit_nochange
+        fi
     fi
     
     if [ "$SKIP_CUSTOM" != '1' ]
@@ -66,9 +79,15 @@ function restore_gs {
                 echo_need
                 read INPUT_DNSBACKUP_DATE
                 
-                if [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ]
+                if [ "$INPUT_DNSBACKUP_DATE" = "IGNORE-CUSTOM" ]
+                then
+                    MESSAGE="Skipping ${CUSTOM_DNS}"
+                    echo_info
+                elif [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ]
                 then
                     MESSAGE="Backup File Selected"
+                    echo_info
+                    
                     DO_CUSTOM_RESTORE='1'
                 else
                     MESSAGE="Invalid Request"
@@ -100,9 +119,15 @@ function restore_gs {
                 echo_need
                 read INPUT_CNAMEBACKUP_DATE
                 
-                if [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_CNAMEBACKUP_DATE}-${CNAME_CONF}.backup ]
+                if [ "$INPUT_CNAMEBACKUP_DATE" = "IGNORE-CNAME" ]
+                then
+                    MESSAGE="Skipping ${CNAME_CONF}"
+                    echo_info
+                elif [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_CNAMEBACKUP_DATE}-${CNAME_CONF}.backup ]
                 then
                     MESSAGE="Backup File Selected"
+                    echo_info
+                    
                     DO_CNAME_RESTORE='1'
                 else
                     MESSAGE="Invalid Request"
@@ -117,8 +142,14 @@ function restore_gs {
         fi
     fi
     
-    MESSAGE="${GRAVITY_FI} from ${INPUT_BACKUP_DATE} Selected"
-    echo_info
+    if [ "$DO_CUSTOM_RESTORE" == "1" ]
+    then
+        MESSAGE="${GRAVITY_FI} from ${INPUT_BACKUP_DATE} Selected"
+        echo_info
+    else
+        MESSAGE="${GRAVITY_FI} Restore Unavailable"
+        echo_info
+    fi
     
     if [ "$DO_CUSTOM_RESTORE" == "1" ]
     then
@@ -149,47 +180,50 @@ function restore_gs {
     ${PH_EXEC} stop >/dev/null 2>&1
     error_validate
     
-    MESSAGE="Restoring ${GRAVITY_FI} on $HOSTNAME"
-    echo_stat
-    sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${GRAVITY_FI}.backup ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
-    error_validate
-    
-    MESSAGE="Validating Ownership on ${GRAVITY_FI}"
-    echo_stat
-    
-    GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk 'OFS=":" {print $3,$4}')
-    if [ "$GRAVDB_OWN" == "$FILE_OWNER" ]
+    if [ "$DO_CUSTOM_RESTORE" == "1" ]
     then
-        echo_good
-    else
-        echo_fail
-        
-        MESSAGE="Attempting to Compensate"
-        echo_warn
-        
-        MESSAGE="Setting Ownership on ${GRAVITY_FI}"
+        MESSAGE="Restoring ${GRAVITY_FI} on $HOSTNAME"
         echo_stat
-        sudo chown ${FILE_OWNER} ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+        sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${GRAVITY_FI}.backup ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
         error_validate
-    fi
-    
-    MESSAGE="Validating Permissions on ${GRAVITY_FI}"
-    echo_stat
-    
-    GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | awk '{print $1}')
-    if [ "$GRAVDB_RWE" = "-rw-rw-r--" ]
-    then
-        echo_good
-    else
-        echo_fail
         
-        MESSAGE="Attempting to Compensate"
-        echo_warn
-        
-        MESSAGE="Setting Ownership on ${GRAVITY_FI}"
+        MESSAGE="Validating Ownership on ${GRAVITY_FI}"
         echo_stat
-        sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
-        error_validate
+        
+        GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk 'OFS=":" {print $3,$4}')
+        if [ "$GRAVDB_OWN" == "$FILE_OWNER" ]
+        then
+            echo_good
+        else
+            echo_fail
+            
+            MESSAGE="Attempting to Compensate"
+            echo_warn
+            
+            MESSAGE="Setting Ownership on ${GRAVITY_FI}"
+            echo_stat
+            sudo chown ${FILE_OWNER} ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+            error_validate
+        fi
+        
+        MESSAGE="Validating Permissions on ${GRAVITY_FI}"
+        echo_stat
+        
+        GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | awk '{print $1}')
+        if [ "$GRAVDB_RWE" = "-rw-rw-r--" ]
+        then
+            echo_good
+        else
+            echo_fail
+            
+            MESSAGE="Attempting to Compensate"
+            echo_warn
+            
+            MESSAGE="Setting Ownership on ${GRAVITY_FI}"
+            echo_stat
+            sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+            error_validate
+        fi
     fi
     
     if [ "$DO_CUSTOM_RESTORE" == '1' ]
