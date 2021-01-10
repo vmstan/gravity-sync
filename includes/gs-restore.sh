@@ -37,8 +37,10 @@ function restore_gs {
         MESSAGE="Previous ${GRAVITY_FI} Versions Available to Restore"
         echo_info
         
+        echo_lines
         ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${GRAVITY_FI} | colrm 18
         echo -e "IGNORE-GRAVITY"
+        echo_lines
         
         MESSAGE="Select backup date to restore ${GRAVITY_FI} from"
         echo_need
@@ -72,8 +74,11 @@ function restore_gs {
             then
                 MESSAGE="Previous ${CUSTOM_DNS} Versions Available to Restore"
                 echo_info
+                
+                echo_lines
                 ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${CUSTOM_DNS} | colrm 18
                 echo -e "IGNORE-CUSTOM"
+                echo_lines
                 
                 MESSAGE="Select backup date to restore ${CUSTOM_DNS} from"
                 echo_need
@@ -112,8 +117,11 @@ function restore_gs {
             then
                 MESSAGE="Previous ${CNAME_CONF} Versions Available to Restore"
                 echo_info
+                
+                echo_lines
                 ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${CNAME_CONF} | colrm 18
                 echo -e "IGNORE-CNAME"
+                echo_lines
                 
                 MESSAGE="Select backup date to restore ${CNAME_CONF} from"
                 echo_need
