@@ -44,7 +44,7 @@ function restore_gs {
         echo_need
         read INPUT_BACKUP_DATE
         
-        if [ "$INPUT_DNSBACKUP_DATE" = "IGNORE-GRAVITY" ]
+        if [ "$INPUT_DNSBACKUP_DATE" == "IGNORE-GRAVITY" ]
         then
             MESSAGE="Skipping ${GRAVITY_FI}"
             echo_info
@@ -79,7 +79,7 @@ function restore_gs {
                 echo_need
                 read INPUT_DNSBACKUP_DATE
                 
-                if [ "$INPUT_DNSBACKUP_DATE" = "IGNORE-CUSTOM" ]
+                if [ "$INPUT_DNSBACKUP_DATE" == "IGNORE-CUSTOM" ]
                 then
                     MESSAGE="Skipping ${CUSTOM_DNS}"
                     echo_info
@@ -119,7 +119,7 @@ function restore_gs {
                 echo_need
                 read INPUT_CNAMEBACKUP_DATE
                 
-                if [ "$INPUT_CNAMEBACKUP_DATE" = "IGNORE-CNAME" ]
+                if [ "$INPUT_CNAMEBACKUP_DATE" == "IGNORE-CNAME" ]
                 then
                     MESSAGE="Skipping ${CNAME_CONF}"
                     echo_info
