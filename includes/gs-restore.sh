@@ -44,7 +44,7 @@ function restore_gs {
         echo_need
         read INPUT_BACKUP_DATE
         
-        if [ "$INPUT_DNSBACKUP_DATE" == "IGNORE-GRAVITY" ]
+        if [ "$INPUT_BACKUP_DATE" == "IGNORE-GRAVITY" ]
         then
             MESSAGE="Skipping ${GRAVITY_FI}"
             echo_info
