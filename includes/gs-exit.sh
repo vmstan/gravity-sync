@@ -24,25 +24,26 @@ function exit_withchange {
 function list_gs_arguments {
     echo -e "Usage: $0 [options]"
     echo -e "Example: '$0 pull'"
-    echo -e ""
+    echo_blank
     echo -e "Setup Options:"
-    echo -e " ${YELLOW}config${NC}		Create a new ${CONFIG_FILE} file"
-    echo -e " ${YELLOW}automate${NC}	Add a scheduled pull task to crontab"
+    echo -e " ${YELLOW}config${NC}      Create a new ${CONFIG_FILE} file"
+    echo -e " ${YELLOW}automate${NC}    Add a scheduled pull task to crontab"
     echo -e " ${YELLOW}update${NC}		Update ${PROGRAM} to the latest version"
-    echo -e " ${YELLOW}version${NC}	Display installed version of ${PROGRAM}"
+    echo -e " ${YELLOW}version${NC}     Display installed version of ${PROGRAM}"
     echo -e " ${YELLOW}sudo${NC}		Configure passwordless sudo for current user"
-    echo -e ""
+    echo_blank
     echo -e "Replication Options:"
     echo -e " ${YELLOW}smart${NC}		Detect changes on each side and bring them together"
     echo -e " ${YELLOW}pull${NC}		Force remote configuration changes to this server"
     echo -e " ${YELLOW}push${NC}		Force local configuration made on this server back"
-    echo -e " ${YELLOW}restore${NC}	Restore the ${GRAVITY_FI} on this server"
-    echo -e " ${YELLOW}backup${NC}	Backup the ${GRAVITY_FI} on this server"
-    echo -e " ${YELLOW}compare${NC}	Just check for differences"
-    echo -e ""
+    echo -e " ${YELLOW}restore${NC}     Restore the ${GRAVITY_FI} on this server"
+    echo -e " ${YELLOW}backup${NC}      Backup the ${GRAVITY_FI} on this server"
+    echo -e " ${YELLOW}compare${NC}     Just check for differences"
+    echo_blank
     echo -e "Debug Options:"
-    echo -e " ${YELLOW}logs${NC}		Show recent successful replication jobs"
-    echo -e " ${YELLOW}cron${NC}		Display output of last crontab execution"
-    echo -e ""
+    echo -e " ${YELLOW}logs${NC}        Show recent successful replication jobs"
+    echo -e " ${YELLOW}cron${NC}        Display output of last crontab execution"
+    echo -e " ${YELLOW}info${NC}        Shows information about the current system"
+    echo_blank
     exit_nochange
 }

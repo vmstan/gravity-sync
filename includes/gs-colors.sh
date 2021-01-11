@@ -57,3 +57,10 @@ function echo_need {
 function echo_lines {
     echo -e "========================================================"
 }
+
+### Lines
+function echo_blank {
+    echo -e ""
+}
+
+
