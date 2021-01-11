@@ -24,7 +24,7 @@ function exit_withchange {
 function list_gs_arguments {
     echo -e "Usage: $0 [options]"
     echo -e "Example: '$0 pull'"
-    echo_blank
+    echo_lines
     echo -e "Setup Options:"
     echo -e " ${YELLOW}config${NC}      Create a new ${CONFIG_FILE} file"
     echo -e " ${YELLOW}automate${NC}    Add a scheduled pull task to crontab"
@@ -44,6 +44,6 @@ function list_gs_arguments {
     echo -e " ${YELLOW}logs${NC}        Show recent successful replication jobs"
     echo -e " ${YELLOW}cron${NC}        Display output of last crontab execution"
     echo -e " ${YELLOW}info${NC}        Shows information about the current system"
-    echo_blank
+    echo_lines
     exit_nochange
 }
