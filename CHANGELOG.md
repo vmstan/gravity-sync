@@ -24,11 +24,15 @@ An example would be setting different caching options for Pi-hole, or specifying
 #### 3.2.1
 
 - Changes application of permissions for Docker instances to UID:GID instead of names. (#99/#128)
-- Adds `./gravity-sync info` function to help with troubleshooting installation/configuration settings.
+- Adds `./gravity-sync.sh info` function to help with troubleshooting installation/configuration settings.
 
 #### 3.2.2
 
-- Restore process completely revamped. You can now choose to ignore any of the three elements during restore. The prompts are clearer and more consistent with Gravity Sync script styling. Importantly, lack of backup files in an element will not cause the restoration to fail.
+The `./gravity-sync.sh restore` process completely revamped:
+
+- You can now choose to ignore any of the three elements during restore.
+- The prompts are clearer and more consistent with Gravity Sync script styling.
+- Importantly, lack of backup files in an element will not cause the restoration to fail.
 
 ## 3.1
 
