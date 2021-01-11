@@ -30,7 +30,7 @@ function list_gs_arguments {
     echo -e " ${YELLOW}automate${NC}    Schedules the ${PROGRAM} replication task using crontab"
     echo -e " ${YELLOW}version${NC}     Shows the installed version of ${PROGRAM} and check for updates"
     echo -e " ${YELLOW}update${NC}      Upgrades ${PROGRAM} to the latest available version using Git"
-    echo -e " ${YELLOW}dev${NC}         Sets `upgrade` command to use a development version of ${PROGRAM}"
+    echo -e " ${YELLOW}dev${NC}         Sets upgrade command to use a development version of ${PROGRAM}"
     echo -e " ${YELLOW}sudo${NC}        Configures passwordless sudo for current user"
     echo_blank
     echo -e "Replication Options:"
