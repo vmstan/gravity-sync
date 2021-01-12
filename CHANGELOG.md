@@ -38,6 +38,10 @@ The `./gravity-sync.sh restore` process completely revamped:
 
 - Cleanup of the error message screen when an invalid command is run (ex: `./gravity-sync.sh wtf`)
 
+#### 3.2.4
+
+- Changes script startup and shutdown text format.
+
 ## 3.1
 
 ### The Container Release
