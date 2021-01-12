@@ -28,7 +28,7 @@ echo -e "========================================================"
 echo -e "${YELLOW}Gravity Sync by ${BLUE}@vmstan${YELLOW} - Online Installation${NC}"
 echo -e "${CYAN}https://github.com/vmstan/gravity-sync${NC}"
 echo -e "========================================================"
-# echo -e "Initalizing Short Range Sensors"
+echo -e "[${GREEN}✓${NC}] Checking Short Range Sensors"
 
 # Check Root
 echo -e "[${YELLOW}i${NC}] ${YELLOW}Validating System Authorization${NC}"
