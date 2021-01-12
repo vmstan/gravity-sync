@@ -34,6 +34,10 @@ The `./gravity-sync.sh restore` process completely revamped:
 - The prompts are clearer and more consistent with Gravity Sync script styling.
 - Importantly, lack of backup files in an element will not cause the restoration to fail.
 
+#### 3.2.3
+
+- Cleanup of the error message screen when an invalid command is run (ex: `./gravity-sync.sh wtf`)
+
 ## 3.1
 
 ### The Container Release
