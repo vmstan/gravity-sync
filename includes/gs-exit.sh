@@ -7,7 +7,13 @@
 ## No Changes Made
 function exit_nochange {
     SCRIPT_END=$SECONDS
-    MESSAGE="${PROGRAM} ${TASKTYPE} Aborting ($((SCRIPT_END-SCRIPT_START)) seconds)"
+    
+    if [ "${TASKTYPE}" == "" ]
+        MESSAGE="${PROGRAM} Aborting ($((SCRIPT_END-SCRIPT_START)) seconds)"
+    else
+        MESSAGE="${PROGRAM} ${TASKTYPE} Aborting ($((SCRIPT_END-SCRIPT_START)) seconds)"
+    fi
+    
     echo_info
     exit 0
 }
@@ -15,7 +21,13 @@ function exit_nochange {
 ## Changes Made
 function exit_withchange {
     SCRIPT_END=$SECONDS
-    MESSAGE="${PROGRAM} ${TASKTYPE} Completed ($((SCRIPT_END-SCRIPT_START)) seconds)"
+    
+    if [ "${TASKTYPE}" == "" ]
+        MESSAGE="${PROGRAM} Completed ($((SCRIPT_END-SCRIPT_START)) seconds)"
+    else
+        MESSAGE="${PROGRAM} ${TASKTYPE} Completed ($((SCRIPT_END-SCRIPT_START)) seconds)"
+    fi
+    
     echo_info
     exit 0
 }
