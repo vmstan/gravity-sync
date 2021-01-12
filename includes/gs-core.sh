@@ -66,7 +66,7 @@ function ph_type {
 # Standard Output
 function start_gs {
     MESSAGE="${PROGRAM} ${VERSION} Executing"
-    echo_info
+    echo_grav
     cd ${LOCAL_FOLDR}
     
     import_gs
@@ -92,7 +92,7 @@ function start_gs {
 # Standard Output No Config
 function start_gs_noconfig {
     MESSAGE="${PROGRAM} ${VERSION} Executing"
-    echo_info
+    echo_grav
     cd ${LOCAL_FOLDR}
     
     MESSAGE="Evaluating Arguments"

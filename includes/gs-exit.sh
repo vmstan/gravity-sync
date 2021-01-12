@@ -15,7 +15,7 @@ function exit_nochange {
         MESSAGE="${PROGRAM} ${TASKTYPE} Aborting ($((SCRIPT_END-SCRIPT_START)) seconds)"
     fi
     
-    echo_info
+    echo_grav
     exit 0
 }
 
@@ -30,7 +30,7 @@ function exit_withchange {
         MESSAGE="${PROGRAM} ${TASKTYPE} Completed ($((SCRIPT_END-SCRIPT_START)) seconds)"
     fi
     
-    echo_info
+    echo_grav
     exit 0
 }
 
