@@ -36,7 +36,7 @@ Gravity Sync will **not**:
 
 1. [Review System Requirements](https://github.com/vmstan/gravity-sync/wiki/System-Requirements)
 2. [Prepare Your Pi-hole](https://github.com/vmstan/gravity-sync/wiki/Installing#primary-pi-hole)
-3. [Install Gravity Sync](https://github.com/vmstan/gravity-sync/wiki/Installing#secondary-pi-hole)
+3. [Install Gravity Sync](https://github.com/vmstan/gravity-sync/wiki/Installing#secondary-pi-hole) ([Updating](https://github.com/vmstan/gravity-sync/wiki/Updating))
 4. [Configure Gravity Sync](https://github.com/vmstan/gravity-sync/wiki/Installing#configuration)
 5. [Execute Gravity Sync](https://github.com/vmstan/gravity-sync/wiki/Installing#execution)
 6. [Automate Gravity Sync](https://github.com/vmstan/gravity-sync/wiki/Installing#automation)
