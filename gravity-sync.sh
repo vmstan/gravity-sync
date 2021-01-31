@@ -17,8 +17,8 @@ VERSION='3.2.4'
 # STANDARD VARIABLES #########################
 
 # Installation Types
-PH_IN_TYPE='default'				# Pi-hole install type, `default` or `docker` (local)
-RH_IN_TYPE='default'				# Pi-hole install type, `default` or `docker` (remote)
+PH_IN_TYPE='default'				# Pi-hole install type, `default`, `docker`, or `podman` (local)
+RH_IN_TYPE='default'				# Pi-hole install type, `default`, `docker`, or `podman` (remote)
 
 # Pi-hole Folder/File Customization
 PIHOLE_DIR='/etc/pihole' 			# default Pi-hole data directory (local)
@@ -29,10 +29,12 @@ PIHOLE_BIN='/usr/local/bin/pihole' 	# default Pi-hole binary directory (local)
 RIHOLE_BIN='/usr/local/bin/pihole' 	# default Pi-hole binary directory (remote)
 DOCKER_BIN='/usr/bin/docker'		# default Docker binary directory (local)
 ROCKER_BIN='/usr/bin/docker'		# default Docker binary directory (remote)
+PODMAN_BIN='/usr/bin/podman'        # default Podman binary directory (local)
+RODMAN_BIN='/usr/bin/podman'        # default Podman binary directory (remote)
 FILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (local)
 RILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (remote)
-DOCKER_CON='pihole'					# default Pi-hole Docker container name (local)
-ROCKER_CON='pihole'					# default Pi-hole Docker container name (remote)
+CON_NAME='pihole'					# default Pi-hole container name (local)
+RON_NAME='pihole'					# default Pi-hole container name (remote)
 
 GRAVITY_FI='gravity.db' 			        # default Pi-hole database file
 CUSTOM_DNS='custom.list'			        # default Pi-hole local DNS lookups

@@ -37,7 +37,8 @@ function config_generate {
     error_validate
     
     docker_detect
-    if [ "${DOCKERREADY}" == "1" ]
+    podman_detect
+    if [ "${DOCKERREADY}" == "1" ] || [ "${PODMANREADY}" == "1" ]
     then
         MESSAGE="Advanced Configuration Required"
         echo_info
@@ -109,28 +110,35 @@ function config_generate {
 
 ## Advanced Configuration Options
 function advanced_config_generate {
-    MESSAGE="Local Pi-hole in Docker Container? (Leave blank for default 'No')"
+    MESSAGE="Local Pi-hole in Container? (Allowed: 'docker' or 'podman'. Leave blank for default 'No')"
     echo_need
     read INPUT_PH_IN_TYPE
     INPUT_PH_IN_TYPE="${INPUT_PH_IN_TYPE:-N}"
     
     if [ "${INPUT_PH_IN_TYPE}" != "N" ]
     then
-        MESSAGE="Saving Local Docker Setting to ${CONFIG_FILE}"
+        if [ "${INPUT_PH_IN_TYPE}" != "docker" ] && [ "${INPUT_PH_IN_TYPE}" != "podman" ]
+        then
+            MESSAGE="Local Container Type must either be 'docker' or 'podman'"
+            echo_warn
+            exit_withchanges
+        fi
+
+        MESSAGE="Saving Local Container Type Setting to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# PH_IN_TYPE=''/c\PH_IN_TYPE='docker'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+        sed -i "/# PH_IN_TYPE=''/c\PH_IN_TYPE='${INPUT_PH_IN_TYPE}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
         error_validate
         
-        MESSAGE="Local Docker Container Name? (Leave blank for default 'pihole')"
+        MESSAGE="Local Container Name? (Leave blank for default 'pihole')"
         echo_need
-        read INPUT_DOCKER_CON
-        INPUT_DOCKER_CON="${INPUT_DOCKER_CON:-pihole}"
+        read INPUT_CON_NAME
+        INPUT_CON_NAME="${INPUT_CON_NAME:-pihole}"
         
-        if [ "${INPUT_DOCKER_CON}" != "pihole" ]
+        if [ "${INPUT_CON_NAME}" != "pihole" ]
         then
             MESSAGE="Saving Local Container Name to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# DOCKER_CON=''/c\DOCKER_CON='${INPUT_DOCKER_CON}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+            sed -i "/# CON_NAME=''/c\CON_NAME='${INPUT_CON_NAME}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
             error_validate
         fi
         
@@ -174,28 +182,34 @@ function advanced_config_generate {
         error_validate
     fi
     
-    MESSAGE="Remote Pi-hole in Docker Container? (Leave blank for default 'No')"
+    MESSAGE="Remote Pi-hole in Container? (Allowed: 'docker' or 'podman'. Leave blank for default 'No')"
     echo_need
     read INPUT_RH_IN_TYPE
     INPUT_RH_IN_TYPE="${INPUT_RH_IN_TYPE:-N}"
     
     if [ "${INPUT_RH_IN_TYPE}" != "N" ]
     then
-        MESSAGE="Saving Remote Docker Setting to ${CONFIG_FILE}"
+        if [ "${INPUT_RH_IN_TYPE}" != "docker" ] && [ "${INPUT_RH_IN_TYPE}" != "podman" ]
+        then
+            MESSAGE="Remote Container Type must either be 'docker' or 'podman'"
+            echo_warn
+            exit_withchanges
+        fi
+        MESSAGE="Saving Remote Container Type Setting to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# RH_IN_TYPE=''/c\RH_IN_TYPE='docker'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+        sed -i "/# RH_IN_TYPE=''/c\RH_IN_TYPE='${INPUT_RH_IN_TYPE}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
         error_validate
         
-        MESSAGE="Remote Docker Container Name? (Leave blank for default 'pihole')"
+        MESSAGE="Remote Container Name? (Leave blank for default 'pihole')"
         echo_need
-        read INPUT_ROCKER_CON
-        INPUT_ROCKER_CON="${INPUT_ROCKER_CON:-pihole}"
+        read INPUT_RON_NAME
+        INPUT_RON_NAME="${INPUT_RON_NAME:-pihole}"
         
-        if [ "${INPUT_ROCKER_CON}" != "pihole" ]
+        if [ "${INPUT_RON_NAME}" != "pihole" ]
         then
             MESSAGE="Saving Remote Container Name to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# ROCKER_CON=''/c\ROCKER_CON='${INPUT_ROCKER_CON}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+            sed -i "/# RON_NAME=''/c\RON_NAME='${INPUT_RON_NAME}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
             error_validate
         fi
         
@@ -419,6 +433,18 @@ function docker_detect {
         if [ "$FTLCHECK" != "" ]
         then
             DOCKERREADY="1"
+        fi
+    fi
+}
+
+## Detect Podman
+function podman_detect {
+    if hash podman 2>/dev/null
+    then
+        FTLCHECK=$(sudo podman container ls | grep 'pihole/pihole')
+        if [ "$FTLCHECK" != "" ]
+        then
+            PODMANREADY="1"
         fi
     fi
 }
