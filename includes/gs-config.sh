@@ -131,14 +131,14 @@ function advanced_config_generate {
         
         MESSAGE="Local Container Name? (Leave blank for default 'pihole')"
         echo_need
-        read INPUT_CON_NAME
-        INPUT_CON_NAME="${INPUT_CON_NAME:-pihole}"
+        read INPUT_DOCKER_CON
+        INPUT_DOCKER_CON="${INPUT_DOCKER_CON:-pihole}"
         
-        if [ "${INPUT_CON_NAME}" != "pihole" ]
+        if [ "${INPUT_DOCKER_CON}" != "pihole" ]
         then
             MESSAGE="Saving Local Container Name to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# CON_NAME=''/c\CON_NAME='${INPUT_CON_NAME}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+            sed -i "/# DOCKER_CON=''/c\DOCKER_CON='${INPUT_DOCKER_CON}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
             error_validate
         fi
         
@@ -202,14 +202,14 @@ function advanced_config_generate {
         
         MESSAGE="Remote Container Name? (Leave blank for default 'pihole')"
         echo_need
-        read INPUT_RON_NAME
-        INPUT_RON_NAME="${INPUT_RON_NAME:-pihole}"
+        read INPUT_ROCKER_CON
+        INPUT_ROCKER_CON="${INPUT_ROCKER_CON:-pihole}"
         
-        if [ "${INPUT_RON_NAME}" != "pihole" ]
+        if [ "${INPUT_ROCKER_CON}" != "pihole" ]
         then
             MESSAGE="Saving Remote Container Name to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# RON_NAME=''/c\RON_NAME='${INPUT_RON_NAME}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+            sed -i "/# ROCKER_CON=''/c\ROCKER_CON='${INPUT_ROCKER_CON}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
             error_validate
         fi
         

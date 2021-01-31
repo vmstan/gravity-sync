@@ -25,8 +25,8 @@ REMOTE_USER='pi'
 # RODMAN_BIN=''             # default Podman binary directory (remote)
 # FILE_OWNER=''				# default Pi-hole file owner and group (local)
 # RILE_OWNER=''				# default Pi-hole file owner and group (remote)
-# CON_NAME=''				# default Pi-hole container name (local)
-# RON_NAME=''				# default Pi-hole container name (remote)
+# DOCKER_CON=''				# default Pi-hole container name (local)
+# ROCKER_CON=''				# default Pi-hole container name (remote)
 
 # GRAVITY_FI='' 			# default Pi-hole database file
 # CUSTOM_DNS=''				# default Pi-hole local DNS lookups

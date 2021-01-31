@@ -51,10 +51,10 @@ function ph_type {
         PH_EXEC="${PIHOLE_BIN}"
     elif [ "$PH_IN_TYPE" == "docker" ]
     then
-        PH_EXEC="${DOCKER_BIN} exec ${CON_NAME} pihole"
+        PH_EXEC="${DOCKER_BIN} exec ${DOCKER_CON} pihole"
     elif [ "$PH_IN_TYPE" == "podman" ]
     then
-        PH_EXEC="${PODMAN_BIN} exec ${CON_NAME} pihole"
+        PH_EXEC="${PODMAN_BIN} exec ${DOCKER_CON} pihole"
     fi
     
     if [ "$RH_IN_TYPE" == "default" ]
@@ -62,10 +62,10 @@ function ph_type {
         RH_EXEC="${RIHOLE_BIN}"
     elif [ "$RH_IN_TYPE" == "docker" ]
     then
-        RH_EXEC="${ROCKER_BIN} exec ${RON_NAME} pihole"
+        RH_EXEC="${ROCKER_BIN} exec ${ROCKER_CON} pihole"
     elif [ "$RH_IN_TYPE" == "podman" ]
     then
-        RH_EXEC="${RODMAN_BIN} exec ${RON_NAME} pihole"
+        RH_EXEC="${RODMAN_BIN} exec ${ROCKER_CON} pihole"
     fi
 }
 

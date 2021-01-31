@@ -33,8 +33,8 @@ PODMAN_BIN='/usr/bin/podman'        # default Podman binary directory (local)
 RODMAN_BIN='/usr/bin/podman'        # default Podman binary directory (remote)
 FILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (local)
 RILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (remote)
-CON_NAME='pihole'					# default Pi-hole container name (local)
-RON_NAME='pihole'					# default Pi-hole container name (remote)
+DOCKER_CON='pihole'					# default Pi-hole container name (local)
+ROCKER_CON='pihole'					# default Pi-hole container name (remote)
 
 GRAVITY_FI='gravity.db' 			        # default Pi-hole database file
 CUSTOM_DNS='custom.list'			        # default Pi-hole local DNS lookups

@@ -134,11 +134,11 @@ function show_info() {
         echo -e "Local Pi-hole Binary Directory: ${PIHOLE_BIN}"
     elif [ "${PH_IN_TYPE}" == "docker" ]
     then 
-        echo -e "Local Pi-hole Container Name: ${CON_NAME}"
+        echo -e "Local Pi-hole Container Name: ${DOCKER_CON}"
         echo -e "Local Docker Binary Directory: ${DOCKER_BIN}"
     elif [ "${PH_IN_TYPE}" == "podman" ]
     then 
-        echo -e "Local Pi-hole Container Name: ${CON_NAME}"
+        echo -e "Local Pi-hole Container Name: ${DOCKER_CON}"
         echo -e "Local Podman Binary Directory: ${PODMAN_BIN}"
     fi
     
@@ -207,11 +207,11 @@ function show_info() {
         echo -e "Remote Pi-hole Binary Directory: ${RIHOLE_BIN}"
     elif [ "${RH_IN_TYPE}" == "docker" ]
     then 
-        echo -e "Remote Pi-hole Container Name: ${RON_NAME}"
+        echo -e "Remote Pi-hole Container Name: ${ROCKER_CON}"
         echo -e "Remote Docker Binary Directory: ${ROCKER_BIN}"
     elif [ "${RH_IN_TYPE}" == "podman" ]
     then 
-        echo -e "Remote Pi-hole Container Name: ${RON_NAME}"
+        echo -e "Remote Pi-hole Container Name: ${ROCKER_CON}"
         echo -e "Remote Podman Binary Directory: ${RODMAN_BIN}"
     fi
 
