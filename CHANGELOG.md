@@ -42,6 +42,11 @@ The `./gravity-sync.sh restore` process completely revamped:
 
 - Changes script startup and shutdown text format.
 
+#### 3.2.5
+
+- Correct error where Docker based installs would fail to restart if Docker exec commands required sudo privileges.
+- Correct error where setup script would prompt twice for Local/Remote DNSMASQ directories when using Docker.
+
 ## 3.1
 
 ### The Container Release

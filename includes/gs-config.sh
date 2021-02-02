@@ -161,7 +161,7 @@ function advanced_config_generate {
             echo_stat
             sed -i "/# DNSMAQ_DIR=''/c\DNSMAQ_DIR='${INPUT_DNSMAQ_DIR}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
             error_validate
-            SKIP_DNSMAQ_DIR="1"
+            SKIP_DNSMASQ_DIR="1"
         else
             MESSAGE="This setting is required!"
             echo_warn
@@ -226,7 +226,7 @@ function advanced_config_generate {
             echo_stat
             sed -i "/# RNSMAQ_DIR=''/c\RNSMAQ_DIR='${INPUT_RNSMAQ_DIR}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
             error_validate
-            SKIP_RNSMAQ_DIR="1"
+            SKIP_RNSMASQ_DIR="1"
         else
             MESSAGE="This setting is required!"
             echo_warn
