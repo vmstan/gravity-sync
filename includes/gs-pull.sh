@@ -219,6 +219,7 @@ function pull_gs {
     pull_gs_cname
     pull_gs_reload
     md5_recheck
+    backup_cleanup
     
     logs_export
     exit_withchange
