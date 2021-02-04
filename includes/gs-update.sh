@@ -96,10 +96,10 @@ function show_info() {
         pihole version
     elif [ "${PH_IN_TYPE}" == "docker" ]
     then 
-        docker exec -it pihole pihole -v
+        sudo docker exec -it pihole pihole -v
     elif [ "${PH_IN_TYPE}" == "podman" ]
     then 
-        podman exec -it pihole pihole -v
+        sudo podman exec -it pihole pihole -v
     fi
     
     uname -srm
