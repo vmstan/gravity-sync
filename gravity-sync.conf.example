@@ -9,8 +9,8 @@ REMOTE_USER='pi'
 # STANDARD VARIABLES #########################
 
 ### Installation Types
-# PH_IN_TYPE=''				# Pi-hole install type, `default` or `docker` (local)
-# RH_IN_TYPE=''				# Pi-hole install type, `default` or `docker` (remote)
+# PH_IN_TYPE=''				# Pi-hole install type, `default`, `docker`, or `podman` (local)
+# RH_IN_TYPE=''				# Pi-hole install type, `default`, `docker`, or `podman` (remote)
 
 ### Pi-hole Folder/File Customization
 # PIHOLE_DIR='' 			# default Pi-hole data directory (local)
@@ -21,10 +21,12 @@ REMOTE_USER='pi'
 # RIHOLE_BIN='' 			# default Pi-hole binary directory (remote)
 # DOCKER_BIN=''				# default Docker binary directory (local)
 # ROCKER_BIN=''				# default Docker binary directory (remote)
+# PODMAN_BIN=''             # default Podman binary directory (local)
+# RODMAN_BIN=''             # default Podman binary directory (remote)
 # FILE_OWNER=''				# default Pi-hole file owner and group (local)
 # RILE_OWNER=''				# default Pi-hole file owner and group (remote)
-# DOCKER_CON=''				# default Pi-hole Docker container name (local)
-# ROCKER_CON=''				# default Pi-hole Docker container name (remote)
+# DOCKER_CON=''				# default Pi-hole container name (local)
+# ROCKER_CON=''				# default Pi-hole container name (remote)
 
 # GRAVITY_FI='' 			# default Pi-hole database file
 # CUSTOM_DNS=''				# default Pi-hole local DNS lookups
