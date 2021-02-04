@@ -1,5 +1,11 @@
 # The Changelog
 
+## 3.3
+
+### The Wordy Release
+
+This release focuses on making some of the prompts and messages in Gravity Sync easier to understand. Starting with the initial install and configuration wizard. As the script has grown, added features, and become more complex... more options are necessary during install and it wasn't always clear what to do.
+
 ## 3.2
 
 ### The Alias Release
