@@ -100,7 +100,7 @@ function backup_remote_cname {
 }
 
 function backup_cleanup {
-    MESSAGE="Cleaning Up Old Backups"
+    MESSAGE="Scrubbing ${BACKUP_RETAIN} Redundant Antimatter Containment Pods"
     echo_stat
     
     find ${LOCAL_FOLDR}/${BACKUP_FOLD}/$(date +%Y)*.backup -mtime +${BACKUP_RETAIN} -type f -delete

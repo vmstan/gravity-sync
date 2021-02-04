@@ -125,6 +125,7 @@ function md5_compare {
     else
         MESSAGE="No Replication Required"
         echo_info
+        backup_cleanup
         exit_nochange
     fi
 }

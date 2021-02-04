@@ -23,5 +23,7 @@ function task_compare {
     
     previous_md5
     md5_compare
+    backup_cleanup
+    
     exit_withchange
 }
