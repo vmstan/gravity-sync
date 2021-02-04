@@ -212,6 +212,7 @@ function smart_gs {
     fi
     
     md5_recheck
+    backup_cleanup
     
     logs_export
     exit_withchange

@@ -1,5 +1,13 @@
 # The Changelog
 
+## 3.3
+
+### The Wordy Release
+
+This release focuses on making some of the prompts and messages in Gravity Sync easier to understand. Starting with the initial install and configuration wizard. As the script has grown, added features, and become more complex... more options are necessary during install and it wasn't always clear what to do.
+
+Additionally, "beta" support for [Podman](https://podman.io) based container deployments has been added. (Thanks to work by [@mfschumann](https://github.com/vmstan/gravity-sync/pull/138)) This is marked as beta because at the moment, Gravity Sync may not be regularly tested with this container engine and so regular support may be limited. Use of the official Pi-hole container image is still required.
+
 ## 3.2
 
 ### The Alias Release
@@ -41,6 +49,15 @@ The `./gravity-sync.sh restore` process completely revamped:
 #### 3.2.4
 
 - Changes script startup and shutdown text format.
+
+#### 3.2.5
+
+- Correct error where Docker based installs would fail to restart if Docker exec commands required sudo privileges.
+- Correct error where setup script would prompt twice for Local/Remote DNSMASQ directories when using Docker.
+
+#### 3.2.6
+
+- Adds old backup removal tasks into push/pull/sync/compare functions.
 
 ## 3.1
 
