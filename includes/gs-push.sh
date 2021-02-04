@@ -165,8 +165,9 @@ function push_gs {
     push_gs_cust
     push_gs_cname
     push_gs_reload
-    
     md5_recheck
+    backup_cleanup
+    
     logs_export
     exit_withchange
 }
