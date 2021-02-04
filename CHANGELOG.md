@@ -47,6 +47,10 @@ The `./gravity-sync.sh restore` process completely revamped:
 - Correct error where Docker based installs would fail to restart if Docker exec commands required sudo privileges.
 - Correct error where setup script would prompt twice for Local/Remote DNSMASQ directories when using Docker.
 
+#### 3.2.6
+
+- Adds old backup removal tasks into push/pull/sync/compare functions.
+
 ## 3.1
 
 ### The Container Release
