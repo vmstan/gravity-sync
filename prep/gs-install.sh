@@ -246,7 +246,7 @@ else
         echo -e "[${BLUE}>${NC}] Creating Gravity Sync Directories"
             if [ "$GS_DEV" != "" ]
             then
-                git clone -b origin/${GS_DEV} https://github.com/vmstan/gravity-sync.git
+                git clone -b ${GS_DEV} https://github.com/vmstan/gravity-sync.git
             else
                 git clone https://github.com/vmstan/gravity-sync.git
             fi
