@@ -12,7 +12,7 @@ function import_gs {
     echo -en "${STAT} $MESSAGE"
     if [ -f ${LOCAL_FOLDR}/settings/${CONFIG_FILE} ]
     then
-        source ${LOCAL_FOLDR}/${CONFIG_FILE}
+        source ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
         
         # MESSAGE="Targeting ${REMOTE_USER}@${REMOTE_HOST}"
