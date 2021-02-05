@@ -39,6 +39,33 @@ function relocate_config_gs {
         mv ${LOCAL_FOLDR}/${CONFIG_FILE} ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
     fi
+    
+    if [ -f ${LOCAL_FOLDR}/${SYNCING_LOG} ]
+    then
+        MESSAGE="Relocating ${SYNCING_LOG}"
+        echo -en "${STAT} $MESSAGE"
+        
+        mv ${LOCAL_FOLDR}/${SYNCING_LOG} ${LOG_PATH}/${SYNCING_LOG}
+        error_validate
+    fi
+    
+    if [ -f ${LOCAL_FOLDR}/${CRONJOB_LOG} ]
+    then
+        MESSAGE="Relocating ${CRONJOB_LOG}"
+        echo -en "${STAT} $MESSAGE"
+        
+        mv ${LOCAL_FOLDR}/${CRONJOB_LOG} ${LOG_PATH}/${CRONJOB_LOG}
+        error_validate
+    fi
+    
+    if [ -f ${LOCAL_FOLDR}/${HISTORY_MD5} ]
+    then
+        MESSAGE="Relocating ${HISTORY_MD5}"
+        echo -en "${STAT} $MESSAGE"
+        
+        mv ${LOCAL_FOLDR}/${HISTORY_MD5} ${LOG_PATH}/${HISTORY_MD5}
+        error_validate
+    fi
 }
 
 ## Invalid Tasks
