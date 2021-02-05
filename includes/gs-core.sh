@@ -6,9 +6,11 @@
 
 ## Import Settings
 function import_gs {
+    relocate_config_gs
+    
     MESSAGE="Importing ${CONFIG_FILE} Settings"
     echo -en "${STAT} $MESSAGE"
-    if [ -f ${LOCAL_FOLDR}/${CONFIG_FILE} ]
+    if [ -f ${LOCAL_FOLDR}/settings/${CONFIG_FILE} ]
     then
         source ${LOCAL_FOLDR}/${CONFIG_FILE}
         error_validate
@@ -25,6 +27,17 @@ function import_gs {
         
         TASKTYPE='CONFIG'
         config_generate
+    fi
+}
+
+function relocate_config_gs {
+    if [ -f ${LOCAL_FOLDR}/${CONFIG_FILE} ]
+    then
+        MESSAGE="Relocating ${CONFIG_FILE}"
+        echo -en "${STAT} $MESSAGE"
+        
+        mv ${LOCAL_FOLDR}/${CONFIG_FILE} ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+        error_validate
     fi
 }
 

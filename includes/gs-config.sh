@@ -10,7 +10,9 @@ function task_configure {
     MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
     echo_good
     
-    if [ -f ${LOCAL_FOLDR}/${CONFIG_FILE} ]
+    relocate_config_gs
+    
+    if [ -f ${LOCAL_FOLDR}/settings/${CONFIG_FILE} ]
     then		
         config_delete
     else
@@ -33,7 +35,7 @@ function config_generate {
     
     MESSAGE="Creating New ${CONFIG_FILE} from Template"
     echo_stat
-    cp ${LOCAL_FOLDR}/${CONFIG_FILE}.example ${LOCAL_FOLDR}/${CONFIG_FILE}
+    cp ${LOCAL_FOLDR}/settings/${CONFIG_FILE}.example ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
     error_validate
     
     docker_detect
@@ -82,19 +84,19 @@ function config_generate {
     
     MESSAGE="Saving Host to ${CONFIG_FILE}"
     echo_stat
-    sed -i "/REMOTE_HOST='192.168.1.10'/c\REMOTE_HOST='${INPUT_REMOTE_HOST}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+    sed -i "/REMOTE_HOST='192.168.1.10'/c\REMOTE_HOST='${INPUT_REMOTE_HOST}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
     error_validate
     
     MESSAGE="Saving User to ${CONFIG_FILE}"
     echo_stat
-    sed -i "/REMOTE_USER='pi'/c\REMOTE_USER='${INPUT_REMOTE_USER}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+    sed -i "/REMOTE_USER='pi'/c\REMOTE_USER='${INPUT_REMOTE_USER}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
     error_validate
 
     generate_sshkey
     
     MESSAGE="Importing New ${CONFIG_FILE}"
     echo_stat
-    source ${LOCAL_FOLDR}/${CONFIG_FILE}
+    source ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
     error_validate
 
     export_sshkey	
@@ -126,7 +128,7 @@ function advanced_config_generate {
 
         MESSAGE="Saving Local Container Type Setting to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# PH_IN_TYPE=''/c\PH_IN_TYPE='${INPUT_PH_IN_TYPE}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+        sed -i "/# PH_IN_TYPE=''/c\PH_IN_TYPE='${INPUT_PH_IN_TYPE}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
         
         MESSAGE="Local Container Name? (Leave blank for default 'pihole')"
@@ -138,7 +140,7 @@ function advanced_config_generate {
         then
             MESSAGE="Saving Local Container Name to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# DOCKER_CON=''/c\DOCKER_CON='${INPUT_DOCKER_CON}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+            sed -i "/# DOCKER_CON=''/c\DOCKER_CON='${INPUT_DOCKER_CON}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
         fi
         
@@ -150,7 +152,7 @@ function advanced_config_generate {
         then
             MESSAGE="Saving Local Pi-hole Volume to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# PIHOLE_DIR=''/c\PIHOLE_DIR='${INPUT_PIHOLE_DIR}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+            sed -i "/# PIHOLE_DIR=''/c\PIHOLE_DIR='${INPUT_PIHOLE_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
             SKIP_PIHOLE_DIR="1"
         else
@@ -167,7 +169,7 @@ function advanced_config_generate {
         then
             MESSAGE="Saving Local DNSMASQ Volume to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# DNSMAQ_DIR=''/c\DNSMAQ_DIR='${INPUT_DNSMAQ_DIR}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+            sed -i "/# DNSMAQ_DIR=''/c\DNSMAQ_DIR='${INPUT_DNSMAQ_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
             SKIP_DNSMASQ_DIR="1"
         else
@@ -178,7 +180,7 @@ function advanced_config_generate {
         
         MESSAGE="Saving Local Volume Ownership to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# FILE_OWNER=''/c\FILE_OWNER='999:999'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+        sed -i "/# FILE_OWNER=''/c\FILE_OWNER='999:999'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
     fi
     
@@ -197,7 +199,7 @@ function advanced_config_generate {
         fi
         MESSAGE="Saving Remote Container Type Setting to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# RH_IN_TYPE=''/c\RH_IN_TYPE='${INPUT_RH_IN_TYPE}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+        sed -i "/# RH_IN_TYPE=''/c\RH_IN_TYPE='${INPUT_RH_IN_TYPE}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
         
         MESSAGE="Remote Container Name? (Leave blank for default 'pihole')"
@@ -209,7 +211,7 @@ function advanced_config_generate {
         then
             MESSAGE="Saving Remote Container Name to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# ROCKER_CON=''/c\ROCKER_CON='${INPUT_ROCKER_CON}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+            sed -i "/# ROCKER_CON=''/c\ROCKER_CON='${INPUT_ROCKER_CON}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
         fi
         
@@ -221,7 +223,7 @@ function advanced_config_generate {
         then
             MESSAGE="Saving Remote Pi-hole Volume to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# RIHOLE_DIR=''/c\RIHOLE_DIR='${INPUT_RIHOLE_DIR}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+            sed -i "/# RIHOLE_DIR=''/c\RIHOLE_DIR='${INPUT_RIHOLE_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
             SKIP_RIHOLE_DIR="1"
         else
@@ -238,7 +240,7 @@ function advanced_config_generate {
         then
             MESSAGE="Saving Remote DNSMASQ Volume to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# RNSMAQ_DIR=''/c\RNSMAQ_DIR='${INPUT_RNSMAQ_DIR}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+            sed -i "/# RNSMAQ_DIR=''/c\RNSMAQ_DIR='${INPUT_RNSMAQ_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
             SKIP_RNSMASQ_DIR="1"
         else
@@ -249,7 +251,7 @@ function advanced_config_generate {
         
         MESSAGE="Saving Remote Volume Ownership to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# RILE_OWNER=''/c\RILE_OWNER='999:999'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+        sed -i "/# RILE_OWNER=''/c\RILE_OWNER='999:999'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
     fi
     
@@ -265,7 +267,7 @@ function advanced_config_generate {
         then
             MESSAGE="Saving Local Pi-hole Settings Directory Path to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# PIHOLE_DIR=''/c\PIHOLE_DIR='${INPUT_PIHOLE_DIR}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+            sed -i "/# PIHOLE_DIR=''/c\PIHOLE_DIR='${INPUT_PIHOLE_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
         fi
     fi
@@ -281,7 +283,7 @@ function advanced_config_generate {
         then
             MESSAGE="Saving Remote Pi-hole Settings Directory Path to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# RIHOLE_DIR=''/c\RIHOLE_DIR='${INPUT_RIHOLE_DIR}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+            sed -i "/# RIHOLE_DIR=''/c\RIHOLE_DIR='${INPUT_RIHOLE_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
         fi
     fi
@@ -297,7 +299,7 @@ function advanced_config_generate {
         then
             MESSAGE="Saving Local DNSMASQ Settings Directory Path to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# DNSMASQ_DIR=''/c\DNSMASQ_DIR='${INPUT_DNSMASQ_DIR}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+            sed -i "/# DNSMASQ_DIR=''/c\DNSMASQ_DIR='${INPUT_DNSMASQ_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
         fi
     fi
@@ -313,7 +315,7 @@ function advanced_config_generate {
         then
             MESSAGE="Saving Remote DNSMASQ Settings Directory Path to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# RNSMASQ_DIR=''/c\RNSMASQ_DIR='${INPUT_RNSMASQ_DIR}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+            sed -i "/# RNSMASQ_DIR=''/c\RNSMASQ_DIR='${INPUT_RNSMASQ_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
         fi
     fi
@@ -328,7 +330,7 @@ function advanced_config_generate {
     then
         MESSAGE="Saving Custom SSH Port to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# SSH_PORT=''/c\SSH_PORT='${INPUT_SSH_PORT}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+        sed -i "/# SSH_PORT=''/c\SSH_PORT='${INPUT_SSH_PORT}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
     fi
     
@@ -341,7 +343,7 @@ function advanced_config_generate {
     then
         MESSAGE="Saving ICMP Avoidance to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# PING_AVOID=''/c\PING_AVOID='1'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+        sed -i "/# PING_AVOID=''/c\PING_AVOID='1'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
         PING_AVOID=1
     fi
@@ -355,7 +357,7 @@ function advanced_config_generate {
     then
         MESSAGE="Saving Custom PKIF to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# SSH_PKIF=''/c\SSH_PKIF='${INPUT_CUSTOM_PKIF}'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+        sed -i "/# SSH_PKIF=''/c\SSH_PKIF='${INPUT_CUSTOM_PKIF}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
     fi
     
@@ -368,7 +370,7 @@ function advanced_config_generate {
     then
         MESSAGE="Saving Local DNS Preference to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# SKIP_CUSTOM=''/c\SKIP_CUSTOM='1'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+        sed -i "/# SKIP_CUSTOM=''/c\SKIP_CUSTOM='1'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
     fi
     
@@ -383,7 +385,7 @@ function advanced_config_generate {
         then
             MESSAGE="Saving Local CNAME Preference to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# INCLUDE_CNAME=''/c\INCLUDE_CNAME='1'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+            sed -i "/# INCLUDE_CNAME=''/c\INCLUDE_CNAME='1'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
         fi
     fi
@@ -397,19 +399,19 @@ function advanced_config_generate {
     then
         MESSAGE="Saving Backup Retention to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# BACKUP_RETAIN=''/c\BACKUP_RETAIN='1'" ${LOCAL_FOLDR}/${CONFIG_FILE}
+        sed -i "/# BACKUP_RETAIN=''/c\BACKUP_RETAIN='1'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
     fi
 }
 
 ## Delete Existing Configuration
 function config_delete {
-    source ${LOCAL_FOLDR}/${CONFIG_FILE}
+    source ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
     MESSAGE="Configuration File Exists"
     echo_warn
     
     echo_lines
-    cat ${LOCAL_FOLDR}/${CONFIG_FILE}
+    cat ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
     echo_lines
     
     MESSAGE="Are you sure you want to erase this configuration?"
@@ -419,7 +421,7 @@ function config_delete {
 
     MESSAGE="Erasing Existing Configuration"
     echo_stat
-    rm -f ${LOCAL_FOLDR}/${CONFIG_FILE}
+    rm -f ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
 
     config_generate
