@@ -6,11 +6,9 @@ backup/*.last
 backup/*.backup
 backup/*.push
 backup/*.pull
+logs/*
+settings/gravity-sync.conf
 dev
 .vscode
 .DS_Store
 .nova
-logs/gravity-sync.log
-logs/gravity-sync.cron
-settings/gravity-sync.conf
-logs/gravity-sync.md5
