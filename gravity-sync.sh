@@ -3,7 +3,8 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='3.2.6'
+VERSION='3.3.0'
+
 
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
 # Requires Pi-Hole 5.x or higher already be installed, for help visit https://pi-hole.net
@@ -17,8 +18,8 @@ VERSION='3.2.6'
 # STANDARD VARIABLES #########################
 
 # Installation Types
-PH_IN_TYPE='default'				# Pi-hole install type, `default` or `docker` (local)
-RH_IN_TYPE='default'				# Pi-hole install type, `default` or `docker` (remote)
+PH_IN_TYPE='default'				# Pi-hole install type, `default`, `docker`, or `podman` (local)
+RH_IN_TYPE='default'				# Pi-hole install type, `default`, `docker`, or `podman` (remote)
 
 # Pi-hole Folder/File Customization
 PIHOLE_DIR='/etc/pihole' 			# default Pi-hole data directory (local)
@@ -29,10 +30,12 @@ PIHOLE_BIN='/usr/local/bin/pihole' 	# default Pi-hole binary directory (local)
 RIHOLE_BIN='/usr/local/bin/pihole' 	# default Pi-hole binary directory (remote)
 DOCKER_BIN='/usr/bin/docker'		# default Docker binary directory (local)
 ROCKER_BIN='/usr/bin/docker'		# default Docker binary directory (remote)
+PODMAN_BIN='/usr/bin/podman'        # default Podman binary directory (local)
+RODMAN_BIN='/usr/bin/podman'        # default Podman binary directory (remote)
 FILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (local)
 RILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (remote)
-DOCKER_CON='pihole'					# default Pi-hole Docker container name (local)
-ROCKER_CON='pihole'					# default Pi-hole Docker container name (remote)
+DOCKER_CON='pihole'					# default Pi-hole container name (local)
+ROCKER_CON='pihole'					# default Pi-hole container name (remote)
 
 GRAVITY_FI='gravity.db' 			        # default Pi-hole database file
 CUSTOM_DNS='custom.list'			        # default Pi-hole local DNS lookups
@@ -48,7 +51,7 @@ PING_AVOID='0'						# replace in gravity-sync.conf to overwrite
 ROOT_CHECK_AVOID='0'				# replace in gravity-sync.conf to overwrite
 
 # Backup Customization
-BACKUP_RETAIN='7'					# replace in gravity-sync.conf to overwrite
+BACKUP_RETAIN='3'					# replace in gravity-sync.conf to overwrite
 
 # SSH Customization
 SSH_PORT='22' 						# default SSH port
@@ -60,7 +63,7 @@ LOCAL_FOLDR=$(dirname $GS_FILEPATH) # auto determined - do not change!
 CONFIG_FILE='gravity-sync.conf' 	# must exist with primary host/user configured
 GS_FILENAME='gravity-sync.sh'		# must exist because it's this script
 BACKUP_FOLD='backup' 				# must exist as subdirectory in LOCAL_FOLDR
-LOG_PATH="${LOCAL_FOLDR}"			# replace in gravity-sync.conf to overwrite
+LOG_PATH="${LOCAL_FOLDR}/logs"		# replace in gravity-sync.conf to overwrite
 SYNCING_LOG='gravity-sync.log' 		# replace in gravity-sync.conf to overwrite
 CRONJOB_LOG='gravity-sync.cron' 	# replace in gravity-sync.conf to overwrite
 HISTORY_MD5='gravity-sync.md5'		# replace in gravity-sync.conf to overwrite
@@ -183,7 +186,7 @@ case $# in
         case $1 in
             auto|automate)
                 start_gs
-                task_automate $2 $3 ;;
+                task_automate $2 ;;
         esac
     ;;
     

@@ -1,12 +1,13 @@
 gravity-sync.log
 gravity-sync.cron
-gravity.db.last
 gravity-sync.conf
 gravity-sync.md5
 backup/*.last
 backup/*.backup
 backup/*.push
 backup/*.pull
+logs/*
+settings/gravity-sync.conf
 dev
 .vscode
 .DS_Store

@@ -1,5 +1,25 @@
 # The Changelog
 
+## 3.3
+
+### The Podman Release
+
+For this release, "beta" support for [Podman](https://podman.io) based container deployments has been added. (Thanks to work by [@mfschumann](https://github.com/vmstan/gravity-sync/pull/138)) This is marked as beta because at the moment, Gravity Sync may not be regularly tested with this container engine and so regular support may be limited. Use of the official Pi-hole container image is still required.
+
+This release also removes automated nightly backups as a function of the automation script. You can still execute a manual `./gravity-sync.sh backup` anytime. Automating this function was made redundant by the primary synchronization functions backing up the database files prior to execution in later versions, resulting in multiple backups or backing up unchanged data. Existing users will continue to backup each night unless you run `./gravity-sync.sh automate` again to configure a new schedule, at which time the existing backup job will be deleted.
+
+Additionally, this release focuses on making some of the prompts and messages in Gravity Sync easier to understand. Starting with the initial install and configuration wizard. As the script has grown, added features, and become more complex... more options are necessary during install and it wasn't always clear what to do. This release adds some clarification to various components and will change over time.
+
+#### Configuration Changes
+
+- The first time you execute Gravity Sync after upgrading to 3.3, your `gravity-sync.conf` file will be moved into a `settings` folder in the same directory.
+- The first time you execute Gravity Sync after upgrading to 3.3, your existing `gravity-sync.md5`, `gravity-sync.log`, and `gravity-sync.cron` files will be moved into a `logs` folder in the same directory.
+- The default number days for which backups are retained has been reduced from 7 to 3.
+
+#### Bug Fixes
+
+- Docker Swarm use for the Pi-hole container should be supported by a change in the execution command.
+
 ## 3.2
 
 ### The Alias Release

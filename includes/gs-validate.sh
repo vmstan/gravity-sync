@@ -46,6 +46,15 @@ function validate_ph_folders {
             echo_fail
             exit_nochange
         fi
+    elif [ "$PH_IN_TYPE" == "podman" ]
+    then
+        FTLCHECK=$(sudo podman container ls | grep 'pihole/pihole')
+        if [ "$FTLCHECK" == "" ]
+        then
+            MESSAGE="Unable to Validate that Pi-Hole is Installed"
+            echo_fail
+            exit_nochange
+        fi
     fi
     
     if [ ! -d ${PIHOLE_DIR} ]

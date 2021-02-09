@@ -96,7 +96,10 @@ function show_info() {
         pihole version
     elif [ "${PH_IN_TYPE}" == "docker" ]
     then 
-        docker exec -it pihole pihole -v
+        sudo docker exec -it pihole pihole -v
+    elif [ "${PH_IN_TYPE}" == "podman" ]
+    then 
+        sudo podman exec -it pihole pihole -v
     fi
     
     uname -srm
@@ -112,6 +115,12 @@ function show_info() {
     then
         docker --version
     fi
+
+    if hash podman 2>/dev/null
+    then
+        podman --version
+    fi
+
     echo -e ""
     
     echo -e "${YELLOW}Local/Secondary Instance Settings${NC}"
@@ -127,6 +136,10 @@ function show_info() {
     then 
         echo -e "Local Pi-hole Container Name: ${DOCKER_CON}"
         echo -e "Local Docker Binary Directory: ${DOCKER_BIN}"
+    elif [ "${PH_IN_TYPE}" == "podman" ]
+    then 
+        echo -e "Local Pi-hole Container Name: ${DOCKER_CON}"
+        echo -e "Local Podman Binary Directory: ${PODMAN_BIN}"
     fi
     
     echo -e "Local File Owner Settings: ${FILE_OWNER}"
@@ -196,6 +209,10 @@ function show_info() {
     then 
         echo -e "Remote Pi-hole Container Name: ${ROCKER_CON}"
         echo -e "Remote Docker Binary Directory: ${ROCKER_BIN}"
+    elif [ "${RH_IN_TYPE}" == "podman" ]
+    then 
+        echo -e "Remote Pi-hole Container Name: ${ROCKER_CON}"
+        echo -e "Remote Podman Binary Directory: ${RODMAN_BIN}"
     fi
 
     echo -e "Remote File Owner Settings: ${RILE_OWNER}"

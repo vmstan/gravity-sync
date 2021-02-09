@@ -6,11 +6,13 @@
 
 ## Import Settings
 function import_gs {
+    relocate_config_gs
+    
     MESSAGE="Importing ${CONFIG_FILE} Settings"
     echo -en "${STAT} $MESSAGE"
-    if [ -f ${LOCAL_FOLDR}/${CONFIG_FILE} ]
+    if [ -f ${LOCAL_FOLDR}/settings/${CONFIG_FILE} ]
     then
-        source ${LOCAL_FOLDR}/${CONFIG_FILE}
+        source ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
         
         # MESSAGE="Targeting ${REMOTE_USER}@${REMOTE_HOST}"
@@ -25,6 +27,44 @@ function import_gs {
         
         TASKTYPE='CONFIG'
         config_generate
+    fi
+}
+
+function relocate_config_gs {
+    if [ -f ${LOCAL_FOLDR}/${CONFIG_FILE} ]
+    then
+        MESSAGE="Relocating ${CONFIG_FILE}"
+        echo -en "${STAT} $MESSAGE"
+        
+        mv ${LOCAL_FOLDR}/${CONFIG_FILE} ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+        error_validate
+    fi
+    
+    if [ -f ${LOCAL_FOLDR}/${SYNCING_LOG} ]
+    then
+        MESSAGE="Relocating ${SYNCING_LOG}"
+        echo -en "${STAT} $MESSAGE"
+        
+        mv ${LOCAL_FOLDR}/${SYNCING_LOG} ${LOG_PATH}/${SYNCING_LOG}
+        error_validate
+    fi
+    
+    if [ -f ${LOCAL_FOLDR}/${CRONJOB_LOG} ]
+    then
+        MESSAGE="Relocating ${CRONJOB_LOG}"
+        echo -en "${STAT} $MESSAGE"
+        
+        mv ${LOCAL_FOLDR}/${CRONJOB_LOG} ${LOG_PATH}/${CRONJOB_LOG}
+        error_validate
+    fi
+    
+    if [ -f ${LOCAL_FOLDR}/${HISTORY_MD5} ]
+    then
+        MESSAGE="Relocating ${HISTORY_MD5}"
+        echo -en "${STAT} $MESSAGE"
+        
+        mv ${LOCAL_FOLDR}/${HISTORY_MD5} ${LOG_PATH}/${HISTORY_MD5}
+        error_validate
     fi
 }
 
@@ -51,7 +91,10 @@ function ph_type {
         PH_EXEC="${PIHOLE_BIN}"
     elif [ "$PH_IN_TYPE" == "docker" ]
     then
-        PH_EXEC="sudo ${DOCKER_BIN} exec ${DOCKER_CON} pihole"
+        PH_EXEC="sudo ${DOCKER_BIN} exec $(sudo ${DOCKER_BIN} ps -qf name=${DOCKER_CON}) pihole"
+    elif [ "$PH_IN_TYPE" == "podman" ]
+    then
+        PH_EXEC="sudo ${PODMAN_BIN} exec ${DOCKER_CON} pihole"
     fi
     
     if [ "$RH_IN_TYPE" == "default" ]
@@ -59,7 +102,10 @@ function ph_type {
         RH_EXEC="${RIHOLE_BIN}"
     elif [ "$RH_IN_TYPE" == "docker" ]
     then
-        RH_EXEC="sudo ${ROCKER_BIN} exec ${ROCKER_CON} pihole"
+        RH_EXEC="sudo ${ROCKER_BIN} exec $(sudo ${ROCKER_BIN} ps -qf ${ROCKER_CON}) pihole"
+    elif [ "$RH_IN_TYPE" == "podman" ]
+    then
+        RH_EXEC="sudo ${RODMAN_BIN} exec ${ROCKER_CON} pihole"
     fi
 }
 

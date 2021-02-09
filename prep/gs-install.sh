@@ -24,8 +24,24 @@ PHFAILCOUNT="0"
 CURRENTUSER=$(whoami)
 
 # Header
-echo -e "========================================================"
-echo -e "${YELLOW}Gravity Sync by ${BLUE}@vmstan${YELLOW} - Online Installation${NC}"
+echo -e ""
+echo -e "         ..::-----::..                          ..::------::.         "
+echo -e "      .:----:::::::----:.                    .:::--:::::---===-:      "
+echo -e "    :---:.           .:---:                +##+:.          .:-===-.   "
+echo -e "  .---:.                :---:            -*##*:               .-===:  "
+echo -e " .---.                    :---:        -++*+.                   .==+- "
+echo -e " ---.          =            :---:    :====.           -          .=++."
+echo -e ":--:          -=-.            :---::---:.            -=-.         :++="
+echo -e "---.      .:-=====-:..          ------.          .:-=====-:..     .+++"
+echo -e "---.        .:===-.            :------:            .:===-.        :+++"
+echo -e ".--:          .=:            :---:  :---:             =:          -++-"
+echo -e " :--:          ..          .---:.     :--::           ..         -=+= "
+echo -e "  :--:                   .---:.         :-:::                   -===. "
+echo -e "   :---:               :---:              :::::              .:====   "
+echo -e "     :---::..     ..::---:.                 ::::::..     ..:-===-.    "
+echo -e "       .::-----------::.                      .::---------===-:       "
+echo -e ""
+echo -e "${YELLOW}Gravity Sync by ${BLUE}@vmstan${NC}"
 echo -e "${CYAN}https://github.com/vmstan/gravity-sync${NC}"
 echo -e "========================================================"
 echo -e "[${GREEN}✓${NC}] Checking Short Range Sensors"
@@ -155,6 +171,33 @@ else
                 PHFAILCOUNT=$((PHFAILCOUNT+1))
             fi
         fi
+    elif hash podman 2>/dev/null
+    then
+        echo -e "[${GREEN}✓${NC}] Podman Binaries Detected"
+        
+        if [ "$LOCALADMIN" == "sudo" ]
+        then
+            FTLCHECK=$(sudo podman container ls | grep 'pihole/pihole')
+        elif [ "$LOCALADMIN" == "nosudo" ]
+        then
+            echo -e "[${PURPLE}!${NC}] ${PURPLE}No Podman Pi-hole Container Detected (unable to scan)${NC}"
+            # CROSSCOUNT=$((CROSSCOUNT+1))
+            PHFAILCOUNT=$((PHFAILCOUNT+1))
+        else
+            FTLCHECK=$(podman container ls | grep 'pihole/pihole')
+        fi
+        
+        if [ "$LOCALADMIN" != "nosudo" ]
+        then
+            if [ "$FTLCHECK" != "" ]
+            then
+                echo -e "[${GREEN}✓${NC}] Pi-Hole Podman Container Detected"
+    else
+                echo -e "[${PURPLE}!${NC}] ${PURPLE}No Podman Pi-hole Container Detected${NC}"
+                # CROSSCOUNT=$((CROSSCOUNT+1))
+                PHFAILCOUNT=$((PHFAILCOUNT+1))
+            fi
+        fi
     else
         # echo -e "[${RED}✗${NC}] No Local Pi-hole Install Detected"
         echo -e "[${PURPLE}!${NC}] ${PURPLE}No Docker Pi-hole Alternative Detected${NC}"
@@ -217,7 +260,12 @@ else
         echo -e "[${YELLOW}i${NC}] Installation Exiting (without changes)"
     else
         echo -e "[${BLUE}>${NC}] Creating Gravity Sync Directories"
-        git clone https://github.com/vmstan/gravity-sync.git
+            if [ "$GS_DEV" != "" ]
+            then
+                git clone -b ${GS_DEV} https://github.com/vmstan/gravity-sync.git
+            else
+                git clone https://github.com/vmstan/gravity-sync.git
+            fi
         echo -e "[${BLUE}>${NC}] Starting Gravity Sync Configuration"
         echo -e "========================================================"
         ./gravity-sync/gravity-sync.sh configure <&1
