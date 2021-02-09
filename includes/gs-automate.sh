@@ -29,6 +29,7 @@ function task_automate {
         MESSAGE="Synchronization Frequency in Minutes (5, 10, 15, 30) or 0 to Disable"
         echo_need
         read INPUT_AUTO_FREQ
+        INPUT_AUTO_FREQ="${INPUT_AUTO_FREQ:-0}"
     fi
     
     if [ $INPUT_AUTO_FREQ == 5 ] || [ $INPUT_AUTO_FREQ == 10 ] || [ $INPUT_AUTO_FREQ == 15 ] || [ $INPUT_AUTO_FREQ == 30 ]
