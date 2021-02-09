@@ -76,6 +76,7 @@ function config_generate {
         
             advanced_config_generate
         elif [ "${INPUT_ADVANCED_INSTALL}" == "Y" ]
+        then
             MESSAGE="Standard Configuration Selected"
             echo_info
         else
