@@ -14,6 +14,7 @@ Additionally, this release focuses on making some of the prompts and messages in
 
 - The first time you execute Gravity Sync after upgrading to 3.3, your `gravity-sync.conf` file will be moved into a `settings` folder in the same directory.
 - The first time you execute Gravity Sync after upgrading to 3.3, your existing `gravity-sync.md5`, `gravity-sync.log`, and `gravity-sync.cron` files will be moved into a `logs` folder in the same directory.
+- The default number days for which backups are retained has been reduced from 7 to 3.
 
 #### Bug Fixes
 
