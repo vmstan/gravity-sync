@@ -131,6 +131,20 @@ function advanced_config_generate {
         sed -i "/# PH_IN_TYPE=''/c\PH_IN_TYPE='${INPUT_PH_IN_TYPE}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
         
+        
+        MESSAGE="Currently Running Container Images"
+        echo_info
+        
+        echo_lines
+        if [ "${INPUT_PH_IN_TYPE}" == "docker" ] 
+        then
+            sudo docker container ls
+        else if [ "${INPUT_PH_IN_TYPE}" != "podman" ]
+        then
+            sudo podman container ls
+        fi
+        echo_lines
+        
         MESSAGE="Local Container Name? (Leave blank for default 'pihole')"
         echo_need
         read INPUT_DOCKER_CON
