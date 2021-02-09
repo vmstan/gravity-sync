@@ -6,7 +6,7 @@ labels: ''
 assignees: ''
 
 ---
-_Unless you are unable to update, please make sure you're running the latest versions of Pi-hole and Gravity Sync before filing a ticket. Also please include the output of `./gravity-sync.sh info` in your report, as a text-file or screenshot attachment._
+<!-- Unless you have identified a specifc flaw in the code or execution of the script that is repeatable, please start with a Discussion and then if asked, it can be esclated to a bug report here. Be sure to attach a screenshot of the issue, code snippts, any relevant logging. -->
 
 **Issue Description**
 

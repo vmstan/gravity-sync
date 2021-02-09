@@ -5,6 +5,7 @@ SCRIPT_START=$SECONDS
 PROGRAM='Gravity Sync'
 VERSION='3.3.0'
 
+
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
 # Requires Pi-Hole 5.x or higher already be installed, for help visit https://pi-hole.net
 
