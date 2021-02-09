@@ -39,16 +39,18 @@ function config_generate {
     error_validate
     
     echo_lines
-    echo -e "${BOLD}Welcome to the ${PURPLE}Gravity Sync${NC} Configuration Wizard${NC}"
-    echo -e "Please read to the documentation at ${BLUE}https://github.com/vmstan/gravity-sync/wiki${NC} before you continue!"
+    echo -e "Welcome to the ${PURPLE}Gravity Sync${NC} Configuration Wizard"
+    echo -e "Please read through ${BLUE}https://github.com/vmstan/gravity-sync/wiki${NC} before you continue!"
     echo_blank
-    echo -e "If the installer detects that you have a supported container engine (Docker or Podman) installed, you will be directed"
-    echo -e "to the advanced installation options. Otherwise you can manually enable this to adjust settings such as custom Pi-hole"
-    echo -e "binary or configuration directories, SSH options, CNAME replication, and backup retention."
+    echo -e "If the installer detects that you have a supported container engine (Docker or Podman) installed,"
+    echo -e "you will be directed to the advanced installation options. Otherwise you can manually enable this" 
+    echo -e "to adjust settings such as custom Pi-hole binary or configuration directories, SSH options, CNAME"
+    echo -e "replication, and backup retention."
     echo_blank
-    echo -e "Gravity Sync uses a primary/secondary model for replication, and normally syncs changes from the primary to the secondary."
-    echo -e "The LOCAL Pi-hole where you are running this configuration script is considered the the SECONDARY Pi-hole!"
-    echo -e "The REMOTE Pi-hole where you will normally make configuration changes is considered the PRIMARY Pi-hole."
+    echo -e "Gravity Sync uses a primary/secondary model for replication, and normally syncs changes from the "
+    echo -e "primary to the secondary. The LOCAL Pi-hole where you are running this configuration script is"
+    echo -e "considered the the SECONDARY Pi-hole! The REMOTE Pi-hole where you will normally make configuration" 
+    echo -e "changes is considered the PRIMARY Pi-hole."
     echo_blank
     echo -e "Confused? Refer back to the documentation."
     echo_lines
