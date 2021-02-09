@@ -141,12 +141,12 @@ function config_generate {
 
 ## Advanced Configuration Options
 function advanced_config_generate {
-    MESSAGE="Local/Secondary Pi-hole in Container? (Allowed: 'docker' or 'podman'. Leave blank for default 'No')"
+    MESSAGE="Local/Secondary Pi-hole Instance Type? (Allowed: 'docker' or 'podman' or 'default')"
     echo_need
     read INPUT_PH_IN_TYPE
-    INPUT_PH_IN_TYPE="${INPUT_PH_IN_TYPE:-N}"
+    INPUT_PH_IN_TYPE="${INPUT_PH_IN_TYPE:-default}"
     
-    if [ "${INPUT_PH_IN_TYPE}" != "N" ]
+    if [ "${INPUT_PH_IN_TYPE}" != "default" ]
     then
         if [ "${INPUT_PH_IN_TYPE}" != "docker" ] && [ "${INPUT_PH_IN_TYPE}" != "podman" ]
         then
@@ -227,12 +227,12 @@ function advanced_config_generate {
         error_validate
     fi
     
-    MESSAGE="Primary/Remote Pi-hole in Container? (Allowed: 'docker' or 'podman'. Leave blank for default 'No')"
+    MESSAGE="Primary/Remote Pi-hole Instance Type? (Allowed: 'docker' or 'podman' or 'default')"
     echo_need
     read INPUT_RH_IN_TYPE
-    INPUT_RH_IN_TYPE="${INPUT_RH_IN_TYPE:-N}"
+    INPUT_RH_IN_TYPE="${INPUT_RH_IN_TYPE:-default}"
     
-    if [ "${INPUT_RH_IN_TYPE}" != "N" ]
+    if [ "${INPUT_RH_IN_TYPE}" != "default" ]
     then
         if [ "${INPUT_RH_IN_TYPE}" != "docker" ] && [ "${INPUT_RH_IN_TYPE}" != "podman" ]
         then
@@ -433,16 +433,16 @@ function advanced_config_generate {
         fi
     fi
     
-    MESSAGE="Change Backup Retention in Days? (Leave blank for default '7')"
+    MESSAGE="Change Backup Retention in Days? (Leave blank for default '3')"
     echo_need
     read INPUT_BACKUP_RETAIN
-    INPUT_BACKUP_RETAIN="${INPUT_BACKUP_RETAIN:-7}"
+    INPUT_BACKUP_RETAIN="${INPUT_BACKUP_RETAIN:-3}"
     
-    if [ "${INPUT_BACKUP_RETAIN}" != "7" ]
+    if [ "${INPUT_BACKUP_RETAIN}" != "3" ]
     then
         MESSAGE="Saving Backup Retention to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# BACKUP_RETAIN=''/c\BACKUP_RETAIN='1'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+        sed -i "/# BACKUP_RETAIN=''/c\BACKUP_RETAIN='${INPUT_BACKUP_RETAIN}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
     fi
 }
