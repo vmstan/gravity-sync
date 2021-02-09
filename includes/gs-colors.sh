@@ -51,7 +51,7 @@ function echo_fail {
 
 ### Request
 function echo_need {
-    echo -en "${NEED} ${MESSAGE}: "
+    echo -en "${NEED} ${BOLD}${MESSAGE}:${NC} "
 }
 
 ### Gravity Sync Logo
