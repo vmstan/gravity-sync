@@ -391,7 +391,7 @@ function advanced_config_generate {
         PING_AVOID=1
     fi
         
-    MESSAGE="Use Custom SSH PKIF Location? (Leave blank for default '.ssh/id_rsa')"
+    MESSAGE="Custom SSH PKIF Location? (Leave blank for default '.ssh/id_rsa')"
     echo_need
     read INPUT_CUSTOM_PKIF
     INPUT_CUSTOM_PKIF="${INPUT_CUSTOM_PKIF:-.ssh/id_rsa}"
@@ -404,7 +404,7 @@ function advanced_config_generate {
         error_validate
     fi
     
-    MESSAGE="Enable Replicate 'Local DNS Records' Feature? (Leave blank for default 'Yes')"
+    MESSAGE="Enable Replicate 'Local DNS Records' Feature? (Y/N, default 'Y')"
     echo_need
     read INPUT_SKIP_CUSTOM
     INPUT_SKIP_CUSTOM="${INPUT_SKIP_CUSTOM:-Y}"
@@ -419,7 +419,7 @@ function advanced_config_generate {
     
     if [ "${INPUT_SKIP_CUSTOM}" == "Y" ]
     then
-        MESSAGE="Enable Replicate 'Local CNAME Records' Feature? (Leave blank for default 'Yes')"
+        MESSAGE="Enable Replicate 'Local CNAME Records' Feature? (Y/N, default 'Y')"
         echo_need
         read INPUT_INCLUDE_CNAME
         INPUT_INCLUDE_CNAME="${INPUT_INCLUDE_CNAME:-Y}"
