@@ -38,32 +38,58 @@ function config_generate {
     cp ${LOCAL_FOLDR}/settings/${CONFIG_FILE}.example ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
     error_validate
     
+    echo_lines
+    echo -e "${BOLD}Welcome to the ${PURPLE}Gravity Sync${NC} Configuration Wizard${NC}"
+    echo -e "Please read to the documentation at ${BLUE}https://github.com/vmstan/gravity-sync/wiki${NC} before you continue!"
+    echo_blank
+    echo -e "If the installer detects that you have a supported container engine (Docker or Podman) installed, you will be directed"
+    echo -e "to the advanced installation options. Otherwise you can manually enable this to adjust settings such as custom Pi-hole"
+    echo -e "binary or configuration directories, SSH options, CNAME replication, and backup retention."
+    echo_blank
+    echo -e "Gravity Sync uses a primary/secondary model for replication, and normally syncs changes from the primary to the secondary."
+    echo -e "The LOCAL Pi-hole where you are running this configuration script is considered the the SECONDARY Pi-hole!"
+    echo -e "The REMOTE Pi-hole where you will normally make configuration changes is considered the PRIMARY Pi-hole."
+    echo_blank
+    echo -e "Confused? Refer back to the documentation."
+    echo_lines
+    
     docker_detect
     podman_detect
+    
     if [ "${DOCKERREADY}" == "1" ] || [ "${PODMANREADY}" == "1" ]
     then
+        MESSAGE="Container Engine Detected"
+        echo_good
         MESSAGE="Advanced Configuration Required"
         echo_info
         advanced_config_generate
     else
-        MESSAGE="Use Advanced Installation Options? (Leave blank for default 'No')"
+        MESSAGE="Use Advanced Installation Options? (Y/N, default N)"
         echo_need
         read INPUT_ADVANCED_INSTALL
         INPUT_ADVANCED_INSTALL="${INPUT_ADVANCED_INSTALL:-N}"
     
-        if [ "${INPUT_ADVANCED_INSTALL}" != "N" ]
+        if [ "${INPUT_ADVANCED_INSTALL}" == "N" ]
         then
             MESSAGE="Advanced Configuration Selected"
             echo_info
         
             advanced_config_generate
+        elif [ "${INPUT_ADVANCED_INSTALL}" == "Y" ]
+            MESSAGE="Standard Configuration Selected"
+            echo_info
+        else
+            MESSAGE="Invalid Selection"
+            echo_warn
+            
+            exit_nochange
         fi
     fi
     
-    MESSAGE="Standard Settings"
+    MESSAGE="Required Gravity Sync Settings"
     echo_info
 
-    MESSAGE="Primary Pi-hole Address (IP or DNS)"
+    MESSAGE="Primary/Remote Pi-hole Address (IP or DNS)"
     echo_need
     read INPUT_REMOTE_HOST
 
@@ -78,16 +104,16 @@ function config_generate {
         echo_warn
     fi
     
-    MESSAGE="SSH User for ${INPUT_REMOTE_HOST}"
-    echo_need
-    read INPUT_REMOTE_USER
-    
-    MESSAGE="Saving Host to ${CONFIG_FILE}"
+    MESSAGE="Saving Primary/Remote Host to ${CONFIG_FILE}"
     echo_stat
     sed -i "/REMOTE_HOST='192.168.1.10'/c\REMOTE_HOST='${INPUT_REMOTE_HOST}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
     error_validate
     
-    MESSAGE="Saving User to ${CONFIG_FILE}"
+    MESSAGE="Existing SSH User for ${INPUT_REMOTE_HOST}"
+    echo_need
+    read INPUT_REMOTE_USER
+    
+    MESSAGE="Saving User "${INPUT_REMOTE_USER}" to ${CONFIG_FILE}"
     echo_stat
     sed -i "/REMOTE_USER='pi'/c\REMOTE_USER='${INPUT_REMOTE_USER}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
     error_validate
@@ -112,7 +138,7 @@ function config_generate {
 
 ## Advanced Configuration Options
 function advanced_config_generate {
-    MESSAGE="Local Pi-hole in Container? (Allowed: 'docker' or 'podman'. Leave blank for default 'No')"
+    MESSAGE="Local/Secondary Pi-hole in Container? (Allowed: 'docker' or 'podman'. Leave blank for default 'No')"
     echo_need
     read INPUT_PH_IN_TYPE
     INPUT_PH_IN_TYPE="${INPUT_PH_IN_TYPE:-N}"
@@ -121,12 +147,12 @@ function advanced_config_generate {
     then
         if [ "${INPUT_PH_IN_TYPE}" != "docker" ] && [ "${INPUT_PH_IN_TYPE}" != "podman" ]
         then
-            MESSAGE="Local Container Type must either be 'docker' or 'podman'"
+            MESSAGE="Local/Secondary Container Type must either be 'docker' or 'podman'"
             echo_warn
             exit_withchanges
         fi
 
-        MESSAGE="Saving Local Container Type Setting to ${CONFIG_FILE}"
+        MESSAGE="Saving Local/Secondary Container Type Setting to ${CONFIG_FILE}"
         echo_stat
         sed -i "/# PH_IN_TYPE=''/c\PH_IN_TYPE='${INPUT_PH_IN_TYPE}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
@@ -145,26 +171,26 @@ function advanced_config_generate {
         fi
         echo_lines
         
-        MESSAGE="Local Container Name? (Leave blank for default 'pihole')"
+        MESSAGE="Local/Secondary Container Name? (Leave blank for default 'pihole')"
         echo_need
         read INPUT_DOCKER_CON
         INPUT_DOCKER_CON="${INPUT_DOCKER_CON:-pihole}"
         
         if [ "${INPUT_DOCKER_CON}" != "pihole" ]
         then
-            MESSAGE="Saving Local Container Name to ${CONFIG_FILE}"
+            MESSAGE="Saving Local/Secondary Container Name to ${CONFIG_FILE}"
             echo_stat
             sed -i "/# DOCKER_CON=''/c\DOCKER_CON='${INPUT_DOCKER_CON}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
         fi
         
-        MESSAGE="Local Pi-hole 'etc' Volume Path? (Required, no trailing slash)"
+        MESSAGE="Local/Secondary Pi-hole 'etc' Volume Path? (Required, no trailing slash)"
         echo_need
         read INPUT_PIHOLE_DIR
         
         if [ "${INPUT_PIHOLE_DIR}" != "" ]
         then
-            MESSAGE="Saving Local Pi-hole Volume to ${CONFIG_FILE}"
+            MESSAGE="Saving Local/Secondary Pi-hole Volume to ${CONFIG_FILE}"
             echo_stat
             sed -i "/# PIHOLE_DIR=''/c\PIHOLE_DIR='${INPUT_PIHOLE_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
@@ -175,13 +201,13 @@ function advanced_config_generate {
             exit_withchanges
         fi
         
-        MESSAGE="Local DNSMASQ 'etc' Volume Path? (Required, no trailing slash)"
+        MESSAGE="Local/Secondary DNSMASQ 'etc' Volume Path? (Required, no trailing slash)"
         echo_need
         read INPUT_DNSMAQ_DIR
         
         if [ "${INPUT_DNSMAQ_DIR}" != "" ]
         then
-            MESSAGE="Saving Local DNSMASQ Volume to ${CONFIG_FILE}"
+            MESSAGE="Saving Local/Secondary DNSMASQ Volume to ${CONFIG_FILE}"
             echo_stat
             sed -i "/# DNSMAQ_DIR=''/c\DNSMAQ_DIR='${INPUT_DNSMAQ_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
@@ -192,13 +218,13 @@ function advanced_config_generate {
             exit_withchanges
         fi
         
-        MESSAGE="Saving Local Volume Ownership to ${CONFIG_FILE}"
+        MESSAGE="Saving Local/Secondary Volume Ownership to ${CONFIG_FILE}"
         echo_stat
         sed -i "/# FILE_OWNER=''/c\FILE_OWNER='999:999'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
     fi
     
-    MESSAGE="Remote Pi-hole in Container? (Allowed: 'docker' or 'podman'. Leave blank for default 'No')"
+    MESSAGE="Primary/Remote Pi-hole in Container? (Allowed: 'docker' or 'podman'. Leave blank for default 'No')"
     echo_need
     read INPUT_RH_IN_TYPE
     INPUT_RH_IN_TYPE="${INPUT_RH_IN_TYPE:-N}"
@@ -207,35 +233,35 @@ function advanced_config_generate {
     then
         if [ "${INPUT_RH_IN_TYPE}" != "docker" ] && [ "${INPUT_RH_IN_TYPE}" != "podman" ]
         then
-            MESSAGE="Remote Container Type must either be 'docker' or 'podman'"
+            MESSAGE="Primary/Remote Container Type must either be 'docker' or 'podman'"
             echo_warn
             exit_withchanges
         fi
-        MESSAGE="Saving Remote Container Type Setting to ${CONFIG_FILE}"
+        MESSAGE="Saving Primary/Remote Container Type Setting to ${CONFIG_FILE}"
         echo_stat
         sed -i "/# RH_IN_TYPE=''/c\RH_IN_TYPE='${INPUT_RH_IN_TYPE}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
         
-        MESSAGE="Remote Container Name? (Leave blank for default 'pihole')"
+        MESSAGE="Primary/Remote Container Name? (Leave blank for default 'pihole')"
         echo_need
         read INPUT_ROCKER_CON
         INPUT_ROCKER_CON="${INPUT_ROCKER_CON:-pihole}"
         
         if [ "${INPUT_ROCKER_CON}" != "pihole" ]
         then
-            MESSAGE="Saving Remote Container Name to ${CONFIG_FILE}"
+            MESSAGE="Saving Primary/Remote Container Name to ${CONFIG_FILE}"
             echo_stat
             sed -i "/# ROCKER_CON=''/c\ROCKER_CON='${INPUT_ROCKER_CON}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
         fi
         
-        MESSAGE="Remote Pi-hole 'etc' Volume Path? (Required, no trailing slash)"
+        MESSAGE="Primary/Remote Pi-hole 'etc' Volume Path? (Required, no trailing slash)"
         echo_need
         read INPUT_RIHOLE_DIR
         
         if [ "${INPUT_RIHOLE_DIR}" != "" ]
         then
-            MESSAGE="Saving Remote Pi-hole Volume to ${CONFIG_FILE}"
+            MESSAGE="Saving Primary/Remote Pi-hole Volume to ${CONFIG_FILE}"
             echo_stat
             sed -i "/# RIHOLE_DIR=''/c\RIHOLE_DIR='${INPUT_RIHOLE_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
@@ -246,13 +272,13 @@ function advanced_config_generate {
             exit_withchanges
         fi
         
-        MESSAGE="Remote DNSMASQ 'etc' Volume Path? (Required, no trailing slash)"
+        MESSAGE="Primary/Remote DNSMASQ 'etc' Volume Path? (Required, no trailing slash)"
         echo_need
         read INPUT_RNSMAQ_DIR
         
         if [ "${INPUT_RNSMAQ_DIR}" != "" ]
         then
-            MESSAGE="Saving Remote DNSMASQ Volume to ${CONFIG_FILE}"
+            MESSAGE="Saving Primary/Remote DNSMASQ Volume to ${CONFIG_FILE}"
             echo_stat
             sed -i "/# RNSMAQ_DIR=''/c\RNSMAQ_DIR='${INPUT_RNSMAQ_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
@@ -263,7 +289,7 @@ function advanced_config_generate {
             exit_withchanges
         fi
         
-        MESSAGE="Saving Remote Volume Ownership to ${CONFIG_FILE}"
+        MESSAGE="Saving Primary/Remote Volume Ownership to ${CONFIG_FILE}"
         echo_stat
         sed -i "/# RILE_OWNER=''/c\RILE_OWNER='999:999'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
@@ -272,14 +298,14 @@ function advanced_config_generate {
         
     if [ "$SKIP_PIHOLE_DIR" != "1" ]
     then
-        MESSAGE="Local Pi-hole Settings Directory Path? (Leave blank for default '/etc/pihole')"
+        MESSAGE="Local/Secondary Pi-hole Settings Directory Path? (Leave blank for default '/etc/pihole')"
         echo_need
         read INPUT_PIHOLE_DIR
         INPUT_PIHOLE_DIR="${INPUT_PIHOLE_DIR:-/etc/pihole}"
         
         if [ "${INPUT_PIHOLE_DIR}" != "/etc/pihole" ]
         then
-            MESSAGE="Saving Local Pi-hole Settings Directory Path to ${CONFIG_FILE}"
+            MESSAGE="Saving Local/Secondary Pi-hole Settings Directory Path to ${CONFIG_FILE}"
             echo_stat
             sed -i "/# PIHOLE_DIR=''/c\PIHOLE_DIR='${INPUT_PIHOLE_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
@@ -288,14 +314,14 @@ function advanced_config_generate {
     
     if [ "$SKIP_RIHOLE_DIR" != "1" ]
     then
-        MESSAGE="Remote Pi-hole Settings Directory Path? (Leave blank for default '/etc/pihole')"
+        MESSAGE="Primary/Remote Pi-hole Settings Directory Path? (Leave blank for default '/etc/pihole')"
         echo_need
         read INPUT_RIHOLE_DIR
         INPUT_RIHOLE_DIR="${INPUT_RIHOLE_DIR:-/etc/pihole}"
         
         if [ "${INPUT_RIHOLE_DIR}" != "/etc/pihole" ]
         then
-            MESSAGE="Saving Remote Pi-hole Settings Directory Path to ${CONFIG_FILE}"
+            MESSAGE="Saving Primary/Remote Pi-hole Settings Directory Path to ${CONFIG_FILE}"
             echo_stat
             sed -i "/# RIHOLE_DIR=''/c\RIHOLE_DIR='${INPUT_RIHOLE_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
@@ -304,14 +330,14 @@ function advanced_config_generate {
     
     if [ "$SKIP_DNSMASQ_DIR" != "1" ]
     then
-        MESSAGE="Local DNSMASQ Settings Directory Path? (Leave blank for default '/etc/dnsmasq.d')"
+        MESSAGE="Local/Secondary DNSMASQ Settings Directory Path? (Leave blank for default '/etc/dnsmasq.d')"
         echo_need
         read INPUT_DNSMASQ_DIR
         INPUT_DNSMASQ_DIR="${INPUT_DNSMASQ_DIR:-/etc/dnsmasq.d}"
         
         if [ "${INPUT_DNSMASQ_DIR}" != "/etc/dnsmasq.d" ]
         then
-            MESSAGE="Saving Local DNSMASQ Settings Directory Path to ${CONFIG_FILE}"
+            MESSAGE="Saving Local/Secondary DNSMASQ Settings Directory Path to ${CONFIG_FILE}"
             echo_stat
             sed -i "/# DNSMASQ_DIR=''/c\DNSMASQ_DIR='${INPUT_DNSMASQ_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
@@ -320,21 +346,21 @@ function advanced_config_generate {
     
     if [ "$SKIP_RNSMASQ_DIR" != "1" ]
     then
-        MESSAGE="Remote DNSMASQ Settings Directory Path? (Leave blank for default '/etc/dnsmasq.d')"
+        MESSAGE="Primary/Remote DNSMASQ Settings Directory Path? (Leave blank for default '/etc/dnsmasq.d')"
         echo_need
         read INPUT_RNSMASQ_DIR
         INPUT_RNSMASQ_DIR="${INPUT_RNSMASQ_DIR:-/etc/dnsmasq.d}"
         
         if [ "${INPUT_RNSMASQ_DIR}" != "/etc/dnsmasq.d" ]
         then
-            MESSAGE="Saving Remote DNSMASQ Settings Directory Path to ${CONFIG_FILE}"
+            MESSAGE="Saving Primary/Remote DNSMASQ Settings Directory Path to ${CONFIG_FILE}"
             echo_stat
             sed -i "/# RNSMASQ_DIR=''/c\RNSMASQ_DIR='${INPUT_RNSMASQ_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
         fi
     fi
     
-    MESSAGE="Use Custom SSH Port? (Leave blank for default '22')"
+    MESSAGE="Custom SSH Port to Connect to Primary/Remote host? (Leave blank for default '22')"
     echo_need
     read INPUT_SSH_PORT
     INPUT_SSH_PORT="${INPUT_SSH_PORT:-22}"
@@ -348,7 +374,7 @@ function advanced_config_generate {
         error_validate
     fi
     
-    MESSAGE="Enable ICMP Check? (Leave blank for default 'Yes')"
+    MESSAGE="Enable Ping/ICMP Check of Primary/Remote? (Y/N, default 'Y')"
     echo_need
     read INPUT_PING_AVOID
     INPUT_PING_AVOID="${INPUT_PING_AVOID:-Y}"
@@ -426,6 +452,7 @@ function config_delete {
     
     echo_lines
     cat ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+    echo_blank
     echo_lines
     
     MESSAGE="Are you sure you want to erase this configuration?"
