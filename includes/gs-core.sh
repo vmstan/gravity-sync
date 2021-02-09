@@ -91,7 +91,7 @@ function ph_type {
         PH_EXEC="${PIHOLE_BIN}"
     elif [ "$PH_IN_TYPE" == "docker" ]
     then
-        PH_EXEC="sudo ${DOCKER_BIN} exec $(sudo ${DOCKER_BIN} ps -qf ${DOCKER_CON}) pihole"
+        PH_EXEC="sudo ${DOCKER_BIN} exec $(sudo ${DOCKER_BIN} ps -qf name=${DOCKER_CON}) pihole"
     elif [ "$PH_IN_TYPE" == "podman" ]
     then
         PH_EXEC="sudo ${PODMAN_BIN} exec ${DOCKER_CON} pihole"
