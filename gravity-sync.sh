@@ -185,7 +185,7 @@ case $# in
         case $1 in
             auto|automate)
                 start_gs
-                task_automate $2 $3 ;;
+                task_automate $2 ;;
         esac
     ;;
     
