@@ -8,6 +8,9 @@ This release focuses on making some of the prompts and messages in Gravity Sync 
 
 Additionally, "beta" support for [Podman](https://podman.io) based container deployments has been added. (Thanks to work by [@mfschumann](https://github.com/vmstan/gravity-sync/pull/138)) This is marked as beta because at the moment, Gravity Sync may not be regularly tested with this container engine and so regular support may be limited. Use of the official Pi-hole container image is still required.
 
+- The first time you execute Gravity Sync after upgrading to 3.3, your `gravity-sync.conf` file will be moved into a `settings` folder in the same directory.
+- The first time you execute Gravity Sync after upgrading to 3.3, your existing `gravity-sync.md5`, `gravity-sync.log`, and `gravity-sync.cron` files will be moved into a `logs` folder in the same directory.
+
 ## 3.2
 
 ### The Alias Release
