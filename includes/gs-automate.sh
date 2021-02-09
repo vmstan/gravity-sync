@@ -33,9 +33,15 @@ function task_automate {
     
     if [ $INPUT_AUTO_FREQ == 5 ] || [ $INPUT_AUTO_FREQ == 10 ] || [ $INPUT_AUTO_FREQ == 15 ] || [ $INPUT_AUTO_FREQ == 30 ]
     then
-        MESSAGE="Invalid Frequency Range"
-        echo_fail
-        exit_nochange
+        if [ $CRON_EXIST == 1 ]
+        then
+            clear_cron
+        fi
+        
+        MESSAGE="Saving New Synchronization Automation"
+        echo_stat
+        (crontab -l 2>/dev/null; echo "*/${INPUT_AUTO_FREQ} * * * * ${BASH_PATH} ${LOCAL_FOLDR}/${GS_FILENAME} smart > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
+        error_validate
     elif [ $INPUT_AUTO_FREQ == 0 ]
     then
         if [ $CRON_EXIST == 1 ]
@@ -48,16 +54,10 @@ function task_automate {
             MESSAGE="No Synchronization Automation Scheduled"
             echo_warn
         fi
-    else
-        if [ $CRON_EXIST == 1 ]
-        then
-            clear_cron
-        fi
-        
-        MESSAGE="Saving New Synchronization Automation"
-        echo_stat
-        (crontab -l 2>/dev/null; echo "*/${INPUT_AUTO_FREQ} * * * * ${BASH_PATH} ${LOCAL_FOLDR}/${GS_FILENAME} smart > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
-        error_validate
+    elif
+        MESSAGE="Invalid Frequency Range"
+        echo_fail
+        xit_nochange
     fi
     
    # MESSAGE="Configuring Daily Backup Frequency"
