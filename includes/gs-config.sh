@@ -139,7 +139,7 @@ function advanced_config_generate {
         if [ "${INPUT_PH_IN_TYPE}" == "docker" ] 
         then
             sudo docker container ls
-        else if [ "${INPUT_PH_IN_TYPE}" != "podman" ]
+        elif [ "${INPUT_PH_IN_TYPE}" == "podman" ]
         then
             sudo podman container ls
         fi
