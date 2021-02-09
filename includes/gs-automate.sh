@@ -31,7 +31,7 @@ function task_automate {
         read INPUT_AUTO_FREQ
     fi
     
-    if [ $INPUT_AUTO_FREQ != 5 ] || [ $INPUT_AUTO_FREQ != 10 ] || [ $INPUT_AUTO_FREQ != 15 ] || [ $INPUT_AUTO_FREQ != 30 ]
+    if [ $INPUT_AUTO_FREQ == 5 ] || [ $INPUT_AUTO_FREQ == 10 ] || [ $INPUT_AUTO_FREQ == 15 ] || [ $INPUT_AUTO_FREQ == 30 ]
     then
         MESSAGE="Invalid Frequency Range"
         echo_fail
