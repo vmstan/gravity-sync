@@ -54,10 +54,10 @@ function task_automate {
             MESSAGE="No Synchronization Automation Scheduled"
             echo_warn
         fi
-    elif
+    else
         MESSAGE="Invalid Frequency Range"
         echo_fail
-        xit_nochange
+        exit_nochange
     fi
     
    # MESSAGE="Configuring Daily Backup Frequency"
