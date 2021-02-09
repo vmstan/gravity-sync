@@ -132,7 +132,7 @@ function advanced_config_generate {
         error_validate
         
         
-        MESSAGE="Currently Running Container Images"
+        MESSAGE="Displaying Currently Running Container Images"
         echo_info
         
         echo_lines

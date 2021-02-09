@@ -19,14 +19,14 @@ function task_automate {
         CRON_EXIST='1'
     fi
     
-    MESSAGE="Configuring Automated Smart Sync"
+    MESSAGE="Configuring Automated Synchronization"
     echo_info
     
     if [[ $1 =~ ^[0-9][0-9]?$ ]]
     then
         INPUT_AUTO_FREQ=$1
     else
-        MESSAGE="Sync Frequency in Minutes (5, 10, 15, 30) or 0 to Disable"
+        MESSAGE="Synchronization Frequency in Minutes (5, 10, 15, 30) or 0 to Disable"
         echo_need
         read INPUT_AUTO_FREQ
     fi
@@ -42,10 +42,10 @@ function task_automate {
         then
             clear_cron
             
-            MESSAGE="Sync Automation Disabled"
+            MESSAGE="Synchronization Automation Disabled"
             echo_warn
         else
-            MESSAGE="No Sync Automation Scheduled"
+            MESSAGE="No Synchronization Automation Scheduled"
             echo_warn
         fi
     else
@@ -54,7 +54,7 @@ function task_automate {
             clear_cron
         fi
         
-        MESSAGE="Saving New Sync Automation"
+        MESSAGE="Saving New Synchronization Automation"
         echo_stat
         (crontab -l 2>/dev/null; echo "*/${INPUT_AUTO_FREQ} * * * * ${BASH_PATH} ${LOCAL_FOLDR}/${GS_FILENAME} smart > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
         error_validate
