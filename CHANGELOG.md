@@ -20,6 +20,10 @@ Additionally, this release focuses on making some of the prompts and messages in
 
 - Docker Swarm use for the Pi-hole container should be supported by a change in the execution command.
 
+#### 3.3.1
+
+- Fixes issue with inverted Advanced Install Options selection [#163](https://github.com/vmstan/gravity-sync/issues/163)
+
 ## 3.2
 
 ### The Alias Release

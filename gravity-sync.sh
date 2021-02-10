@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='3.3.0'
+VERSION='3.3.1'
 
 
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
