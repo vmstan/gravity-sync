@@ -71,13 +71,13 @@ function config_generate {
         read INPUT_ADVANCED_INSTALL
         INPUT_ADVANCED_INSTALL="${INPUT_ADVANCED_INSTALL:-N}"
     
-        if [ "${INPUT_ADVANCED_INSTALL}" == "N" ]
+        if [ "${INPUT_ADVANCED_INSTALL}" == "Y" ]
         then
             MESSAGE="Advanced Configuration Selected"
             echo_info
         
             advanced_config_generate
-        elif [ "${INPUT_ADVANCED_INSTALL}" == "Y" ]
+        elif [ "${INPUT_ADVANCED_INSTALL}" == "N" ]
         then
             MESSAGE="Standard Configuration Selected"
             echo_info
