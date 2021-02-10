@@ -52,7 +52,7 @@ function config_generate {
     echo -e "considered the the SECONDARY Pi-hole! The REMOTE Pi-hole where you will normally make configuration" 
     echo -e "changes is considered the PRIMARY Pi-hole."
     echo_blank
-    echo -e "Confused? Refer back to the documentation."
+    echo -e "Confused? Please refer back to the documentation."
     echo_lines
     
     docker_detect
