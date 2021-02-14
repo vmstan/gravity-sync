@@ -103,6 +103,6 @@ function backup_cleanup {
     MESSAGE="Scrubbing ${BACKUP_RETAIN} Redundant Antimatter Containment Pods"
     echo_stat
     
-    find ${LOCAL_FOLDR}/${BACKUP_FOLD}/$(date +%Y)*.backup -mtime +${BACKUP_RETAIN} -type f -delete
+    find ${LOCAL_FOLDR}/${BACKUP_FOLD}/*.backup -mtime +${BACKUP_RETAIN} -type f -delete
     error_validate
 }
