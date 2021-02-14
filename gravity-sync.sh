@@ -36,6 +36,7 @@ FILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (local)
 RILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (remote)
 DOCKER_CON='pihole'					# default Pi-hole container name (local)
 ROCKER_CON='pihole'					# default Pi-hole container name (remote)
+CONTAIMAGE='pihole/pihole'          # official Pi-hole container image
 
 GRAVITY_FI='gravity.db' 			        # default Pi-hole database file
 CUSTOM_DNS='custom.list'			        # default Pi-hole local DNS lookups
