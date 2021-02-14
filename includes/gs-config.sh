@@ -35,7 +35,7 @@ function config_generate {
     
     MESSAGE="Creating New ${CONFIG_FILE} from Template"
     echo_stat
-    cp ${LOCAL_FOLDR}/settings/${CONFIG_FILE}.example ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+    cp ${LOCAL_FOLDR}/templates/${CONFIG_FILE}.example ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
     error_validate
     
     echo_lines
