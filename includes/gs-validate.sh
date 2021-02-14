@@ -39,7 +39,7 @@ function validate_ph_folders {
         fi
     elif [ "$PH_IN_TYPE" == "docker" ]
     then
-        FTLCHECK=$(sudo docker container ls | grep '${CONTAIMAGE}')
+        FTLCHECK=$(sudo docker container ls | grep "${CONTAIMAGE}")
         if [ "$FTLCHECK" == "" ]
         then
             MESSAGE="Unable to Validate that Pi-Hole is Installed"
@@ -48,7 +48,7 @@ function validate_ph_folders {
         fi
     elif [ "$PH_IN_TYPE" == "podman" ]
     then
-        FTLCHECK=$(sudo podman container ls | grep '${CONTAIMAGE}')
+        FTLCHECK=$(sudo podman container ls | grep "${CONTAIMAGE}")
         if [ "$FTLCHECK" == "" ]
         then
             MESSAGE="Unable to Validate that Pi-Hole is Installed"
