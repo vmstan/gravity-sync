@@ -100,9 +100,12 @@ function backup_remote_cname {
 }
 
 function backup_cleanup {
-    MESSAGE="Purging redundant backups, ${BACKUP_RETAIN} days worth remain"
+    MESSAGE="Purging redundant backups"
     echo_stat
     
     find ${LOCAL_FOLDR}/${BACKUP_FOLD}/*.backup -mtime +${BACKUP_RETAIN} -type f -delete
     error_validate
+    
+    MESSAGE="${BACKUP_RETAIN} days of backups remain"
+    echo_info
 }
