@@ -25,7 +25,7 @@ function backup_settime {
 }
 
 function backup_local_gravity {
-    MESSAGE="Performing backup of local ${GRAVITY_FI}"
+    MESSAGE="Performing backup of secondary Domain Database"
     echo_stat
     
     sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} ".backup '${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${GRAVITY_FI}.backup'"
@@ -37,7 +37,7 @@ function backup_local_custom {
     then
         if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
         then
-            MESSAGE="Performing backup of local ${CUSTOM_DNS}"
+            MESSAGE="Performing backup of secondary Local DNS Records"
             echo_stat
             
             cp ${PIHOLE_DIR}/${CUSTOM_DNS} ${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CUSTOM_DNS}.backup
@@ -54,7 +54,7 @@ function backup_local_cname {
     then
         if [ -f ${DNSMAQ_DIR}/${CNAME_CONF} ]
         then
-            MESSAGE="Performing backup of local ${CNAME_CONF}"
+            MESSAGE="Performing backup of secondary Local CNAMEs"
             echo_stat
             
             cp ${DNSMAQ_DIR}/${CNAME_CONF} ${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CNAME_CONF}.backup
@@ -67,7 +67,7 @@ function backup_local_cname {
 }
 
 function backup_remote_gravity {
-    MESSAGE="Performing backup of remote ${GRAVITY_FI}"
+    MESSAGE="Performing backup of primary Domain Database"
     echo_stat
     
     CMD_TIMEOUT='60'
@@ -78,7 +78,7 @@ function backup_remote_gravity {
 function backup_remote_custom {
     if [ "$SKIP_CUSTOM" != '1' ]
     then
-        MESSAGE="Performing backup of remote ${CUSTOM_DNS}"
+        MESSAGE="Performing backup of primary Local DNS Records"
         echo_stat
         
         CMD_TIMEOUT='15'
@@ -90,7 +90,7 @@ function backup_remote_custom {
 function backup_remote_cname {
     if [ "$INCLUDE_CNAME" == '1' ]
     then
-        MESSAGE="Performing backup of remote ${CNAME_CONF}"
+        MESSAGE="Performing backup of primary Local CNAMEs"
         echo_stat
         
         CMD_TIMEOUT='15'
