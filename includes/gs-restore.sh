@@ -7,7 +7,7 @@
 ## Restore Task
 function task_restore {
     TASKTYPE='RESTORE'
-    MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
     show_target

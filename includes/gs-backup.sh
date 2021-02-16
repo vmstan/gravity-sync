@@ -7,7 +7,7 @@
 ## Backup Task
 function task_backup {
     TASKTYPE='BACKUP'
-    MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
     backup_settime

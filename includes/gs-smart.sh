@@ -7,7 +7,7 @@
 ## Smart Task
 function task_smart {
     TASKTYPE='SMART'
-    MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
     show_target

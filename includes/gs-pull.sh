@@ -7,7 +7,7 @@
 ## Pull Task
 function task_pull {
     TASKTYPE='PULL'
-    MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
     show_target

@@ -7,7 +7,7 @@
 ## Compare Task
 function task_compare {
     TASKTYPE='COMPARE'
-    MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
     show_target

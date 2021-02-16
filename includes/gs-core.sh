@@ -6,7 +6,7 @@
 
 # Standard Output
 function start_gs {
-    MESSAGE="${PROGRAM} (${VERSION})"
+    MESSAGE="Initalizing ${PROGRAM} (${VERSION})"
     echo_grav
     cd ${LOCAL_FOLDR}
     
@@ -32,7 +32,7 @@ function start_gs {
 
 # Standard Output No Config
 function start_gs_noconfig {
-    MESSAGE="${PROGRAM} (${VERSION})"
+    MESSAGE="Initalizing ${PROGRAM} (${VERSION})"
     echo_grav
     cd ${LOCAL_FOLDR}
     
@@ -44,7 +44,7 @@ function start_gs_noconfig {
 function import_gs {
     relocate_config_gs
     
-    MESSAGE="Importing ${CONFIG_FILE} Settings"
+    MESSAGE="Loading ${CONFIG_FILE}"
     echo -en "${STAT} $MESSAGE"
     if [ -f ${LOCAL_FOLDR}/settings/${CONFIG_FILE} ]
     then

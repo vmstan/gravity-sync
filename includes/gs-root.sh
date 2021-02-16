@@ -7,7 +7,7 @@
 ## Sudo Creation Task
 function task_sudo {
     TASKTYPE='SUDO'
-    MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
     MESSAGE="Creating Sudoer.d Template"

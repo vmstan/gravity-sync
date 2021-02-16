@@ -222,7 +222,7 @@ function show_info() {
 ## Devmode Task
 function task_devmode {
     TASKTYPE='DEV'
-    MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
     if [ -f ${LOCAL_FOLDR}/dev ]
@@ -270,7 +270,7 @@ function task_devmode {
 ## Update Task
 function task_update {
     TASKTYPE='UPDATE'
-    MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
     dbclient_warning
@@ -283,7 +283,7 @@ function task_update {
 ## Version Task
 function task_version {
     TASKTYPE='VERSION'
-    MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
     show_version
@@ -294,7 +294,7 @@ function task_version {
 
 function task_info() {
     TASKTYPE='INFO'
-    MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
     show_info

@@ -7,7 +7,7 @@
 ## Logs Task
 function task_logs {
     TASKTYPE='LOGS'
-    MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
     logs_gs

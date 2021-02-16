@@ -7,7 +7,7 @@
 ## Purge Task
 function task_purge {
     TASKTYPE="THE-PURGE"
-    MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
     MESSAGE="THIS WILL RESET YOUR ENTIRE GRAVITY SYNC INSTALLATION"
