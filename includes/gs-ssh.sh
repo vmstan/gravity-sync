@@ -99,7 +99,7 @@ function detect_ssh {
     if hash ssh 2>/dev/null
     then
         MESSAGE="${MESSAGE} (OpenSSH)"
-        echo_good
+        echo_sameline
         SSH_CMD='ssh'
     elif hash dbclient 2>/dev/null
     then
@@ -126,7 +126,7 @@ function detect_ssh {
     
     if hash rsync 2>/dev/null
     then
-        echo_good
+        echo_sameline
     else
         echo_fail
         MESSAGE="RSYNC is Required"
