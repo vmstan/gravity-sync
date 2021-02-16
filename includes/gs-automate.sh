@@ -7,26 +7,26 @@
 ## Automate Task
 function task_automate {
     TASKTYPE='AUTOMATE'
-    MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
     CRON_EXIST='0'
     CRON_CHECK=$(crontab -l | grep -q "${GS_FILENAME}"  && echo '1' || echo '0')
     if [ ${CRON_CHECK} == 1 ]
     then
-        MESSAGE="Automation Task Already Exists"
-        echo_info
+        MESSAGE="Automation task already exists in crontab"
+        echo_warn
         CRON_EXIST='1'
     fi
     
-    MESSAGE="Configuring Automated Synchronization"
+    MESSAGE="Select synchronization frequency (in minutes)"
     echo_info
     
     if [[ $1 =~ ^[0-9][0-9]?$ ]]
     then
         INPUT_AUTO_FREQ=$1
     else
-        MESSAGE="Synchronization Frequency in Minutes (5, 10, 15, 30) or 0 to Disable (default 15)"
+        MESSAGE="Valid options are 5, 10, 15, 30 or 0 to disable (default: 15)"
         echo_need
         read INPUT_AUTO_FREQ
         INPUT_AUTO_FREQ="${INPUT_AUTO_FREQ:-15}"
@@ -39,7 +39,7 @@ function task_automate {
             clear_cron
         fi
         
-        MESSAGE="Saving New Synchronization Automation"
+        MESSAGE="Saving new synchronization task to crontab"
         echo_stat
         (crontab -l 2>/dev/null; echo "*/${INPUT_AUTO_FREQ} * * * * ${BASH_PATH} ${LOCAL_FOLDR}/${GS_FILENAME} smart > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
         error_validate
@@ -49,14 +49,14 @@ function task_automate {
         then
             clear_cron
             
-            MESSAGE="Synchronization Automation Disabled"
+            MESSAGE="Synchronization automation has been disabled"
             echo_warn
         else
-            MESSAGE="No Synchronization Automation Scheduled"
+            MESSAGE="No synchronization automation has been scheduled"
             echo_warn
         fi
     else
-        MESSAGE="Invalid Frequency Range"
+        MESSAGE="Invalid synchronization frequency selected"
         echo_fail
         exit_nochange
     fi
@@ -94,7 +94,7 @@ function task_automate {
 
 ## Clear Existing Automation Settings
 function clear_cron {
-    MESSAGE="Removing Existing Automation"
+    MESSAGE="Removing existing synchronization automation"
     echo_stat
     
     crontab -l > cronjob-old.tmp
@@ -108,7 +108,7 @@ function clear_cron {
 ## Cron Task
 function task_cron {
     TASKTYPE='CRON'
-    MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
     show_crontab

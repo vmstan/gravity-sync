@@ -18,7 +18,7 @@ function task_logs {
 function logs_export {
     if [ "${TASKTYPE}" != "BACKUP" ]
     then
-        MESSAGE="Saving File Hashes"
+        MESSAGE="Saving MD5 hashes from replication"
         echo_stat
         rm -f ${LOG_PATH}/${HISTORY_MD5}
         echo -e ${primaryDBMD5} >> ${LOG_PATH}/${HISTORY_MD5}
@@ -30,7 +30,7 @@ function logs_export {
         error_validate
     fi
     
-    MESSAGE="Logging Successful ${TASKTYPE}"
+    MESSAGE="Logging successful ${TASKTYPE}"
     echo_stat
     echo -e $(date) "[${TASKTYPE}]" >> ${LOG_PATH}/${SYNCING_LOG}
     error_validate
@@ -42,15 +42,15 @@ function logs_gs {
     echo_info
     
     echo -e "========================================================"
-    echo -e "Recent Complete ${YELLOW}SMART${NC} Executions"
+    echo -e "Recent complete ${YELLOW}SMART${NC} executions"
     tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep SMART
-    echo -e "Recent Complete ${YELLOW}PULL${NC} Executions"
+    echo -e "Recent complete ${YELLOW}PULL${NC} executions"
     tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PULL
-    echo -e "Recent Complete ${YELLOW}PUSH${NC} Executions"
+    echo -e "Recent complete ${YELLOW}PUSH${NC} executions"
     tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PUSH
-    echo -e "Recent Complete ${YELLOW}BACKUP${NC} Executions"
+    echo -e "Recent complete ${YELLOW}BACKUP${NC} executions"
     tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep BACKUP
-    echo -e "Recent Complete ${YELLOW}RESTORE${NC} Executions"
+    echo -e "Recent complete ${YELLOW}RESTORE${NC} executions"
     tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep RESTORE
     echo -e "========================================================"
     
@@ -60,7 +60,7 @@ function logs_gs {
 ## Crontab Logs
 ### Core Crontab Logs
 function show_crontab {
-    MESSAGE="Replaying Last Cronjob"
+    MESSAGE="Replaying last automated replication log"
     echo_stat
     
     if [ -f ${LOG_PATH}/${CRONJOB_LOG} ]
@@ -80,7 +80,7 @@ function show_crontab {
         then
             echo_fail
             
-            MESSAGE="${LOG_PATH}/${CRONJOB_LOG} is Empty"
+            MESSAGE="${LOG_PATH}/${CRONJOB_LOG} is empty"
             echo_info
             
             exit_nochange
@@ -88,7 +88,7 @@ function show_crontab {
     else
         echo_fail
         
-        MESSAGE="${LOG_PATH}/${CRONJOB_LOG} is Missing"
+        MESSAGE="${LOG_PATH}/${CRONJOB_LOG} is missing"
         echo_info
         
         exit_nochange
