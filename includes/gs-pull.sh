@@ -46,28 +46,28 @@ function pull_gs_grav {
     
     if [ "$FILE_OWNER" != "named:docker" ]
     then
-        MESSAGE="Validating Settings of ${GRAVITY_FI}"
+        MESSAGE="Validating settings of ${GRAVITY_FI}"
         echo_stat
         
         GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk 'OFS=":" {print $3,$4}')
         if [ "$GRAVDB_OWN" != "$FILE_OWNER" ]
         then
-            MESSAGE="Validating Ownership on ${GRAVITY_FI}"
+            MESSAGE="Validating ownership on ${GRAVITY_FI}"
             echo_fail
             
-            MESSAGE="Attempting to Compensate"
+            MESSAGE="Attempting to compensate"
             echo_warn
             
-            MESSAGE="Setting Ownership on ${GRAVITY_FI}"
+            MESSAGE="Setting ownership on ${GRAVITY_FI}"
             echo_stat
             sudo chown ${FILE_OWNER} ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
             error_validate
             
-            MESSAGE="Continuing Validation of ${GRAVITY_FI}"
+            MESSAGE="Continuing validation of ${GRAVITY_FI}"
             echo_stat
         fi
     else
-        MESSAGE="Setting Ownership on ${GRAVITY_FI}"
+        MESSAGE="Setting ownership on ${GRAVITY_FI}"
         echo_stat
         sudo chown ${FILE_OWNER} ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
         error_validate
@@ -77,18 +77,18 @@ function pull_gs_grav {
     GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | awk '{print $1}')
     if [ "$GRAVDB_RWE" != "-rw-rw-r--" ]
     then
-        MESSAGE="Validating Permissions on ${GRAVITY_FI}"
+        MESSAGE="Validating permissions on ${GRAVITY_FI}"
         echo_fail
         
-        MESSAGE="Attempting to Compensate"
+        MESSAGE="Attempting to compensate"
         echo_warn
         
-        MESSAGE="Setting Permissions on ${GRAVITY_FI}"
+        MESSAGE="Setting permissions on ${GRAVITY_FI}"
         echo_stat
         sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
         error_validate
         
-        MESSAGE="Continuing Validation of ${GRAVITY_FI}"
+        MESSAGE="Continuing validation of ${GRAVITY_FI}"
         echo_stat
     fi
     
@@ -116,42 +116,42 @@ function pull_gs_cust {
             sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
             error_validate
             
-            MESSAGE="Validating Settings on ${CUSTOM_DNS}"
+            MESSAGE="Validating settings on ${CUSTOM_DNS}"
             echo_stat
             
             CUSTOMLS_OWN=$(ls -ld ${PIHOLE_DIR}/${CUSTOM_DNS} | awk '{print $3 $4}')
             if [ "$CUSTOMLS_OWN" != "rootroot" ]
             then
-                MESSAGE="Validating Ownership on ${CUSTOM_DNS}"
+                MESSAGE="Validating ownership on ${CUSTOM_DNS}"
                 echo_fail
                 
-                MESSAGE="Attempting to Compensate"
+                MESSAGE="Attempting to compensate"
                 echo_warn
                 
-                MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
+                MESSAGE="Setting ownership on ${CUSTOM_DNS}"
                 echo_stat
                 sudo chown root:root ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
                 error_validate
                 
-                MESSAGE="Continuing Validation of ${GRAVITY_FI}"
+                MESSAGE="Continuing validation of ${GRAVITY_FI}"
                 echo_stat
             fi
             
             CUSTOMLS_RWE=$(namei -m ${PIHOLE_DIR}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | awk '{print $1}')
             if [ "$CUSTOMLS_RWE" != "-rw-r--r--" ]
             then
-                MESSAGE="Validating Permissions on ${CUSTOM_DNS}"
+                MESSAGE="Validating permissions on ${CUSTOM_DNS}"
                 echo_fail
                 
-                MESSAGE="Attempting to Compensate"
+                MESSAGE="Attempting to compensate"
                 echo_warn
                 
-                MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
+                MESSAGE="Setting ownership on ${CUSTOM_DNS}"
                 echo_stat
                 sudo chmod 644 ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
                 error_validate
                 
-                MESSAGE="Continuing Validation of ${GRAVITY_FI}"
+                MESSAGE="Continuing validation of ${GRAVITY_FI}"
                 echo_stat
             fi
             
@@ -181,7 +181,7 @@ function pull_gs_cname {
             sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${CNAME_CONF}.pull ${DNSMAQ_DIR}/${CNAME_CONF} >/dev/null 2>&1
             error_validate
             
-            MESSAGE="Validating Settings on ${CNAME_CONF}"
+            MESSAGE="Validating settings on ${CNAME_CONF}"
             echo_stat
             
             validate_cname_permissions
@@ -193,16 +193,16 @@ function pull_gs_cname {
 
 ## Pull Reload
 function pull_gs_reload {
-    MESSAGE="Isolating Regeneration Pathways"
+    MESSAGE="Isolating regeneration pathways"
     echo_info
     sleep 1
     
-    MESSAGE="Updating FTLDNS Configuration"
+    MESSAGE="Updating FTLDNS configuration"
     echo_stat
     ${PH_EXEC} restartdns reloadlists >/dev/null 2>&1
     error_validate
     
-    MESSAGE="Reloading FTLDNS Services"
+    MESSAGE="Reloading FTLDNS services"
     echo_stat
     ${PH_EXEC} restartdns >/dev/null 2>&1
     error_validate

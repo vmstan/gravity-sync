@@ -45,13 +45,13 @@ function push_gs_grav {
     RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${GRAVITY_FI}"
     create_rsynccmd
     
-    MESSAGE="Setting Permissions on ${GRAVITY_FI}"
+    MESSAGE="Setting permissions on ${GRAVITY_FI}"
     echo_stat
     CMD_TIMEOUT='15'
     CMD_REQUESTED="sudo chmod 664 ${RIHOLE_DIR}/${GRAVITY_FI}"
     create_sshcmd
     
-    MESSAGE="Setting Ownership on ${GRAVITY_FI}"
+    MESSAGE="Setting ownership on ${GRAVITY_FI}"
     echo_stat
     CMD_TIMEOUT='15'
     CMD_REQUESTED="sudo chown ${RILE_OWNER} ${RIHOLE_DIR}/${GRAVITY_FI}"
@@ -81,13 +81,13 @@ function push_gs_cust {
             RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${CUSTOM_DNS}"
             create_rsynccmd
             
-            MESSAGE="Setting Permissions on ${CUSTOM_DNS}"
+            MESSAGE="Setting permissions on ${CUSTOM_DNS}"
             echo_stat
             CMD_TIMEOUT='15'
             CMD_REQUESTED="sudo chmod 644 ${RIHOLE_DIR}/${CUSTOM_DNS}"
             create_sshcmd
             
-            MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
+            MESSAGE="Setting ownership on ${CUSTOM_DNS}"
             echo_stat
             CMD_TIMEOUT='15'
             CMD_REQUESTED="sudo chown root:root ${RIHOLE_DIR}/${CUSTOM_DNS}"
@@ -119,13 +119,13 @@ function push_gs_cname {
             RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${RNSMAQ_DIR}/${CNAME_CONF}"
             create_rsynccmd
             
-            MESSAGE="Setting Permissions on ${CNAME_CONF}"
+            MESSAGE="Setting permissions on ${CNAME_CONF}"
             echo_stat
             CMD_TIMEOUT='15'
             CMD_REQUESTED="sudo chmod 644 ${RNSMAQ_DIR}/${CNAME_CONF}"
             create_sshcmd
             
-            MESSAGE="Setting Ownership on ${CNAME_CONF}"
+            MESSAGE="Setting ownership on ${CNAME_CONF}"
             echo_stat
             CMD_TIMEOUT='15'
             CMD_REQUESTED="sudo chown root:root ${RNSMAQ_DIR}/${CNAME_CONF}"
@@ -136,17 +136,17 @@ function push_gs_cname {
 
 ## Push Reload
 function push_gs_reload {
-    MESSAGE="Inverting Tachyon Pulses"
+    MESSAGE="Inverting tachyon pulses"
     echo_info
     sleep 1
     
-    MESSAGE="Updating Remote FTLDNS Configuration"
+    MESSAGE="Updating remote FTLDNS configuration"
     echo_stat
     CMD_TIMEOUT='15'
     CMD_REQUESTED="${RH_EXEC} restartdns reloadlists"
     create_sshcmd
     
-    MESSAGE="Reloading Remote FTLDNS Services"
+    MESSAGE="Reloading remote FTLDNS Services"
     echo_stat
     CMD_TIMEOUT='15'
     CMD_REQUESTED="${RH_EXEC} restartdns"

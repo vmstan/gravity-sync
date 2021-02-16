@@ -183,7 +183,7 @@ function md5_recheck {
                 secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//')
                 error_validate
             else
-                MESSAGE="No ${CUSTOM_DNS} Detected on ${REMOTE_HOST}"
+                MESSAGE="No ${CUSTOM_DNS} detected on ${REMOTE_HOST}"
                 echo_info
             fi
         else
@@ -193,7 +193,7 @@ function md5_recheck {
                 MESSAGE="${REMOTE_HOST} has ${CUSTOM_DNS}"
                 echo_info
             fi
-            MESSAGE="No ${CUSTOM_DNS} Detected on $HOSTNAME"
+            MESSAGE="No ${CUSTOM_DNS} detected on $HOSTNAME"
             echo_info
         fi
     fi
@@ -218,7 +218,7 @@ function md5_recheck {
                     secondCNMD5=$(md5sum ${DNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//')
                     error_validate
                 else
-                    MESSAGE="No ${CNAME_CONF} Detected on ${REMOTE_HOST}"
+                    MESSAGE="No ${CNAME_CONF} detected on ${REMOTE_HOST}"
                     echo_info
                 fi
             else
@@ -229,7 +229,7 @@ function md5_recheck {
                     echo_info
                 fi
                 
-                MESSAGE="No ${CNAME_CONF} Detected on $HOSTNAME"
+                MESSAGE="No ${CNAME_CONF} detected on $HOSTNAME"
                 echo_info
             fi
         fi
