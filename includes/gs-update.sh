@@ -22,15 +22,15 @@ function update_gs {
     GIT_CHECK=$(git status | awk '{print $1}')
     if [ "$GIT_CHECK" == "fatal:" ]
     then
-        MESSAGE="Requires GitHub Installation"
+        MESSAGE="Updater usage requires GitHub installation"
         echo_warn
         exit_nochange
     else
-        MESSAGE="Updating Cache"
+        MESSAGE="Downloading updates via GitHub"
         echo_stat
         git fetch --all >/dev/null 2>&1
         error_validate
-        MESSAGE="Applying Update"
+        MESSAGE="Deploying the latest ${PROGRAM} code"
         echo_stat
         git reset --hard ${BRANCH} >/dev/null 2>&1
         error_validate
@@ -40,7 +40,7 @@ function update_gs {
 ## Show Version
 function show_version {
     echo_lines
-    MESSAGE="${BOLD}${PROGRAM}${NC} by ${CYAN}@vmstan${NC}"
+    MESSAGE="${PURPLE}${PROGRAM}${NC} by ${CYAN}@vmstan${NC}"
     echo_info
     
     MESSAGE="${BLUE}https://github.com/vmstan/gravity-sync${NC}"
@@ -89,7 +89,7 @@ function show_info() {
     
     echo_lines
     echo -e "${YELLOW}Local Software Versions${NC}"
-    echo -e "${RED}Gravity Sync${NC} ${VERSION}${DEVVERSION}"
+    echo -e "${PURPLE}Gravity Sync${NC} ${VERSION}${DEVVERSION}"
     echo -e "${BLUE}Pi-hole${NC}"
     if [ "${PH_IN_TYPE}" == "default" ]
     then
