@@ -8,12 +8,12 @@
 function md5_compare {
     HASHMARK='0'
     
-    MESSAGE="Hashing remote ${GRAVITY_FI}"
+    MESSAGE="Hashing the primary (remote) ${GRAVITY_FI}"
     echo_stat
     primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${GRAVITY_FI}" | sed 's/\s.*$//')
     error_validate
     
-    MESSAGE="Hashing local ${GRAVITY_FI}"
+    MESSAGE="Comparing to $HOSTNAME's ${GRAVITY_FI}"
     echo_stat
     secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI} | sed 's/\s.*$//')
     error_validate
@@ -34,13 +34,13 @@ function md5_compare {
             if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RIHOLE_DIR}/${CUSTOM_DNS}
             then
                 REMOTE_CUSTOM_DNS="1"
-                MESSAGE="Hashing remote DNS file"
+                MESSAGE="Scanning the primary (remote) Local DNS Records"
                 echo_stat
                 
                 primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//'")
                 error_validate
                 
-                MESSAGE="Hashing local DNS file"
+                MESSAGE="Comparing to $HOSTNAME's Local DNS Records"
                 echo_stat
                 secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//')
                 error_validate
@@ -49,12 +49,12 @@ function md5_compare {
                 then
                     HASHMARK=$((HASHMARK+0))
                 else
-                    MESSAGE="Differenced ${CUSTOM_DNS} detected"
+                    MESSAGE="Differenced ${CUSTOM_DNS} file detected"
                     echo_warn
                     HASHMARK=$((HASHMARK+1))
                 fi
             else
-                MESSAGE="No ${CUSTOM_DNS} detected on ${REMOTE_HOST}"
+                MESSAGE="No ${CUSTOM_DNS} file detected on ${REMOTE_HOST}"
                 echo_info
             fi
         else
@@ -65,7 +65,7 @@ function md5_compare {
                 HASHMARK=$((HASHMARK+1))
                 echo_info
             fi
-            MESSAGE="No ${CUSTOM_DNS} detected on $HOSTNAME"
+            MESSAGE="No ${CUSTOM_DNS} file detected on $HOSTNAME"
             echo_info
         fi
     fi
@@ -79,13 +79,13 @@ function md5_compare {
                 if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RNSMAQ_DIR}/${CNAME_CONF}
                 then
                     REMOTE_CNAME_DNS="1"
-                    MESSAGE="Hashing remote CNAME extension"
+                    MESSAGE="Reviewing primary (remote) Local DNS CNAME extensions"
                     echo_stat
                     
                     primaryCNMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//'")
                     error_validate
                     
-                    MESSAGE="Hashing local CNAME extension"
+                    MESSAGE="Comparing to $HOSTNAME's Local DNS CNAME extensions"
                     echo_stat
                     secondCNMD5=$(md5sum ${DNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//')
                     error_validate
@@ -94,12 +94,12 @@ function md5_compare {
                     then
                         HASHMARK=$((HASHMARK+0))
                     else
-                        MESSAGE="Differenced ${CNAME_CONF} detected"
+                        MESSAGE="Differenced ${CNAME_CONF} file detected"
                         echo_warn
                         HASHMARK=$((HASHMARK+1))
                     fi
                 else
-                    MESSAGE="No ${CNAME_CONF} detected on ${REMOTE_HOST}"
+                    MESSAGE="No ${CNAME_CONF} file detected on ${REMOTE_HOST}"
                     echo_info
                 fi
             else
@@ -111,7 +111,7 @@ function md5_compare {
                     echo_info
                 fi
                 
-                MESSAGE="No ${CNAME_CONF} detected on $HOSTNAME"
+                MESSAGE="No ${CNAME_CONF} file detected on $HOSTNAME"
                 echo_info
             fi
         fi
@@ -119,11 +119,11 @@ function md5_compare {
     
     if [ "$HASHMARK" != "0" ]
     then
-        MESSAGE="Replication is required"
+        MESSAGE="Replication of Pi-hole settings are required"
         echo_warn
         HASHMARK=$((HASHMARK+0))
     else
-        MESSAGE="No replication is required"
+        MESSAGE="No replication is required at this time"
         echo_info
         backup_cleanup
         exit_nochange
