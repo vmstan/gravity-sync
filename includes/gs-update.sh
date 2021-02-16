@@ -40,7 +40,7 @@ function update_gs {
 ## Show Version
 function show_version {
     echo_lines
-    MESSAGE="${PURPLE}${PROGRAM}${NC} by ${CYAN}@vmstan${NC}"
+    MESSAGE="${PURPLE}${PROGRAM}${NC} for Pi-hole"
     echo_info
     
     MESSAGE="${BLUE}https://github.com/vmstan/gravity-sync${NC}"
@@ -66,7 +66,7 @@ function show_version {
     else
         if [ "$GITVERSION" != "$VERSION" ]
         then
-            MESSAGE="Update available: ${PURPLE}${GITVERSION}${NC}"
+            MESSAGE="Update available: ${RED}${GITVERSION}${NC}"
         else
             MESSAGE="Latest version: ${GREEN}${GITVERSION}${NC}"
         fi
