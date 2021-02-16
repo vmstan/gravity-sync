@@ -13,7 +13,7 @@ function start_gs {
     import_gs
     ph_type
     
-    MESSAGE="Evaluating Arguments"
+    MESSAGE="Evaluating arguments"
     echo_stat
     
     if [ "${ROOT_CHECK_AVOID}" != "1" ]
@@ -23,7 +23,7 @@ function start_gs {
     
     if [ "${INCLUDE_CNAME}" == "1" ] && [ "${SKIP_CUSTOM}" == "1" ]
     then
-        MESSAGE="Invalid Local DNS Settings in ${CONFIG_FILE}"
+        MESSAGE="Invalid DNS/CNAME database replication settings in ${CONFIG_FILE}"
         echo_fail
         
         exit_nochange
@@ -36,7 +36,7 @@ function start_gs_noconfig {
     echo_grav
     cd ${LOCAL_FOLDR}
     
-    MESSAGE="Evaluating Arguments"
+    MESSAGE="Evaluating arguments"
     echo_stat
 }
 
@@ -58,7 +58,7 @@ function import_gs {
     else
         echo_fail
         
-        MESSAGE="${CONFIG_FILE} Missing"
+        MESSAGE="${CONFIG_FILE} is missing"
         echo_info
         
         TASKTYPE='CONFIG'
