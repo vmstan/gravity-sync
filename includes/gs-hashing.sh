@@ -79,13 +79,13 @@ function md5_compare {
                 if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RNSMAQ_DIR}/${CNAME_CONF}
                 then
                     REMOTE_CNAME_DNS="1"
-                    MESSAGE="Reviewing primary (remote) Local DNS CNAME extensions"
+                    MESSAGE="Reviewing primary (remote) Local DNS CNAME Records"
                     echo_stat
                     
                     primaryCNMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//'")
                     error_validate
                     
-                    MESSAGE="Comparing to $HOSTNAME's Local DNS CNAME extensions"
+                    MESSAGE="Comparing to $HOSTNAME's Local DNS CNAME Records"
                     echo_stat
                     secondCNMD5=$(md5sum ${DNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//')
                     error_validate
