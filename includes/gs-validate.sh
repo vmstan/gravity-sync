@@ -6,22 +6,22 @@
 
 ## Validate GS Folders
 function validate_gs_folders {
-    MESSAGE="Validating ${PROGRAM} Folders on $HOSTNAME"
+    MESSAGE="Validating ${PROGRAM} folders on $HOSTNAME"
     echo_stat
     if [ ! -d ${LOCAL_FOLDR} ]
     then
-        MESSAGE="Unable to Validate ${PROGRAM} Folders on $HOSTNAME"
+        MESSAGE="Unable to validate ${PROGRAM} folders on $HOSTNAME"
         echo_fail
         exit_nochange
     fi
     
     if [ ! -d ${LOCAL_FOLDR}/${BACKUP_FOLD} ]
     then
-        MESSAGE="Unable to Validate ${PROGRAM} Backup Folder on $HOSTNAME"
+        MESSAGE="Unable to validate ${PROGRAM} backup folder on $HOSTNAME"
         echo_fail
         exit_nochange
     fi
-    echo_good
+    #echo_good
 }
 
 ## Validate Pi-hole Folders
@@ -63,7 +63,7 @@ function validate_ph_folders {
         echo_fail
         exit_nochange
     fi
-    echo_good
+    #echo_good
 }
 
 ## Validate DNSMASQ Folders
@@ -77,7 +77,7 @@ function validate_dns_folders {
         echo_fail
         exit_nochange
     fi
-    echo_good
+    #echo_good
 }
 
 ## Validate SQLite3

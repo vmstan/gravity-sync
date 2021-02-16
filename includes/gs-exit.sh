@@ -10,9 +10,9 @@ function exit_nochange {
     
     if [ "${TASKTYPE}" == "" ]
     then
-        MESSAGE="${PROGRAM} Aborted after $((SCRIPT_END-SCRIPT_START)) seconds"
+        MESSAGE="${PROGRAM} aborted after $((SCRIPT_END-SCRIPT_START)) seconds"
     else
-        MESSAGE="${PROGRAM} ${TASKTYPE} Aborted after $((SCRIPT_END-SCRIPT_START)) seconds"
+        MESSAGE="${PROGRAM} ${TASKTYPE} aborted after $((SCRIPT_END-SCRIPT_START)) seconds"
     fi
     
     echo_grav
@@ -25,9 +25,9 @@ function exit_withchange {
     
     if [ "${TASKTYPE}" == "" ]
     then
-        MESSAGE="${PROGRAM} Completed in $((SCRIPT_END-SCRIPT_START)) seconds"
+        MESSAGE="${PROGRAM} completed in $((SCRIPT_END-SCRIPT_START)) seconds"
     else
-        MESSAGE="${PROGRAM} ${TASKTYPE} Completed in $((SCRIPT_END-SCRIPT_START)) seconds"
+        MESSAGE="${PROGRAM} ${TASKTYPE} completed in $((SCRIPT_END-SCRIPT_START)) seconds"
     fi
     
     echo_grav
