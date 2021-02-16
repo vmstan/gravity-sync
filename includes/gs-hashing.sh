@@ -8,12 +8,12 @@
 function md5_compare {
     HASHMARK='0'
     
-    MESSAGE="Hashing the primary host Gravity database"
+    MESSAGE="Hashing the primary host Domain Database"
     echo_stat
     primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${GRAVITY_FI}" | sed 's/\s.*$//')
     error_validate
     
-    MESSAGE="Comparing to secondary host Gravity database"
+    MESSAGE="Comparing to secondary host Domain Database"
     echo_stat
     secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI} | sed 's/\s.*$//')
     error_validate
