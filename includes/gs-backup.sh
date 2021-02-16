@@ -106,7 +106,7 @@ function backup_cleanup {
     find ${LOCAL_FOLDR}/${BACKUP_FOLD}/*.backup -mtime +${BACKUP_RETAIN} -type f -delete
     error_validate
     
-    BACKUP_FOLDER_SIZE=$(du -hcs ${LOCAL_FOLDR}/${BACKUP_FOLD}  | sed 's/\s.*$//')
+    BACKUP_FOLDER_SIZE=$(du -h ${LOCAL_FOLDR}/${BACKUP_FOLD}  | sed 's/\s.*$//')
     
     MESSAGE="${BACKUP_RETAIN} days of backups remain (${BACKUP_FOLDER_SIZE})"
     echo_info
