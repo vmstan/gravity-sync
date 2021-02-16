@@ -21,7 +21,7 @@ function validate_gs_folders {
         echo_fail
         exit_nochange
     fi
-    #echo_good
+    echo_newline
 }
 
 ## Validate Pi-hole Folders
@@ -63,7 +63,7 @@ function validate_ph_folders {
         echo_fail
         exit_nochange
     fi
-    #echo_good
+    echo_newline
 }
 
 ## Validate DNSMASQ Folders
@@ -77,7 +77,7 @@ function validate_dns_folders {
         echo_fail
         exit_nochange
     fi
-    #echo_good
+    echo_newline
 }
 
 ## Validate SQLite3
