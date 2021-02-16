@@ -44,6 +44,11 @@ function echo_good {
     echo -e "\r${GOOD} ${MESSAGE}"
 }
 
+### Success
+function echo_sameline {
+    echo -e "\r"
+}
+
 ### Failure
 function echo_fail {
     echo -e "\r${FAIL} ${MESSAGE}"
