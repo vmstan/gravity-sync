@@ -56,19 +56,19 @@ function show_version {
         DEVVERSION=""
     fi
     
-    MESSAGE="Running Version: ${GREEN}${VERSION}${NC} ${DEVVERSION}"
+    MESSAGE="Running version: ${GREEN}${VERSION}${NC} ${DEVVERSION}"
     echo_info
     
     GITVERSION=$(curl -sf https://raw.githubusercontent.com/vmstan/gravity-sync/master/VERSION)
     if [ -z "$GITVERSION" ]
     then
-        MESSAGE="Latest Version: ${RED}Unknown${NC}"
+        MESSAGE="Latest version: ${RED}Unknown${NC}"
     else
         if [ "$GITVERSION" != "$VERSION" ]
         then
-            MESSAGE="Update Available: ${PURPLE}${GITVERSION}${NC}"
+            MESSAGE="Update available: ${PURPLE}${GITVERSION}${NC}"
         else
-            MESSAGE="Latest Version: ${GREEN}${GITVERSION}${NC}"
+            MESSAGE="Latest version: ${GREEN}${GITVERSION}${NC}"
         fi
     fi
     echo_info
