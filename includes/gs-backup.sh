@@ -25,7 +25,7 @@ function backup_settime {
 }
 
 function backup_local_gravity {
-    MESSAGE="Performing Backup of Local ${GRAVITY_FI}"
+    MESSAGE="Performing backup of local ${GRAVITY_FI}"
     echo_stat
     
     sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} ".backup '${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${GRAVITY_FI}.backup'"
@@ -37,13 +37,13 @@ function backup_local_custom {
     then
         if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
         then
-            MESSAGE="Performing Backup Up Local ${CUSTOM_DNS}"
+            MESSAGE="Performing backup of local ${CUSTOM_DNS}"
             echo_stat
             
             cp ${PIHOLE_DIR}/${CUSTOM_DNS} ${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CUSTOM_DNS}.backup
             error_validate
         else
-            MESSAGE="No Local ${CUSTOM_DNS} Detected"
+            MESSAGE="No local ${CUSTOM_DNS} detected"
             echo_info
         fi
     fi
@@ -54,20 +54,20 @@ function backup_local_cname {
     then
         if [ -f ${DNSMAQ_DIR}/${CNAME_CONF} ]
         then
-            MESSAGE="Performing Backup Up Local ${CNAME_CONF}"
+            MESSAGE="Performing backup of local ${CNAME_CONF}"
             echo_stat
             
             cp ${DNSMAQ_DIR}/${CNAME_CONF} ${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CNAME_CONF}.backup
             error_validate
         else
-            MESSAGE="No Local ${CNAME_CONF} Detected"
+            MESSAGE="No local ${CNAME_CONF} detected"
             echo_info
         fi
     fi
 }
 
 function backup_remote_gravity {
-    MESSAGE="Performing Backup of Remote ${GRAVITY_FI}"
+    MESSAGE="Performing backup of remote ${GRAVITY_FI}"
     echo_stat
     
     CMD_TIMEOUT='60'
@@ -78,7 +78,7 @@ function backup_remote_gravity {
 function backup_remote_custom {
     if [ "$SKIP_CUSTOM" != '1' ]
     then
-        MESSAGE="Performing Backup of Remote ${CUSTOM_DNS}"
+        MESSAGE="Performing backup of remote ${CUSTOM_DNS}"
         echo_stat
         
         CMD_TIMEOUT='15'
@@ -90,7 +90,7 @@ function backup_remote_custom {
 function backup_remote_cname {
     if [ "$INCLUDE_CNAME" == '1' ]
     then
-        MESSAGE="Performing Backup of Remote ${CNAME_CONF}"
+        MESSAGE="Performing backup of remote ${CNAME_CONF}"
         echo_stat
         
         CMD_TIMEOUT='15'
@@ -100,7 +100,7 @@ function backup_remote_cname {
 }
 
 function backup_cleanup {
-    MESSAGE="Scrubbing ${BACKUP_RETAIN} Redundant Antimatter Containment Pods"
+    MESSAGE="Purging redundant backups, ${BACKUP_RETAIN} days worth remain"
     echo_stat
     
     find ${LOCAL_FOLDR}/${BACKUP_FOLD}/*.backup -mtime +${BACKUP_RETAIN} -type f -delete

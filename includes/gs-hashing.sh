@@ -8,12 +8,12 @@
 function md5_compare {
     HASHMARK='0'
     
-    MESSAGE="Analyzing ${GRAVITY_FI} on ${REMOTE_HOST}"
+    MESSAGE="Analyzing ${GRAVITY_FI} (primary/remote)"
     echo_stat
     primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${GRAVITY_FI}" | sed 's/\s.*$//')
     error_validate
     
-    MESSAGE="Analyzing ${GRAVITY_FI} on $HOSTNAME"
+    MESSAGE="Analyzing ${GRAVITY_FI} (secondary/local)"
     echo_stat
     secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI} | sed 's/\s.*$//')
     error_validate
@@ -22,7 +22,7 @@ function md5_compare {
     then
         HASHMARK=$((HASHMARK+0))
     else
-        MESSAGE="Differenced ${GRAVITY_FI} Detected"
+        MESSAGE="Differenced ${GRAVITY_FI} detected"
         echo_warn
         HASHMARK=$((HASHMARK+1))
     fi
@@ -34,13 +34,13 @@ function md5_compare {
             if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RIHOLE_DIR}/${CUSTOM_DNS}
             then
                 REMOTE_CUSTOM_DNS="1"
-                MESSAGE="Analyzing ${CUSTOM_DNS} on ${REMOTE_HOST}"
+                MESSAGE="Analyzing ${CUSTOM_DNS} (primary/remote)"
                 echo_stat
                 
                 primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//'")
                 error_validate
                 
-                MESSAGE="Analyzing ${CUSTOM_DNS} on $HOSTNAME"
+                MESSAGE="Analyzing ${CUSTOM_DNS} (secondary/local)"
                 echo_stat
                 secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//')
                 error_validate
@@ -49,12 +49,12 @@ function md5_compare {
                 then
                     HASHMARK=$((HASHMARK+0))
                 else
-                    MESSAGE="Differenced ${CUSTOM_DNS} Detected"
+                    MESSAGE="Differenced ${CUSTOM_DNS} detected"
                     echo_warn
                     HASHMARK=$((HASHMARK+1))
                 fi
             else
-                MESSAGE="No ${CUSTOM_DNS} Detected on ${REMOTE_HOST}"
+                MESSAGE="No ${CUSTOM_DNS} detected on ${REMOTE_HOST}"
                 echo_info
             fi
         else
@@ -65,7 +65,7 @@ function md5_compare {
                 HASHMARK=$((HASHMARK+1))
                 echo_info
             fi
-            MESSAGE="No ${CUSTOM_DNS} Detected on $HOSTNAME"
+            MESSAGE="No ${CUSTOM_DNS} detected on $HOSTNAME"
             echo_info
         fi
     fi
@@ -94,12 +94,12 @@ function md5_compare {
                     then
                         HASHMARK=$((HASHMARK+0))
                     else
-                        MESSAGE="Differenced ${CNAME_CONF} Detected"
+                        MESSAGE="Differenced ${CNAME_CONF} detected"
                         echo_warn
                         HASHMARK=$((HASHMARK+1))
                     fi
                 else
-                    MESSAGE="No ${CNAME_CONF} Detected on ${REMOTE_HOST}"
+                    MESSAGE="No ${CNAME_CONF} detected on ${REMOTE_HOST}"
                     echo_info
                 fi
             else
@@ -111,7 +111,7 @@ function md5_compare {
                     echo_info
                 fi
                 
-                MESSAGE="No ${CNAME_CONF} Detected on $HOSTNAME"
+                MESSAGE="No ${CNAME_CONF} detected on $HOSTNAME"
                 echo_info
             fi
         fi
@@ -119,11 +119,11 @@ function md5_compare {
     
     if [ "$HASHMARK" != "0" ]
     then
-        MESSAGE="Replication Required"
+        MESSAGE="Replication is required"
         echo_warn
         HASHMARK=$((HASHMARK+0))
     else
-        MESSAGE="No Replication Required"
+        MESSAGE="No replication is required"
         echo_info
         backup_cleanup
         exit_nochange
@@ -150,7 +150,7 @@ function previous_md5 {
 }
 
 function md5_recheck {
-    MESSAGE="Performing Replicator Diagnostics"
+    MESSAGE="Performing replicator diagnostics"
     echo_info
     
     HASHMARK='0'
