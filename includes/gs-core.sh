@@ -4,6 +4,42 @@
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
 # This code is called from the main gravity-sync.sh file and should not execute directly!
 
+# Standard Output
+function start_gs {
+    MESSAGE="${PROGRAM} (${VERSION})"
+    echo_grav
+    cd ${LOCAL_FOLDR}
+    
+    import_gs
+    ph_type
+    
+    MESSAGE="Evaluating Arguments"
+    echo_stat
+    
+    if [ "${ROOT_CHECK_AVOID}" != "1" ]
+    then
+        new_root_check
+    fi
+    
+    if [ "${INCLUDE_CNAME}" == "1" ] && [ "${SKIP_CUSTOM}" == "1" ]
+    then
+        MESSAGE="Invalid Local DNS Settings in ${CONFIG_FILE}"
+        echo_fail
+        
+        exit_nochange
+    fi
+}
+
+# Standard Output No Config
+function start_gs_noconfig {
+    MESSAGE="${PROGRAM} (${VERSION})"
+    echo_grav
+    cd ${LOCAL_FOLDR}
+    
+    MESSAGE="Evaluating Arguments"
+    echo_stat
+}
+
 ## Import Settings
 function import_gs {
     relocate_config_gs
@@ -107,40 +143,4 @@ function ph_type {
     then
         RH_EXEC="sudo ${RODMAN_BIN} exec ${ROCKER_CON} pihole"
     fi
-}
-
-# Standard Output
-function start_gs {
-    MESSAGE="${PROGRAM} ${VERSION} Executing"
-    echo_grav
-    cd ${LOCAL_FOLDR}
-    
-    import_gs
-    ph_type
-    
-    MESSAGE="Evaluating Arguments"
-    echo_stat
-    
-    if [ "${ROOT_CHECK_AVOID}" != "1" ]
-    then
-        new_root_check
-    fi
-    
-    if [ "${INCLUDE_CNAME}" == "1" ] && [ "${SKIP_CUSTOM}" == "1" ]
-    then
-        MESSAGE="Invalid Local DNS Settings in ${CONFIG_FILE}"
-        echo_fail
-        
-        exit_nochange
-    fi
-}
-
-# Standard Output No Config
-function start_gs_noconfig {
-    MESSAGE="${PROGRAM} ${VERSION} Executing"
-    echo_grav
-    cd ${LOCAL_FOLDR}
-    
-    MESSAGE="Evaluating Arguments"
-    echo_stat
 }
