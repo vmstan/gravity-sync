@@ -146,7 +146,7 @@ function push_gs_reload {
     CMD_REQUESTED="${RH_EXEC} restartdns reloadlists"
     create_sshcmd
     
-    MESSAGE="Reloading remote FTLDNS Services"
+    MESSAGE="Reloading remote FTLDNS services"
     echo_stat
     CMD_TIMEOUT='15'
     CMD_REQUESTED="${RH_EXEC} restartdns"

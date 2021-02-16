@@ -34,7 +34,7 @@ function restore_gs {
     
     if [ "${GRAVITY_DATE_LIST}" != "" ]
     then
-        MESSAGE="Previous ${GRAVITY_FI} Versions Available to Restore"
+        MESSAGE="Previous versions of the Domain Database available to restore"
         echo_info
         
         echo_lines
@@ -42,22 +42,22 @@ function restore_gs {
         echo -e "IGNORE-GRAVITY"
         echo_lines
         
-        MESSAGE="Select backup date to restore ${GRAVITY_FI} from"
+        MESSAGE="Select backup date to restore the Domain Database from"
         echo_need
         read INPUT_BACKUP_DATE
         
         if [ "$INPUT_BACKUP_DATE" == "IGNORE-GRAVITY" ]
         then
-            MESSAGE="Skipping Gravity"
+            MESSAGE="Skipping restore of Domain Database"
             echo_warn
         elif [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${GRAVITY_FI}.backup ]
         then
-            MESSAGE="Backup Selected"
+            MESSAGE="Domain Database backup selected for restoration"
             echo_good
             
             DO_GRAVITY_RESTORE='1'
         else
-            MESSAGE="Invalid Request"
+            MESSAGE="Invalid restoration request"
             echo_info
             
             exit_nochange
@@ -72,7 +72,7 @@ function restore_gs {
             
             if [ "${CUSTOM_DATE_LIST}" != "" ]
             then
-                MESSAGE="Previous ${CUSTOM_DNS} Versions Available to Restore"
+                MESSAGE="Previous versions of the Local DNS Records available to restore"
                 echo_info
                 
                 echo_lines
@@ -80,28 +80,28 @@ function restore_gs {
                 echo -e "IGNORE-CUSTOM"
                 echo_lines
                 
-                MESSAGE="Select backup date to restore ${CUSTOM_DNS} from"
+                MESSAGE="Select backup date to restore the Local DNS Records from"
                 echo_need
                 read INPUT_DNSBACKUP_DATE
                 
                 if [ "$INPUT_DNSBACKUP_DATE" == "IGNORE-CUSTOM" ]
                 then
-                    MESSAGE="Skipping DNS"
+                    MESSAGE="Skipping restore of Local DNS Records"
                     echo_warn
                 elif [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ]
                 then
-                    MESSAGE="Backup Selected"
+                    MESSAGE="Local DNS Records backup selected for restoration"
                     echo_good
                     
                     DO_CUSTOM_RESTORE='1'
                 else
-                    MESSAGE="Invalid Request"
+                    MESSAGE="Invalid restoration request"
                     echo_fail
                     
                     exit_nochange
                 fi
             else
-                MESSAGE="No ${CUSTOM_DNS} Backups"
+                MESSAGE="No Local DNS Records backups are available"
                 echo_info
             fi
         fi
@@ -115,7 +115,7 @@ function restore_gs {
             
             if [ "${CNAME_DATE_LIST}" != "" ]
             then
-                MESSAGE="Previous ${CNAME_CONF} Versions Available to Restore"
+                MESSAGE="Previous versions of the Local DNS CNAMEs available to restore"
                 echo_info
                 
                 echo_lines
@@ -123,28 +123,28 @@ function restore_gs {
                 echo -e "IGNORE-CNAME"
                 echo_lines
                 
-                MESSAGE="Select backup date to restore ${CNAME_CONF} from"
+                MESSAGE="Select backup date to restore the Local DNS CNAMEs from"
                 echo_need
                 read INPUT_CNAMEBACKUP_DATE
                 
                 if [ "$INPUT_CNAMEBACKUP_DATE" == "IGNORE-CNAME" ]
                 then
-                    MESSAGE="Skipping CNAME"
+                    MESSAGE="Skipping restore of Local DNS CNAMEs"
                     echo_warn
                 elif [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_CNAMEBACKUP_DATE}-${CNAME_CONF}.backup ]
                 then
-                    MESSAGE="Backup Selected"
+                    MESSAGE="Local DNS CNAMEs backup selected for restoration"
                     echo_good
                     
                     DO_CNAME_RESTORE='1'
                 else
-                    MESSAGE="Invalid Request"
+                    MESSAGE="Invalid restoration request"
                     echo_fail
                     
                     exit_nochange
                 fi
             else
-                MESSAGE="No ${CNAME_CONF} Backups"
+                MESSAGE="No Local DNS CNAME backups are available"
                 echo_info
             fi
         fi
@@ -152,37 +152,37 @@ function restore_gs {
     
     if [ "$DO_GRAVITY_RESTORE" == "1" ]
     then
-        MESSAGE="${GRAVITY_FI} from ${INPUT_BACKUP_DATE} Selected"
+        MESSAGE="Domain Database from ${INPUT_BACKUP_DATE} selected"
         echo_info
     else
-        MESSAGE="${GRAVITY_FI} Restore Unavailable"
+        MESSAGE="Domain Database restoration is unavailable"
         echo_info
     fi
     
     if [ "$DO_CUSTOM_RESTORE" == "1" ]
     then
-        MESSAGE="${CUSTOM_DNS} from ${INPUT_DNSBACKUP_DATE} Selected"
+        MESSAGE="Local DNS Records from ${INPUT_DNSBACKUP_DATE} selected"
         echo_info
     else
-        MESSAGE="${CUSTOM_DNS} Restore Unavailable"
+        MESSAGE="Local DNS Records restoration is unavailable"
         echo_info
     fi
     
     if [ "$DO_CNAME_RESTORE" == "1" ]
     then
-        MESSAGE="${CNAME_CONF} from ${INPUT_CNAMEBACKUP_DATE} Selected"
+        MESSAGE="Local DNS CNAMEs from ${INPUT_CNAMEBACKUP_DATE} Selected"
         echo_info
     else
-        MESSAGE="${CNAME_CONF} Restore Unavailable"
+        MESSAGE="Local DNS CNAMEs restoration is unavailable"
         echo_info
     fi
     
     intent_validate
     
-    MESSAGE="Making Time Warp Calculations"
+    MESSAGE="Preparing calculations for time travel"
     echo_info
     
-    MESSAGE="Stopping Pi-hole Services"
+    MESSAGE="Stopping FTLDNS services on $HOSTNAME"
     echo_stat
     
     ${PH_EXEC} stop >/dev/null 2>&1
@@ -190,12 +190,12 @@ function restore_gs {
     
     if [ "$DO_CUSTOM_RESTORE" == "1" ]
     then
-        MESSAGE="Restoring ${GRAVITY_FI} on $HOSTNAME"
+        MESSAGE="Restoring secondary Domain Database"
         echo_stat
         sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${GRAVITY_FI}.backup ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
         error_validate
         
-        MESSAGE="Validating Ownership on ${GRAVITY_FI}"
+        MESSAGE="Validating file ownership of Domain Database"
         echo_stat
         
         GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk 'OFS=":" {print $3,$4}')
@@ -205,16 +205,16 @@ function restore_gs {
         else
             echo_fail
             
-            MESSAGE="Attempting to Compensate"
+            MESSAGE="Attempting to compensate"
             echo_warn
             
-            MESSAGE="Setting Ownership on ${GRAVITY_FI}"
+            MESSAGE="Setting file ownership of Domain Database"
             echo_stat
             sudo chown ${FILE_OWNER} ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
             error_validate
         fi
         
-        MESSAGE="Validating Permissions on ${GRAVITY_FI}"
+        MESSAGE="Validating file permissions of Domain Database"
         echo_stat
         
         GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | awk '{print $1}')
@@ -224,10 +224,10 @@ function restore_gs {
         else
             echo_fail
             
-            MESSAGE="Attempting to Compensate"
+            MESSAGE="Attempting to compensate"
             echo_warn
             
-            MESSAGE="Setting Ownership on ${GRAVITY_FI}"
+            MESSAGE="Setting file ownership of Domain Database"
             echo_stat
             sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
             error_validate
@@ -238,12 +238,12 @@ function restore_gs {
     then
         if [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ]
         then
-            MESSAGE="Restoring ${CUSTOM_DNS} on $HOSTNAME"
+            MESSAGE="Restoring secondary Local DNS Records"
             echo_stat
             sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
             error_validate
             
-            MESSAGE="Validating Ownership on ${CUSTOM_DNS}"
+            MESSAGE="Validating file ownership on Local DNS Records"
             echo_stat
             
             CUSTOMLS_OWN=$(ls -ld ${PIHOLE_DIR}/${CUSTOM_DNS} | awk '{print $3 $4}')
@@ -253,16 +253,16 @@ function restore_gs {
             else
                 echo_fail
                 
-                MESSAGE="Attempting to Compensate"
+                MESSAGE="Attempting to compensate"
                 echo_warn
                 
-                MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
+                MESSAGE="Setting file ownership on Local DNS Records"
                 echo_stat
                 sudo chown root:root ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
                 error_validate
             fi
             
-            MESSAGE="Validating Permissions on ${CUSTOM_DNS}"
+            MESSAGE="Validating file permissions on Local DNS Records"
             echo_stat
             
             CUSTOMLS_RWE=$(namei -m ${PIHOLE_DIR}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | awk '{print $1}')
@@ -272,10 +272,10 @@ function restore_gs {
             else
                 echo_fail
                 
-                MESSAGE="Attempting to Compensate"
+                MESSAGE="Attempting to compensate"
                 echo_warn
                 
-                MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
+                MESSAGE="Setting file ownership on Local DNS Records"
                 echo_stat
                 sudo chmod 644 ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
                 error_validate
@@ -287,7 +287,7 @@ function restore_gs {
     then
         if [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_CNAMEBACKUP_DATE}-${CNAME_CONF}.backup ]
         then
-            MESSAGE="Restoring ${CNAME_CONF} on $HOSTNAME"
+            MESSAGE="Restoring secondary Local DNS CNAMEs"
             echo_stat
             sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_CNAMEBACKUP_DATE}-${CNAME_CONF}.backup ${DNSMAQ_DIR}/${CNAME_CONF} >/dev/null 2>&1
             error_validate

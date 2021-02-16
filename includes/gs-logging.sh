@@ -18,7 +18,7 @@ function task_logs {
 function logs_export {
     if [ "${TASKTYPE}" != "BACKUP" ]
     then
-        MESSAGE="Logging updated hashes from previous replication"
+        MESSAGE="Saving the updated hashes from this replication"
         echo_stat
         rm -f ${LOG_PATH}/${HISTORY_MD5}
         echo -e ${primaryDBMD5} >> ${LOG_PATH}/${HISTORY_MD5}
@@ -30,7 +30,7 @@ function logs_export {
         error_validate
     fi
     
-    MESSAGE="Logging successful ${TASKTYPE}"
+    MESSAGE="Logging successful ${TASKTYPE} task"
     echo_stat
     echo -e $(date) "[${TASKTYPE}]" >> ${LOG_PATH}/${SYNCING_LOG}
     error_validate

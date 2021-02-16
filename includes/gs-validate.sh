@@ -183,8 +183,93 @@ function dbclient_warning {
     fi
 }
 
-## Validate CNAME Permissions
+## Validate Domain Database Permissions
+function validate_gravity_permissions() {
+    MESSAGE="Validating file ownership of Domain Database"
+    echo_stat
+    
+    GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk 'OFS=":" {print $3,$4}')
+    if [ "$GRAVDB_OWN" == "$FILE_OWNER" ]
+    then
+        echo_good
+    else
+        echo_fail
+        
+        MESSAGE="Attempting to compensate"
+        echo_warn
+        
+        MESSAGE="Setting file ownership of Domain Database"
+        echo_stat
+        sudo chown ${FILE_OWNER} ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+        error_validate
+    fi
+    
+    MESSAGE="Validating file permissions of Domain Database"
+    echo_stat
+    
+    GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | awk '{print $1}')
+    if [ "$GRAVDB_RWE" = "-rw-rw-r--" ]
+    then
+        echo_good
+    else
+        echo_fail
+        
+        MESSAGE="Attempting to compensate"
+        echo_warn
+        
+        MESSAGE="Setting file ownership of Domain Database"
+        echo_stat
+        sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+        error_validate
+    fi
+}
+
+## Validate Local DNS Records Permissions
+function validate_custom_permissions() {
+    MESSAGE="Validating file ownership on Local DNS Records"
+    echo_stat
+    
+    CUSTOMLS_OWN=$(ls -ld ${PIHOLE_DIR}/${CUSTOM_DNS} | awk '{print $3 $4}')
+    if [ "$CUSTOMLS_OWN" == "rootroot" ]
+    then
+        echo_good
+    else
+        echo_fail
+        
+        MESSAGE="Attempting to compensate"
+        echo_warn
+        
+        MESSAGE="Setting file ownership on Local DNS Records"
+        echo_stat
+        sudo chown root:root ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+        error_validate
+    fi
+    
+    MESSAGE="Validating file permissions on Local DNS Records"
+    echo_stat
+    
+    CUSTOMLS_RWE=$(namei -m ${PIHOLE_DIR}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | awk '{print $1}')
+    if [ "$CUSTOMLS_RWE" == "-rw-r--r--" ]
+    then
+        echo_good
+    else
+        echo_fail
+        
+        MESSAGE="Attempting to compensate"
+        echo_warn
+        
+        MESSAGE="Setting file ownership on Local DNS Records"
+        echo_stat
+        sudo chmod 644 ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+        error_validate
+    fi
+}
+
+## Validate Local DNS CNAME Permissions
 function validate_cname_permissions {
+    MESSAGE="Validating file ownership on Local DNS CNAMEs"
+    echo_stat
+    
     CNAMELS_OWN=$(ls -ld ${DNSMAQ_DIR}/${CNAME_CONF} | awk '{print $3 $4}')
     if [ "$CNAMELS_OWN" == "rootroot" ]
     then
@@ -195,13 +280,13 @@ function validate_cname_permissions {
         MESSAGE="Attempting to compensate"
         echo_warn
         
-        MESSAGE="Setting ownership on ${CNAME_CONF}"
+        MESSAGE="Setting file ownership on Local DNS CNAMEs"
         echo_stat
         sudo chown root:root ${DNSMAQ_DIR}/${CNAME_CONF} >/dev/null 2>&1
         error_validate
     fi
     
-    MESSAGE="Validating permissions on ${CNAME_CONF}"
+    MESSAGE="Validating file permissions on Local DNS CNAMEs"
     echo_stat
     
     CNAMELS_RWE=$(namei -m ${DNSMAQ_DIR}/${CNAME_CONF} | grep -v f: | grep ${CNAME_CONF} | awk '{print $1}')
@@ -214,9 +299,10 @@ function validate_cname_permissions {
         MESSAGE="Attempting to compensate"
         echo_warn
         
-        MESSAGE="Setting ownership on ${CNAME_CONF}"
+        MESSAGE="Setting file ownership on Local DNS CNAMEs"
         echo_stat
         sudo chmod 644 ${DNSMAQ_DIR}/${CNAME_CONF} >/dev/null 2>&1
         error_validate
     fi
 }
+
