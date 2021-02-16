@@ -87,16 +87,16 @@ function validate_sqlite3 {
     if hash sqlite3 2>/dev/null
     then
         # MESSAGE="SQLITE3 Utility Detected"
-        echo_good
+        echo_sameline
     else
         MESSAGE="Unable to Validate SQLITE Install on $HOSTNAME"
         echo_warn
         
-        MESSAGE="Installing SQLLITE3 with ${PKG_MANAGER}"
-        echo_stat
+        #MESSAGE="Installing SQLLITE3 with ${PKG_MANAGER}"
+        #echo_stat
         
-        ${PKG_INSTALL} sqllite3 >/dev/null 2>&1
-        error_validate
+        #${PKG_INSTALL} sqllite3 >/dev/null 2>&1
+        #error_validate
     fi
 }
 
