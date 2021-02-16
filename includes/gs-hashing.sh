@@ -8,12 +8,12 @@
 function md5_compare {
     HASHMARK='0'
     
-    MESSAGE="Hashing the primary (remote) ${GRAVITY_FI}"
+    MESSAGE="Hashing the primary host ${GRAVITY_FI}"
     echo_stat
     primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${GRAVITY_FI}" | sed 's/\s.*$//')
     error_validate
     
-    MESSAGE="Comparing to $HOSTNAME's ${GRAVITY_FI}"
+    MESSAGE="Comparing to secondary host ${GRAVITY_FI}"
     echo_stat
     secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI} | sed 's/\s.*$//')
     error_validate
@@ -34,13 +34,13 @@ function md5_compare {
             if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RIHOLE_DIR}/${CUSTOM_DNS}
             then
                 REMOTE_CUSTOM_DNS="1"
-                MESSAGE="Scanning the primary (remote) Local DNS Records"
+                MESSAGE="Scanning the primary Local DNS Records"
                 echo_stat
                 
                 primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//'")
                 error_validate
                 
-                MESSAGE="Comparing to $HOSTNAME's Local DNS Records"
+                MESSAGE="Comparing to secondary Local DNS Records"
                 echo_stat
                 secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//')
                 error_validate
@@ -79,13 +79,13 @@ function md5_compare {
                 if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RNSMAQ_DIR}/${CNAME_CONF}
                 then
                     REMOTE_CNAME_DNS="1"
-                    MESSAGE="Reviewing primary (remote) Local DNS CNAME Records"
+                    MESSAGE="Reviewing primary Local DNS CNAME Records"
                     echo_stat
                     
                     primaryCNMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//'")
                     error_validate
                     
-                    MESSAGE="Comparing to $HOSTNAME's Local DNS CNAME Records"
+                    MESSAGE="Comparing to secondary Local DNS CNAME Records"
                     echo_stat
                     secondCNMD5=$(md5sum ${DNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//')
                     error_validate
