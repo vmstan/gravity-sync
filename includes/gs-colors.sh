@@ -47,7 +47,7 @@ function echo_good {
 ### Success
 function echo_sameline {
     echo -en "\r"
-    echo -en ""
+    echo -en "                                                                                        "
 }
 
 ### Failure
