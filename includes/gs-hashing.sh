@@ -158,12 +158,12 @@ function md5_recheck {
     MESSAGE="Reanalyzing ${GRAVITY_FI} on ${REMOTE_HOST}"
     echo_stat
     primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${GRAVITY_FI}" | sed 's/\s.*$//')
-    error_validate
+    silent_error_validate
     
     MESSAGE="Reanalyzing ${GRAVITY_FI} on $HOSTNAME"
     echo_stat
     secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI} | sed 's/\s.*$//')
-    error_validate
+    silent_error_validate
     
     if [ "$SKIP_CUSTOM" != '1' ]
     then
@@ -176,12 +176,12 @@ function md5_recheck {
                 echo_stat
                 
                 primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//'")
-                error_validate
+                silent_error_validate
                 
                 MESSAGE="Reanalyzing ${CUSTOM_DNS} on $HOSTNAME"
                 echo_stat
                 secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//')
-                error_validate
+                silent_error_validate
             else
                 MESSAGE="No ${CUSTOM_DNS} detected on ${REMOTE_HOST}"
                 echo_info
@@ -211,12 +211,12 @@ function md5_recheck {
                     echo_stat
                     
                     primaryCNMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//'")
-                    error_validate
+                    silent_error_validate
                     
                     MESSAGE="Reanalyzing ${CNAME_CONF} on $HOSTNAME"
                     echo_stat
                     secondCNMD5=$(md5sum ${DNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//')
-                    error_validate
+                    silent_error_validate
                 else
                     MESSAGE="No ${CNAME_CONF} detected on ${REMOTE_HOST}"
                     echo_info
