@@ -76,7 +76,6 @@ function show_version {
 }
 
 function show_info() {
-        
     if [ -f ${LOCAL_FOLDR}/dev ]
     then
         DEVVERSION="-dev"
@@ -248,14 +247,14 @@ function task_devmode {
         touch ${LOCAL_FOLDR}/dev
         error_validate
         
-        MESSAGE="Updating Cache"
+        MESSAGE="Checking available branches"
         echo_stat
         git fetch --all >/dev/null 2>&1
         error_validate
         
         git branch -r
         
-        MESSAGE="Select Branch to Update Against"
+        MESSAGE="Select GitHub branch to update against"
         echo_need
         read INPUT_BRANCH
         
