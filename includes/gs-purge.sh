@@ -51,7 +51,7 @@ function task_purge {
     
     intent_validate
     
-    MESSAGE="Cleaning Gravity Sync Directory"
+    MESSAGE="Cleaning Gravity Sync directory"
     echo_stat
     
     git clean -f -X -d >/dev/null 2>&1
@@ -59,20 +59,20 @@ function task_purge {
     
     clear_cron
     
-    MESSAGE="Deleting SSH Key-files"
+    MESSAGE="Deleting SSH key-files"
     echo_stat
     
     rm -f $HOME/${SSH_PKIF} >/dev/null 2>&1
     rm -f $HOME/${SSH_PKIF}.pub >/dev/null 2>&1
     error_validate
     
-    MESSAGE="Realigning Dilithium Matrix"
-    echo_stat
+    MESSAGE="Realigning dilithium crystal matrix"
+    echo_info
     
     sleep 1
     
-    MESSAGE="Realigning Dilithium Matrix"
-    echo_good
+    # MESSAGE="Realigning Dilithium Matrix"
+    # echo_good
     
     update_gs
 }

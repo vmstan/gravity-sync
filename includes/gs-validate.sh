@@ -26,14 +26,14 @@ function validate_gs_folders {
 
 ## Validate Pi-hole Folders
 function validate_ph_folders {
-    MESSAGE="Validating Pi-hole Configuration"
+    MESSAGE="Validating Pi-hole configuration"
     echo_stat
     
     if [ "$PH_IN_TYPE" == "default" ]
     then
         if [ ! -f ${PIHOLE_BIN} ]
         then
-            MESSAGE="Unable to Validate that Pi-Hole is Installed"
+            MESSAGE="Unable to validate that Pi-Hole is installed on $HOSTNAME"
             echo_fail
             exit_nochange
         fi
@@ -42,7 +42,7 @@ function validate_ph_folders {
         FTLCHECK=$(sudo docker container ls | grep "${CONTAIMAGE}")
         if [ "$FTLCHECK" == "" ]
         then
-            MESSAGE="Unable to Validate that Pi-Hole is Installed"
+            MESSAGE="Unable to validate that Pi-Hole container is running on $HOSTNAME"
             echo_fail
             exit_nochange
         fi
@@ -51,7 +51,7 @@ function validate_ph_folders {
         FTLCHECK=$(sudo podman container ls | grep "${CONTAIMAGE}")
         if [ "$FTLCHECK" == "" ]
         then
-            MESSAGE="Unable to Validate that Pi-Hole is Installed"
+            MESSAGE="Unable to validate that Pi-Hole container is running on $HOSTNAME"
             echo_fail
             exit_nochange
         fi
@@ -59,7 +59,7 @@ function validate_ph_folders {
     
     if [ ! -d ${PIHOLE_DIR} ]
     then
-        MESSAGE="Unable to Validate Pi-Hole Configuration Directory"
+        MESSAGE="Unable to validate the Pi-Hole configuration directory location"
         echo_fail
         exit_nochange
     fi
@@ -68,12 +68,12 @@ function validate_ph_folders {
 
 ## Validate DNSMASQ Folders
 function validate_dns_folders {
-    MESSAGE="Validating DNSMASQ Configuration"
+    MESSAGE="Validating DNSMASQ configuration"
     echo_stat
     
     if [ ! -d ${DNSMAQ_DIR} ]
     then
-        MESSAGE="Unable to Validate DNSMASQ Configuration Directory"
+        MESSAGE="Unable to validate the DNSMASQ configuration directory"
         echo_fail
         exit_nochange
     fi
@@ -82,14 +82,14 @@ function validate_dns_folders {
 
 ## Validate SQLite3
 function validate_sqlite3 {
-    MESSAGE="Validating SQLITE Installed on $HOSTNAME"
+    MESSAGE="Validating SQLITE3 installation"
     echo_stat
     if hash sqlite3 2>/dev/null
     then
         # MESSAGE="SQLITE3 Utility Detected"
         echo_sameline
     else
-        MESSAGE="Unable to Validate SQLITE Install on $HOSTNAME"
+        MESSAGE="Unable to validate SQLITE3 installation on $HOSTNAME"
         echo_warn
         
         #MESSAGE="Installing SQLLITE3 with ${PKG_MANAGER}"
@@ -133,7 +133,7 @@ function validate_os_sshpass {
     #	echo_info
     # fi
     
-    MESSAGE="Validating Connection to ${REMOTE_HOST}"
+    MESSAGE="Connecting to ${REMOTE_HOST}"
     echo_stat
     
     CMD_TIMEOUT='5'
@@ -177,7 +177,7 @@ function dbclient_warning {
         then
             NOEMPTYBASHIF="1"
         else
-            MESSAGE="Dropbear support has been deprecated - please convert to OpenSSH"
+            MESSAGE="Dropbear support has been deprecated"
             echo_warn
         fi
     fi
@@ -192,16 +192,16 @@ function validate_cname_permissions {
     else
         echo_fail
         
-        MESSAGE="Attempting to Compensate"
+        MESSAGE="Attempting to compensate"
         echo_warn
         
-        MESSAGE="Setting Ownership on ${CNAME_CONF}"
+        MESSAGE="Setting ownership on ${CNAME_CONF}"
         echo_stat
         sudo chown root:root ${DNSMAQ_DIR}/${CNAME_CONF} >/dev/null 2>&1
         error_validate
     fi
     
-    MESSAGE="Validating Permissions on ${CNAME_CONF}"
+    MESSAGE="Validating permissions on ${CNAME_CONF}"
     echo_stat
     
     CNAMELS_RWE=$(namei -m ${DNSMAQ_DIR}/${CNAME_CONF} | grep -v f: | grep ${CNAME_CONF} | awk '{print $1}')
@@ -211,10 +211,10 @@ function validate_cname_permissions {
     else
         echo_fail
         
-        MESSAGE="Attempting to Compensate"
+        MESSAGE="Attempting to compensate"
         echo_warn
         
-        MESSAGE="Setting Ownership on ${CNAME_CONF}"
+        MESSAGE="Setting ownership on ${CNAME_CONF}"
         echo_stat
         sudo chmod 644 ${DNSMAQ_DIR}/${CNAME_CONF} >/dev/null 2>&1
         error_validate
