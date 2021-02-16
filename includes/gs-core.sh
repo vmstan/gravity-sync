@@ -121,6 +121,17 @@ function error_validate {
     fi
 }
 
+## Error Validation
+function silent_error_validate {
+    if [ "$?" != "0" ]
+    then
+        echo_fail
+        exit 1
+    else
+        echo_sameline
+    fi
+}
+
 function ph_type {
     if [ "$PH_IN_TYPE" == "default" ]
     then

@@ -18,7 +18,7 @@ function task_logs {
 function logs_export {
     if [ "${TASKTYPE}" != "BACKUP" ]
     then
-        MESSAGE="Saving MD5 hashes from replication"
+        MESSAGE="Logging updated hashes from previous replication"
         echo_stat
         rm -f ${LOG_PATH}/${HISTORY_MD5}
         echo -e ${primaryDBMD5} >> ${LOG_PATH}/${HISTORY_MD5}
