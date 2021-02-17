@@ -101,16 +101,16 @@ function pull_gs_cname {
 
 ## Pull Reload
 function pull_gs_reload {
-    MESSAGE="Isolating regeneration pathways"
+    MESSAGE="${UI_PULL_RELOAD_WAIT}"
     echo_info
     sleep 1
     
-    MESSAGE="Updating FTLDNS configuration"
+    MESSAGE="${UI_FTLDNS_CONFIG_UPDATE}"
     echo_stat
     ${PH_EXEC} restartdns reloadlists >/dev/null 2>&1
     error_validate
     
-    MESSAGE="Reloading FTLDNS services"
+    MESSAGE="${UI_FTLDNS_CONFIG_RELOAD}"
     echo_stat
     ${PH_EXEC} restartdns >/dev/null 2>&1
     error_validate
