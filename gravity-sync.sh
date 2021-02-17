@@ -72,14 +72,12 @@ HISTORY_MD5='gravity-sync.md5'		# replace in gravity-sync.conf to overwrite
 # OS Settings
 BASH_PATH='/bin/bash'				# default OS bash path
 
-# Interface Settings
-UI_GRAVITY_NAME='Domain Database'
-UI_CUSTOM_NAME='Local DNS Records'
-UI_CNAME_NAME='Local DNS CNAMEs'
-
 ##############################################
 ### NEVER CHANGE ANYTHING BELOW THIS LINE! ###
 ##############################################
+
+# Import UI Fields
+source ${LOCAL_FOLDR}/includes/gs-ui.sh
 
 # Import Color/Message Includes
 source ${LOCAL_FOLDR}/includes/gs-colors.sh
