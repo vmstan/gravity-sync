@@ -5,7 +5,7 @@
 # This code is called from the main gravity-sync.sh file and should not execute directly!
 
 ## Backup Task
-function task_backup {
+function task_backup() {
     TASKTYPE='BACKUP'
     MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
@@ -20,24 +20,24 @@ function task_backup {
     exit_withchange
 }
 
-function backup_settime {
+function backup_settime() {
     BACKUPTIMESTAMP=$(date +%F-%H%M%S)
 }
 
-function backup_local_gravity {
-    MESSAGE="Performing backup of secondary Domain Database"
+function backup_local_gravity() {
+    MESSAGE="${UI_BACKUP_SECONDARY} ${UI_GRAVITY_NAME}"
     echo_stat
     
     sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} ".backup '${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${GRAVITY_FI}.backup'"
     error_validate
 }
 
-function backup_local_custom {
+function backup_local_custom() {
     if [ "$SKIP_CUSTOM" != '1' ]
     then
         if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
         then
-            MESSAGE="Performing backup of secondary Local DNS Records"
+            MESSAGE="${UI_BACKUP_SECONDARY} ${UI_CUSTOM_NAME}"
             echo_stat
             
             cp ${PIHOLE_DIR}/${CUSTOM_DNS} ${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CUSTOM_DNS}.backup
@@ -49,12 +49,12 @@ function backup_local_custom {
     fi
 }
 
-function backup_local_cname {
+function backup_local_cname() {
     if [ "${INCLUDE_CNAME}" == '1' ]
     then
         if [ -f ${DNSMAQ_DIR}/${CNAME_CONF} ]
         then
-            MESSAGE="Performing backup of secondary Local CNAMEs"
+            MESSAGE="${UI_BACKUP_SECONDARY} ${UI_CNAME_NAME}"
             echo_stat
             
             cp ${DNSMAQ_DIR}/${CNAME_CONF} ${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CNAME_CONF}.backup
@@ -66,8 +66,8 @@ function backup_local_cname {
     fi
 }
 
-function backup_remote_gravity {
-    MESSAGE="Performing backup of primary Domain Database"
+function backup_remote_gravity() {
+    MESSAGE="${UI_BACKUP_PRIMARY} ${UI_GRAVITY_NAME}"
     echo_stat
     
     CMD_TIMEOUT='60'
@@ -75,10 +75,10 @@ function backup_remote_gravity {
     create_sshcmd
 }
 
-function backup_remote_custom {
+function backup_remote_custom() {
     if [ "$SKIP_CUSTOM" != '1' ]
     then
-        MESSAGE="Performing backup of primary Local DNS Records"
+        MESSAGE="${UI_BACKUP_PRIMARY} ${UI_CUSTOM_NAME}"
         echo_stat
         
         CMD_TIMEOUT='15'
@@ -87,10 +87,10 @@ function backup_remote_custom {
     fi
 }
 
-function backup_remote_cname {
+function backup_remote_cname() {
     if [ "$INCLUDE_CNAME" == '1' ]
     then
-        MESSAGE="Performing backup of primary Local CNAMEs"
+        MESSAGE="${UI_BACKUP_PRIMARY} ${UI_CNAME_NAME}"
         echo_stat
         
         CMD_TIMEOUT='15'
@@ -99,8 +99,8 @@ function backup_remote_cname {
     fi
 }
 
-function backup_cleanup {
-    MESSAGE="Purging redundant backups on secondary Pi-hole instance"
+function backup_cleanup() {
+    MESSAGE="${UI_BACKUP_PURGE}"
     echo_stat
     
     find ${LOCAL_FOLDR}/${BACKUP_FOLD}/*.backup -mtime +${BACKUP_RETAIN} -type f -delete
@@ -108,6 +108,6 @@ function backup_cleanup {
     
     BACKUP_FOLDER_SIZE=$(du -h ${LOCAL_FOLDR}/${BACKUP_FOLD}  | sed 's/\s.*$//')
     
-    MESSAGE="${BACKUP_RETAIN} days of backups remain (${BACKUP_FOLDER_SIZE})"
+    MESSAGE="${BACKUP_RETAIN} ${UI_BACKUP_REMAIN} (${BACKUP_FOLDER_SIZE})"
     echo_info
 }
