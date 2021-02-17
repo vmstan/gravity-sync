@@ -25,3 +25,11 @@ UI_REPLACE_SECONDARY='Replacing the secondary'
 UI_PULL_RELOAD_WAIT='Isolating regeneration pathways'
 UI_FTLDNS_CONFIG_UPDATE='Updating FTLDNS configuration'
 UI_FTLDNS_CONFIG_RELOAD='Reloading FTLDNS services'
+
+# Logging
+UI_LOGGING_SUCCESS='Logging successful'
+UI_LOGGING_HASHES='Saving the updated hashes from this replication'
+UI_LOGGING_DISPLAY='Displaying output of previous jobs'
+UI_LOGGING_EMPTY='is empty'
+UI_LOGGING_MISSING='is missing'
+UI_LOGGING_RECENT_COMPLETE='Recent complete executions of'
