@@ -172,7 +172,7 @@ function validate_gravity_permissions() {
         error_validate
     fi
     
-    MESSAGE="Validating file permissions of ${UI_GRAVITY_NAME}"
+    MESSAGE="${UI_VAL_FILE_PERMISSION} of ${UI_GRAVITY_NAME}"
     echo_stat
     
     GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | awk '{print $1}')
@@ -185,7 +185,7 @@ function validate_gravity_permissions() {
         MESSAGE="${UI_COMPENSATE}"
         echo_warn
         
-        MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_GRAVITY_NAME}"
+        MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_GRAVITY_NAME}"
         echo_stat
         sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
         error_validate
@@ -213,7 +213,7 @@ function validate_custom_permissions() {
         error_validate
     fi
     
-    MESSAGE="${UI_VAL_FILE_PERMISSIONS} ${UI_CUSTOM_NAME}"
+    MESSAGE="${UI_VAL_FILE_PERMISSION} ${UI_CUSTOM_NAME}"
     echo_stat
     
     CUSTOMLS_RWE=$(namei -m ${PIHOLE_DIR}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | awk '{print $1}')
@@ -226,7 +226,7 @@ function validate_custom_permissions() {
         MESSAGE="${UI_COMPENSATE}"
         echo_warn
         
-        MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_CUSTOM_NAME}"
+        MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_CUSTOM_NAME}"
         echo_stat
         sudo chmod 644 ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
         error_validate
@@ -254,7 +254,7 @@ function validate_cname_permissions() {
         error_validate
     fi
     
-    MESSAGE="${UI_VAL_FILE_PERMISSIONS} ${UI_CNAME_NAME}"
+    MESSAGE="${UI_VAL_FILE_PERMISSION} ${UI_CNAME_NAME}"
     echo_stat
     
     CNAMELS_RWE=$(namei -m ${DNSMAQ_DIR}/${CNAME_CONF} | grep -v f: | grep ${CNAME_CONF} | awk '{print $1}')
@@ -267,7 +267,7 @@ function validate_cname_permissions() {
         MESSAGE="${UI_COMPENSATE}"
         echo_warn
         
-        MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_CNAME_NAME}"
+        MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_CNAME_NAME}"
         echo_stat
         sudo chmod 644 ${DNSMAQ_DIR}/${CNAME_CONF} >/dev/null 2>&1
         error_validate
