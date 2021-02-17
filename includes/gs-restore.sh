@@ -72,8 +72,8 @@ function restore_gs {
             
             if [ "${CUSTOM_DATE_LIST}" != "" ]
             then
-                MESSAGE="${UI_RESTORE_SELECT_DATE} ${UI_CUSTOM_NAME}"
-                echo_info
+                # MESSAGE="${UI_RESTORE_SELECT_DATE} ${UI_CUSTOM_NAME}"
+                # echo_info
                 
                 echo_lines
                 ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${CUSTOM_DNS} | colrm 18
@@ -115,8 +115,8 @@ function restore_gs {
             
             if [ "${CNAME_DATE_LIST}" != "" ]
             then
-                MESSAGE="${UI_RESTORE_SELECT_DATE} ${UI_CNAME_NAME}"
-                echo_info
+                # MESSAGE="${UI_RESTORE_SELECT_DATE} ${UI_CNAME_NAME}"
+                # echo_info
                 
                 echo_lines
                 ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${CNAME_CONF} | colrm 18
@@ -188,7 +188,7 @@ function restore_gs {
     # ${PH_EXEC} stop >/dev/null 2>&1
     # error_validate
     
-    if [ "$DO_CUSTOM_RESTORE" == "1" ]
+    if [ "$DO_GRAVITY_RESTORE" == "1" ]
     then
         MESSAGE="${UI_RESTORE_SECONDARY} ${UI_GRAVITY_NAME}"
         echo_stat
