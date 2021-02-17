@@ -182,11 +182,11 @@ function restore_gs {
     MESSAGE="Preparing calculations for time travel"
     echo_info
     
-    MESSAGE="Stopping FTLDNS services on $HOSTNAME"
-    echo_stat
+    # MESSAGE="Stopping FTLDNS services on $HOSTNAME"
+    # echo_stat
     
-    ${PH_EXEC} stop >/dev/null 2>&1
-    error_validate
+    # ${PH_EXEC} stop >/dev/null 2>&1
+    # error_validate
     
     if [ "$DO_CUSTOM_RESTORE" == "1" ]
     then
@@ -195,43 +195,7 @@ function restore_gs {
         sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${GRAVITY_FI}.backup ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
         error_validate
         
-        MESSAGE="Validating file ownership of Domain Database"
-        echo_stat
-        
-        GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk 'OFS=":" {print $3,$4}')
-        if [ "$GRAVDB_OWN" == "$FILE_OWNER" ]
-        then
-            echo_good
-        else
-            echo_fail
-            
-            MESSAGE="Attempting to compensate"
-            echo_warn
-            
-            MESSAGE="Setting file ownership of Domain Database"
-            echo_stat
-            sudo chown ${FILE_OWNER} ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
-            error_validate
-        fi
-        
-        MESSAGE="Validating file permissions of Domain Database"
-        echo_stat
-        
-        GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | awk '{print $1}')
-        if [ "$GRAVDB_RWE" = "-rw-rw-r--" ]
-        then
-            echo_good
-        else
-            echo_fail
-            
-            MESSAGE="Attempting to compensate"
-            echo_warn
-            
-            MESSAGE="Setting file ownership of Domain Database"
-            echo_stat
-            sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
-            error_validate
-        fi
+        validate_gravity_permissions
     fi
     
     if [ "$DO_CUSTOM_RESTORE" == '1' ]
@@ -243,43 +207,7 @@ function restore_gs {
             sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
             error_validate
             
-            MESSAGE="Validating file ownership on Local DNS Records"
-            echo_stat
-            
-            CUSTOMLS_OWN=$(ls -ld ${PIHOLE_DIR}/${CUSTOM_DNS} | awk '{print $3 $4}')
-            if [ "$CUSTOMLS_OWN" == "rootroot" ]
-            then
-                echo_good
-            else
-                echo_fail
-                
-                MESSAGE="Attempting to compensate"
-                echo_warn
-                
-                MESSAGE="Setting file ownership on Local DNS Records"
-                echo_stat
-                sudo chown root:root ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
-                error_validate
-            fi
-            
-            MESSAGE="Validating file permissions on Local DNS Records"
-            echo_stat
-            
-            CUSTOMLS_RWE=$(namei -m ${PIHOLE_DIR}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | awk '{print $1}')
-            if [ "$CUSTOMLS_RWE" == "-rw-r--r--" ]
-            then
-                echo_good
-            else
-                echo_fail
-                
-                MESSAGE="Attempting to compensate"
-                echo_warn
-                
-                MESSAGE="Setting file ownership on Local DNS Records"
-                echo_stat
-                sudo chmod 644 ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
-                error_validate
-            fi
+            validate_custom_permissions
         fi
     fi
     
@@ -291,9 +219,6 @@ function restore_gs {
             echo_stat
             sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_CNAMEBACKUP_DATE}-${CNAME_CONF}.backup ${DNSMAQ_DIR}/${CNAME_CONF} >/dev/null 2>&1
             error_validate
-            
-            MESSAGE="Validating Ownership on ${CNAME_CONF}"
-            echo_stat
             
             validate_cname_permissions
         fi
