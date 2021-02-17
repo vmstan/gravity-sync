@@ -16,3 +16,9 @@ UI_VAL_FILE_OWNERSHIP='Validating file ownership on'
 UI_VAL_FILE_PERMISSION='Validating file permissions on'
 
 UI_DROPBEAR_DEP='Dropbear support has been deprecated'
+
+UI_PULL_PRIMARY='Pulling the primary'
+UI_REPLACE_SECONDARY='Replacing the secondary'
+UI_PULL_RELOAD_WAIT='Isolating regeneration pathways'
+UI_FTLDNS_CONFIG_UPDATE='Updating FTLDNS configuration'
+UI_FTLDNS_CONFIG_RELOAD='Reloading FTLDNS services'

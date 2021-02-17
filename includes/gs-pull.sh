@@ -32,14 +32,14 @@ function pull_gs_grav {
     backup_local_gravity
     backup_remote_gravity
     
-    MESSAGE="Pulling ${GRAVITY_FI} from ${REMOTE_HOST}"
+    MESSAGE="${UI_PULL_PRIMARY} ${UI_GRAVITY_NAME}"
     echo_stat
     RSYNC_REPATH="rsync"
     RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${GRAVITY_FI}.backup"
     RSYNC_TARGET="${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull"
     create_rsynccmd
     
-    MESSAGE="Replacing ${GRAVITY_FI} on $HOSTNAME"
+    MESSAGE="${UI_REPLACE_SECONDARY} ${UI_GRAVITY_NAME}"
     echo_stat
     sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
     error_validate
@@ -56,14 +56,14 @@ function pull_gs_cust {
             backup_local_custom
             backup_remote_custom
             
-            MESSAGE="Pulling ${CUSTOM_DNS} from ${REMOTE_HOST}"
+            MESSAGE="${UI_PULL_PRIMARY} ${UI_CUSTOM_NAME}"
             echo_stat
             RSYNC_REPATH="rsync"
             RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${CUSTOM_DNS}.backup"
             RSYNC_TARGET="${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull"
             create_rsynccmd
             
-            MESSAGE="Replacing ${CUSTOM_DNS} on $HOSTNAME"
+            MESSAGE="${UI_REPLACE_SECONDARY} ${UI_CUSTOM_NAME}"
             echo_stat
             sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
             error_validate
@@ -82,20 +82,17 @@ function pull_gs_cname {
             backup_local_cname
             backup_remote_cname
             
-            MESSAGE="Pulling ${CNAME_CONF} from ${REMOTE_HOST}"
+            MESSAGE="${UI_PULL_PRIMARY} ${UI_CNAME_NAME}"
             echo_stat
             RSYNC_REPATH="rsync"
             RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/dnsmasq.d-${CNAME_CONF}.backup"
             RSYNC_TARGET="${LOCAL_FOLDR}/${BACKUP_FOLD}/${CNAME_CONF}.pull"
             create_rsynccmd
             
-            MESSAGE="Replacing ${CNAME_CONF} on $HOSTNAME"
+            MESSAGE="${UI_REPLACE_SECONDARY} ${UI_CNAME_NAME}"
             echo_stat
             sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${CNAME_CONF}.pull ${DNSMAQ_DIR}/${CNAME_CONF} >/dev/null 2>&1
             error_validate
-            
-            MESSAGE="Validating settings on ${CNAME_CONF}"
-            echo_stat
             
             validate_cname_permissions
         fi
