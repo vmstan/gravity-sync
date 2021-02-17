@@ -185,7 +185,7 @@ function dbclient_warning {
 
 ## Validate Domain Database Permissions
 function validate_gravity_permissions() {
-    MESSAGE="Validating file ownership of Domain Database"
+    MESSAGE="Validating file ownership of ${UI_GRAVITY_NAME}"
     echo_stat
     
     GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk 'OFS=":" {print $3,$4}')
@@ -198,13 +198,13 @@ function validate_gravity_permissions() {
         MESSAGE="Attempting to compensate"
         echo_warn
         
-        MESSAGE="Setting file ownership of Domain Database"
+        MESSAGE="Setting file ownership of ${UI_GRAVITY_NAME}"
         echo_stat
         sudo chown ${FILE_OWNER} ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
         error_validate
     fi
     
-    MESSAGE="Validating file permissions of Domain Database"
+    MESSAGE="Validating file permissions of ${UI_GRAVITY_NAME}"
     echo_stat
     
     GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | awk '{print $1}')
@@ -217,7 +217,7 @@ function validate_gravity_permissions() {
         MESSAGE="Attempting to compensate"
         echo_warn
         
-        MESSAGE="Setting file ownership of Domain Database"
+        MESSAGE="Setting file ownership of ${UI_GRAVITY_NAME}"
         echo_stat
         sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
         error_validate
@@ -226,7 +226,7 @@ function validate_gravity_permissions() {
 
 ## Validate Local DNS Records Permissions
 function validate_custom_permissions() {
-    MESSAGE="Validating file ownership on Local DNS Records"
+    MESSAGE="Validating file ownership on ${UI_CUSTOM_NAME}"
     echo_stat
     
     CUSTOMLS_OWN=$(ls -ld ${PIHOLE_DIR}/${CUSTOM_DNS} | awk '{print $3 $4}')
@@ -239,13 +239,13 @@ function validate_custom_permissions() {
         MESSAGE="Attempting to compensate"
         echo_warn
         
-        MESSAGE="Setting file ownership on Local DNS Records"
+        MESSAGE="Setting file ownership on ${UI_CUSTOM_NAME}"
         echo_stat
         sudo chown root:root ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
         error_validate
     fi
     
-    MESSAGE="Validating file permissions on Local DNS Records"
+    MESSAGE="Validating file permissions on ${UI_CUSTOM_NAME}"
     echo_stat
     
     CUSTOMLS_RWE=$(namei -m ${PIHOLE_DIR}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | awk '{print $1}')
@@ -258,7 +258,7 @@ function validate_custom_permissions() {
         MESSAGE="Attempting to compensate"
         echo_warn
         
-        MESSAGE="Setting file ownership on Local DNS Records"
+        MESSAGE="Setting file ownership on ${UI_CUSTOM_NAME}"
         echo_stat
         sudo chmod 644 ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
         error_validate
@@ -267,7 +267,7 @@ function validate_custom_permissions() {
 
 ## Validate Local DNS CNAME Permissions
 function validate_cname_permissions {
-    MESSAGE="Validating file ownership on Local DNS CNAMEs"
+    MESSAGE="Validating file ownership on ${UI_CNAME_NAME}"
     echo_stat
     
     CNAMELS_OWN=$(ls -ld ${DNSMAQ_DIR}/${CNAME_CONF} | awk '{print $3 $4}')
@@ -280,13 +280,13 @@ function validate_cname_permissions {
         MESSAGE="Attempting to compensate"
         echo_warn
         
-        MESSAGE="Setting file ownership on Local DNS CNAMEs"
+        MESSAGE="Setting file ownership on ${UI_CNAME_NAME}"
         echo_stat
         sudo chown root:root ${DNSMAQ_DIR}/${CNAME_CONF} >/dev/null 2>&1
         error_validate
     fi
     
-    MESSAGE="Validating file permissions on Local DNS CNAMEs"
+    MESSAGE="Validating file permissions on ${UI_CNAME_NAME}"
     echo_stat
     
     CNAMELS_RWE=$(namei -m ${DNSMAQ_DIR}/${CNAME_CONF} | grep -v f: | grep ${CNAME_CONF} | awk '{print $1}')
@@ -299,7 +299,7 @@ function validate_cname_permissions {
         MESSAGE="Attempting to compensate"
         echo_warn
         
-        MESSAGE="Setting file ownership on Local DNS CNAMEs"
+        MESSAGE="Setting file ownership on ${UI_CNAME_NAME}"
         echo_stat
         sudo chmod 644 ${DNSMAQ_DIR}/${CNAME_CONF} >/dev/null 2>&1
         error_validate
