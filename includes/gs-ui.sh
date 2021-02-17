@@ -39,3 +39,18 @@ UI_BACKUP_PRIMARY='Performing backup of primary'
 UI_BACKUP_SECONDARY='Performing backup of secondary'
 UI_BACKUP_PURGE='Purging redundant backups on secondary Pi-hole instance'
 UI_BACKUP_REMAIN='days of backups remain'
+
+# Restore
+UI_RESTORE_WARNING="This will overwrite your current Pi-hole settings on $HOSTNAME with a previous version!"
+UI_RESTORE_INVALID='Invalid restoration request'
+UI_RESTORE_SELECT_DATE='Select backup date from which to restore the'
+UI_RESTORE_SKIPPING='Skipping restore of'
+UI_RESTORE_BACKUP_SELECTED='backup selected for restoration'
+UI_RESTORE_BACKUP_UNAVAILABLE='backups are unavailable'
+UI_RESTORE_FROM='restoring from'
+UI_RESTORE_TIME_TRAVEL='Preparing calculations for time travel'
+UI_RESTORE_SECONDARY='Restoring the secondary'
+UI_RESTORE_PUSH_PROMPT='Do you want to push the restored configuration to the primary Pi-hole? (Y/N)'
+UI_RESTORE_PUSH_NOPUSH="Configuration will not be pushed to the primaryp Pi-hole"
+
+UI_INVALID_SELECTION='Invalid selection'
