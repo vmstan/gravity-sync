@@ -6,34 +6,29 @@
 
 ## Validate GS Folders
 function validate_gs_folders {
-    MESSAGE="Validating ${PROGRAM} folders on $HOSTNAME"
+    MESSAGE="${UI_VAL_GS_FOLDERS}"
     echo_stat
-    if [ ! -d ${LOCAL_FOLDR} ]
+    
+    if [ ! -d ${LOCAL_FOLDR} ] || [ ! -d ${LOCAL_FOLDR}/${BACKUP_FOLD} ] || [ ! -d ${LOCAL_FOLDR}/settings ] || [ ! -d ${LOG_PATH} ]
     then
-        MESSAGE="Unable to validate ${PROGRAM} folders on $HOSTNAME"
+        MESSAGE="${UI_VAL_GS_FOLDERS_FAIL}"
         echo_fail
         exit_nochange
     fi
     
-    if [ ! -d ${LOCAL_FOLDR}/${BACKUP_FOLD} ]
-    then
-        MESSAGE="Unable to validate ${PROGRAM} backup folder on $HOSTNAME"
-        echo_fail
-        exit_nochange
-    fi
     echo_sameline
 }
 
 ## Validate Pi-hole Folders
 function validate_ph_folders {
-    MESSAGE="Validating Pi-hole configuration"
+    MESSAGE="${UI_VALIDATING} ${UI_CORE_APP}"
     echo_stat
     
     if [ "$PH_IN_TYPE" == "default" ]
     then
         if [ ! -f ${PIHOLE_BIN} ]
         then
-            MESSAGE="Unable to validate that Pi-Hole is installed on $HOSTNAME"
+            MESSAGE="${UI_VALIDATING_FAIL_BINARY} ${UI_CORE_APP}"
             echo_fail
             exit_nochange
         fi
@@ -42,7 +37,7 @@ function validate_ph_folders {
         FTLCHECK=$(sudo docker container ls | grep "${CONTAIMAGE}")
         if [ "$FTLCHECK" == "" ]
         then
-            MESSAGE="Unable to validate that Pi-Hole container is running on $HOSTNAME"
+            MESSAGE="${UI_VALIDATING_FAIL_CONTAINER} ${UI_CORE_APP}"
             echo_fail
             exit_nochange
         fi
@@ -51,7 +46,7 @@ function validate_ph_folders {
         FTLCHECK=$(sudo podman container ls | grep "${CONTAIMAGE}")
         if [ "$FTLCHECK" == "" ]
         then
-            MESSAGE="Unable to validate that Pi-Hole container is running on $HOSTNAME"
+            MESSAGE="${UI_VALIDATING_FAIL_CONTAINER} ${UI_CORE_APP}"
             echo_fail
             exit_nochange
         fi
@@ -59,21 +54,22 @@ function validate_ph_folders {
     
     if [ ! -d ${PIHOLE_DIR} ]
     then
-        MESSAGE="Unable to validate the Pi-Hole configuration directory location"
+        MESSAGE="${UI_VALIDATING_FAIL_FOLDER} ${UI_CORE_APP}"
         echo_fail
         exit_nochange
     fi
+    
     echo_sameline
 }
 
 ## Validate DNSMASQ Folders
 function validate_dns_folders {
-    MESSAGE="Validating DNSMASQ configuration"
+    MESSAGE="${UI_VALIDATING} ${UI_CORE_APP_DNS}"
     echo_stat
     
     if [ ! -d ${DNSMAQ_DIR} ]
     then
-        MESSAGE="Unable to validate the DNSMASQ configuration directory"
+        MESSAGE="${UI_VALIDATING_FAIL_FOLDER} ${UI_CORE_APP_DNS}"
         echo_fail
         exit_nochange
     fi
@@ -82,14 +78,14 @@ function validate_dns_folders {
 
 ## Validate SQLite3
 function validate_sqlite3 {
-    MESSAGE="Validating SQLITE3 installation"
+    MESSAGE="${UI_VALIDATING} ${UI_CORE_APP_SQL}"
     echo_stat
     if hash sqlite3 2>/dev/null
     then
         # MESSAGE="SQLITE3 Utility Detected"
         echo_sameline
     else
-        MESSAGE="Unable to validate SQLITE3 installation on $HOSTNAME"
+        MESSAGE="${UI_VALIDATING_FAIL_BINARY} ${UI_CORE_APP_SQL}"
         echo_warn
         
         #MESSAGE="Installing SQLLITE3 with ${PKG_MANAGER}"

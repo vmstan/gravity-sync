@@ -9,12 +9,21 @@ UI_GRAVITY_NAME='Domain Database'
 UI_CUSTOM_NAME='Local DNS Records'
 UI_CNAME_NAME='Local DNS CNAMEs'
 
-# File Validation
+# Validation
+UI_VALIDATING='Validating configuration of'
+UI_VALIDATING_FAIL_CONTAINER='Unable to validate running container instance of'
+UI_VALIDATING_FAIL_FOLDER='Unable to validate configuration folder for'
+UI_VALIDATING_FAIL_BINARY='Unable to validate the availibility of'
+UI_CORE_APP='Pi-hole'
+UI_CORE_APP_DNS='DNSMASQ'
+UI_CORE_APP_SQL='SQLITE3'
 UI_COMPENSATE='Attempting to compensate'
 UI_SET_FILE_OWNERSHIP='Setting file ownership on'
 UI_SET_FILE_PERMISSION='Setting file permissions on'
 UI_VAL_FILE_OWNERSHIP='Validating file ownership on'
 UI_VAL_FILE_PERMISSION='Validating file permissions on'
+UI_VAL_GS_FOLDERS="Validating ${PROGRAM} folders on $HOSTNAME"
+UI_VAL_GS_FOLDERS_FAIL="Unable to validate ${PROGRAM} folders on $HOSTNAME"
 
 # Configuration
 UI_DROPBEAR_DEP='Dropbear support has been deprecated'
