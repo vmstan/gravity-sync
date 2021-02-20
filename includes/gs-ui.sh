@@ -39,7 +39,6 @@ UI_FTLDNS_CONFIG_RELOAD='Reloading secondary FTLDNS services'
 UI_FTLDNS_CONFIG_PUSH_UPDATE='Updating primary FTLDNS configuration'
 UI_FTLDNS_CONFIG_PUSH_RELOAD='Reloading primary FTLDNS services'
 
-
 # Logging
 UI_LOGGING_SUCCESS='Logging successful'
 UI_LOGGING_HASHES='Saving the updated hashes from this replication'
@@ -68,3 +67,8 @@ UI_RESTORE_PUSH_PROMPT='Do you want to push the restored configuration to the pr
 UI_RESTORE_PUSH_NOPUSH="Configuration will not be pushed to the primaryp Pi-hole"
 
 UI_INVALID_SELECTION='Invalid selection'
+
+# Purge
+UI_PURGE_MATRIX_ALIGNMENT='Realigning dilithium crystal matrix'
+UI_PURGE_DELETE_SSH_KEYS='Deleting SSH key-files'
+UI_PURGE_CLEANING_DIR="Purging ${PROGRAM} directory"
