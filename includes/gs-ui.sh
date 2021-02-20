@@ -18,6 +18,11 @@ UI_CORE_EVALUATING='Evaluating arguments'
 UI_CORE_INIT="Initalizing ${PROGRAM} (${VERSION})"
 UI_CORE_RELOCATING='Relocating'
 
+# Exit
+UI_EXIT_CALC_END="after $((SCRIPT_END-SCRIPT_START)) seconds"
+UI_EXIT_ABORT='aborted'
+UI_EXIT_COMPLETE='completed'
+
 # Validation
 UI_VALIDATING='Validating configuration of'
 UI_VALIDATING_FAIL_CONTAINER='Unable to validate running container instance of'
