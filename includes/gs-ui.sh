@@ -28,12 +28,14 @@ UI_VAL_GS_FOLDERS_FAIL="Unable to validate ${PROGRAM} folders on $HOSTNAME"
 # Configuration
 UI_DROPBEAR_DEP='Dropbear support has been deprecated'
 
-# Pull
+# Pull/Push
 UI_PULL_PRIMARY='Pulling the primary'
 UI_REPLACE_SECONDARY='Replacing the secondary'
 UI_PULL_RELOAD_WAIT='Isolating regeneration pathways'
+UI_PUSH_RELOAD_WAIT='Inverting tachyon pulses'
 UI_FTLDNS_CONFIG_UPDATE='Updating FTLDNS configuration'
 UI_FTLDNS_CONFIG_RELOAD='Reloading FTLDNS services'
+
 
 # Logging
 UI_LOGGING_SUCCESS='Logging successful'

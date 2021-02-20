@@ -45,16 +45,16 @@ function push_gs_grav {
     RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${GRAVITY_FI}"
     create_rsynccmd
     
-    MESSAGE="Setting permissions on ${GRAVITY_FI}"
-    echo_stat
-    CMD_TIMEOUT='15'
-    CMD_REQUESTED="sudo chmod 664 ${RIHOLE_DIR}/${GRAVITY_FI}"
-    create_sshcmd
-    
-    MESSAGE="Setting ownership on ${GRAVITY_FI}"
+    MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_GRAVITY_NAME}"
     echo_stat
     CMD_TIMEOUT='15'
     CMD_REQUESTED="sudo chown ${RILE_OWNER} ${RIHOLE_DIR}/${GRAVITY_FI}"
+    create_sshcmd
+    
+    MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_GRAVITY_NAME}"
+    echo_stat
+    CMD_TIMEOUT='15'
+    CMD_REQUESTED="sudo chmod 664 ${RIHOLE_DIR}/${GRAVITY_FI}"
     create_sshcmd
 }
 
@@ -81,16 +81,16 @@ function push_gs_cust {
             RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${CUSTOM_DNS}"
             create_rsynccmd
             
-            MESSAGE="Setting permissions on ${CUSTOM_DNS}"
-            echo_stat
-            CMD_TIMEOUT='15'
-            CMD_REQUESTED="sudo chmod 644 ${RIHOLE_DIR}/${CUSTOM_DNS}"
-            create_sshcmd
-            
-            MESSAGE="Setting ownership on ${CUSTOM_DNS}"
+            MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_CUSTOM_NAME}"
             echo_stat
             CMD_TIMEOUT='15'
             CMD_REQUESTED="sudo chown root:root ${RIHOLE_DIR}/${CUSTOM_DNS}"
+            create_sshcmd
+            
+            MESSAGE="${UI_SET_FILE_PERMISSIONS} ${UI_CUSTOM_NAME}"
+            echo_stat
+            CMD_TIMEOUT='15'
+            CMD_REQUESTED="sudo chmod 644 ${RIHOLE_DIR}/${CUSTOM_DNS}"
             create_sshcmd
         fi
     fi
@@ -119,16 +119,17 @@ function push_gs_cname {
             RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${RNSMAQ_DIR}/${CNAME_CONF}"
             create_rsynccmd
             
-            MESSAGE="Setting permissions on ${CNAME_CONF}"
-            echo_stat
-            CMD_TIMEOUT='15'
-            CMD_REQUESTED="sudo chmod 644 ${RNSMAQ_DIR}/${CNAME_CONF}"
-            create_sshcmd
-            
-            MESSAGE="Setting ownership on ${CNAME_CONF}"
+            MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_CNAME_NAME}"
             echo_stat
             CMD_TIMEOUT='15'
             CMD_REQUESTED="sudo chown root:root ${RNSMAQ_DIR}/${CNAME_CONF}"
+            create_sshcmd
+            
+                        
+            MESSAGE="${UI_SET_FILE_PERMISSIONS} ${UI_CNAME_NAME}"
+            echo_stat
+            CMD_TIMEOUT='15'
+            CMD_REQUESTED="sudo chmod 644 ${RNSMAQ_DIR}/${CNAME_CONF}"
             create_sshcmd
         fi
     fi
@@ -136,17 +137,17 @@ function push_gs_cname {
 
 ## Push Reload
 function push_gs_reload {
-    MESSAGE="Inverting tachyon pulses"
+    MESSAGE="${UI_PUSH_RELOAD_WAIT}"
     echo_info
     sleep 1
     
-    MESSAGE="Updating remote FTLDNS configuration"
+    MESSAGE="${UI_FTLDNS_CONFIG_PUSH_UPDATE}"
     echo_stat
     CMD_TIMEOUT='15'
     CMD_REQUESTED="${RH_EXEC} restartdns reloadlists"
     create_sshcmd
     
-    MESSAGE="Reloading remote FTLDNS services"
+    MESSAGE="${UI_FTLDNS_CONFIG_PUSH_RELOAD}"
     echo_stat
     CMD_TIMEOUT='15'
     CMD_REQUESTED="${RH_EXEC} restartdns"
