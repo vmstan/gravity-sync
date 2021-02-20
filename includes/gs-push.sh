@@ -31,14 +31,14 @@ function push_gs_grav {
     backup_remote_gravity
     backup_local_gravity
     
-    MESSAGE="Copying ${GRAVITY_FI} from ${REMOTE_HOST}"
+    MESSAGE="${UI_BACKUP_PRIMARY} ${UI_GRAVITY_NAME}"
     echo_stat
     RSYNC_REPATH="rsync"
     RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${GRAVITY_FI}.backup"
     RSYNC_TARGET="${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push"
     create_rsynccmd
     
-    MESSAGE="Pushing ${GRAVITY_FI} to ${REMOTE_HOST}"
+    MESSAGE="${UI_PUSH_SECONDARY} ${UI_GRAVITY_NAME}"
     echo_stat
     RSYNC_REPATH="sudo rsync"
     RSYNC_SOURCE="${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${GRAVITY_FI}.backup"
@@ -67,14 +67,14 @@ function push_gs_cust {
             backup_remote_custom
             backup_local_custom
             
-            MESSAGE="Copying ${CUSTOM_DNS} from ${REMOTE_HOST}"
+            MESSAGE="${UI_BACKUP_PRIMARY} ${UI_CUSTOM_NAME}"
             echo_stat
             RSYNC_REPATH="rsync"
             RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${CUSTOM_DNS}.backup"
             RSYNC_TARGET="${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.push"
             create_rsynccmd
             
-            MESSAGE="Pushing ${CUSTOM_DNS} to ${REMOTE_HOST}"
+            MESSAGE="${UI_PUSH_SECONDARY} ${UI_CUSTOM_NAME}"
             echo_stat
             RSYNC_REPATH="sudo rsync"
             RSYNC_SOURCE="${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CUSTOM_DNS}.backup"
@@ -105,14 +105,14 @@ function push_gs_cname {
             backup_remote_cname
             backup_local_cname
             
-            MESSAGE="Copying ${CNAME_CONF} from ${REMOTE_HOST}"
+            MESSAGE="${UI_BACKUP_PRIMARY} ${UI_CNAME_NAME}"
             echo_stat
             RSYNC_REPATH="rsync"
             RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/dnsmasq.d-${CNAME_CONF}.backup"
             RSYNC_TARGET="${LOCAL_FOLDR}/${BACKUP_FOLD}/${CNAME_CONF}.push"
             create_rsynccmd
             
-            MESSAGE="Pushing ${CNAME_CONF} to ${REMOTE_HOST}"
+            MESSAGE="${UI_PUSH_SECONDARY} ${UI_CNAME_NAME}"
             echo_stat
             RSYNC_REPATH="sudo rsync"
             RSYNC_SOURCE="${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CNAME_CONF}.backup"
