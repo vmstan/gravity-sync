@@ -9,6 +9,15 @@ UI_GRAVITY_NAME='Domain Database'
 UI_CUSTOM_NAME='Local DNS Records'
 UI_CNAME_NAME='Local DNS CNAMEs'
 
+# Core
+UI_INVALID_SELECTION='Invalid selection'
+UI_INVALID_DNS_CONFIG='Invalid DNS replication settings in'
+UI_CORE_MISSING='Missing'
+UI_CORE_LOADING='Loading'
+UI_CORE_EVALUATING='Evaluating arguments'
+UI_CORE_INIT="Initalizing ${PROGRAM} (${VERSION})"
+UI_CORE_RELOCATING='Relocating'
+
 # Validation
 UI_VALIDATING='Validating configuration of'
 UI_VALIDATING_FAIL_CONTAINER='Unable to validate running container instance of'
@@ -65,8 +74,6 @@ UI_RESTORE_TIME_TRAVEL='Preparing calculations for time travel'
 UI_RESTORE_SECONDARY='Restoring the secondary'
 UI_RESTORE_PUSH_PROMPT='Do you want to push the restored configuration to the primary Pi-hole? (Y/N)'
 UI_RESTORE_PUSH_NOPUSH="Configuration will not be pushed to the primaryp Pi-hole"
-
-UI_INVALID_SELECTION='Invalid selection'
 
 # Purge
 UI_PURGE_MATRIX_ALIGNMENT='Realigning dilithium crystal matrix'

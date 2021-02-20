@@ -6,14 +6,14 @@
 
 # Standard Output
 function start_gs {
-    MESSAGE="Initalizing ${PROGRAM} (${VERSION})"
+    MESSAGE="${UI_CORE_INIT}"
     echo_grav
     cd ${LOCAL_FOLDR}
     
     import_gs
     ph_type
     
-    MESSAGE="Evaluating arguments"
+    MESSAGE="${UI_CORE_EVALUATING}"
     echo_stat
     
     if [ "${ROOT_CHECK_AVOID}" != "1" ]
@@ -23,7 +23,7 @@ function start_gs {
     
     if [ "${INCLUDE_CNAME}" == "1" ] && [ "${SKIP_CUSTOM}" == "1" ]
     then
-        MESSAGE="Invalid DNS/CNAME database replication settings in ${CONFIG_FILE}"
+        MESSAGE="${UI_INVALID_DNS_CONFIG} ${CONFIG_FILE}"
         echo_fail
         
         exit_nochange
@@ -32,11 +32,11 @@ function start_gs {
 
 # Standard Output No Config
 function start_gs_noconfig {
-    MESSAGE="Initalizing ${PROGRAM} (${VERSION})"
+    MESSAGE="${UI_CORE_INIT}"
     echo_grav
     cd ${LOCAL_FOLDR}
     
-    MESSAGE="Evaluating arguments"
+    MESSAGE="${UI_CORE_EVALUATING}"
     echo_stat
 }
 
@@ -44,7 +44,7 @@ function start_gs_noconfig {
 function import_gs {
     relocate_config_gs
     
-    MESSAGE="Loading ${CONFIG_FILE}"
+    MESSAGE="${UI_CORE_LOADING} ${CONFIG_FILE}"
     echo -en "${STAT} $MESSAGE"
     if [ -f ${LOCAL_FOLDR}/settings/${CONFIG_FILE} ]
     then
@@ -58,7 +58,7 @@ function import_gs {
     else
         echo_fail
         
-        MESSAGE="${CONFIG_FILE} is missing"
+        MESSAGE="${UI_CORE_MISSING} ${CONFIG_FILE}"
         echo_info
         
         TASKTYPE='CONFIG'
@@ -69,7 +69,7 @@ function import_gs {
 function relocate_config_gs {
     if [ -f ${LOCAL_FOLDR}/${CONFIG_FILE} ]
     then
-        MESSAGE="Relocating ${CONFIG_FILE}"
+        MESSAGE="${UI_CORE_RELOCATING} ${CONFIG_FILE}"
         echo -en "${STAT} $MESSAGE"
         
         mv ${LOCAL_FOLDR}/${CONFIG_FILE} ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
@@ -78,7 +78,7 @@ function relocate_config_gs {
     
     if [ -f ${LOCAL_FOLDR}/${SYNCING_LOG} ]
     then
-        MESSAGE="Relocating ${SYNCING_LOG}"
+        MESSAGE="${UI_CORE_RELOCATING} ${SYNCING_LOG}"
         echo -en "${STAT} $MESSAGE"
         
         mv ${LOCAL_FOLDR}/${SYNCING_LOG} ${LOG_PATH}/${SYNCING_LOG}
@@ -87,7 +87,7 @@ function relocate_config_gs {
     
     if [ -f ${LOCAL_FOLDR}/${CRONJOB_LOG} ]
     then
-        MESSAGE="Relocating ${CRONJOB_LOG}"
+        MESSAGE="${UI_CORE_RELOCATING} ${CRONJOB_LOG}"
         echo -en "${STAT} $MESSAGE"
         
         mv ${LOCAL_FOLDR}/${CRONJOB_LOG} ${LOG_PATH}/${CRONJOB_LOG}
@@ -96,7 +96,7 @@ function relocate_config_gs {
     
     if [ -f ${LOCAL_FOLDR}/${HISTORY_MD5} ]
     then
-        MESSAGE="Relocating ${HISTORY_MD5}"
+        MESSAGE="${UI_CORE_RELOCATING} ${HISTORY_MD5}"
         echo -en "${STAT} $MESSAGE"
         
         mv ${LOCAL_FOLDR}/${HISTORY_MD5} ${LOG_PATH}/${HISTORY_MD5}
