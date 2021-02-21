@@ -8,12 +8,12 @@
 function md5_compare {
     HASHMARK='0'
     
-    MESSAGE="Hashing the primary Domain Database"
+    MESSAGE="${UI_HASHING_HASHING} ${UI_GRAVITY_NAME}"
     echo_stat
     primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${GRAVITY_FI}" | sed 's/\s.*$//')
     error_validate
     
-    MESSAGE="Comparing to secondary Domain Database"
+    MESSAGE="${UI_HASHING_COMPARING} ${UI_GRAVITY_NAME}"
     echo_stat
     secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI} | sed 's/\s.*$//')
     error_validate
@@ -22,7 +22,7 @@ function md5_compare {
     then
         HASHMARK=$((HASHMARK+0))
     else
-        MESSAGE="Differenced ${GRAVITY_FI} detected"
+        MESSAGE="${UI_HASHING_DIFFERNCE} ${UI_GRAVITY_NAME}"
         echo_warn
         HASHMARK=$((HASHMARK+1))
     fi
@@ -34,13 +34,13 @@ function md5_compare {
             if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RIHOLE_DIR}/${CUSTOM_DNS}
             then
                 REMOTE_CUSTOM_DNS="1"
-                MESSAGE="Scanning the primary Local DNS Records"
+                MESSAGE="${UI_HASHING_HASHING} ${UI_CUSTOM_NAME}"
                 echo_stat
                 
                 primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//'")
                 error_validate
                 
-                MESSAGE="Comparing to secondary Local DNS Records"
+                MESSAGE="${UI_HASHING_COMPARING} ${UI_CUSTOM_NAME}"
                 echo_stat
                 secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//')
                 error_validate
@@ -49,7 +49,7 @@ function md5_compare {
                 then
                     HASHMARK=$((HASHMARK+0))
                 else
-                    MESSAGE="Differenced ${CUSTOM_DNS} file detected"
+                    MESSAGE="${UI_HASHING_DIFFERNCE} ${UI_CUSTOM_NAME}"
                     echo_warn
                     HASHMARK=$((HASHMARK+1))
                 fi
@@ -79,13 +79,13 @@ function md5_compare {
                 if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RNSMAQ_DIR}/${CNAME_CONF}
                 then
                     REMOTE_CNAME_DNS="1"
-                    MESSAGE="Reviewing primary Local DNS CNAMEs"
+                    MESSAGE="${UI_HASHING_HASHING} ${UI_CNAME_NAME}"
                     echo_stat
                     
                     primaryCNMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//'")
                     error_validate
                     
-                    MESSAGE="Comparing to secondary Local DNS CNAMEs"
+                    MESSAGE="${UI_HASHING_COMPARING} ${UI_CNAME_NAME}"
                     echo_stat
                     secondCNMD5=$(md5sum ${DNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//')
                     error_validate
@@ -94,7 +94,7 @@ function md5_compare {
                     then
                         HASHMARK=$((HASHMARK+0))
                     else
-                        MESSAGE="Differenced ${CNAME_CONF} file detected"
+                        MESSAGE="${UI_HASHING_DIFFERNCE} ${UI_CNAME_NAME}"
                         echo_warn
                         HASHMARK=$((HASHMARK+1))
                     fi

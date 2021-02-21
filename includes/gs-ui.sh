@@ -23,6 +23,11 @@ UI_EXIT_CALC_END="after $((SCRIPT_END-SCRIPT_START)) seconds"
 UI_EXIT_ABORT='aborted'
 UI_EXIT_COMPLETE='completed'
 
+# Hashing
+UI_HASHING_HASHING='Hashing the primary'
+UI_HASHING_COMPARING='Comparing to the secondary'
+UI_HASHING_DIFFERNCE='Differences detected in the'
+
 # Validation
 UI_VALIDATING='Validating configuration of'
 UI_VALIDATING_FAIL_CONTAINER='Unable to validate running container instance of'
