@@ -102,7 +102,7 @@ function ph_type {
         RH_EXEC="${RIHOLE_BIN}"
     elif [ "$RH_IN_TYPE" == "docker" ]
     then
-        RH_EXEC="sudo ${ROCKER_BIN} exec $(sudo ${ROCKER_BIN} ps -qf name=${ROCKER_CON}) pihole"
+        RH_EXEC="sudo ${ROCKER_BIN} exec \$(sudo ${ROCKER_BIN} ps -qf name=${ROCKER_CON}) pihole"
     elif [ "$RH_IN_TYPE" == "podman" ]
     then
         RH_EXEC="sudo ${RODMAN_BIN} exec ${ROCKER_CON} pihole"
