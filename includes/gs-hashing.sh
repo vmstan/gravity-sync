@@ -8,12 +8,12 @@
 function md5_compare {
     HASHMARK='0'
     
-    MESSAGE="Analyzing ${GRAVITY_FI} on ${REMOTE_HOST}"
+    MESSAGE="${UI_HASHING_HASHING} ${UI_GRAVITY_NAME}"
     echo_stat
     primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${GRAVITY_FI}" | sed 's/\s.*$//')
     error_validate
     
-    MESSAGE="Analyzing ${GRAVITY_FI} on $HOSTNAME"
+    MESSAGE="${UI_HASHING_COMPARING} ${UI_GRAVITY_NAME}"
     echo_stat
     secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI} | sed 's/\s.*$//')
     error_validate
@@ -22,7 +22,7 @@ function md5_compare {
     then
         HASHMARK=$((HASHMARK+0))
     else
-        MESSAGE="Differenced ${GRAVITY_FI} Detected"
+        MESSAGE="${UI_HASHING_DIFFERNCE} ${UI_GRAVITY_NAME}"
         echo_warn
         HASHMARK=$((HASHMARK+1))
     fi
@@ -34,13 +34,13 @@ function md5_compare {
             if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RIHOLE_DIR}/${CUSTOM_DNS}
             then
                 REMOTE_CUSTOM_DNS="1"
-                MESSAGE="Analyzing ${CUSTOM_DNS} on ${REMOTE_HOST}"
+                MESSAGE="${UI_HASHING_HASHING} ${UI_CUSTOM_NAME}"
                 echo_stat
                 
                 primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//'")
                 error_validate
                 
-                MESSAGE="Analyzing ${CUSTOM_DNS} on $HOSTNAME"
+                MESSAGE="${UI_HASHING_COMPARING} ${UI_CUSTOM_NAME}"
                 echo_stat
                 secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//')
                 error_validate
@@ -49,23 +49,23 @@ function md5_compare {
                 then
                     HASHMARK=$((HASHMARK+0))
                 else
-                    MESSAGE="Differenced ${CUSTOM_DNS} Detected"
+                    MESSAGE="${UI_HASHING_DIFFERNCE} ${UI_CUSTOM_NAME}"
                     echo_warn
                     HASHMARK=$((HASHMARK+1))
                 fi
             else
-                MESSAGE="No ${CUSTOM_DNS} Detected on ${REMOTE_HOST}"
+                MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_PRIMARY}"
                 echo_info
             fi
         else
             if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RIHOLE_DIR}/${CUSTOM_DNS}
             then
                 REMOTE_CUSTOM_DNS="1"
-                MESSAGE="${REMOTE_HOST} has ${CUSTOM_DNS}"
+                MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_PRIMARY}"
                 HASHMARK=$((HASHMARK+1))
                 echo_info
             fi
-            MESSAGE="No ${CUSTOM_DNS} Detected on $HOSTNAME"
+            MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_SECONDARY}"
             echo_info
         fi
     fi
@@ -79,13 +79,13 @@ function md5_compare {
                 if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RNSMAQ_DIR}/${CNAME_CONF}
                 then
                     REMOTE_CNAME_DNS="1"
-                    MESSAGE="Analyzing ${CNAME_CONF} on ${REMOTE_HOST}"
+                    MESSAGE="${UI_HASHING_HASHING} ${UI_CNAME_NAME}"
                     echo_stat
                     
                     primaryCNMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//'")
                     error_validate
                     
-                    MESSAGE="Analyzing ${CNAME_CONF} on $HOSTNAME"
+                    MESSAGE="${UI_HASHING_COMPARING} ${UI_CNAME_NAME}"
                     echo_stat
                     secondCNMD5=$(md5sum ${DNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//')
                     error_validate
@@ -94,24 +94,24 @@ function md5_compare {
                     then
                         HASHMARK=$((HASHMARK+0))
                     else
-                        MESSAGE="Differenced ${CNAME_CONF} Detected"
+                        MESSAGE="${UI_HASHING_DIFFERNCE} ${UI_CNAME_NAME}"
                         echo_warn
                         HASHMARK=$((HASHMARK+1))
                     fi
                 else
-                    MESSAGE="No ${CNAME_CONF} Detected on ${REMOTE_HOST}"
+                    MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_PRIMARY}"
                     echo_info
                 fi
             else
                 if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RNSMAQ_DIR}/${CNAME_CONF}
                 then
                     REMOTE_CNAME_DNS="1"
-                    MESSAGE="${REMOTE_HOST} has ${CNAME_CONF}"
+                    MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_PRIMARY}"
                     HASHMARK=$((HASHMARK+1))
                     echo_info
                 fi
                 
-                MESSAGE="No ${CNAME_CONF} Detected on $HOSTNAME"
+                MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_SECONDARY}"
                 echo_info
             fi
         fi
@@ -119,11 +119,11 @@ function md5_compare {
     
     if [ "$HASHMARK" != "0" ]
     then
-        MESSAGE="Replication Required"
+        MESSAGE="${UI_HASHING_REQUIRED}"
         echo_warn
         HASHMARK=$((HASHMARK+0))
     else
-        MESSAGE="No Replication Required"
+        MESSAGE="${UI_HASHING_NOREP}"
         echo_info
         backup_cleanup
         exit_nochange
@@ -150,20 +150,20 @@ function previous_md5 {
 }
 
 function md5_recheck {
-    MESSAGE="Performing Replicator Diagnostics"
+    MESSAGE="${UI_HASHING_DIAGNOSTICS}"
     echo_info
     
     HASHMARK='0'
     
-    MESSAGE="Reanalyzing ${GRAVITY_FI} on ${REMOTE_HOST}"
+    MESSAGE="${UI_HASHING_REHASHING} ${UI_GRAVITY_NAME}"
     echo_stat
     primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${GRAVITY_FI}" | sed 's/\s.*$//')
-    error_validate
+    silent_error_validate
     
-    MESSAGE="Reanalyzing ${GRAVITY_FI} on $HOSTNAME"
+    MESSAGE="${UI_HASHING_RECOMPARING} ${UI_GRAVITY_NAME}"
     echo_stat
     secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI} | sed 's/\s.*$//')
-    error_validate
+    silent_error_validate
     
     if [ "$SKIP_CUSTOM" != '1' ]
     then
@@ -172,28 +172,28 @@ function md5_recheck {
             if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RIHOLE_DIR}/${CUSTOM_DNS}
             then
                 REMOTE_CUSTOM_DNS="1"
-                MESSAGE="Reanalyzing ${CUSTOM_DNS} on ${REMOTE_HOST}"
+                MESSAGE="${UI_HASHING_REHASHING} ${UI_CUSTOM_NAME}"
                 echo_stat
                 
                 primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//'")
-                error_validate
+                silent_error_validate
                 
-                MESSAGE="Reanalyzing ${CUSTOM_DNS} on $HOSTNAME"
+                MESSAGE="${UI_HASHING_RECOMPARING} ${UI_CUSTOM_NAME}"
                 echo_stat
                 secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//')
-                error_validate
+                silent_error_validate
             else
-                MESSAGE="No ${CUSTOM_DNS} Detected on ${REMOTE_HOST}"
+                MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_PRIMARY}"
                 echo_info
             fi
         else
             if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RIHOLE_DIR}/${CUSTOM_DNS}
             then
                 REMOTE_CUSTOM_DNS="1"
-                MESSAGE="${REMOTE_HOST} has ${CUSTOM_DNS}"
+                MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_PRIMARY}"
                 echo_info
             fi
-            MESSAGE="No ${CUSTOM_DNS} Detected on $HOSTNAME"
+            MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_SECONDARY}"
             echo_info
         fi
     fi
@@ -207,29 +207,29 @@ function md5_recheck {
                 if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RNSMAQ_DIR}/${CNAME_CONF}
                 then
                     REMOTE_CNAME_DNS="1"
-                    MESSAGE="Reanalyzing ${CNAME_CONF} on ${REMOTE_HOST}"
+                    MESSAGE="${UI_HASHING_REHASHING} ${UI_CNAME_NAME}"
                     echo_stat
                     
                     primaryCNMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//'")
-                    error_validate
+                    silent_error_validate
                     
-                    MESSAGE="Reanalyzing ${CNAME_CONF} on $HOSTNAME"
+                    MESSAGE="${UI_HASHING_RECOMPARING} ${UI_CNAME_NAME}"
                     echo_stat
                     secondCNMD5=$(md5sum ${DNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//')
-                    error_validate
+                    silent_error_validate
                 else
-                    MESSAGE="No ${CNAME_CONF} Detected on ${REMOTE_HOST}"
+                    MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_PRIMARY}"
                     echo_info
                 fi
             else
                 if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RNSMAQ_DIR}/${CNAME_CONF}
                 then
                     REMOTE_CNAME_DNS="1"
-                    MESSAGE="${REMOTE_HOST} has ${CNAME_CONF}"
+                    MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_PRIMARY}"
                     echo_info
                 fi
                 
-                MESSAGE="No ${CNAME_CONF} Detected on $HOSTNAME"
+                MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_SECONDARY}"
                 echo_info
             fi
         fi

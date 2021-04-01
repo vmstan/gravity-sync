@@ -4,11 +4,47 @@
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
 # This code is called from the main gravity-sync.sh file and should not execute directly!
 
+# Standard Output
+function start_gs {
+    MESSAGE="${UI_CORE_INIT}"
+    echo_grav
+    cd ${LOCAL_FOLDR}
+    
+    import_gs
+    ph_type
+    
+    MESSAGE="${UI_CORE_EVALUATING}"
+    echo_stat
+    
+    if [ "${ROOT_CHECK_AVOID}" != "1" ]
+    then
+        new_root_check
+    fi
+    
+    if [ "${INCLUDE_CNAME}" == "1" ] && [ "${SKIP_CUSTOM}" == "1" ]
+    then
+        MESSAGE="${UI_INVALID_DNS_CONFIG} ${CONFIG_FILE}"
+        echo_fail
+        
+        exit_nochange
+    fi
+}
+
+# Standard Output No Config
+function start_gs_noconfig {
+    MESSAGE="${UI_CORE_INIT}"
+    echo_grav
+    cd ${LOCAL_FOLDR}
+    
+    MESSAGE="${UI_CORE_EVALUATING}"
+    echo_stat
+}
+
 ## Import Settings
 function import_gs {
     relocate_config_gs
     
-    MESSAGE="Importing ${CONFIG_FILE} Settings"
+    MESSAGE="${UI_CORE_LOADING} ${CONFIG_FILE}"
     echo -en "${STAT} $MESSAGE"
     if [ -f ${LOCAL_FOLDR}/settings/${CONFIG_FILE} ]
     then
@@ -22,7 +58,7 @@ function import_gs {
     else
         echo_fail
         
-        MESSAGE="${CONFIG_FILE} Missing"
+        MESSAGE="${UI_CORE_MISSING} ${CONFIG_FILE}"
         echo_info
         
         TASKTYPE='CONFIG'
@@ -33,7 +69,7 @@ function import_gs {
 function relocate_config_gs {
     if [ -f ${LOCAL_FOLDR}/${CONFIG_FILE} ]
     then
-        MESSAGE="Relocating ${CONFIG_FILE}"
+        MESSAGE="${UI_CORE_RELOCATING} ${CONFIG_FILE}"
         echo -en "${STAT} $MESSAGE"
         
         mv ${LOCAL_FOLDR}/${CONFIG_FILE} ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
@@ -42,7 +78,7 @@ function relocate_config_gs {
     
     if [ -f ${LOCAL_FOLDR}/${SYNCING_LOG} ]
     then
-        MESSAGE="Relocating ${SYNCING_LOG}"
+        MESSAGE="${UI_CORE_RELOCATING} ${SYNCING_LOG}"
         echo -en "${STAT} $MESSAGE"
         
         mv ${LOCAL_FOLDR}/${SYNCING_LOG} ${LOG_PATH}/${SYNCING_LOG}
@@ -51,7 +87,7 @@ function relocate_config_gs {
     
     if [ -f ${LOCAL_FOLDR}/${CRONJOB_LOG} ]
     then
-        MESSAGE="Relocating ${CRONJOB_LOG}"
+        MESSAGE="${UI_CORE_RELOCATING} ${CRONJOB_LOG}"
         echo -en "${STAT} $MESSAGE"
         
         mv ${LOCAL_FOLDR}/${CRONJOB_LOG} ${LOG_PATH}/${CRONJOB_LOG}
@@ -60,7 +96,7 @@ function relocate_config_gs {
     
     if [ -f ${LOCAL_FOLDR}/${HISTORY_MD5} ]
     then
-        MESSAGE="Relocating ${HISTORY_MD5}"
+        MESSAGE="${UI_CORE_RELOCATING} ${HISTORY_MD5}"
         echo -en "${STAT} $MESSAGE"
         
         mv ${LOCAL_FOLDR}/${HISTORY_MD5} ${LOG_PATH}/${HISTORY_MD5}
@@ -85,6 +121,17 @@ function error_validate {
     fi
 }
 
+## Error Validation
+function silent_error_validate {
+    if [ "$?" != "0" ]
+    then
+        echo_fail
+        exit 1
+    else
+        echo_sameline
+    fi
+}
+
 function ph_type {
     if [ "$PH_IN_TYPE" == "default" ]
     then
@@ -102,45 +149,9 @@ function ph_type {
         RH_EXEC="${RIHOLE_BIN}"
     elif [ "$RH_IN_TYPE" == "docker" ]
     then
-        RH_EXEC="sudo ${ROCKER_BIN} exec $(sudo ${ROCKER_BIN} ps -qf name=${ROCKER_CON}) pihole"
+        RH_EXEC="sudo ${ROCKER_BIN} exec \$(sudo ${ROCKER_BIN} ps -qf name=${ROCKER_CON}) pihole"
     elif [ "$RH_IN_TYPE" == "podman" ]
     then
         RH_EXEC="sudo ${RODMAN_BIN} exec ${ROCKER_CON} pihole"
     fi
-}
-
-# Standard Output
-function start_gs {
-    MESSAGE="${PROGRAM} ${VERSION} Executing"
-    echo_grav
-    cd ${LOCAL_FOLDR}
-    
-    import_gs
-    ph_type
-    
-    MESSAGE="Evaluating Arguments"
-    echo_stat
-    
-    if [ "${ROOT_CHECK_AVOID}" != "1" ]
-    then
-        new_root_check
-    fi
-    
-    if [ "${INCLUDE_CNAME}" == "1" ] && [ "${SKIP_CUSTOM}" == "1" ]
-    then
-        MESSAGE="Invalid Local DNS Settings in ${CONFIG_FILE}"
-        echo_fail
-        
-        exit_nochange
-    fi
-}
-
-# Standard Output No Config
-function start_gs_noconfig {
-    MESSAGE="${PROGRAM} ${VERSION} Executing"
-    echo_grav
-    cd ${LOCAL_FOLDR}
-    
-    MESSAGE="Evaluating Arguments"
-    echo_stat
 }

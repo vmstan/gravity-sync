@@ -36,15 +36,15 @@ function create_rsynccmd {
 
 ## Detect SSH-KEYGEN
 function detect_sshkeygen {
-    MESSAGE="Validating SSH-KEYGEN install on $HOSTNAME"
+    MESSAGE="Validating SSH-KEYGEN install"
     echo_stat
     
     if hash ssh-keygen >/dev/null 2>&1
     then
-        echo_good
+        echo_sameline
     else
         echo_fail
-        MESSAGE="SSH-KEYGEN is Required"
+        MESSAGE="SSH-KEYGEN is required on $HOSTNAME"
         echo_info
         
         exit_nochange
@@ -56,18 +56,18 @@ function generate_sshkey {
     then
         if [ -f $HOME/${SSH_PKIF} ]
         then
-            MESSAGE="Using Existing ~/${SSH_PKIF}"
+            MESSAGE="Using existing ~/${SSH_PKIF} file"
             echo_info
         else
             if hash ssh-keygen >/dev/null 2>&1
             then
-                MESSAGE="Generating ~/${SSH_PKIF} (SSH-KEYGEN)"
+                MESSAGE="Generating ~/${SSH_PKIF} file"
                 echo_stat
                 
                 ssh-keygen -q -P "" -t rsa -f $HOME/${SSH_PKIF} >/dev/null 2>&1
                 error_validate
             else
-                MESSAGE="No SSH Key Generator Located"
+                MESSAGE="No SSH-KEYGEN available"
                 echo_warn
                 exit_nochange
             fi
@@ -80,12 +80,12 @@ function export_sshkey {
     then
         if [ -f $HOME/${SSH_PKIF} ]
         then
-            MESSAGE="Registering Key-Pair on ${REMOTE_HOST}"
+            MESSAGE="Registering key-pair to ${REMOTE_HOST}"
             echo_info
             
             ssh-copy-id -f -p ${SSH_PORT} -i $HOME/${SSH_PKIF}.pub ${REMOTE_USER}@${REMOTE_HOST}
         else
-            MESSAGE="Error Registering Key-Pair"
+            MESSAGE="Error registering key-pair to ${REMOTE_HOST}"
             echo_warn
         fi
     fi
@@ -93,59 +93,62 @@ function export_sshkey {
 
 ## Detect SSH & RSYNC
 function detect_ssh {
-    MESSAGE="Validating SSH Client on $HOSTNAME"
+    MESSAGE="Validating OpenSSH client"
     echo_stat
     
     if hash ssh 2>/dev/null
     then
         MESSAGE="${MESSAGE} (OpenSSH)"
-        echo_good
+        echo_sameline
         SSH_CMD='ssh'
     elif hash dbclient 2>/dev/null
     then
         MESSAGE="${MESSAGE} (Dropbear)"
         echo_fail
         
-        MESSAGE="Dropbear not supported in GS ${VERSION}"
-        echo_info
+        MESSAGE="Dropbear is not supported in ${PROGRAM} ${VERSION}"
+        echo_warn
         exit_nochange
     else
         echo_fail
+        exit_nochange
         
-        MESSAGE="Attempting to Compensate"
-        echo_warn
-        MESSAGE="Installing SSH Client with ${PKG_MANAGER}"
-        echo_stat
+        # MESSAGE="Attempting to Compensate"
+        # echo_warn
+        # MESSAGE="Installing SSH Client with ${PKG_MANAGER}"
+        # echo_stat
         
-        ${PKG_INSTALL} ssh-client >/dev/null 2>&1
-        error_validate
+        # ${PKG_INSTALL} ssh-client >/dev/null 2>&1
+        # error_validate
     fi
     
-    MESSAGE="Validating RSYNC Installed on $HOSTNAME"
+    MESSAGE="Validating RSYNC client"
     echo_stat
     
     if hash rsync 2>/dev/null
     then
-        echo_good
+        echo_sameline
     else
         echo_fail
-        MESSAGE="RSYNC is Required"
+        
+        MESSAGE="RSYNC client install is required"
         echo_warn
+        exit_nochange
         
-        distro_check
+        # distro_check
         
-        MESSAGE="Attempting to Compensate"
-        echo_warn
+        # MESSAGE="Attempting to Compensate"
+        # echo_warn
         
-        MESSAGE="Installing RSYNC with ${PKG_MANAGER}"
-        echo_stat
-        ${PKG_INSTALL} rsync >/dev/null 2>&1
-        error_validate
+        # MESSAGE="Installing RSYNC with ${PKG_MANAGER}"
+        # echo_stat
+        # ${PKG_INSTALL} rsync >/dev/null 2>&1
+        # error_validate
     fi
 }
 
 function detect_remotersync {
-    MESSAGE="Creating Test File on ${REMOTE_HOST}"
+    MESSAGE="Creating test file on ${REMOTE_HOST}"
     echo_stat
     
     CMD_TIMEOUT='15'
@@ -155,7 +158,7 @@ function detect_remotersync {
     MESSAGE="If pull test fails ensure RSYNC is installed on ${REMOTE_HOST}"
     echo_warn
     
-    MESSAGE="Pulling Test File to $HOSTNAME"
+    MESSAGE="Pulling test file to $HOSTNAME"
     echo_stat
     
     RSYNC_REPATH="rsync"
@@ -163,13 +166,13 @@ function detect_remotersync {
     RSYNC_TARGET="${LOCAL_FOLDR}/gs.test"
     create_rsynccmd
     
-    MESSAGE="Cleaning Up Local Test File"
+    MESSAGE="Cleaning up local test file"
     echo_stat
     
     rm ${LOCAL_FOLDR}/gs.test
     error_validate
     
-    MESSAGE="Cleaning Up Remote Test File"
+    MESSAGE="Cleaning up remote test file"
     echo_stat
     
     CMD_TIMEOUT='15'
@@ -178,7 +181,7 @@ function detect_remotersync {
 }
 
 function show_target {
-    MESSAGE="Targeting ${REMOTE_USER}@${REMOTE_HOST}"
+    MESSAGE="Remote Pi-hole: ${REMOTE_USER}@${REMOTE_HOST}"
     echo_info
     
     detect_ssh

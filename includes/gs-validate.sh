@@ -6,34 +6,29 @@
 
 ## Validate GS Folders
 function validate_gs_folders {
-    MESSAGE="Validating ${PROGRAM} Folders on $HOSTNAME"
+    MESSAGE="${UI_VAL_GS_FOLDERS}"
     echo_stat
-    if [ ! -d ${LOCAL_FOLDR} ]
+    
+    if [ ! -d ${LOCAL_FOLDR} ] || [ ! -d ${LOCAL_FOLDR}/${BACKUP_FOLD} ] || [ ! -d ${LOCAL_FOLDR}/settings ] || [ ! -d ${LOG_PATH} ]
     then
-        MESSAGE="Unable to Validate ${PROGRAM} Folders on $HOSTNAME"
+        MESSAGE="${UI_VAL_GS_FOLDERS_FAIL}"
         echo_fail
         exit_nochange
     fi
     
-    if [ ! -d ${LOCAL_FOLDR}/${BACKUP_FOLD} ]
-    then
-        MESSAGE="Unable to Validate ${PROGRAM} Backup Folder on $HOSTNAME"
-        echo_fail
-        exit_nochange
-    fi
-    echo_good
+    echo_sameline
 }
 
 ## Validate Pi-hole Folders
 function validate_ph_folders {
-    MESSAGE="Validating Pi-hole Configuration"
+    MESSAGE="${UI_VALIDATING} ${UI_CORE_APP}"
     echo_stat
     
     if [ "$PH_IN_TYPE" == "default" ]
     then
         if [ ! -f ${PIHOLE_BIN} ]
         then
-            MESSAGE="Unable to Validate that Pi-Hole is Installed"
+            MESSAGE="${UI_VALIDATING_FAIL_BINARY} ${UI_CORE_APP}"
             echo_fail
             exit_nochange
         fi
@@ -42,7 +37,7 @@ function validate_ph_folders {
         FTLCHECK=$(sudo docker container ls | grep "${CONTAIMAGE}")
         if [ "$FTLCHECK" == "" ]
         then
-            MESSAGE="Unable to Validate that Pi-Hole is Installed"
+            MESSAGE="${UI_VALIDATING_FAIL_CONTAINER} ${UI_CORE_APP}"
             echo_fail
             exit_nochange
         fi
@@ -51,7 +46,7 @@ function validate_ph_folders {
         FTLCHECK=$(sudo podman container ls | grep "${CONTAIMAGE}")
         if [ "$FTLCHECK" == "" ]
         then
-            MESSAGE="Unable to Validate that Pi-Hole is Installed"
+            MESSAGE="${UI_VALIDATING_FAIL_CONTAINER} ${UI_CORE_APP}"
             echo_fail
             exit_nochange
         fi
@@ -59,87 +54,56 @@ function validate_ph_folders {
     
     if [ ! -d ${PIHOLE_DIR} ]
     then
-        MESSAGE="Unable to Validate Pi-Hole Configuration Directory"
+        MESSAGE="${UI_VALIDATING_FAIL_FOLDER} ${UI_CORE_APP}"
         echo_fail
         exit_nochange
     fi
-    echo_good
+    
+    echo_sameline
 }
 
 ## Validate DNSMASQ Folders
 function validate_dns_folders {
-    MESSAGE="Validating DNSMASQ Configuration"
+    MESSAGE="${UI_VALIDATING} ${UI_CORE_APP_DNS}"
     echo_stat
     
     if [ ! -d ${DNSMAQ_DIR} ]
     then
-        MESSAGE="Unable to Validate DNSMASQ Configuration Directory"
+        MESSAGE="${UI_VALIDATING_FAIL_FOLDER} ${UI_CORE_APP_DNS}"
         echo_fail
         exit_nochange
     fi
-    echo_good
+    echo_sameline
 }
 
 ## Validate SQLite3
 function validate_sqlite3 {
-    MESSAGE="Validating SQLITE Installed on $HOSTNAME"
+    MESSAGE="${UI_VALIDATING} ${UI_CORE_APP_SQL}"
     echo_stat
     if hash sqlite3 2>/dev/null
     then
         # MESSAGE="SQLITE3 Utility Detected"
-        echo_good
+        echo_sameline
     else
-        MESSAGE="Unable to Validate SQLITE Install on $HOSTNAME"
+        MESSAGE="${UI_VALIDATING_FAIL_BINARY} ${UI_CORE_APP_SQL}"
         echo_warn
         
-        MESSAGE="Installing SQLLITE3 with ${PKG_MANAGER}"
-        echo_stat
+        #MESSAGE="Installing SQLLITE3 with ${PKG_MANAGER}"
+        #echo_stat
         
-        ${PKG_INSTALL} sqllite3 >/dev/null 2>&1
-        error_validate
+        #${PKG_INSTALL} sqllite3 >/dev/null 2>&1
+        #error_validate
     fi
 }
 
 ## Validate SSHPASS
 function validate_os_sshpass {
-    # SSHPASSWORD=''
-    
-    # if hash sshpass 2>/dev/null
-    # then
-    #	MESSAGE="SSHPASS Utility Detected"
-    #	echo_warn
-    #		if [ -z "$REMOTE_PASS" ]
-    #		then
-    #			MESSAGE="Using SSH Key-Pair Authentication"
-    #			echo_info
-    #		else
-    #			MESSAGE="Testing Authentication Options"
-    #			echo_stat
-    
-    #			timeout 5 ssh -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} 'exit' >/dev/null 2>&1
-    #			if [ "$?" != "0" ]
-    #			then
-    #				SSHPASSWORD="sshpass -p ${REMOTE_PASS}"
-    #				MESSAGE="Using SSH Password Authentication"
-    #				echo_warn
-    #			else
-    #				MESSAGE="Valid Key-Pair Detected ${NC}(${RED}Password Ignored${NC})"
-    #				echo_info
-    #			fi
-    #		fi
-    # else
-    #    SSHPASSWORD=''
-    #	MESSAGE="Using SSH Key-Pair Authentication"
-    #	echo_info
-    # fi
-    
-    MESSAGE="Validating Connection to ${REMOTE_HOST}"
+    MESSAGE="Connecting to ${REMOTE_HOST}"
     echo_stat
     
     CMD_TIMEOUT='5'
     CMD_REQUESTED="exit"
     create_sshcmd
-    
 }
 
 ## Detect Package Manager
@@ -177,14 +141,99 @@ function dbclient_warning {
         then
             NOEMPTYBASHIF="1"
         else
-            MESSAGE="Dropbear support has been deprecated - please convert to OpenSSH"
+            MESSAGE="${UI_DROPBEAR_DEP}"
             echo_warn
         fi
     fi
 }
 
-## Validate CNAME Permissions
-function validate_cname_permissions {
+## Validate Domain Database Permissions
+function validate_gravity_permissions() {
+    MESSAGE="${UI_VAL_FILE_OWNERSHIP} ${UI_GRAVITY_NAME}"
+    echo_stat
+    
+    GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk 'OFS=":" {print $3,$4}')
+    if [ "$GRAVDB_OWN" == "$FILE_OWNER" ]
+    then
+        echo_good
+    else
+        echo_fail
+        
+        MESSAGE="${UI_COMPENSATE}"
+        echo_warn
+        
+        MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_GRAVITY_NAME}"
+        echo_stat
+        sudo chown ${FILE_OWNER} ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+        error_validate
+    fi
+    
+    MESSAGE="${UI_VAL_FILE_PERMISSION} of ${UI_GRAVITY_NAME}"
+    echo_stat
+    
+    GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | awk '{print $1}')
+    if [ "$GRAVDB_RWE" = "-rw-rw-r--" ]
+    then
+        echo_good
+    else
+        echo_fail
+        
+        MESSAGE="${UI_COMPENSATE}"
+        echo_warn
+        
+        MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_GRAVITY_NAME}"
+        echo_stat
+        sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+        error_validate
+    fi
+}
+
+## Validate Local DNS Records Permissions
+function validate_custom_permissions() {
+    MESSAGE="${UI_VAL_FILE_OWNERSHIP} ${UI_CUSTOM_NAME}"
+    echo_stat
+    
+    CUSTOMLS_OWN=$(ls -ld ${PIHOLE_DIR}/${CUSTOM_DNS} | awk '{print $3 $4}')
+    if [ "$CUSTOMLS_OWN" == "rootroot" ]
+    then
+        echo_good
+    else
+        echo_fail
+        
+        MESSAGE="${UI_COMPENSATE}"
+        echo_warn
+        
+        MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_CUSTOM_NAME}"
+        echo_stat
+        sudo chown root:root ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+        error_validate
+    fi
+    
+    MESSAGE="${UI_VAL_FILE_PERMISSION} ${UI_CUSTOM_NAME}"
+    echo_stat
+    
+    CUSTOMLS_RWE=$(namei -m ${PIHOLE_DIR}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | awk '{print $1}')
+    if [ "$CUSTOMLS_RWE" == "-rw-r--r--" ]
+    then
+        echo_good
+    else
+        echo_fail
+        
+        MESSAGE="${UI_COMPENSATE}"
+        echo_warn
+        
+        MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_CUSTOM_NAME}"
+        echo_stat
+        sudo chmod 644 ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+        error_validate
+    fi
+}
+
+## Validate Local DNS CNAME Permissions
+function validate_cname_permissions() {
+    MESSAGE="${UI_VAL_FILE_OWNERSHIP} ${UI_CNAME_NAME}"
+    echo_stat
+    
     CNAMELS_OWN=$(ls -ld ${DNSMAQ_DIR}/${CNAME_CONF} | awk '{print $3 $4}')
     if [ "$CNAMELS_OWN" == "rootroot" ]
     then
@@ -192,16 +241,16 @@ function validate_cname_permissions {
     else
         echo_fail
         
-        MESSAGE="Attempting to Compensate"
+        MESSAGE="${UI_COMPENSATE}"
         echo_warn
         
-        MESSAGE="Setting Ownership on ${CNAME_CONF}"
+        MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_CNAME_NAME}"
         echo_stat
         sudo chown root:root ${DNSMAQ_DIR}/${CNAME_CONF} >/dev/null 2>&1
         error_validate
     fi
     
-    MESSAGE="Validating Permissions on ${CNAME_CONF}"
+    MESSAGE="${UI_VAL_FILE_PERMISSION} ${UI_CNAME_NAME}"
     echo_stat
     
     CNAMELS_RWE=$(namei -m ${DNSMAQ_DIR}/${CNAME_CONF} | grep -v f: | grep ${CNAME_CONF} | awk '{print $1}')
@@ -211,12 +260,13 @@ function validate_cname_permissions {
     else
         echo_fail
         
-        MESSAGE="Attempting to Compensate"
+        MESSAGE="${UI_COMPENSATE}"
         echo_warn
         
-        MESSAGE="Setting Ownership on ${CNAME_CONF}"
+        MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_CNAME_NAME}"
         echo_stat
         sudo chmod 644 ${DNSMAQ_DIR}/${CNAME_CONF} >/dev/null 2>&1
         error_validate
     fi
 }
+

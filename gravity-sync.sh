@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='3.3.2'
+VERSION='3.4.0'
 
 
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
@@ -75,6 +75,9 @@ BASH_PATH='/bin/bash'				# default OS bash path
 ##############################################
 ### NEVER CHANGE ANYTHING BELOW THIS LINE! ###
 ##############################################
+
+# Import UI Fields
+source ${LOCAL_FOLDR}/includes/gs-ui.sh
 
 # Import Color/Message Includes
 source ${LOCAL_FOLDR}/includes/gs-colors.sh

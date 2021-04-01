@@ -7,17 +7,17 @@
 ## Sudo Creation Task
 function task_sudo {
     TASKTYPE='SUDO'
-    MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
-    MESSAGE="Creating Sudoer.d Template"
+    MESSAGE="Creating sudoers.d template file"
     echo_stat
     
     NEW_SUDO_USER=$(whoami)
     echo -e "${NEW_SUDO_USER} ALL=(ALL) NOPASSWD: ALL" > ${LOCAL_FOLDR}/templates/gs-nopasswd.sudo
     error_validate
     
-    MESSAGE="Installing Sudoer.d File"
+    MESSAGE="Installing sudoers.d file on $HOSTNAME"
     echo_stat
     
     sudo install -m 0440 ${LOCAL_FOLDR}/templates/gs-nopasswd.sudo /etc/sudoers.d/gs-nopasswd
@@ -34,7 +34,7 @@ function root_check {
         MESSAGE="${MESSAGE} ${TASKTYPE}"
         echo_fail
         
-        MESSAGE="${PROGRAM} Should Not Run As 'root'"
+        MESSAGE="${PROGRAM} should not run as 'root'"
         echo_warn
         
         exit_nochange
@@ -63,7 +63,7 @@ function new_root_check {
         MESSAGE="${MESSAGE} ${TASKTYPE}"
         echo_fail
         
-        MESSAGE="Insufficent User Rights"
+        MESSAGE="${CURRENTUSER} has insufficent user rights for ${PROGRAM}"
         echo_warn
         
         exit_nochange

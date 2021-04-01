@@ -5,9 +5,9 @@
 # This code is called from the main gravity-sync.sh file and should not execute directly!
 
 ## Backup Task
-function task_backup {
+function task_backup() {
     TASKTYPE='BACKUP'
-    MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
     backup_settime
@@ -20,54 +20,54 @@ function task_backup {
     exit_withchange
 }
 
-function backup_settime {
+function backup_settime() {
     BACKUPTIMESTAMP=$(date +%F-%H%M%S)
 }
 
-function backup_local_gravity {
-    MESSAGE="Performing Backup of Local ${GRAVITY_FI}"
+function backup_local_gravity() {
+    MESSAGE="${UI_BACKUP_SECONDARY} ${UI_GRAVITY_NAME}"
     echo_stat
     
     sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} ".backup '${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${GRAVITY_FI}.backup'"
     error_validate
 }
 
-function backup_local_custom {
+function backup_local_custom() {
     if [ "$SKIP_CUSTOM" != '1' ]
     then
         if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
         then
-            MESSAGE="Performing Backup Up Local ${CUSTOM_DNS}"
+            MESSAGE="${UI_BACKUP_SECONDARY} ${UI_CUSTOM_NAME}"
             echo_stat
             
             cp ${PIHOLE_DIR}/${CUSTOM_DNS} ${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CUSTOM_DNS}.backup
             error_validate
         else
-            MESSAGE="No Local ${CUSTOM_DNS} Detected"
+            MESSAGE="No local ${CUSTOM_DNS} detected"
             echo_info
         fi
     fi
 }
 
-function backup_local_cname {
+function backup_local_cname() {
     if [ "${INCLUDE_CNAME}" == '1' ]
     then
         if [ -f ${DNSMAQ_DIR}/${CNAME_CONF} ]
         then
-            MESSAGE="Performing Backup Up Local ${CNAME_CONF}"
+            MESSAGE="${UI_BACKUP_SECONDARY} ${UI_CNAME_NAME}"
             echo_stat
             
             cp ${DNSMAQ_DIR}/${CNAME_CONF} ${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${CNAME_CONF}.backup
             error_validate
         else
-            MESSAGE="No Local ${CNAME_CONF} Detected"
+            MESSAGE="No local ${CNAME_CONF} detected"
             echo_info
         fi
     fi
 }
 
-function backup_remote_gravity {
-    MESSAGE="Performing Backup of Remote ${GRAVITY_FI}"
+function backup_remote_gravity() {
+    MESSAGE="${UI_BACKUP_PRIMARY} ${UI_GRAVITY_NAME}"
     echo_stat
     
     CMD_TIMEOUT='60'
@@ -75,10 +75,10 @@ function backup_remote_gravity {
     create_sshcmd
 }
 
-function backup_remote_custom {
+function backup_remote_custom() {
     if [ "$SKIP_CUSTOM" != '1' ]
     then
-        MESSAGE="Performing Backup of Remote ${CUSTOM_DNS}"
+        MESSAGE="${UI_BACKUP_PRIMARY} ${UI_CUSTOM_NAME}"
         echo_stat
         
         CMD_TIMEOUT='15'
@@ -87,10 +87,10 @@ function backup_remote_custom {
     fi
 }
 
-function backup_remote_cname {
+function backup_remote_cname() {
     if [ "$INCLUDE_CNAME" == '1' ]
     then
-        MESSAGE="Performing Backup of Remote ${CNAME_CONF}"
+        MESSAGE="${UI_BACKUP_PRIMARY} ${UI_CNAME_NAME}"
         echo_stat
         
         CMD_TIMEOUT='15'
@@ -99,10 +99,15 @@ function backup_remote_cname {
     fi
 }
 
-function backup_cleanup {
-    MESSAGE="Scrubbing ${BACKUP_RETAIN} Redundant Antimatter Containment Pods"
+function backup_cleanup() {
+    MESSAGE="${UI_BACKUP_PURGE}"
     echo_stat
     
     find ${LOCAL_FOLDR}/${BACKUP_FOLD}/*.backup -mtime +${BACKUP_RETAIN} -type f -delete
     error_validate
+    
+    BACKUP_FOLDER_SIZE=$(du -h ${LOCAL_FOLDR}/${BACKUP_FOLD}  | sed 's/\s.*$//')
+    
+    MESSAGE="${BACKUP_RETAIN} ${UI_BACKUP_REMAIN} (${BACKUP_FOLDER_SIZE})"
+    echo_info
 }

@@ -22,15 +22,15 @@ function update_gs {
     GIT_CHECK=$(git status | awk '{print $1}')
     if [ "$GIT_CHECK" == "fatal:" ]
     then
-        MESSAGE="Requires GitHub Installation"
+        MESSAGE="Updater usage requires GitHub installation"
         echo_warn
         exit_nochange
     else
-        MESSAGE="Updating Cache"
+        MESSAGE="Downloading updates via GitHub"
         echo_stat
         git fetch --all >/dev/null 2>&1
         error_validate
-        MESSAGE="Applying Update"
+        MESSAGE="Deploying the latest ${PROGRAM} code"
         echo_stat
         git reset --hard ${BRANCH} >/dev/null 2>&1
         error_validate
@@ -40,7 +40,7 @@ function update_gs {
 ## Show Version
 function show_version {
     echo_lines
-    MESSAGE="${BOLD}${PROGRAM}${NC} by ${CYAN}@vmstan${NC}"
+    MESSAGE="${PURPLE}${PROGRAM}${NC} for Pi-hole"
     echo_info
     
     MESSAGE="${BLUE}https://github.com/vmstan/gravity-sync${NC}"
@@ -56,19 +56,19 @@ function show_version {
         DEVVERSION=""
     fi
     
-    MESSAGE="Running Version: ${GREEN}${VERSION}${NC} ${DEVVERSION}"
+    MESSAGE="Running version: ${GREEN}${VERSION}${NC} ${DEVVERSION}"
     echo_info
     
     GITVERSION=$(curl -sf https://raw.githubusercontent.com/vmstan/gravity-sync/master/VERSION)
     if [ -z "$GITVERSION" ]
     then
-        MESSAGE="Latest Version: ${RED}Unknown${NC}"
+        MESSAGE="Latest version: ${RED}Unknown${NC}"
     else
         if [ "$GITVERSION" != "$VERSION" ]
         then
-            MESSAGE="Update Available: ${PURPLE}${GITVERSION}${NC}"
+            MESSAGE="Update available: ${RED}${GITVERSION}${NC}"
         else
-            MESSAGE="Latest Version: ${GREEN}${GITVERSION}${NC}"
+            MESSAGE="Latest version: ${GREEN}${GITVERSION}${NC}"
         fi
     fi
     echo_info
@@ -76,7 +76,6 @@ function show_version {
 }
 
 function show_info() {
-        
     if [ -f ${LOCAL_FOLDR}/dev ]
     then
         DEVVERSION="-dev"
@@ -89,7 +88,7 @@ function show_info() {
     
     echo_lines
     echo -e "${YELLOW}Local Software Versions${NC}"
-    echo -e "${RED}Gravity Sync${NC} ${VERSION}${DEVVERSION}"
+    echo -e "${PURPLE}Gravity Sync${NC} ${VERSION}${DEVVERSION}"
     echo -e "${BLUE}Pi-hole${NC}"
     if [ "${PH_IN_TYPE}" == "default" ]
     then
@@ -222,7 +221,7 @@ function show_info() {
 ## Devmode Task
 function task_devmode {
     TASKTYPE='DEV'
-    MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
     if [ -f ${LOCAL_FOLDR}/dev ]
@@ -248,14 +247,14 @@ function task_devmode {
         touch ${LOCAL_FOLDR}/dev
         error_validate
         
-        MESSAGE="Updating Cache"
+        MESSAGE="Checking available branches"
         echo_stat
         git fetch --all >/dev/null 2>&1
         error_validate
         
         git branch -r
         
-        MESSAGE="Select Branch to Update Against"
+        MESSAGE="Select GitHub branch to update against"
         echo_need
         read INPUT_BRANCH
         
@@ -270,7 +269,7 @@ function task_devmode {
 ## Update Task
 function task_update {
     TASKTYPE='UPDATE'
-    MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
     dbclient_warning
@@ -283,7 +282,7 @@ function task_update {
 ## Version Task
 function task_version {
     TASKTYPE='VERSION'
-    MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
     show_version
@@ -294,7 +293,7 @@ function task_version {
 
 function task_info() {
     TASKTYPE='INFO'
-    MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
     show_info

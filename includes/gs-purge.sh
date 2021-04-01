@@ -7,51 +7,39 @@
 ## Purge Task
 function task_purge {
     TASKTYPE="THE-PURGE"
-    MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
-    MESSAGE="THIS WILL RESET YOUR ENTIRE GRAVITY SYNC INSTALLATION"
-    echo_warn
-    MESSAGE="This will remove:"
-    echo_warn
-    MESSAGE="- All backups files."
-    echo_warn
-    MESSAGE="- Your ${CONFIG_FILE} file."
-    echo_warn
-    
+    echo_lines
+    echo -e "THIS WILL RESET YOUR ENTIRE GRAVITY SYNC INSTALLATION"
+    echo -e "This will remove:"
+    echo -e "- All backups files."
+    echo -e "- Your ${CONFIG_FILE} file."
+        
     if [ -f "${LOCAL_FOLDR}/dev" ]
     then
-        MESSAGE="- Your development branch updater."
+        echo -e "- Your development branch updater."
     elif [ -f "${LOCAL_FOLDR}/beta" ]
     then
-        MESSAGE="- Your beta branch updater."
+        echo -e "- Your beta branch updater."
     fi
-    echo_warn
-    
-    MESSAGE="- All cronjob/automation tasks."
-    echo_warn
-    MESSAGE="- All job history/logs."
-    echo_warn
-    MESSAGE="- Associated SSH id_rsa keys."
-    echo_warn
-    MESSAGE="This function cannot be undone!"
-    echo_warn
-    
-    MESSAGE="YOU WILL NEED TO REBUILD GRAVITY SYNC AFTER EXECUTION"
-    echo_warn
-    
-    MESSAGE="Pi-hole binaries, configuration and services ARE NOT impacted!"
-    echo_info
-    MESSAGE="Your device will continue to resolve and block DNS requests,"
-    echo_info
-    MESSAGE="but your ${GRAVITY_FI} and ${CUSTOM_DNS} WILL NOT sync anymore,"
-    echo_info
-    MESSAGE="until you reconfigure Gravity Sync on this device."
-    echo_info
-    
+        
+    echo -e "- All cronjob/automation tasks."
+    echo -e "- All job history/logs."
+    echo -e "- Associated SSH id_rsa keys."
+    echo -e ""
+    echo -e "This function cannot be undone!"
+    echo -e ""
+    echo -e "YOU WILL NEED TO REBUILD GRAVITY SYNC AFTER EXECUTION"
+    echo -e "Pi-hole binaries, configuration and services ARE NOT impacted!"
+    echo -e "Your device will continue to resolve and block DNS requests,"
+    echo -e "but your ${UI_GRAVITY_NAME} and ${UI_CUSTOM_NAME} WILL NOT sync anymore,"
+    echo -e "until you reconfigure Gravity Sync on this device."
+    echo_lines
+        
     intent_validate
     
-    MESSAGE="Cleaning Gravity Sync Directory"
+    MESSAGE="${UI_PURGE_CLEANING_DIR}"
     echo_stat
     
     git clean -f -X -d >/dev/null 2>&1
@@ -59,20 +47,20 @@ function task_purge {
     
     clear_cron
     
-    MESSAGE="Deleting SSH Key-files"
+    MESSAGE="${UI_PURGE_DELETE_SSH_KEYS}"
     echo_stat
     
     rm -f $HOME/${SSH_PKIF} >/dev/null 2>&1
     rm -f $HOME/${SSH_PKIF}.pub >/dev/null 2>&1
     error_validate
     
-    MESSAGE="Realigning Dilithium Matrix"
-    echo_stat
+    MESSAGE="${UI_PURGE_MATRIX_ALIGNMENT}"
+    echo_info
     
     sleep 1
     
-    MESSAGE="Realigning Dilithium Matrix"
-    echo_good
+    # MESSAGE="Realigning Dilithium Matrix"
+    # echo_good
     
     update_gs
 }

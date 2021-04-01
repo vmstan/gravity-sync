@@ -7,7 +7,7 @@
 ## Logs Task
 function task_logs {
     TASKTYPE='LOGS'
-    MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
     logs_gs
@@ -18,7 +18,7 @@ function task_logs {
 function logs_export {
     if [ "${TASKTYPE}" != "BACKUP" ]
     then
-        MESSAGE="Saving File Hashes"
+        MESSAGE="${UI_LOGGING_HASHES}"
         echo_stat
         rm -f ${LOG_PATH}/${HISTORY_MD5}
         echo -e ${primaryDBMD5} >> ${LOG_PATH}/${HISTORY_MD5}
@@ -30,7 +30,7 @@ function logs_export {
         error_validate
     fi
     
-    MESSAGE="Logging Successful ${TASKTYPE}"
+    MESSAGE="${UI_LOGGING_SUCCESS} ${TASKTYPE}"
     echo_stat
     echo -e $(date) "[${TASKTYPE}]" >> ${LOG_PATH}/${SYNCING_LOG}
     error_validate
@@ -38,21 +38,21 @@ function logs_export {
 
 ### Output Sync Logs
 function logs_gs {
-    MESSAGE="Tailing ${LOG_PATH}/${SYNCING_LOG}"
+    MESSAGE="${UI_LOGGING_DISPLAY}"
     echo_info
     
-    echo -e "========================================================"
-    echo -e "Recent Complete ${YELLOW}SMART${NC} Executions"
+    echo_lines
+    echo -e "${UI_LOGGING_RECENT_COMPLETE} ${YELLOW}SMART${NC}"
     tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep SMART
-    echo -e "Recent Complete ${YELLOW}PULL${NC} Executions"
+    echo -e "${UI_LOGGING_RECENT_COMPLETE} ${YELLOW}PULL${NC}"
     tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PULL
-    echo -e "Recent Complete ${YELLOW}PUSH${NC} Executions"
+    echo -e "${UI_LOGGING_RECENT_COMPLETE} ${YELLOW}PUSH${NC}"
     tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PUSH
-    echo -e "Recent Complete ${YELLOW}BACKUP${NC} Executions"
+    echo -e "${UI_LOGGING_RECENT_COMPLETE} ${YELLOW}BACKUP${NC}"
     tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep BACKUP
-    echo -e "Recent Complete ${YELLOW}RESTORE${NC} Executions"
+    echo -e "${UI_LOGGING_RECENT_COMPLETE} ${YELLOW}RESTORE${NC}"
     tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep RESTORE
-    echo -e "========================================================"
+    echo_lines
     
     exit_nochange
 }
@@ -60,7 +60,7 @@ function logs_gs {
 ## Crontab Logs
 ### Core Crontab Logs
 function show_crontab {
-    MESSAGE="Replaying Last Cronjob"
+    MESSAGE="${UI_LOGGING_DISPLAY}"
     echo_stat
     
     if [ -f ${LOG_PATH}/${CRONJOB_LOG} ]
@@ -68,19 +68,19 @@ function show_crontab {
         if [ -s ${LOG_PATH}/${CRONJOB_LOG} ]
         echo_good
         
-        MESSAGE="Tailing ${LOG_PATH}/${CRONJOB_LOG}"
-        echo_info
+        # MESSAGE="Tailing ${LOG_PATH}/${CRONJOB_LOG}"
+        # echo_info
         
-        echo -e "========================================================"
+        echo_lines
         date -r ${LOG_PATH}/${CRONJOB_LOG}
         cat ${LOG_PATH}/${CRONJOB_LOG}
-        echo -e "========================================================"
+        echo_lines
         
         exit_nochange
         then
             echo_fail
             
-            MESSAGE="${LOG_PATH}/${CRONJOB_LOG} is Empty"
+            MESSAGE="${LOG_PATH}/${CRONJOB_LOG} ${UI_LOGGING_EMPTY}"
             echo_info
             
             exit_nochange
@@ -88,7 +88,7 @@ function show_crontab {
     else
         echo_fail
         
-        MESSAGE="${LOG_PATH}/${CRONJOB_LOG} is Missing"
+        MESSAGE="${LOG_PATH}/${CRONJOB_LOG} ${UI_LOGGING_MISSING}"
         echo_info
         
         exit_nochange

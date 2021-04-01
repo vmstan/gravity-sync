@@ -7,7 +7,7 @@
 ## Restore Task
 function task_restore {
     TASKTYPE='RESTORE'
-    MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
     show_target
@@ -27,14 +27,14 @@ function task_restore {
 
 ## Restore Gravity
 function restore_gs {
-    MESSAGE="This will restore your settings on $HOSTNAME with a previous version!"
+    MESSAGE=""
     echo_warn
     
     GRAVITY_DATE_LIST=$(ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${GRAVITY_FI} | colrm 18)
     
     if [ "${GRAVITY_DATE_LIST}" != "" ]
     then
-        MESSAGE="Previous ${GRAVITY_FI} Versions Available to Restore"
+        MESSAGE="${UI_RESTORE_WARNING}"
         echo_info
         
         echo_lines
@@ -42,22 +42,22 @@ function restore_gs {
         echo -e "IGNORE-GRAVITY"
         echo_lines
         
-        MESSAGE="Select backup date to restore ${GRAVITY_FI} from"
+        MESSAGE="${UI_RESTORE_SELECT_DATE} ${UI_GRAVITY_NAME}"
         echo_need
         read INPUT_BACKUP_DATE
         
         if [ "$INPUT_BACKUP_DATE" == "IGNORE-GRAVITY" ]
         then
-            MESSAGE="Skipping Gravity"
+            MESSAGE="${UI_RESTORE_SKIPPING} ${UI_GRAVITY_NAME}"
             echo_warn
         elif [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${GRAVITY_FI}.backup ]
         then
-            MESSAGE="Backup Selected"
+            MESSAGE="${UI_GRAVITY_NAME} ${UI_RESTORE_BACKUP_SELECTED}"
             echo_good
             
             DO_GRAVITY_RESTORE='1'
         else
-            MESSAGE="Invalid Request"
+            MESSAGE="${UI_RESTORE_INVALID}"
             echo_info
             
             exit_nochange
@@ -72,36 +72,36 @@ function restore_gs {
             
             if [ "${CUSTOM_DATE_LIST}" != "" ]
             then
-                MESSAGE="Previous ${CUSTOM_DNS} Versions Available to Restore"
-                echo_info
+                # MESSAGE="${UI_RESTORE_SELECT_DATE} ${UI_CUSTOM_NAME}"
+                # echo_info
                 
                 echo_lines
                 ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${CUSTOM_DNS} | colrm 18
                 echo -e "IGNORE-CUSTOM"
                 echo_lines
                 
-                MESSAGE="Select backup date to restore ${CUSTOM_DNS} from"
+                MESSAGE="${UI_RESTORE_SELECT_DATE} ${UI_CUSTOM_NAME}"
                 echo_need
                 read INPUT_DNSBACKUP_DATE
                 
                 if [ "$INPUT_DNSBACKUP_DATE" == "IGNORE-CUSTOM" ]
                 then
-                    MESSAGE="Skipping DNS"
+                    MESSAGE="${UI_RESTORE_SKIPPING} ${UI_CUSTOM_NAME}"
                     echo_warn
                 elif [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ]
                 then
-                    MESSAGE="Backup Selected"
+                    MESSAGE="${UI_CUSTOM_NAME} ${UI_RESTORE_BACKUP_SELECTED}"
                     echo_good
                     
                     DO_CUSTOM_RESTORE='1'
                 else
-                    MESSAGE="Invalid Request"
+                    MESSAGE="${UI_RESTORE_INVALID}"
                     echo_fail
                     
                     exit_nochange
                 fi
             else
-                MESSAGE="No ${CUSTOM_DNS} Backups"
+                MESSAGE="${UI_CUSTOM_NAME} ${UI_RESTORE_BACKUP_UNAVAILABLE}"
                 echo_info
             fi
         fi
@@ -115,36 +115,36 @@ function restore_gs {
             
             if [ "${CNAME_DATE_LIST}" != "" ]
             then
-                MESSAGE="Previous ${CNAME_CONF} Versions Available to Restore"
-                echo_info
+                # MESSAGE="${UI_RESTORE_SELECT_DATE} ${UI_CNAME_NAME}"
+                # echo_info
                 
                 echo_lines
                 ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${CNAME_CONF} | colrm 18
                 echo -e "IGNORE-CNAME"
                 echo_lines
                 
-                MESSAGE="Select backup date to restore ${CNAME_CONF} from"
+                MESSAGE="${UI_RESTORE_SELECT_DATE} ${UI_CNAME_NAME}"
                 echo_need
                 read INPUT_CNAMEBACKUP_DATE
                 
                 if [ "$INPUT_CNAMEBACKUP_DATE" == "IGNORE-CNAME" ]
                 then
-                    MESSAGE="Skipping CNAME"
+                    MESSAGE="${UI_RESTORE_SKIPPING} ${UI_CNAME_NAME}"
                     echo_warn
                 elif [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_CNAMEBACKUP_DATE}-${CNAME_CONF}.backup ]
                 then
-                    MESSAGE="Backup Selected"
+                    MESSAGE="${UI_CNAME_NAME} ${UI_RESTORE_BACKUP_SELECTED}"
                     echo_good
                     
                     DO_CNAME_RESTORE='1'
                 else
-                    MESSAGE="Invalid Request"
+                    MESSAGE="${UI_RESTORE_INVALID}"
                     echo_fail
                     
                     exit_nochange
                 fi
             else
-                MESSAGE="No ${CNAME_CONF} Backups"
+                MESSAGE="${UI_CNAME_NAME} ${UI_RESTORE_BACKUP_UNAVAILABLE}"
                 echo_info
             fi
         fi
@@ -152,134 +152,62 @@ function restore_gs {
     
     if [ "$DO_GRAVITY_RESTORE" == "1" ]
     then
-        MESSAGE="${GRAVITY_FI} from ${INPUT_BACKUP_DATE} Selected"
+        MESSAGE="${UI_GRAVITY_NAME} ${UI_RESTORE_FROM} ${INPUT_BACKUP_DATE}"
         echo_info
     else
-        MESSAGE="${GRAVITY_FI} Restore Unavailable"
+        MESSAGE="${UI_GRAVITY_NAME} ${UI_RESTORE_BACKUP_UNAVAILABLE}"
         echo_info
     fi
     
     if [ "$DO_CUSTOM_RESTORE" == "1" ]
     then
-        MESSAGE="${CUSTOM_DNS} from ${INPUT_DNSBACKUP_DATE} Selected"
+        MESSAGE="${UI_CUSTOM_NAME} ${UI_RESTORE_FROM} ${INPUT_DNSBACKUP_DATE}"
         echo_info
     else
-        MESSAGE="${CUSTOM_DNS} Restore Unavailable"
+        MESSAGE="${UI_CUSTOM_NAME} ${UI_RESTORE_BACKUP_UNAVAILABLE}"
         echo_info
     fi
     
     if [ "$DO_CNAME_RESTORE" == "1" ]
     then
-        MESSAGE="${CNAME_CONF} from ${INPUT_CNAMEBACKUP_DATE} Selected"
+        MESSAGE="${UI_CNAME_NAME} ${UI_RESTORE_FROM} ${INPUT_CNAMEBACKUP_DATE}"
         echo_info
     else
-        MESSAGE="${CNAME_CONF} Restore Unavailable"
+        MESSAGE="${UI_CNAME_NAME} ${UI_RESTORE_BACKUP_UNAVAILABLE}"
         echo_info
     fi
     
     intent_validate
     
-    MESSAGE="Making Time Warp Calculations"
+    MESSAGE="${UI_RESTORE_TIME_TRAVEL}"
     echo_info
     
-    MESSAGE="Stopping Pi-hole Services"
-    echo_stat
+    # MESSAGE="Stopping FTLDNS services on $HOSTNAME"
+    # echo_stat
     
-    ${PH_EXEC} stop >/dev/null 2>&1
-    error_validate
+    # ${PH_EXEC} stop >/dev/null 2>&1
+    # error_validate
     
-    if [ "$DO_CUSTOM_RESTORE" == "1" ]
+    if [ "$DO_GRAVITY_RESTORE" == "1" ]
     then
-        MESSAGE="Restoring ${GRAVITY_FI} on $HOSTNAME"
+        MESSAGE="${UI_RESTORE_SECONDARY} ${UI_GRAVITY_NAME}"
         echo_stat
         sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_BACKUP_DATE}-${GRAVITY_FI}.backup ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
         error_validate
         
-        MESSAGE="Validating Ownership on ${GRAVITY_FI}"
-        echo_stat
-        
-        GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk 'OFS=":" {print $3,$4}')
-        if [ "$GRAVDB_OWN" == "$FILE_OWNER" ]
-        then
-            echo_good
-        else
-            echo_fail
-            
-            MESSAGE="Attempting to Compensate"
-            echo_warn
-            
-            MESSAGE="Setting Ownership on ${GRAVITY_FI}"
-            echo_stat
-            sudo chown ${FILE_OWNER} ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
-            error_validate
-        fi
-        
-        MESSAGE="Validating Permissions on ${GRAVITY_FI}"
-        echo_stat
-        
-        GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | awk '{print $1}')
-        if [ "$GRAVDB_RWE" = "-rw-rw-r--" ]
-        then
-            echo_good
-        else
-            echo_fail
-            
-            MESSAGE="Attempting to Compensate"
-            echo_warn
-            
-            MESSAGE="Setting Ownership on ${GRAVITY_FI}"
-            echo_stat
-            sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
-            error_validate
-        fi
+        validate_gravity_permissions
     fi
     
     if [ "$DO_CUSTOM_RESTORE" == '1' ]
     then
         if [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ]
         then
-            MESSAGE="Restoring ${CUSTOM_DNS} on $HOSTNAME"
+            MESSAGE="${UI_RESTORE_SECONDARY} ${UI_CUSTOM_NAME}"
             echo_stat
             sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_DNSBACKUP_DATE}-${CUSTOM_DNS}.backup ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
             error_validate
             
-            MESSAGE="Validating Ownership on ${CUSTOM_DNS}"
-            echo_stat
-            
-            CUSTOMLS_OWN=$(ls -ld ${PIHOLE_DIR}/${CUSTOM_DNS} | awk '{print $3 $4}')
-            if [ "$CUSTOMLS_OWN" == "rootroot" ]
-            then
-                echo_good
-            else
-                echo_fail
-                
-                MESSAGE="Attempting to Compensate"
-                echo_warn
-                
-                MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
-                echo_stat
-                sudo chown root:root ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
-                error_validate
-            fi
-            
-            MESSAGE="Validating Permissions on ${CUSTOM_DNS}"
-            echo_stat
-            
-            CUSTOMLS_RWE=$(namei -m ${PIHOLE_DIR}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | awk '{print $1}')
-            if [ "$CUSTOMLS_RWE" == "-rw-r--r--" ]
-            then
-                echo_good
-            else
-                echo_fail
-                
-                MESSAGE="Attempting to Compensate"
-                echo_warn
-                
-                MESSAGE="Setting Ownership on ${CUSTOM_DNS}"
-                echo_stat
-                sudo chmod 644 ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
-                error_validate
-            fi
+            validate_custom_permissions
         fi
     fi
     
@@ -287,13 +215,10 @@ function restore_gs {
     then
         if [ -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_CNAMEBACKUP_DATE}-${CNAME_CONF}.backup ]
         then
-            MESSAGE="Restoring ${CNAME_CONF} on $HOSTNAME"
+            MESSAGE="${UI_RESTORE_SECONDARY} ${UI_CNAME_NAME}"
             echo_stat
             sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${INPUT_CNAMEBACKUP_DATE}-${CNAME_CONF}.backup ${DNSMAQ_DIR}/${CNAME_CONF} >/dev/null 2>&1
             error_validate
-            
-            MESSAGE="Validating Ownership on ${CNAME_CONF}"
-            echo_stat
             
             validate_cname_permissions
         fi
@@ -301,7 +226,7 @@ function restore_gs {
     
     pull_gs_reload
     
-    MESSAGE="Do you want to push the restored configuration to the primary Pi-hole? (yes/no)"
+    MESSAGE="${UI_RESTORE_PUSH_PROMPT}"
     echo_need
     read PUSH_TO_PRIMARY
     
@@ -310,10 +235,13 @@ function restore_gs {
         push_gs
     elif [ "${PUSH_TO_PRIMARY}" == "No" ] || [ "${PUSH_TO_PRIMARY}" == "no" ] || [ "${PUSH_TO_PRIMARY}" == "N" ] || [ "${PUSH_TO_PRIMARY}" == "n" ]
     then
+        MESSAGE="${UI_RESTORE_PUSH_NOPUSH}"
+        echo_info
+        
         logs_export
         exit_withchange
     else
-        MESSAGE="Invalid Selection - Defaulting No"
+        MESSAGE="${UI_INVALID_SELECTION} - ${UI_RESTORE_PUSH_NOPUSH}"
         echo_warn
         
         logs_export

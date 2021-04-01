@@ -23,19 +23,19 @@ function intent_validate {
             INTENT="ENGAGE TRACTOR BEAM"
         fi
         
-        MESSAGE="Type ${INTENT} to Confirm"
+        MESSAGE="Type ${INTENT} to confirm"
         echo_need
         
         read INPUT_INTENT
         
         if [ "${INPUT_INTENT}" != "${INTENT}" ]
         then
-            MESSAGE="${TASKTYPE} Aborted"
+            MESSAGE="${TASKTYPE} aborted"
             echo_info
             exit_nochange
         fi
     else
-        MESSAGE="Verification Bypassed"
+        MESSAGE="Verification bypassed"
         echo_warn
     fi
 }

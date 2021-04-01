@@ -7,7 +7,7 @@
 ## Configure Task
 function task_configure {				
     TASKTYPE='CONFIGURE'
-    MESSAGE="${MESSAGE}: ${TASKTYPE} Requested"
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
     relocate_config_gs
