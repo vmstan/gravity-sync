@@ -77,7 +77,7 @@ UI_LOGGING_RECENT_COMPLETE='Recent complete executions of'
 
 # Backup
 UI_BACKUP_PRIMARY='Performing backup of primary'
-UI_BACKUP_COPY='Duplicating backup of primary'
+UI_BACKUP_COPY='Pulling backup of primary'
 UI_BACKUP_SECONDARY='Performing backup of secondary'
 UI_BACKUP_PURGE='Purging redundant backups on secondary Pi-hole instance'
 UI_BACKUP_REMAIN='days of backups remain'
