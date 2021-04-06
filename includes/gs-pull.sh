@@ -31,6 +31,7 @@ function pull_gs_grav {
     
     backup_local_gravity
     backup_remote_gravity
+    backup_remote_gravity_integrity
     
     MESSAGE="${UI_PULL_PRIMARY} ${UI_GRAVITY_NAME}"
     echo_stat
