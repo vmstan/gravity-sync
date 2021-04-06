@@ -32,7 +32,7 @@ function push_gs_grav {
     backup_local_gravity
     backup_local_gravity_integrity
     
-    MESSAGE="${UI_BACKUP_PRIMARY} ${UI_GRAVITY_NAME}"
+    MESSAGE="${UI_BACKUP_COPY} ${UI_GRAVITY_NAME}"
     echo_stat
     RSYNC_REPATH="rsync"
     RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${GRAVITY_FI}.backup"
@@ -68,7 +68,7 @@ function push_gs_cust {
             backup_remote_custom
             backup_local_custom
             
-            MESSAGE="${UI_BACKUP_PRIMARY} ${UI_CUSTOM_NAME}"
+            MESSAGE="${UI_BACKUP_COPY} ${UI_CUSTOM_NAME}"
             echo_stat
             RSYNC_REPATH="rsync"
             RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${CUSTOM_DNS}.backup"
@@ -106,7 +106,7 @@ function push_gs_cname {
             backup_remote_cname
             backup_local_cname
             
-            MESSAGE="${UI_BACKUP_PRIMARY} ${UI_CNAME_NAME}"
+            MESSAGE="${UI_BACKUP_COPY} ${UI_CNAME_NAME}"
             echo_stat
             RSYNC_REPATH="rsync"
             RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/dnsmasq.d-${CNAME_CONF}.backup"
