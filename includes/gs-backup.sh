@@ -83,6 +83,7 @@ function backup_remote_gravity_integrity() {
     error_validate
     
     if [ "$primaryIntegrity" != 'ok' ]
+    then
         MESSAGE="${UI_BACKUP_INTEGRITY_FAILED} ${UI_GRAVITY_NAME}"
         echo_fail
         
