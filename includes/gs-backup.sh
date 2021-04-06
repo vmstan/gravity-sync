@@ -75,6 +75,21 @@ function backup_remote_gravity() {
     create_sshcmd
 }
 
+function backup_remote_gravity_integrity() {
+    MESSAGE="${UI_BACKUP_INTEGRITY}"
+    echo_stat
+    
+    primaryIntegrity=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sqlite3 ${RIHOLE_DIR}/${GRAVITY_FI}.backup 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
+    error_validate
+    
+    if [ "$primaryIntegrity" != 'ok' ]
+        MESSAGE="${UI_BACKUP_INTEGRITY_FAILED} ${UI_GRAVITY_NAME}"
+        echo_fail
+        
+        exit_nochange
+    fi
+}
+
 function backup_remote_custom() {
     if [ "$SKIP_CUSTOM" != '1' ]
     then
