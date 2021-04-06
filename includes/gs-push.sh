@@ -30,6 +30,7 @@ function task_push {
 function push_gs_grav {
     backup_remote_gravity
     backup_local_gravity
+    backup_local_gravity_integrity
     
     MESSAGE="${UI_BACKUP_PRIMARY} ${UI_GRAVITY_NAME}"
     echo_stat
