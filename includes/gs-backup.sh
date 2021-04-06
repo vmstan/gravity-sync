@@ -12,6 +12,7 @@ function task_backup() {
     
     backup_settime
     backup_local_gravity
+    backup_local_gravity_integrity
     backup_local_custom
     backup_local_cname
     backup_cleanup
@@ -30,6 +31,22 @@ function backup_local_gravity() {
     
     sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} ".backup '${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${GRAVITY_FI}.backup'"
     error_validate
+}
+
+function backup_local_gravity_integrity() {
+    MESSAGE="${UI_BACKUP_INTEGRITY}"
+    echo_stat
+    
+    secondaryIntegrity=$(sqlite3 ${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${GRAVITY_FI}.backup 'PRAGMA integrity_check;' | sed 's/\s.*$//')
+    error_validate
+    
+    if [ "$secondaryIntegrity" != 'ok' ]
+    then
+        MESSAGE="${UI_BACKUP_INTEGRITY_FAILED} ${UI_GRAVITY_NAME}"
+        echo_fail
+        
+        exit_nochange
+    fi
 }
 
 function backup_local_custom() {
