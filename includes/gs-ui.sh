@@ -80,7 +80,7 @@ UI_BACKUP_PRIMARY='Performing backup of primary'
 UI_BACKUP_SECONDARY='Performing backup of secondary'
 UI_BACKUP_PURGE='Purging redundant backups on secondary Pi-hole instance'
 UI_BACKUP_REMAIN='days of backups remain'
-UI_BACKUP_INTEGRITY="Initiating primary ${UI_GRAVITY_NAME} integrity check"
+UI_BACKUP_INTEGRITY="Checking ${UI_GRAVITY_NAME} backup integrity"
 UI_BACKUP_INTEGRITY_FAILED='Integrity check has failed for the primary'
 
 # Restore
