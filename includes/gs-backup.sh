@@ -45,6 +45,12 @@ function backup_local_gravity_integrity() {
         MESSAGE="${UI_BACKUP_INTEGRITY_FAILED} ${UI_GRAVITY_NAME}"
         echo_fail
         
+        MESSAGE="${UI_BACKUP_INTEGRITY_DELETE} ${UI_GRAVITY_NAME}"
+        echo_stat
+            
+        sudo rm ${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${GRAVITY_FI}.backup
+        error_validate
+        
         exit_nochange
     fi
 }
@@ -103,6 +109,13 @@ function backup_remote_gravity_integrity() {
     then
         MESSAGE="${UI_BACKUP_INTEGRITY_FAILED} ${UI_GRAVITY_NAME}"
         echo_fail
+        
+        MESSAGE="{UI_BACKUP_INTEGRITY_DELETE} ${UI_GRAVITY_NAME}"
+        echo_stat
+        
+        CMD_TIMEOUT='15'
+        CMD_REQUESTED="sudo rm ${RIHOLE_DIR}/${GRAVITY_FI}.backup"
+        create_sshcmd
         
         exit_nochange
     fi

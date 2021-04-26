@@ -83,6 +83,7 @@ UI_BACKUP_PURGE='Purging redundant backups on secondary Pi-hole instance'
 UI_BACKUP_REMAIN='days of backups remain'
 UI_BACKUP_INTEGRITY="Checking ${UI_GRAVITY_NAME} backup integrity"
 UI_BACKUP_INTEGRITY_FAILED='Integrity check has failed for the primary'
+UI_BACKUP_INTEGRITY_DELETE='Removing failed backup'
 
 # Restore
 UI_RESTORE_WARNING="This will overwrite your current Pi-hole settings on $HOSTNAME with a previous version!"
