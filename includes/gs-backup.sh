@@ -149,7 +149,7 @@ function backup_cleanup() {
     MESSAGE="${UI_BACKUP_PURGE}"
     echo_stat
     
-    find ${LOCAL_FOLDR}/${BACKUP_FOLD}/*.backup -mtime +${BACKUP_RETAIN} -type f -delete
+    find ${LOCAL_FOLDR}/${BACKUP_FOLD}/ -name "*.backup*" -mtime +${BACKUP_RETAIN} -type f -delete
     error_validate
     
     BACKUP_FOLDER_SIZE=$(du -h ${LOCAL_FOLDR}/${BACKUP_FOLD}  | sed 's/\s.*$//')
