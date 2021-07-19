@@ -39,9 +39,16 @@ function task_automate {
             clear_cron
         fi
         
+        if [[ ${PATH} != *"/usr/sbin"* ]]
+        then
+            CRON_ENV_PATH=$'PATH=/bin:/usr/bin:/usr/sbin\n'
+        else
+            CRON_ENV_PATH=""
+        fi
+        
         MESSAGE="${UI_AUTO_CRON_SAVING}"
         echo_stat
-        (crontab -l 2>/dev/null; echo "*/${INPUT_AUTO_FREQ} * * * * ${BASH_PATH} ${LOCAL_FOLDR}/${GS_FILENAME} smart > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
+        (crontab -l 2>/dev/null; echo "${CRON_ENV_PATH}*/${INPUT_AUTO_FREQ} * * * * ${BASH_PATH} ${LOCAL_FOLDR}/${GS_FILENAME} smart > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
         error_validate
     elif [ $INPUT_AUTO_FREQ == 0 ]
     then
