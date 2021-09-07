@@ -159,14 +159,19 @@ function backup_cleanup() {
         then
             rm -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/*.backup
             error_validate
+
+            MESSAGE="All backup files purged"
+            echo_info
         else
             find ${LOCAL_FOLDR}/${BACKUP_FOLD}/ -name "*.backup*" -mtime +${BACKUP_RETAIN} -type f -delete
             error_validate
+
+            BACKUP_FOLDER_SIZE=$(du -h ${LOCAL_FOLDR}/${BACKUP_FOLD}  | sed 's/\s.*$//')
+    
+            MESSAGE="${BACKUP_RETAIN} ${UI_BACKUP_REMAIN} (${BACKUP_FOLDER_SIZE})"
+            echo_info
         fi
     fi
 
-    BACKUP_FOLDER_SIZE=$(du -h ${LOCAL_FOLDR}/${BACKUP_FOLD}  | sed 's/\s.*$//')
-    
-    MESSAGE="${BACKUP_RETAIN} ${UI_BACKUP_REMAIN} (${BACKUP_FOLDER_SIZE})"
-    echo_info
+
 }
