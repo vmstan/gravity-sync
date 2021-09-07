@@ -55,9 +55,6 @@ function task_automate {
         if [ $CRON_EXIST == 1 ]
         then
             clear_cron
-            
-            # MESSAGE="Synchronization automation has been disabled"
-            # echo_warn
         else
             MESSAGE="${UI_AUTO_CRON_DISABLED}"
             echo_warn

@@ -112,14 +112,6 @@ function detect_ssh {
     else
         echo_fail
         exit_nochange
-        
-        # MESSAGE="Attempting to Compensate"
-        # echo_warn
-        # MESSAGE="Installing SSH Client with ${PKG_MANAGER}"
-        # echo_stat
-        
-        # ${PKG_INSTALL} ssh-client >/dev/null 2>&1
-        # error_validate
     fi
     
     MESSAGE="Validating RSYNC client"
@@ -134,16 +126,6 @@ function detect_ssh {
         MESSAGE="RSYNC client install is required"
         echo_warn
         exit_nochange
-        
-        # distro_check
-        
-        # MESSAGE="Attempting to Compensate"
-        # echo_warn
-        
-        # MESSAGE="Installing RSYNC with ${PKG_MANAGER}"
-        # echo_stat
-        # ${PKG_INSTALL} rsync >/dev/null 2>&1
-        # error_validate
     fi
 }
 

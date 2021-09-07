@@ -50,11 +50,6 @@ function import_gs {
     then
         source ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
-        
-        # MESSAGE="Targeting ${REMOTE_USER}@${REMOTE_HOST}"
-        # echo_info
-        
-        # detect_ssh
     else
         echo_fail
         
