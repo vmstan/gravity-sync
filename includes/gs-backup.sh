@@ -153,15 +153,18 @@ function backup_cleanup() {
     rm -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/*.pull
     rm -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/*.push
     
-    if [ "${BACKUP_RETAIN}" == '0' ] || [ "${TASKTYPE}" != "backup" ]
+    if [ "${TASKTYPE}" != "backup" ]
     then
-        rm -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/*.backup
-        error_validate
-    else
-        find ${LOCAL_FOLDR}/${BACKUP_FOLD}/ -name "*.backup*" -mtime +${BACKUP_RETAIN} -type f -delete
-        error_validate
+        if [ "${BACKUP_RETAIN}" == '0' ]
+        then
+            rm -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/*.backup
+            error_validate
+        else
+            find ${LOCAL_FOLDR}/${BACKUP_FOLD}/ -name "*.backup*" -mtime +${BACKUP_RETAIN} -type f -delete
+            error_validate
+        fi
     fi
-    
+
     BACKUP_FOLDER_SIZE=$(du -h ${LOCAL_FOLDR}/${BACKUP_FOLD}  | sed 's/\s.*$//')
     
     MESSAGE="${BACKUP_RETAIN} ${UI_BACKUP_REMAIN} (${BACKUP_FOLDER_SIZE})"
