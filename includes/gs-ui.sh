@@ -19,7 +19,7 @@ UI_CORE_INIT="Initalizing ${PROGRAM} (${VERSION})"
 UI_CORE_RELOCATING='Relocating'
 
 # Exit
-UI_EXIT_CALC_END="after $((SCRIPT_END-SCRIPT_START)) seconds"
+UI_EXIT_CALC_END="after $(($SCRIPT_END-$SCRIPT_START)) seconds"
 UI_EXIT_ABORT='aborted'
 UI_EXIT_COMPLETE='completed'
 
