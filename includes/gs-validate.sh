@@ -73,7 +73,7 @@ function validate_dns_folders {
         echo_fail
         exit_nochange
     fi
-    # echo_sameline
+    echo_good
 }
 
 ## Validate SQLite3
@@ -83,7 +83,7 @@ function validate_sqlite3 {
     if hash sqlite3 2>/dev/null
     then
         # MESSAGE="SQLITE3 Utility Detected"
-        # # echo_sameline
+        echo_good
     else
         MESSAGE="${UI_VALIDATING_FAIL_BINARY} ${UI_CORE_APP_SQL}"
         echo_warn

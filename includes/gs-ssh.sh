@@ -127,7 +127,7 @@ function detect_ssh {
     
     if hash rsync 2>/dev/null
     then
-        # echo_sameline
+        echo_good
     else
         echo_fail
         
