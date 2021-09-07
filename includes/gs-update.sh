@@ -127,6 +127,7 @@ function show_info() {
     echo -e "Local Pi-hole Type: ${PH_IN_TYPE}"
     echo -e "Local Pi-hole Config Directory: ${PIHOLE_DIR}"
     echo -e "Local DNSMASQ Config Directory: ${DNSMAQ_DIR}"
+    echo -e "Local Gravity Sync Directory: ${LOCAL_FOLDR}" 
     
     if [ "${PH_IN_TYPE}" == "default" ]
     then
@@ -192,6 +193,9 @@ function show_info() {
     else
         echo -e "Backup Retention: ${BACKUP_RETAIN} days (custom)"
     fi
+
+    BACKUP_FOLDER_SIZE=$(du -h ${LOCAL_FOLDR}/${BACKUP_FOLD}  | sed 's/\s.*$//')
+    echo -e "Backup Folder Size: ${BACKUP_FOLDER_SIZE}"
         
     echo -e ""
     echo -e "${YELLOW}Remote/Primary Instance Settings${NC}"

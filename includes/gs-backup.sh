@@ -160,7 +160,7 @@ function backup_cleanup() {
             rm -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/*.backup
             error_validate
 
-            MESSAGE="All backup files purged"
+            MESSAGE="${UI_BACKUP_DELETE_ALL}"
             echo_info
         else
             find ${LOCAL_FOLDR}/${BACKUP_FOLD}/ -name "*.backup*" -mtime +${BACKUP_RETAIN} -type f -delete
