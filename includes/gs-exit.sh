@@ -7,7 +7,7 @@
 ## No Changes Made
 function exit_nochange {
     SCRIPT_END=$SECONDS
-    SCRIPT_RUN=$SCRIPT_START-$SCRIPT_END
+    SCRIPT_RUN=($SCRIPT_END-$SCRIPT_START)
     
     if [ "${TASKTYPE}" == "" ]
     then
