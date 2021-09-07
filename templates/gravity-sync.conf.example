@@ -45,6 +45,7 @@ REMOTE_USER='pi'
 ### Backup Customization
 # BACKUP_RETAIN=''			# replace in gravity-sync.conf to overwrite
 # BACKUP_TIMEOUT=''			# replace in gravity-sync.conf to overwrite
+# BACKUP_INTEGRITY_WAIT=''  # time to wait after backup for integrity check
 
 ### SSH Customization
 # SSH_PORT='' 				# default SSH port

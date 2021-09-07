@@ -53,6 +53,7 @@ ROOT_CHECK_AVOID='0'				# replace in gravity-sync.conf to overwrite
 # Backup Customization
 BACKUP_RETAIN='3'					# replace in gravity-sync.conf to overwrite
 BACKUP_TIMEOUT='240'                # replace in gravity-sync.conf to overwrite
+BACKUP_INTEGRITY_WAIT='5'           # replace in gravity-sync.conf to overwrite
 
 # SSH Customization
 SSH_PORT='22' 						# default SSH port

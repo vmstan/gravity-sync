@@ -38,6 +38,7 @@ function backup_local_gravity_integrity() {
     MESSAGE="${UI_BACKUP_INTEGRITY}"
     echo_stat
     
+    sleep $BACKUP_INTEGRITY_WAIT
     secondaryIntegrity=$(sqlite3 ${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${GRAVITY_FI}.backup 'PRAGMA integrity_check;' | sed 's/\s.*$//')
     error_validate
     
@@ -103,6 +104,7 @@ function backup_remote_gravity_integrity() {
     MESSAGE="${UI_BACKUP_INTEGRITY}"
     echo_stat
     
+    sleep $BACKUP_INTEGRITY_WAIT
     primaryIntegrity=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sqlite3 ${RIHOLE_DIR}/${GRAVITY_FI}.backup 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
     error_validate
     
