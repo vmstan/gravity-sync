@@ -153,7 +153,7 @@ function backup_cleanup() {
     rm -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/*.pull
     rm -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/*.push
     
-    if [ "${TASKTYPE}" != "backup" ]
+    if [ "${TASKTYPE}" != "BACKUP" ]
     then
         if [ "${BACKUP_RETAIN}" == '0' ]
         then
