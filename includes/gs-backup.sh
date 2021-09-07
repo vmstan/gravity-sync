@@ -16,7 +16,7 @@ function task_backup() {
     backup_local_gravity_integrity
     backup_local_custom
     backup_local_cname
-    backup_cleanup
+    # backup_cleanup
     
     logs_export
     exit_withchange
@@ -172,6 +172,4 @@ function backup_cleanup() {
             echo_info
         fi
     fi
-
-
 }
