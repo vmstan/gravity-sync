@@ -157,6 +157,9 @@ function backup_cleanup() {
     then
         rm -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/*.backup
         error_validate
+    elif [ "${TASKTYPE}" == "backup" ]
+        find ${LOCAL_FOLDR}/${BACKUP_FOLD}/ -name "*.backup*" -mtime +${BACKUP_RETAIN} -type f -delete
+        error_validate
     else
         find ${LOCAL_FOLDR}/${BACKUP_FOLD}/ -name "*.backup*" -mtime +${BACKUP_RETAIN} -type f -delete
         error_validate
