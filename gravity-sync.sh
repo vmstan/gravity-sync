@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='3.4.5'
+VERSION='3.4.6'
 
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
 # Requires Pi-Hole 5.x or higher already be installed, for help visit https://pi-hole.net
@@ -52,7 +52,8 @@ ROOT_CHECK_AVOID='0'				# replace in gravity-sync.conf to overwrite
 
 # Backup Customization
 BACKUP_RETAIN='3'					# replace in gravity-sync.conf to overwrite
-BACKUP_TIMEOUT='60'                 # replace in gravity-sync.conf to overwrite
+BACKUP_TIMEOUT='240'                # replace in gravity-sync.conf to overwrite
+BACKUP_INTEGRITY_WAIT='5'           # replace in gravity-sync.conf to overwrite
 
 # SSH Customization
 SSH_PORT='22' 						# default SSH port

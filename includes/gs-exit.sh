@@ -7,12 +7,13 @@
 ## No Changes Made
 function exit_nochange {
     SCRIPT_END=$SECONDS
+    let SCRIPT_RUN=SCRIPT_END-SCRIPT_START
     
     if [ "${TASKTYPE}" == "" ]
     then
-        MESSAGE="${PROGRAM} ${UI_EXIT_ABORT} ${UI_EXIT_CALC_END}"
+        MESSAGE="${PROGRAM} ${UI_EXIT_ABORT} ${UI_EXIT_CALC_END} ${SCRIPT_RUN} ${UI_EXIT_CALC_TIMER}"
     else
-        MESSAGE="${PROGRAM} ${TASKTYPE} ${UI_EXIT_ABORT} ${UI_EXIT_CALC_END}"
+        MESSAGE="${PROGRAM} ${TASKTYPE} ${UI_EXIT_ABORT} ${UI_EXIT_CALC_END} ${SCRIPT_RUN} ${UI_EXIT_CALC_TIMER}"
     fi
     
     echo_grav
@@ -22,12 +23,13 @@ function exit_nochange {
 ## Changes Made
 function exit_withchange {
     SCRIPT_END=$SECONDS
+    let SCRIPT_RUN=SCRIPT_END-SCRIPT_START
     
     if [ "${TASKTYPE}" == "" ]
     then
-        MESSAGE="${PROGRAM} ${UI_EXIT_COMPLETE} ${UI_EXIT_CALC_END}"
+        MESSAGE="${PROGRAM} ${UI_EXIT_COMPLETE} ${UI_EXIT_CALC_END} ${SCRIPT_RUN} ${UI_EXIT_CALC_TIMER}"
     else
-        MESSAGE="${PROGRAM} ${TASKTYPE} ${UI_EXIT_COMPLETE} ${UI_EXIT_CALC_END}"
+        MESSAGE="${PROGRAM} ${TASKTYPE} ${UI_EXIT_COMPLETE} ${UI_EXIT_CALC_END} ${SCRIPT_RUN} ${UI_EXIT_CALC_TIMER}"
     fi
     
     echo_grav

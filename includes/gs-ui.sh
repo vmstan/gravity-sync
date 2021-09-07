@@ -19,9 +19,10 @@ UI_CORE_INIT="Initalizing ${PROGRAM} (${VERSION})"
 UI_CORE_RELOCATING='Relocating'
 
 # Exit
-UI_EXIT_CALC_END="after $((SCRIPT_END-SCRIPT_START)) seconds"
+UI_EXIT_CALC_END='after'
 UI_EXIT_ABORT='aborted'
 UI_EXIT_COMPLETE='completed'
+UI_EXIT_CALC_TIMER='seconds'
 
 # Hashing
 UI_HASHING_HASHING='Hashing the primary'
@@ -84,6 +85,7 @@ UI_BACKUP_REMAIN='days of backups remain'
 UI_BACKUP_INTEGRITY="Checking ${UI_GRAVITY_NAME} backup integrity"
 UI_BACKUP_INTEGRITY_FAILED='Integrity check has failed for the primary'
 UI_BACKUP_INTEGRITY_DELETE='Removing failed backup'
+UI_BACKUP_DELETE_ALL='All backup files purged'
 
 # Restore
 UI_RESTORE_WARNING="This will overwrite your current Pi-hole settings on $HOSTNAME with a previous version!"

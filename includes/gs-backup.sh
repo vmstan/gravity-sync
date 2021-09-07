@@ -1,3 +1,4 @@
+
 # GRAVITY SYNC BY VMSTAN #####################
 # gs-backup.sh ###############################
 
@@ -15,7 +16,7 @@ function task_backup() {
     backup_local_gravity_integrity
     backup_local_custom
     backup_local_cname
-    backup_cleanup
+    # backup_cleanup
     
     logs_export
     exit_withchange
@@ -37,6 +38,7 @@ function backup_local_gravity_integrity() {
     MESSAGE="${UI_BACKUP_INTEGRITY}"
     echo_stat
     
+    sleep $BACKUP_INTEGRITY_WAIT
     secondaryIntegrity=$(sqlite3 ${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${GRAVITY_FI}.backup 'PRAGMA integrity_check;' | sed 's/\s.*$//')
     error_validate
     
@@ -102,6 +104,7 @@ function backup_remote_gravity_integrity() {
     MESSAGE="${UI_BACKUP_INTEGRITY}"
     echo_stat
     
+    sleep $BACKUP_INTEGRITY_WAIT
     primaryIntegrity=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sqlite3 ${RIHOLE_DIR}/${GRAVITY_FI}.backup 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
     error_validate
     
@@ -148,12 +151,27 @@ function backup_remote_cname() {
 function backup_cleanup() {
     MESSAGE="${UI_BACKUP_PURGE}"
     echo_stat
+
+    rm -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/*.pull
+    rm -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/*.push
     
-    find ${LOCAL_FOLDR}/${BACKUP_FOLD}/ -name "*.backup*" -mtime +${BACKUP_RETAIN} -type f -delete
-    error_validate
+    if [ "${TASKTYPE}" != "BACKUP" ]
+    then
+        if [ "${BACKUP_RETAIN}" == '0' ]
+        then
+            rm -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/*.backup
+            error_validate
+
+            MESSAGE="${UI_BACKUP_DELETE_ALL}"
+            echo_info
+        else
+            find ${LOCAL_FOLDR}/${BACKUP_FOLD}/ -name "*.backup*" -mtime +${BACKUP_RETAIN} -type f -delete
+            error_validate
+
+            BACKUP_FOLDER_SIZE=$(du -h ${LOCAL_FOLDR}/${BACKUP_FOLD}  | sed 's/\s.*$//')
     
-    BACKUP_FOLDER_SIZE=$(du -h ${LOCAL_FOLDR}/${BACKUP_FOLD}  | sed 's/\s.*$//')
-    
-    MESSAGE="${BACKUP_RETAIN} ${UI_BACKUP_REMAIN} (${BACKUP_FOLDER_SIZE})"
-    echo_info
+            MESSAGE="${BACKUP_RETAIN} ${UI_BACKUP_REMAIN} (${BACKUP_FOLDER_SIZE})"
+            echo_info
+        fi
+    fi
 }

@@ -41,7 +41,7 @@ function detect_sshkeygen {
     
     if hash ssh-keygen >/dev/null 2>&1
     then
-        echo_sameline
+        echo_good
     else
         echo_fail
         MESSAGE="SSH-KEYGEN is required on $HOSTNAME"
@@ -99,7 +99,7 @@ function detect_ssh {
     if hash ssh 2>/dev/null
     then
         MESSAGE="${MESSAGE} (OpenSSH)"
-        echo_sameline
+        echo_good
         SSH_CMD='ssh'
     elif hash dbclient 2>/dev/null
     then
@@ -127,7 +127,7 @@ function detect_ssh {
     
     if hash rsync 2>/dev/null
     then
-        echo_sameline
+        echo_good
     else
         echo_fail
         
