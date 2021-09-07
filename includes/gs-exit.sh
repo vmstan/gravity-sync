@@ -13,7 +13,7 @@ function exit_nochange {
     then
         MESSAGE="${PROGRAM} ${UI_EXIT_ABORT} ${UI_EXIT_CALC_END} ${SCRIPT_RUN} ${UI_EXIT_CALC_TIMER}"
     else
-        MESSAGE="${PROGRAM} ${TASKTYPE} ${UI_EXIT_ABORT} ${UI_EXIT_CALC_END} v${SCRIPT_RUN} ${UI_EXIT_CALC_TIMER}"
+        MESSAGE="${PROGRAM} ${TASKTYPE} ${UI_EXIT_ABORT} ${UI_EXIT_CALC_END} ${SCRIPT_RUN} ${UI_EXIT_CALC_TIMER}"
     fi
     
     echo_grav

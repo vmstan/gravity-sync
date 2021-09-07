@@ -22,7 +22,7 @@ UI_CORE_RELOCATING='Relocating'
 UI_EXIT_CALC_END='after'
 UI_EXIT_ABORT='aborted'
 UI_EXIT_COMPLETE='completed'
-UI_EXIT_TIMER='seconds'
+UI_EXIT_CALC_TIMER='seconds'
 
 # Hashing
 UI_HASHING_HASHING='Hashing the primary'
