@@ -150,12 +150,12 @@ function backup_cleanup() {
     MESSAGE="${UI_BACKUP_PURGE}"
     echo_stat
 
-    rm -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/"*.pull"
-    rm -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/"*.push"
+    rm -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/*.pull
+    rm -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/*.push
     
     if [ "${BACKUP_RETAIN}" == '0' ]
     then
-        rm -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/"*.backup"
+        rm -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/*.backup
         error_validate
     else
         find ${LOCAL_FOLDR}/${BACKUP_FOLD}/ -name "*.backup*" -mtime +${BACKUP_RETAIN} -type f -delete
