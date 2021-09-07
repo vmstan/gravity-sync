@@ -149,6 +149,9 @@ function backup_remote_cname() {
 function backup_cleanup() {
     MESSAGE="${UI_BACKUP_PURGE}"
     echo_stat
+
+    rm -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/"*.pull"
+    rm -f ${LOCAL_FOLDR}/${BACKUP_FOLD}/"*.push"
     
     if [ "${BACKUP_RETAIN}" == '0' ]
     then
