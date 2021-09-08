@@ -68,9 +68,6 @@ function show_crontab {
         if [ -s ${LOG_PATH}/${CRONJOB_LOG} ]
         echo_good
         
-        # MESSAGE="Tailing ${LOG_PATH}/${CRONJOB_LOG}"
-        # echo_info
-        
         echo_lines
         date -r ${LOG_PATH}/${CRONJOB_LOG}
         cat ${LOG_PATH}/${CRONJOB_LOG}

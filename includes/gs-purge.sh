@@ -59,8 +59,5 @@ function task_purge {
     
     sleep 1
     
-    # MESSAGE="Realigning Dilithium Matrix"
-    # echo_good
-    
     update_gs
 }

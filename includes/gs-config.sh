@@ -18,11 +18,6 @@ function task_configure {
     else
         config_generate
     fi
-
-    # backup_settime
-    # backup_local_gravity
-    # backup_local_custom
-    # backup_cleanup
     
     create_alias
     
@@ -30,9 +25,7 @@ function task_configure {
 }
 
 ## Generate New Configuration
-function config_generate {
-    # detect_ssh
-    
+function config_generate {  
     MESSAGE="Creating New ${CONFIG_FILE} from Template"
     echo_stat
     cp ${LOCAL_FOLDR}/templates/${CONFIG_FILE}.example ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
@@ -129,14 +122,6 @@ function config_generate {
     error_validate
 
     export_sshkey	
-    
-    # MESSAGE="Testing Configuration"
-    # echo_info
-
-    # validate_os_sshpass
-    # validate_sqlite3
-
-    # detect_remotersync
 }
 
 ## Advanced Configuration Options

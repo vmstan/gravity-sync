@@ -82,17 +82,10 @@ function validate_sqlite3 {
     echo_stat
     if hash sqlite3 2>/dev/null
     then
-        # MESSAGE="SQLITE3 Utility Detected"
         echo_good
     else
         MESSAGE="${UI_VALIDATING_FAIL_BINARY} ${UI_CORE_APP_SQL}"
         echo_warn
-        
-        #MESSAGE="Installing SQLLITE3 with ${PKG_MANAGER}"
-        #echo_stat
-        
-        #${PKG_INSTALL} sqllite3 >/dev/null 2>&1
-        #error_validate
     fi
 }
 

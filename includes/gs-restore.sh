@@ -72,9 +72,6 @@ function restore_gs {
             
             if [ "${CUSTOM_DATE_LIST}" != "" ]
             then
-                # MESSAGE="${UI_RESTORE_SELECT_DATE} ${UI_CUSTOM_NAME}"
-                # echo_info
-                
                 echo_lines
                 ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${CUSTOM_DNS} | colrm 18
                 echo -e "IGNORE-CUSTOM"
@@ -115,9 +112,6 @@ function restore_gs {
             
             if [ "${CNAME_DATE_LIST}" != "" ]
             then
-                # MESSAGE="${UI_RESTORE_SELECT_DATE} ${UI_CNAME_NAME}"
-                # echo_info
-                
                 echo_lines
                 ls ${LOCAL_FOLDR}/${BACKUP_FOLD} | grep $(date +%Y) | grep ${CNAME_CONF} | colrm 18
                 echo -e "IGNORE-CNAME"
@@ -181,12 +175,6 @@ function restore_gs {
     
     MESSAGE="${UI_RESTORE_TIME_TRAVEL}"
     echo_info
-    
-    # MESSAGE="Stopping FTLDNS services on $HOSTNAME"
-    # echo_stat
-    
-    # ${PH_EXEC} stop >/dev/null 2>&1
-    # error_validate
     
     if [ "$DO_GRAVITY_RESTORE" == "1" ]
     then

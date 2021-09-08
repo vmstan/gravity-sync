@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='3.4.6'
+VERSION='3.4.7'
 
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
 # Requires Pi-Hole 5.x or higher already be installed, for help visit https://pi-hole.net
@@ -89,7 +89,6 @@ source ${LOCAL_FOLDR}/includes/gs-colors.sh
 source ${LOCAL_FOLDR}/includes/gs-core.sh
 
 # Gravity Replication Functions
-source ${LOCAL_FOLDR}/includes/gs-compare.sh
 source ${LOCAL_FOLDR}/includes/gs-pull.sh
 source ${LOCAL_FOLDR}/includes/gs-push.sh
 source ${LOCAL_FOLDR}/includes/gs-smart.sh
