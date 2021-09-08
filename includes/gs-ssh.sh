@@ -6,32 +6,14 @@
 
 ## Determine SSH Pathways
 function create_sshcmd {
-    # if hash ssh 2>/dev/null
-    # then
-    #	if [ -z "$SSHPASSWORD" ]
-    #	then
     timeout --preserve-status ${CMD_TIMEOUT} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} "${CMD_REQUESTED}"
     error_validate
-    #	else
-    #		timeout --preserve-status ${CMD_TIMEOUT} ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} "${CMD_REQUESTED}"
-    #			error_validate
-    #	fi
-    # fi
 }
 
 ## Determine SSH Pathways
 function create_rsynccmd {
-    # if hash ssh 2>/dev/null
-    # then
-    #	if [ -z "$SSHPASSWORD" ]
-    #	then
     rsync --rsync-path="${RSYNC_REPATH}" -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
     error_validate
-    #	else
-    #		rsync --rsync-path="${RSYNC_REPATH}" -e "${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
-    #			error_validate
-    #	fi
-    # fi
 }
 
 ## Detect SSH-KEYGEN
@@ -93,20 +75,18 @@ function export_sshkey {
 
 ## Detect SSH & RSYNC
 function detect_ssh {
-    MESSAGE="Validating OpenSSH client"
+    MESSAGE="${UI_VALIDATING} ${UI_CORE_OPENSSH}"
     echo_stat
     
     if hash ssh 2>/dev/null
     then
-        MESSAGE="${MESSAGE} (OpenSSH)"
         echo_good
         SSH_CMD='ssh'
     elif hash dbclient 2>/dev/null
     then
-        MESSAGE="${MESSAGE} (Dropbear)"
         echo_fail
         
-        MESSAGE="Dropbear is not supported in ${PROGRAM} ${VERSION}"
+        MESSAGE="${UI_DROPBEAR_DEP}"
         echo_warn
         exit_nochange
     else
@@ -114,7 +94,7 @@ function detect_ssh {
         exit_nochange
     fi
     
-    MESSAGE="Validating RSYNC client"
+    MESSAGE="${UI_VALIDATING} ${UI_CORE_RSYNC}"
     echo_stat
     
     if hash rsync 2>/dev/null
@@ -123,7 +103,6 @@ function detect_ssh {
     else
         echo_fail
         
-        MESSAGE="RSYNC client install is required"
         echo_warn
         exit_nochange
     fi
@@ -163,7 +142,7 @@ function detect_remotersync {
 }
 
 function show_target {
-    MESSAGE="Remote Pi-hole: ${REMOTE_USER}@${REMOTE_HOST}"
+    MESSAGE="${UI_CORE_UC_PRIMARY} ${UI_CORE_APP}: ${REMOTE_USER}@${REMOTE_HOST}"
     echo_info
     
     detect_ssh
