@@ -42,7 +42,7 @@ function config_generate {
     echo_blank
     echo -e "Gravity Sync uses a primary/secondary model for replication, and normally syncs changes from the "
     echo -e "primary to the secondary. The LOCAL Pi-hole where you are running this configuration script is"
-    echo -e "considered the the SECONDARY Pi-hole! The REMOTE Pi-hole where you will normally make configuration" 
+    echo -e "considered the SECONDARY Pi-hole! The REMOTE Pi-hole where you will normally make configuration" 
     echo -e "changes is considered the PRIMARY Pi-hole."
     echo_blank
     echo -e "Confused? Please refer back to the documentation."
