@@ -145,7 +145,7 @@ function push_gs_reload {
     MESSAGE="${UI_FTLDNS_CONFIG_PUSH_UPDATE}"
     echo_stat
     CMD_TIMEOUT='15'
-    CMD_REQUESTED="${RH_EXEC} restartdns reloadlists"
+    CMD_REQUESTED="${RH_EXEC} restartdns reload-lists"
     create_sshcmd
     
     MESSAGE="${UI_FTLDNS_CONFIG_PUSH_RELOAD}"
