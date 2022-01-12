@@ -108,7 +108,7 @@ function pull_gs_reload {
     
     MESSAGE="${UI_FTLDNS_CONFIG_UPDATE}"
     echo_stat
-    ${PH_EXEC} restartdns reloadlists >/dev/null 2>&1
+    ${PH_EXEC} restartdns reload-lists >/dev/null 2>&1
     error_validate
     
     MESSAGE="${UI_FTLDNS_CONFIG_RELOAD}"
