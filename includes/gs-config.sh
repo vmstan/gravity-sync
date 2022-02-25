@@ -85,7 +85,7 @@ function config_generate {
     MESSAGE="Required Gravity Sync Settings"
     echo_info
 
-    MESSAGE="Primary/Remote Pi-hole Address (IP or DNS)"
+    MESSAGE="Primary/Remote Pi-hole Host Address (IP or DNS)"
     echo_need
     read INPUT_REMOTE_HOST
 
@@ -416,19 +416,6 @@ function advanced_config_generate {
             sed -i "/# INCLUDE_CNAME=''/c\INCLUDE_CNAME='1'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
         fi
-    fi
-    
-    MESSAGE="Change Backup Retention in Days? (Leave blank for default '3')"
-    echo_need
-    read INPUT_BACKUP_RETAIN
-    INPUT_BACKUP_RETAIN="${INPUT_BACKUP_RETAIN:-3}"
-    
-    if [ "${INPUT_BACKUP_RETAIN}" != "3" ]
-    then
-        MESSAGE="Saving Backup Retention to ${CONFIG_FILE}"
-        echo_stat
-        sed -i "/# BACKUP_RETAIN=''/c\BACKUP_RETAIN='${INPUT_BACKUP_RETAIN}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
-        error_validate
     fi
 }
 

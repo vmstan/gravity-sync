@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='3.4.8'
+VERSION='3.5.0'
 
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
 # Requires Pi-Hole 5.x or higher already be installed, for help visit https://pi-hole.net
@@ -51,7 +51,6 @@ PING_AVOID='0'						# replace in gravity-sync.conf to overwrite
 ROOT_CHECK_AVOID='0'				# replace in gravity-sync.conf to overwrite
 
 # Backup Customization
-BACKUP_RETAIN='3'					# replace in gravity-sync.conf to overwrite
 BACKUP_TIMEOUT='240'                # replace in gravity-sync.conf to overwrite
 BACKUP_INTEGRITY_WAIT='5'           # replace in gravity-sync.conf to overwrite
 
@@ -133,9 +132,6 @@ case $# in
             push)
                 start_gs
                 task_push ;;
-            restore)
-                start_gs
-                task_restore ;;
             version)
                 start_gs_noconfig
                 task_version ;;
@@ -160,9 +156,6 @@ case $# in
             auto|automate)
                 start_gs
                 task_automate ;;
-            backup)
-                start_gs
-                task_backup ;;
             purge)
                 start_gs
                 task_purge ;;
