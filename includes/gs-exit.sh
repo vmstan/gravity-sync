@@ -54,8 +54,6 @@ function list_gs_arguments {
     echo -e " ${YELLOW}pull${NC}        Brings the remote Pi-hole configuration to this server"
     echo -e " ${YELLOW}push${NC}        Sends the local Pi-hole configuration to the primary"
     echo -e " ${YELLOW}compare${NC}     Just checks for Pi-hole differences at each side without making changes"
-    echo -e " ${YELLOW}restore${NC}     Restores the Pi-hole configuration on this server"
-    echo -e " ${YELLOW}backup${NC}      Just backs up the Pi-hole on this server"
     echo_blank
     echo -e "Debug Options:"
     echo -e " ${YELLOW}logs${NC}        Shows the recent successful replication jobs/times"
