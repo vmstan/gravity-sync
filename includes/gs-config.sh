@@ -417,19 +417,6 @@ function advanced_config_generate {
             error_validate
         fi
     fi
-    
-    MESSAGE="Change Backup Retention in Days? (Leave blank for default '3')"
-    echo_need
-    read INPUT_BACKUP_RETAIN
-    INPUT_BACKUP_RETAIN="${INPUT_BACKUP_RETAIN:-3}"
-    
-    if [ "${INPUT_BACKUP_RETAIN}" != "3" ]
-    then
-        MESSAGE="Saving Backup Retention to ${CONFIG_FILE}"
-        echo_stat
-        sed -i "/# BACKUP_RETAIN=''/c\BACKUP_RETAIN='${INPUT_BACKUP_RETAIN}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
-        error_validate
-    fi
 }
 
 ## Delete Existing Configuration

@@ -51,7 +51,6 @@ PING_AVOID='0'						# replace in gravity-sync.conf to overwrite
 ROOT_CHECK_AVOID='0'				# replace in gravity-sync.conf to overwrite
 
 # Backup Customization
-BACKUP_RETAIN='3'					# replace in gravity-sync.conf to overwrite
 BACKUP_TIMEOUT='240'                # replace in gravity-sync.conf to overwrite
 BACKUP_INTEGRITY_WAIT='5'           # replace in gravity-sync.conf to overwrite
 
