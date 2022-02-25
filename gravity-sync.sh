@@ -133,9 +133,6 @@ case $# in
             push)
                 start_gs
                 task_push ;;
-            restore)
-                start_gs
-                task_restore ;;
             version)
                 start_gs_noconfig
                 task_version ;;
@@ -160,9 +157,6 @@ case $# in
             auto|automate)
                 start_gs
                 task_automate ;;
-            backup)
-                start_gs
-                task_backup ;;
             purge)
                 start_gs
                 task_purge ;;
