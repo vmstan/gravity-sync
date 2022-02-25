@@ -81,15 +81,15 @@ UI_LOGGING_MISSING='is missing'
 UI_LOGGING_RECENT_COMPLETE='Recent complete executions of'
 
 # Backup
-UI_BACKUP_PRIMARY='Performing backup of primary'
-UI_BACKUP_COPY='Pulling backup of primary'
-UI_BACKUP_SECONDARY='Performing backup of secondary'
-UI_BACKUP_PURGE='Purging redundant backups on secondary Pi-hole instance'
+UI_BACKUP_PRIMARY='Performing copy of primary'
+UI_BACKUP_COPY='Pulling copy of primary'
+UI_BACKUP_SECONDARY='Performing copy of secondary'
+UI_BACKUP_PURGE='Purging unused data files from this Pi-hole instance'
 UI_BACKUP_REMAIN='days of backups remain'
-UI_BACKUP_INTEGRITY="Checking ${UI_GRAVITY_NAME} backup integrity"
+UI_BACKUP_INTEGRITY="Checking ${UI_GRAVITY_NAME} copy integrity"
 UI_BACKUP_INTEGRITY_FAILED='Integrity check has failed for the primary'
-UI_BACKUP_INTEGRITY_DELETE='Removing failed backup'
-UI_BACKUP_DELETE_ALL='All backup files purged'
+UI_BACKUP_INTEGRITY_DELETE='Removing failed copies'
+UI_BACKUP_DELETE_ALL='All unused data files purged'
 
 # Restore
 UI_RESTORE_WARNING="This will overwrite your current Pi-hole settings on $HOSTNAME with a previous version!"
