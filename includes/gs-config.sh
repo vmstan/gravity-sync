@@ -85,7 +85,7 @@ function config_generate {
     MESSAGE="Required Gravity Sync Settings"
     echo_info
 
-    MESSAGE="Primary/Remote Pi-hole Address (IP or DNS)"
+    MESSAGE="Primary/Remote Pi-hole Host Address (IP or DNS)"
     echo_need
     read INPUT_REMOTE_HOST
 
