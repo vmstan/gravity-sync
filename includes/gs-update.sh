@@ -34,6 +34,10 @@ function update_gs {
         echo_stat
         git reset --hard ${BRANCH} >/dev/null 2>&1
         error_validate
+        MESSAGE="Cleaning things up"
+        echo_stat
+        git clean -fq
+        error_validate
     fi
 }
 
