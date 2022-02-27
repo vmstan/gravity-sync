@@ -45,6 +45,11 @@ function echo_good {
 }
 
 ### Success
+function echo_good_clean {
+    echo -e "\r${GOOD} ${MESSAGE}"
+}
+
+### Success
 function echo_sameline {
     echo -en "                                                                                        "
     echo -en "\r"
