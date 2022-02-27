@@ -99,8 +99,6 @@ function config_generate {
         echo_info
         advanced_config_generate
     else
-        MESSAGE="Advanced or Standard"
-        echo_info
         MESSAGE="Do you want to enable advanced installation options?"
         echo_grav
         MESSAGE="Yes/No"
