@@ -348,47 +348,6 @@ function advanced_config_generate {
         fi
     fi
     
-    MESSAGE="Custom SSH Port to Connect to Primary/Remote host? (Leave blank for default '22')"
-    echo_need
-    read INPUT_SSH_PORT
-    INPUT_SSH_PORT="${INPUT_SSH_PORT:-22}"
-    SSH_PORT="${INPUT_SSH_PORT}"
-    
-    if [ "${INPUT_SSH_PORT}" != "22" ]
-    then
-        MESSAGE="Saving Custom SSH Port to ${CONFIG_FILE}"
-        echo_stat
-        sed -i "/# SSH_PORT=''/c\SSH_PORT='${INPUT_SSH_PORT}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
-        error_validate
-    fi
-    
-    MESSAGE="Enable Ping/ICMP Check of Primary/Remote? (Y/N, default 'Y')"
-    echo_need
-    read INPUT_PING_AVOID
-    INPUT_PING_AVOID="${INPUT_PING_AVOID:-Y}"
-    
-    if [ "${INPUT_PING_AVOID}" != "Y" ]
-    then
-        MESSAGE="Saving ICMP Avoidance to ${CONFIG_FILE}"
-        echo_stat
-        sed -i "/# PING_AVOID=''/c\PING_AVOID='1'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
-        error_validate
-        PING_AVOID=1
-    fi
-        
-    MESSAGE="Custom SSH PKIF Location? (Leave blank for default '.ssh/id_rsa')"
-    echo_need
-    read INPUT_CUSTOM_PKIF
-    INPUT_CUSTOM_PKIF="${INPUT_CUSTOM_PKIF:-.ssh/id_rsa}"
-        
-    if [ "${INPUT_CUSTOM_PKIF}" != ".ssh/id_rsa" ]
-    then
-        MESSAGE="Saving Custom PKIF to ${CONFIG_FILE}"
-        echo_stat
-        sed -i "/# SSH_PKIF=''/c\SSH_PKIF='${INPUT_CUSTOM_PKIF}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
-        error_validate
-    fi
-    
     MESSAGE="Enable Replicate 'Local DNS Records' Feature? (Y/N, default 'Y')"
     echo_need
     read INPUT_SKIP_CUSTOM
