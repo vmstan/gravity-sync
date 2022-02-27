@@ -71,6 +71,9 @@ function config_generate {
     error_validate
     
     MESSAGE="Existing SSH User for ${INPUT_REMOTE_HOST}"
+    echo_grav
+
+    MESSAGE="User"
     echo_need
     read INPUT_REMOTE_USER
     
