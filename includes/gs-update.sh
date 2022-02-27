@@ -43,24 +43,17 @@ function update_gs {
 
 ## Show Version
 function show_version {
-    echo_lines
-    MESSAGE="${PURPLE}${PROGRAM}${NC} for Pi-hole"
-    echo_info
-    
-    MESSAGE="${BLUE}https://github.com/vmstan/gravity-sync${NC}"
-    echo_info
-    
     if [ -f ${LOCAL_FOLDR}/dev ]
     then
-        DEVVERSION="dev"
+        DEVVERSION="-dev"
     elif [ -f ${LOCAL_FOLDR}/beta ]
     then
-        DEVVERSION="beta"
+        DEVVERSION="-beta"
     else
         DEVVERSION=""
     fi
     
-    MESSAGE="Running version: ${GREEN}${VERSION}${NC} ${DEVVERSION}"
+    MESSAGE="Running version: ${GREEN}${VERSION}${NC}${DEVVERSION}"
     echo_info
     
     GITVERSION=$(curl -sf https://raw.githubusercontent.com/vmstan/gravity-sync/master/VERSION)
@@ -76,7 +69,6 @@ function show_version {
         fi
     fi
     echo_info
-    echo_lines
 }
 
 function show_info() {
