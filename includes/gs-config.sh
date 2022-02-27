@@ -62,7 +62,7 @@ function config_generate {
         MESSAGE="Advanced or Standard"
         echo_info
         MESSAGE="Do you want to enable advanced installation options?"
-        echo_logo
+        echo_grav
         MESSAGE="Yes/No"
         echo_need
         read INPUT_ADVANCED_INSTALL
