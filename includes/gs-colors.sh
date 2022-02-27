@@ -18,8 +18,8 @@ NC='\033[0m'
 FAIL="${RED}✗${NC}"
 WARN="${PURPLE}!${NC}"
 GOOD="${GREEN}✓${NC}"
-STAT="${CYAN}e${NC}"
-INFO="${YELLOW}i${NC}"
+STAT="${CYAN}∞${NC}"
+INFO="${YELLOW}ᐅ${NC}"
 NEED="${BLUE}?${NC}"
 LOGO="${PURPLE}∞${NC}"
 
