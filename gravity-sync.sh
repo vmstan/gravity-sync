@@ -91,7 +91,6 @@ source ${LOCAL_FOLDR}/includes/gs-core.sh
 source ${LOCAL_FOLDR}/includes/gs-pull.sh
 source ${LOCAL_FOLDR}/includes/gs-push.sh
 source ${LOCAL_FOLDR}/includes/gs-smart.sh
-source ${LOCAL_FOLDR}/includes/gs-restore.sh
 source ${LOCAL_FOLDR}/includes/gs-backup.sh
 
 # Hashing & SSH Functions
