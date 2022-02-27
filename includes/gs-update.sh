@@ -270,8 +270,6 @@ function task_update {
     MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
-    dbclient_warning
-    
     update_gs
     
     exit_withchange
