@@ -19,7 +19,7 @@ FAIL="${RED}✗${NC}"
 WARN="${PURPLE}!${NC}"
 GOOD="${GREEN}✓${NC}"
 STAT="${CYAN}∞${NC}"
-INFO="${YELLOW}ᐅ${NC}"
+INFO="${YELLOW}»${NC}"
 NEED="${BLUE}?${NC}"
 LOGO="${PURPLE}∞${NC}"
 
