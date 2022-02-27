@@ -59,20 +59,22 @@ function config_generate {
         echo_info
         advanced_config_generate
     else
+        MESSAGE="Advanced or Standard"
+        echo_info
         MESSAGE="Do you want to enable advanced installation options?"
-        echo_warn
-        MESSAGE="(Y/N, default N)"
+        echo_logo
+        MESSAGE="Yes/No"
         echo_need
         read INPUT_ADVANCED_INSTALL
         INPUT_ADVANCED_INSTALL="${INPUT_ADVANCED_INSTALL:-N}"
     
-        if [ "${INPUT_ADVANCED_INSTALL}" == "Y" ]
+        if [ "${INPUT_ADVANCED_INSTALL}" == "Yes" ] || [ "${INPUT_ADVANCED_INSTALL}" == "yes" ] || [ "${INPUT_ADVANCED_INSTALL}" == "Y" ] || [ "${INPUT_ADVANCED_INSTALL}" == "y" ]
         then
             MESSAGE="Advanced Configuration Selected"
             echo_info
         
             advanced_config_generate
-        elif [ "${INPUT_ADVANCED_INSTALL}" == "N" ]
+        elif [ "${INPUT_ADVANCED_INSTALL}" == "No" ] || [ "${INPUT_ADVANCED_INSTALL}" == "no" ] || [ "${INPUT_ADVANCED_INSTALL}" == "N" ] || [ "${INPUT_ADVANCED_INSTALL}" == "n" ]
         then
             MESSAGE="Standard Configuration Selected"
             echo_info
