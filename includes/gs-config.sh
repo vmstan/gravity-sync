@@ -423,14 +423,14 @@ function advanced_config_generate {
 function config_delete {
     source ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
     MESSAGE="Configuration File Exists"
-    echo_warn
+    echo_info
     
-    echo_lines
-    cat ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
-    echo_blank
-    echo_lines
+    # echo_lines
+    # cat ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+    # echo_blank
+    # echo_lines
     
-    MESSAGE="Are you sure you want to erase this configuration?"
+    MESSAGE="Are you sure you want to erase your existing configuration?"
     echo_warn
 
     intent_validate

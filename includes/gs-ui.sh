@@ -27,7 +27,7 @@ UI_CORE_UC_SECONDARY='Secondary'
 
 # Exit
 UI_EXIT_CALC_END='after'
-UI_EXIT_ABORT='aborted'
+UI_EXIT_ABORT='exited'
 UI_EXIT_COMPLETE='completed'
 UI_EXIT_CALC_TIMER='seconds'
 

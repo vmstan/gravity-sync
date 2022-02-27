@@ -30,7 +30,7 @@ function intent_validate {
         
         if [ "${INPUT_INTENT}" != "${INTENT}" ]
         then
-            MESSAGE="${TASKTYPE} aborted"
+            MESSAGE="${TASKTYPE} excited"
             echo_info
             exit_nochange
         fi
