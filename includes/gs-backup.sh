@@ -134,7 +134,6 @@ function backup_remote_cname() {
 function backup_cleanup() {
     MESSAGE="${UI_BACKUP_PURGE}"
     echo_stat
-
     git clean -fq
     error_validate
 }

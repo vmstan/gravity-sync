@@ -15,13 +15,13 @@ BOLD='\033[1m'
 NC='\033[0m'
 
 ## Message Codes
-FAIL="[${RED}✗${NC}]"
-WARN="[${PURPLE}!${NC}]"
-GOOD="[${GREEN}✓${NC}]"
-STAT="[${CYAN}e${NC}]"
-INFO="[${YELLOW}i${NC}]"
-NEED="[${BLUE}?${NC}]"
-LOGO="[${PURPLE}∞${NC}]"
+FAIL="${RED}✗${NC}"
+WARN="${PURPLE}!${NC}"
+GOOD="${GREEN}✓${NC}"
+STAT="${CYAN}e${NC}"
+INFO="${YELLOW}i${NC}"
+NEED="${BLUE}?${NC}"
+LOGO="${PURPLE}∞${NC}"
 
 ## Echo Stack
 ### Informative
