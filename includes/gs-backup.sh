@@ -5,23 +5,6 @@
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
 # This code is called from the main gravity-sync.sh file and should not execute directly!
 
-## Backup Task
-function task_backup() {
-    TASKTYPE='BACKUP'
-    MESSAGE="${MESSAGE}: ${TASKTYPE}"
-    echo_good
-    
-    backup_settime
-    backup_local_gravity
-    backup_local_gravity_integrity
-    backup_local_custom
-    backup_local_cname
-    # backup_cleanup
-    
-    logs_export
-    exit_withchange
-}
-
 function backup_settime() {
     BACKUPTIMESTAMP=$(date +%F-%H%M%S)
 }
