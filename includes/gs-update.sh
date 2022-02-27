@@ -260,7 +260,6 @@ function task_devmode {
     fi
     
     update_gs
-    
     exit_withchange
 }
 
@@ -269,9 +268,7 @@ function task_update {
     TASKTYPE='UPDATE'
     MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
-    
     update_gs
-    
     exit_withchange
 }
 
@@ -280,7 +277,6 @@ function task_version {
     TASKTYPE='VERSION'
     MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
-    
     show_version
     exit_nochange
 }
@@ -291,8 +287,6 @@ function task_info() {
     TASKTYPE='INFO'
     MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
-    
     show_info
-    
     exit_nochange
 }
