@@ -59,7 +59,9 @@ function config_generate {
         echo_info
         advanced_config_generate
     else
-        MESSAGE="Use Advanced Installation Options? (Y/N, default N)"
+        MESSAGE="Do you want to enable advanced installation options?"
+        echo_warn
+        MESSAGE="(Y/N, default N)"
         echo_need
         read INPUT_ADVANCED_INSTALL
         INPUT_ADVANCED_INSTALL="${INPUT_ADVANCED_INSTALL:-N}"
