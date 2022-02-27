@@ -20,7 +20,6 @@ function task_configure {
     fi
     
     create_alias
-    
     exit_withchange
 }
 
@@ -50,41 +49,6 @@ function config_generate {
     
     docker_detect
     podman_detect
-    
-    if [ "${DOCKERREADY}" == "1" ] || [ "${PODMANREADY}" == "1" ]
-    then
-        MESSAGE="Container Engine Detected"
-        echo_good
-        MESSAGE="Advanced Configuration Required"
-        echo_info
-        advanced_config_generate
-    else
-        MESSAGE="Advanced or Standard"
-        echo_info
-        MESSAGE="Do you want to enable advanced installation options?"
-        echo_grav
-        MESSAGE="Yes/No"
-        echo_need
-        read INPUT_ADVANCED_INSTALL
-        INPUT_ADVANCED_INSTALL="${INPUT_ADVANCED_INSTALL:-N}"
-    
-        if [ "${INPUT_ADVANCED_INSTALL}" == "Yes" ] || [ "${INPUT_ADVANCED_INSTALL}" == "yes" ] || [ "${INPUT_ADVANCED_INSTALL}" == "Y" ] || [ "${INPUT_ADVANCED_INSTALL}" == "y" ]
-        then
-            MESSAGE="Advanced Configuration Selected"
-            echo_info
-        
-            advanced_config_generate
-        elif [ "${INPUT_ADVANCED_INSTALL}" == "No" ] || [ "${INPUT_ADVANCED_INSTALL}" == "no" ] || [ "${INPUT_ADVANCED_INSTALL}" == "N" ] || [ "${INPUT_ADVANCED_INSTALL}" == "n" ]
-        then
-            MESSAGE="Standard Configuration Selected"
-            echo_info
-        else
-            MESSAGE="Invalid Selection"
-            echo_warn
-            
-            exit_nochange
-        fi
-    fi
     
     MESSAGE="Required Gravity Sync Settings"
     echo_info
@@ -125,7 +89,39 @@ function config_generate {
     source ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
     error_validate
 
-    export_sshkey	
+    export_sshkey
+
+    if [ "${DOCKERREADY}" == "1" ] || [ "${PODMANREADY}" == "1" ]
+    then
+        MESSAGE="Container Engine Detected"
+        echo_good
+        MESSAGE="Advanced Configuration Required"
+        echo_info
+        advanced_config_generate
+    else
+        MESSAGE="Advanced or Standard"
+        echo_info
+        MESSAGE="Do you want to enable advanced installation options?"
+        echo_grav
+        MESSAGE="Yes/No"
+        echo_need
+        read INPUT_ADVANCED_INSTALL
+        INPUT_ADVANCED_INSTALL="${INPUT_ADVANCED_INSTALL:-N}"
+    
+        if [ "${INPUT_ADVANCED_INSTALL}" == "Yes" ] || [ "${INPUT_ADVANCED_INSTALL}" == "yes" ] || [ "${INPUT_ADVANCED_INSTALL}" == "Y" ] || [ "${INPUT_ADVANCED_INSTALL}" == "y" ]
+        then
+            MESSAGE="Advanced Configuration Selected"
+            echo_info
+        
+            advanced_config_generate
+        else 
+            end_config
+        fi
+    fi
+}
+
+function end_config(){
+    exit_withchange
 }
 
 ## Advanced Configuration Options
@@ -141,7 +137,7 @@ function advanced_config_generate {
         then
             MESSAGE="Local/Secondary Container Type must either be 'docker' or 'podman'"
             echo_warn
-            exit_withchanges
+            exit_withchange
         fi
 
         MESSAGE="Saving Local/Secondary Container Type Setting to ${CONFIG_FILE}"
@@ -190,7 +186,7 @@ function advanced_config_generate {
         else
             MESSAGE="This setting is required!"
             echo_warn
-            exit_withchanges
+            exit_withchange
         fi
         
         MESSAGE="Local/Secondary DNSMASQ 'etc' Volume Path? (Required, no trailing slash)"
@@ -207,7 +203,7 @@ function advanced_config_generate {
         else
             MESSAGE="This setting is required!"
             echo_warn
-            exit_withchanges
+            exit_withchange
         fi
         
         MESSAGE="Saving Local/Secondary Volume Ownership to ${CONFIG_FILE}"
@@ -227,7 +223,7 @@ function advanced_config_generate {
         then
             MESSAGE="Primary/Remote Container Type must either be 'docker' or 'podman'"
             echo_warn
-            exit_withchanges
+            exit_withchange
         fi
         MESSAGE="Saving Primary/Remote Container Type Setting to ${CONFIG_FILE}"
         echo_stat
@@ -261,7 +257,7 @@ function advanced_config_generate {
         else
             MESSAGE="This setting is required!"
             echo_warn
-            exit_withchanges
+            exit_withchange
         fi
         
         MESSAGE="Primary/Remote DNSMASQ 'etc' Volume Path? (Required, no trailing slash)"
@@ -278,7 +274,7 @@ function advanced_config_generate {
         else
             MESSAGE="This setting is required!"
             echo_warn
-            exit_withchanges
+            exit_withchange
         fi
         
         MESSAGE="Saving Primary/Remote Volume Ownership to ${CONFIG_FILE}"
