@@ -53,21 +53,18 @@ function config_generate {
     MESSAGE="Required Gravity Sync Settings"
     echo_info
 
-    MESSAGE="Primary/Remote Pi-hole Host Address (IP or DNS)"
+    MESSAGE="Primary/Remote Pi-hole Host Address"
+    echo_grav
+
+    MESSAGE="IP"
     echo_need
     read INPUT_REMOTE_HOST
-
-    if [ "${PING_AVOID}" != "1" ]
-    then
-        MESSAGE="Testing Network Connection (ICMP)"
-        echo_stat
-        ping -c 3 ${INPUT_REMOTE_HOST} >/dev/null 2>&1
-            error_validate
-    else
-        MESSAGE="Bypassing Network Testing (ICMP)"
-        echo_warn
-    fi
     
+    MESSAGE="Testing Network Connection (ICMP)"
+    echo_stat
+    ping -c 3 ${INPUT_REMOTE_HOST} >/dev/null 2>&1
+    error_validate
+
     MESSAGE="Saving Primary/Remote Host to ${CONFIG_FILE}"
     echo_stat
     sed -i "/REMOTE_HOST='192.168.1.10'/c\REMOTE_HOST='${INPUT_REMOTE_HOST}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
