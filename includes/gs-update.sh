@@ -187,16 +187,6 @@ function show_info() {
     else
         echo -e "Ping Test: Invalid Configuration"
     fi
-    
-    if [ ${BACKUP_RETAIN} == '7' ]
-    then
-        echo -e "Backup Retention: 7 days (default)"
-    elif [ ${BACKUP_RETAIN} == '1' ]
-    then
-        echo -e "Backup Retention: 1 day (custom)"
-    else
-        echo -e "Backup Retention: ${BACKUP_RETAIN} days (custom)"
-    fi
 
     BACKUP_FOLDER_SIZE=$(du -h ${LOCAL_FOLDR}/${BACKUP_FOLD}  | sed 's/\s.*$//')
     echo -e "Backup Folder Size: ${BACKUP_FOLDER_SIZE}"
