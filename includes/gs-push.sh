@@ -48,13 +48,13 @@ function push_gs_grav {
     
     MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_GRAVITY_NAME}"
     echo_stat
-    CMD_TIMEOUT='15'
+    CMD_TIMEOUT=$BACKUP_TIMEOUT
     CMD_REQUESTED="sudo chown ${RILE_OWNER} ${RIHOLE_DIR}/${GRAVITY_FI}"
     create_sshcmd
     
     MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_GRAVITY_NAME}"
     echo_stat
-    CMD_TIMEOUT='15'
+    CMD_TIMEOUT=$BACKUP_TIMEOUT
     CMD_REQUESTED="sudo chmod 664 ${RIHOLE_DIR}/${GRAVITY_FI}"
     create_sshcmd
 }
@@ -84,13 +84,13 @@ function push_gs_cust {
             
             MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_CUSTOM_NAME}"
             echo_stat
-            CMD_TIMEOUT='15'
+            CMD_TIMEOUT=$BACKUP_TIMEOUT
             CMD_REQUESTED="sudo chown root:root ${RIHOLE_DIR}/${CUSTOM_DNS}"
             create_sshcmd
             
             MESSAGE="${UI_SET_FILE_PERMISSIONS} ${UI_CUSTOM_NAME}"
             echo_stat
-            CMD_TIMEOUT='15'
+            CMD_TIMEOUT=$BACKUP_TIMEOUT
             CMD_REQUESTED="sudo chmod 644 ${RIHOLE_DIR}/${CUSTOM_DNS}"
             create_sshcmd
         fi
@@ -122,14 +122,14 @@ function push_gs_cname {
             
             MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_CNAME_NAME}"
             echo_stat
-            CMD_TIMEOUT='15'
+            CMD_TIMEOUT=$BACKUP_TIMEOUT
             CMD_REQUESTED="sudo chown root:root ${RNSMAQ_DIR}/${CNAME_CONF}"
             create_sshcmd
             
                         
             MESSAGE="${UI_SET_FILE_PERMISSIONS} ${UI_CNAME_NAME}"
             echo_stat
-            CMD_TIMEOUT='15'
+            CMD_TIMEOUT=$BACKUP_TIMEOUT
             CMD_REQUESTED="sudo chmod 644 ${RNSMAQ_DIR}/${CNAME_CONF}"
             create_sshcmd
         fi
@@ -144,13 +144,13 @@ function push_gs_reload {
     
     MESSAGE="${UI_FTLDNS_CONFIG_PUSH_UPDATE}"
     echo_stat
-    CMD_TIMEOUT='15'
+    CMD_TIMEOUT=$BACKUP_TIMEOUT
     CMD_REQUESTED="${RH_EXEC} restartdns reload-lists"
     create_sshcmd
     
     MESSAGE="${UI_FTLDNS_CONFIG_PUSH_RELOAD}"
     echo_stat
-    CMD_TIMEOUT='15'
+    CMD_TIMEOUT=$BACKUP_TIMEOUT
     CMD_REQUESTED="${RH_EXEC} restartdns"
     create_sshcmd
 }
