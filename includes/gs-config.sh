@@ -57,7 +57,7 @@ function config_generate {
     echo_need
     read INPUT_REMOTE_HOST
     
-    MESSAGE="Testing Network Connection (ICMP)"
+    MESSAGE="${UI_CONFIG_ICMP_TEST} ${INPUT_REMOTE_HOST}"
     echo_stat
     ping -c 3 ${INPUT_REMOTE_HOST} >/dev/null 2>&1
     error_validate
