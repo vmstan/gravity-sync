@@ -86,7 +86,10 @@ function config_generate {
     source ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
     error_validate
 
+    echo_lines
     export_sshkey
+    echo_lines
+
     MESSAGE="${UI_CONFIG_SSH_KEYPAIR} ${INPUT_REMOTE_HOST}"
     echo_good_clean
 
