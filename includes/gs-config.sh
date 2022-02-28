@@ -142,7 +142,9 @@ function end_config(){
 
 ## Advanced Configuration Options
 function advanced_config_generate {
-    MESSAGE="Local/Secondary Pi-hole Instance Type? (Allowed: 'docker' or 'podman' or 'default')"
+    MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP} ${UI_CONFIG_INSTANCEREQ}"
+    echo_grav
+    MESSAGE="(Allowed: 'docker' or 'podman' or 'default')"
     echo_need
     read INPUT_PH_IN_TYPE
     INPUT_PH_IN_TYPE="${INPUT_PH_IN_TYPE:-default}"
@@ -151,7 +153,7 @@ function advanced_config_generate {
     then
         if [ "${INPUT_PH_IN_TYPE}" != "docker" ] && [ "${INPUT_PH_IN_TYPE}" != "podman" ]
         then
-            MESSAGE="Local/Secondary Container Type must either be 'docker' or 'podman'"
+            MESSAGE="${UI_CONFIG_LOCALSEC} Container Type must either be 'docker' or 'podman'"
             echo_warn
             exit_withchange
         fi
@@ -175,7 +177,7 @@ function advanced_config_generate {
         fi
         echo_lines
         
-        MESSAGE="Local/Secondary Container Name? (Leave blank for default 'pihole')"
+        MESSAGE="${UI_CONFIG_LOCALSEC} Container Name? (Leave blank for default 'pihole')"
         echo_need
         read INPUT_DOCKER_CON
         INPUT_DOCKER_CON="${INPUT_DOCKER_CON:-pihole}"
@@ -188,13 +190,13 @@ function advanced_config_generate {
             error_validate
         fi
         
-        MESSAGE="Local/Secondary Pi-hole 'etc' Volume Path? (Required, no trailing slash)"
+        MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP} 'etc' Volume Path? (Required, no trailing slash)"
         echo_need
         read INPUT_PIHOLE_DIR
         
         if [ "${INPUT_PIHOLE_DIR}" != "" ]
         then
-            MESSAGE="Saving Local/Secondary Pi-hole Volume to ${CONFIG_FILE}"
+            MESSAGE="Saving Local/Secondary ${UI_CORE_APP} Volume to ${CONFIG_FILE}"
             echo_stat
             sed -i "/# PIHOLE_DIR=''/c\PIHOLE_DIR='${INPUT_PIHOLE_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
@@ -205,7 +207,7 @@ function advanced_config_generate {
             exit_withchange
         fi
         
-        MESSAGE="Local/Secondary DNSMASQ 'etc' Volume Path? (Required, no trailing slash)"
+        MESSAGE="${UI_CONFIG_LOCALSEC} DNSMASQ 'etc' Volume Path? (Required, no trailing slash)"
         echo_need
         read INPUT_DNSMAQ_DIR
         
@@ -228,7 +230,7 @@ function advanced_config_generate {
         error_validate
     fi
     
-    MESSAGE="Primary/Remote Pi-hole Instance Type? (Allowed: 'docker' or 'podman' or 'default')"
+    MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP} ${UI_CONFIG_INSTANCEREQ} (Allowed: 'docker' or 'podman' or 'default')"
     echo_need
     read INPUT_RH_IN_TYPE
     INPUT_RH_IN_TYPE="${INPUT_RH_IN_TYPE:-default}"
@@ -237,7 +239,7 @@ function advanced_config_generate {
     then
         if [ "${INPUT_RH_IN_TYPE}" != "docker" ] && [ "${INPUT_RH_IN_TYPE}" != "podman" ]
         then
-            MESSAGE="Primary/Remote Container Type must either be 'docker' or 'podman'"
+            MESSAGE="${UI_CONFIG_REMOTEPRI} Container Type must either be 'docker' or 'podman'"
             echo_warn
             exit_withchange
         fi
@@ -246,7 +248,7 @@ function advanced_config_generate {
         sed -i "/# RH_IN_TYPE=''/c\RH_IN_TYPE='${INPUT_RH_IN_TYPE}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
         
-        MESSAGE="Primary/Remote Container Name? (Leave blank for default 'pihole')"
+        MESSAGE="${UI_CONFIG_REMOTEPRI} Container Name? (Leave blank for default 'pihole')"
         echo_need
         read INPUT_ROCKER_CON
         INPUT_ROCKER_CON="${INPUT_ROCKER_CON:-pihole}"
@@ -259,13 +261,13 @@ function advanced_config_generate {
             error_validate
         fi
         
-        MESSAGE="Primary/Remote Pi-hole 'etc' Volume Path? (Required, no trailing slash)"
+        MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP} 'etc' Volume Path? (Required, no trailing slash)"
         echo_need
         read INPUT_RIHOLE_DIR
         
         if [ "${INPUT_RIHOLE_DIR}" != "" ]
         then
-            MESSAGE="Saving Primary/Remote Pi-hole Volume to ${CONFIG_FILE}"
+            MESSAGE="Saving Primary/Remote ${UI_CORE_APP} Volume to ${CONFIG_FILE}"
             echo_stat
             sed -i "/# RIHOLE_DIR=''/c\RIHOLE_DIR='${INPUT_RIHOLE_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
@@ -276,7 +278,7 @@ function advanced_config_generate {
             exit_withchange
         fi
         
-        MESSAGE="Primary/Remote DNSMASQ 'etc' Volume Path? (Required, no trailing slash)"
+        MESSAGE="${UI_CONFIG_REMOTEPRI} DNSMASQ 'etc' Volume Path? (Required, no trailing slash)"
         echo_need
         read INPUT_RNSMAQ_DIR
         
@@ -302,14 +304,14 @@ function advanced_config_generate {
         
     if [ "$SKIP_PIHOLE_DIR" != "1" ]
     then
-        MESSAGE="Local/Secondary Pi-hole Settings Directory Path? (Leave blank for default '/etc/pihole')"
+        MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP} Settings Directory Path? (Leave blank for default '/etc/pihole')"
         echo_need
         read INPUT_PIHOLE_DIR
         INPUT_PIHOLE_DIR="${INPUT_PIHOLE_DIR:-/etc/pihole}"
         
         if [ "${INPUT_PIHOLE_DIR}" != "/etc/pihole" ]
         then
-            MESSAGE="Saving Local/Secondary Pi-hole Settings Directory Path to ${CONFIG_FILE}"
+            MESSAGE="Saving Local/Secondary ${UI_CORE_APP} Settings Directory Path to ${CONFIG_FILE}"
             echo_stat
             sed -i "/# PIHOLE_DIR=''/c\PIHOLE_DIR='${INPUT_PIHOLE_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
@@ -318,14 +320,14 @@ function advanced_config_generate {
     
     if [ "$SKIP_RIHOLE_DIR" != "1" ]
     then
-        MESSAGE="Primary/Remote Pi-hole Settings Directory Path? (Leave blank for default '/etc/pihole')"
+        MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP} Settings Directory Path? (Leave blank for default '/etc/pihole')"
         echo_need
         read INPUT_RIHOLE_DIR
         INPUT_RIHOLE_DIR="${INPUT_RIHOLE_DIR:-/etc/pihole}"
         
         if [ "${INPUT_RIHOLE_DIR}" != "/etc/pihole" ]
         then
-            MESSAGE="Saving Primary/Remote Pi-hole Settings Directory Path to ${CONFIG_FILE}"
+            MESSAGE="Saving Primary/Remote ${UI_CORE_APP} Settings Directory Path to ${CONFIG_FILE}"
             echo_stat
             sed -i "/# RIHOLE_DIR=''/c\RIHOLE_DIR='${INPUT_RIHOLE_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
@@ -334,7 +336,7 @@ function advanced_config_generate {
     
     if [ "$SKIP_DNSMASQ_DIR" != "1" ]
     then
-        MESSAGE="Local/Secondary DNSMASQ Settings Directory Path? (Leave blank for default '/etc/dnsmasq.d')"
+        MESSAGE="${UI_CONFIG_LOCALSEC} DNSMASQ Settings Directory Path? (Leave blank for default '/etc/dnsmasq.d')"
         echo_need
         read INPUT_DNSMASQ_DIR
         INPUT_DNSMASQ_DIR="${INPUT_DNSMASQ_DIR:-/etc/dnsmasq.d}"
@@ -350,7 +352,7 @@ function advanced_config_generate {
     
     if [ "$SKIP_RNSMASQ_DIR" != "1" ]
     then
-        MESSAGE="Primary/Remote DNSMASQ Settings Directory Path? (Leave blank for default '/etc/dnsmasq.d')"
+        MESSAGE="${UI_CONFIG_REMOTEPRI} DNSMASQ Settings Directory Path? (Leave blank for default '/etc/dnsmasq.d')"
         echo_need
         read INPUT_RNSMASQ_DIR
         INPUT_RNSMASQ_DIR="${INPUT_RNSMASQ_DIR:-/etc/dnsmasq.d}"
