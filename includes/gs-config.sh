@@ -158,15 +158,13 @@ function advanced_config_generate {
             exit_withchange
         fi
 
-        MESSAGE="Saving ${UI_CONFIG_LOCAL} ${UI_CONFIG_CONTAINER_TYPE} to ${CONFIG_FILE}"
+        MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_CONTAINER_TYPE} to ${CONFIG_FILE}"
         echo_stat
         sed -i "/# PH_IN_TYPE=''/c\PH_IN_TYPE='${INPUT_PH_IN_TYPE}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
         
-        
-        MESSAGE="Displaying Currently Running Container Images"
+        MESSAGE="${UI_CONFIG_CONT_DETECT} ${UI_CONFIG_IMAGES} ${UI_CONFIG_CONT_DETECTED}"
         echo_info
-        
         echo_lines
         if [ "${INPUT_PH_IN_TYPE}" == "docker" ] 
         then
@@ -177,14 +175,16 @@ function advanced_config_generate {
         fi
         echo_lines
         
-        MESSAGE="${UI_CONFIG_LOCALSEC} Container Name? (Leave blank for default 'pihole')"
+        MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP} ${UI_CONFIG_INSTANCENAME}"
+        echo_grav
+        MESSAGE="${UI_CONFIG_PIHOLE_DEFAULT}"
         echo_need
         read INPUT_DOCKER_CON
         INPUT_DOCKER_CON="${INPUT_DOCKER_CON:-pihole}"
         
         if [ "${INPUT_DOCKER_CON}" != "pihole" ]
         then
-            MESSAGE="Saving Local/Secondary Container Name to ${CONFIG_FILE}"
+            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_CONTAINER_NAME} to ${CONFIG_FILE}"
             echo_stat
             sed -i "/# DOCKER_CON=''/c\DOCKER_CON='${INPUT_DOCKER_CON}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
