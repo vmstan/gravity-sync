@@ -25,7 +25,7 @@ function task_configure {
 
 ## Generate New Configuration
 function config_generate {  
-    MESSAGE="Creating New ${CONFIG_FILE} from Template"
+    MESSAGE="${UI_CONFIG_CREATING} ${CONFIG_FILE}"
     echo_stat
     cp ${LOCAL_FOLDR}/templates/${CONFIG_FILE}.example ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
     error_validate
@@ -34,21 +34,18 @@ function config_generate {
     echo -e "Welcome to the ${PURPLE}Gravity Sync${NC} Configuration Wizard"
     echo -e "Please read through ${BLUE}https://github.com/vmstan/gravity-sync/wiki${NC} before you continue!"
     echo_blank
-    echo -e "If the installer detects that you have a supported container engine (Docker or Podman) installed,"
-    echo -e "you will be directed to the advanced installation options. Otherwise you can manually enable this" 
-    echo -e "to adjust settings such as custom Pi-hole binary or configuration directories, SSH options, CNAME"
-    echo -e "replication, and backup retention."
+    echo -e "If the installer detects that you have a supported container engine (Docker or Podman) installed"
+    echo -e "on your local Pi-hole, you will be directed to the advanced installation options. If you using " 
+    echo -e "containers on your remote Pi-hole, you'll need to select this option manually to adjust settings"
+    echo -e "such as custom Pi-hole binary or configuration directories, CNAME replication, etc."
     echo_blank
     echo -e "Gravity Sync uses a primary/secondary model for replication, and normally syncs changes from the "
     echo -e "primary to the secondary. The LOCAL Pi-hole where you are running this configuration script is"
-    echo -e "considered the SECONDARY Pi-hole! The REMOTE Pi-hole where you will normally make configuration" 
-    echo -e "changes is considered the PRIMARY Pi-hole."
+    echo -e "considered the SECONDARY Pi-hole! The REMOTE Pi-hole where you normally make Gravity Database" 
+    echo -e "changes, and is considered the PRIMARY Pi-hole."
     echo_blank
     echo -e "Confused? Please refer back to the documentation."
     echo_lines
-    
-    docker_detect
-    podman_detect
     
     MESSAGE="Required Gravity Sync Settings"
     echo_info
@@ -90,6 +87,8 @@ function config_generate {
     error_validate
 
     export_sshkey
+    docker_detect
+    podman_detect
 
     if [ "${DOCKERREADY}" == "1" ] || [ "${PODMANREADY}" == "1" ]
     then
@@ -346,14 +345,14 @@ function advanced_config_generate {
         fi
     fi
     
-    MESSAGE="Enable Replicate 'Local DNS Records' Feature? (Y/N, default 'Y')"
+    MESSAGE="${UI_ENABLE_REPLICATION_QUEST} ${UI_DNS_NAME}? ${UI_CONFIG_YESNOY}"
     echo_need
     read INPUT_SKIP_CUSTOM
     INPUT_SKIP_CUSTOM="${INPUT_SKIP_CUSTOM:-Y}"
     
     if [ "${INPUT_SKIP_CUSTOM}" != "Y" ]
     then
-        MESSAGE="Saving Local DNS Preference to ${CONFIG_FILE}"
+        MESSAGE="${UI_DNS_NAME} ${UI_CONFIG_PREF_SAVED} ${CONFIG_FILE}"
         echo_stat
         sed -i "/# SKIP_CUSTOM=''/c\SKIP_CUSTOM='1'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
@@ -361,14 +360,14 @@ function advanced_config_generate {
     
     if [ "${INPUT_SKIP_CUSTOM}" == "Y" ]
     then
-        MESSAGE="Enable Replicate 'Local CNAME Records' Feature? (Y/N, default 'Y')"
+        MESSAGE="${UI_ENABLE_REPLICATION_QUEST} ${UI_CNAME_NAME}? ${UI_CONFIG_YESNOY}"
         echo_need
         read INPUT_INCLUDE_CNAME
         INPUT_INCLUDE_CNAME="${INPUT_INCLUDE_CNAME:-Y}"
         
         if [ "${INPUT_INCLUDE_CNAME}" == "Y" ]
         then
-            MESSAGE="Saving Local CNAME Preference to ${CONFIG_FILE}"
+            MESSAGE="${UI_CNAME_NAME} ${UI_CONFIG_PREF_SAVED} ${CONFIG_FILE}"
             echo_stat
             sed -i "/# INCLUDE_CNAME=''/c\INCLUDE_CNAME='1'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
@@ -379,20 +378,15 @@ function advanced_config_generate {
 ## Delete Existing Configuration
 function config_delete {
     source ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
-    MESSAGE="Configuration File Exists"
-    echo_info
-    
-    # echo_lines
-    # cat ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
-    # echo_blank
-    # echo_lines
-    
-    MESSAGE="Are you sure you want to erase your existing configuration?"
-    echo_warn
+    MESSAGE="${CONFIG_FILE} already exists"
+    echo_info  
+  
+    MESSAGE="${UI_CONFIG_AREYOUSURE}"
+    echo_grav
 
     intent_validate
 
-    MESSAGE="Erasing Existing Configuration"
+    MESSAGE="${UI_CONFIG_ERASING} ${CONFIG_FILE}"
     echo_stat
     rm -f ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
@@ -426,9 +420,12 @@ function podman_detect {
 
 ## Create Bash Alias
 function create_alias {
-    MESSAGE="Creating Bash Alias"
+    MESSAGE="${UI_CONFIG_BASH}"
     echo_stat
     
     echo -e "alias gravity-sync='${GS_FILEPATH}'" | sudo tee -a /etc/bash.bashrc > /dev/null
         error_validate
+
+    MESSAGE="${UI_CONFIG_ALIAS}"
+    echo_info
 }

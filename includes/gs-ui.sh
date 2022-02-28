@@ -115,3 +115,14 @@ UI_AUTO_CRON_DISPLAY_FREQ='Select synchronization frequency (in minutes)'
 UI_AUTO_CRON_SELECT_FREQ='Valid options are 5, 10, 15, 30 or 0 to disable (default: 15)'
 UI_AUTO_CRON_SAVING='Saving new synchronization task to crontab'
 UI_AUTO_CRON_DISABLED='Synchronization automation has been disabled'
+
+# Configuration
+UI_CONFIG_YESNOY="(Y/N, default 'Y')"
+UI_CONFIG_YESNON="(Y/N, default 'N')"
+UI_ENABLE_REPLICATION_QUEST='Enable replication of'
+UI_CONFIG_PREF_SAVED='preference saved to'
+UI_CONFIG_AREYOUSURE='Are you sure you want to erase your existing configuration?'
+UI_CONFIG_ERASING='Erasing existing'
+UI_CONFIG_CREATING='Creating new'
+UI_CONFIG_BASH='Creating gravity-sync alias in Bash config'
+UI_CONFIG_ALIAS="You must reload your session for 'gravity-sync' alias to function"
