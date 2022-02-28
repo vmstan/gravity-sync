@@ -127,3 +127,5 @@ UI_CONFIG_CREATING='Creating new'
 UI_CONFIG_BASH='Creating gravity-sync alias in Bash config'
 UI_CONFIG_ALIAS="You must reload your session for 'gravity-sync' alias to function"
 UI_CONFIG_ICMP_TEST='Testing network connection to'
+UI_CONFIG_REQUIRED='required settings'
+UI_CONFIG_ADVANCED='advanced settings'

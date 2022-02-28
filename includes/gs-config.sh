@@ -47,7 +47,7 @@ function config_generate {
     echo -e "Confused? Please refer back to the documentation."
     echo_lines
     
-    MESSAGE="Required Gravity Sync Settings"
+    MESSAGE="${PROGRAM} ${UI_CONFIG_REQUIRED}"
     echo_info
 
     MESSAGE="Primary/Remote Pi-hole Host Address"
