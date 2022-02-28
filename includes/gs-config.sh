@@ -127,18 +127,17 @@ function config_generate {
 
 function end_config(){
     echo_lines
-    echo -e "Configuration has been completed successfully, if you've still not read through the instructions"
+    echo -e "Configuration has been completed successfully, if you've still not read the instructions"
     echo -e "please read through ${BLUE}https://github.com/vmstan/gravity-sync/wiki${NC} before you continue!"
     echo_blank
     echo -e "Your next step is to complete a sync of data from your remote Pi-hole to this local Pi-hole."
     echo -e "ex: gravity-sync pull" 
-    echo -e "If this completes successfully you can automate future syncs using."
+    echo_blank
+    echo -e "If this completes successfully you can automate future sync jobs to run at a regular interval."
     echo -e "ex: gravity-sync automate"
     echo_blank
-    echo -e "Still confused? Please, seriously, refer back to the documentation."
+    echo -e "Still confused? Please refer back to the documentation."
     echo_lines
-    
-    exit_withchange
 }
 
 ## Advanced Configuration Options
