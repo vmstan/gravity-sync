@@ -144,7 +144,7 @@ function end_config(){
 function advanced_config_generate {
     MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP} ${UI_CONFIG_INSTANCEREQ}"
     echo_grav
-    MESSAGE="(Allowed: 'docker' or 'podman' or 'default')"
+    MESSAGE="${UI_CONFIG_INSTANCETYPE}"
     echo_need
     read INPUT_PH_IN_TYPE
     INPUT_PH_IN_TYPE="${INPUT_PH_IN_TYPE:-default}"
@@ -153,12 +153,12 @@ function advanced_config_generate {
     then
         if [ "${INPUT_PH_IN_TYPE}" != "docker" ] && [ "${INPUT_PH_IN_TYPE}" != "podman" ]
         then
-            MESSAGE="${UI_CONFIG_LOCALSEC} Container Type must either be 'docker' or 'podman'"
+            MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CONFIG_INSTANCE_ERROR}"
             echo_warn
             exit_withchange
         fi
 
-        MESSAGE="Saving Local/Secondary Container Type Setting to ${CONFIG_FILE}"
+        MESSAGE="Saving ${UI_CONFIG_LOCAL} ${UI_CONFIG_CONTAINER_TYPE} to ${CONFIG_FILE}"
         echo_stat
         sed -i "/# PH_IN_TYPE=''/c\PH_IN_TYPE='${INPUT_PH_IN_TYPE}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
@@ -230,7 +230,9 @@ function advanced_config_generate {
         error_validate
     fi
     
-    MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP} ${UI_CONFIG_INSTANCEREQ} (Allowed: 'docker' or 'podman' or 'default')"
+    MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP} ${UI_CONFIG_INSTANCEREQ}"
+    echo_grav
+    MESSAGE="${UI_CONFIG_INSTANCETYPE}"
     echo_need
     read INPUT_RH_IN_TYPE
     INPUT_RH_IN_TYPE="${INPUT_RH_IN_TYPE:-default}"
@@ -239,11 +241,11 @@ function advanced_config_generate {
     then
         if [ "${INPUT_RH_IN_TYPE}" != "docker" ] && [ "${INPUT_RH_IN_TYPE}" != "podman" ]
         then
-            MESSAGE="${UI_CONFIG_REMOTEPRI} Container Type must either be 'docker' or 'podman'"
+            MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CONFIG_INSTANCE_ERROR}"
             echo_warn
             exit_withchange
         fi
-        MESSAGE="Saving Primary/Remote Container Type Setting to ${CONFIG_FILE}"
+        MESSAGE="Saving ${UI_CONFIG_REMOTE} ${UI_CONFIG_CONTAINER_TYPE} to ${CONFIG_FILE}"
         echo_stat
         sed -i "/# RH_IN_TYPE=''/c\RH_IN_TYPE='${INPUT_RH_IN_TYPE}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
