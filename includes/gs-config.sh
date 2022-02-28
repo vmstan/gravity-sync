@@ -62,7 +62,7 @@ function config_generate {
     ping -c 3 ${INPUT_REMOTE_HOST} >/dev/null 2>&1
     error_validate
 
-    MESSAGE="Saving Primary/Remote Host to ${CONFIG_FILE}"
+    MESSAGE="Saving ${INPUT_REMOTE_HOST} host to ${CONFIG_FILE}"
     echo_stat
     sed -i "/REMOTE_HOST='192.168.1.10'/c\REMOTE_HOST='${INPUT_REMOTE_HOST}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
     error_validate
@@ -74,40 +74,46 @@ function config_generate {
     echo_need
     read INPUT_REMOTE_USER
     
-    MESSAGE="Saving User "${INPUT_REMOTE_USER}" to ${CONFIG_FILE}"
+    MESSAGE="Saving ${INPUT_REMOTE_USER}@${INPUT_REMOTE_HOST} user to ${CONFIG_FILE}"
     echo_stat
     sed -i "/REMOTE_USER='pi'/c\REMOTE_USER='${INPUT_REMOTE_USER}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
     error_validate
 
     generate_sshkey
     
-    MESSAGE="Importing New ${CONFIG_FILE}"
+    MESSAGE="${UI_CORE_LOADING} ${CONFIG_FILE}"
     echo_stat
     source ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
     error_validate
 
     export_sshkey
+
+    MESSAGE="${UI_CONFIG_CONT_LOOKUP}"
+    echo_stat
+
     docker_detect
     podman_detect
 
     if [ "${DOCKERREADY}" == "1" ] || [ "${PODMANREADY}" == "1" ]
     then
-        MESSAGE="Container Engine Detected"
+        MESSAGE="${UI_CONFIG_CONT_DETECT} ${UI_CONFIG_CONT_DETECTED}"
         echo_good
-        MESSAGE="Advanced Configuration Required"
+        MESSAGE="${UI_CORE_LOADING} ${UI_CONFIG_ADVANCED}"
         echo_info
         advanced_config_generate
     else
-        MESSAGE="Do you want to enable advanced installation options?"
+        MESSAGE="${UI_CONFIG_CONT_DETECT} ${UI_CONFIG_CONT_DETECTNA}"
+        echo_good
+        MESSAGE="${UI_CONFIG_DOADVANCED}"
         echo_grav
-        MESSAGE="Yes/No"
+        MESSAGE="${UI_CONFIG_YESNON}"
         echo_need
         read INPUT_ADVANCED_INSTALL
         INPUT_ADVANCED_INSTALL="${INPUT_ADVANCED_INSTALL:-N}"
     
         if [ "${INPUT_ADVANCED_INSTALL}" == "Yes" ] || [ "${INPUT_ADVANCED_INSTALL}" == "yes" ] || [ "${INPUT_ADVANCED_INSTALL}" == "Y" ] || [ "${INPUT_ADVANCED_INSTALL}" == "y" ]
         then
-            MESSAGE="Advanced Configuration Selected"
+            MESSAGE="${UI_CORE_LOADING} ${UI_CONFIG_ADVANCED}"
             echo_info
         
             advanced_config_generate
