@@ -87,6 +87,8 @@ function config_generate {
     error_validate
 
     export_sshkey
+    MESSAGE="${UI_CONFIG_SSH_KEYPAIR} ${INPUT_REMOTE_HOST}"
+    echo_good_clean
 
     MESSAGE="${UI_CONFIG_CONT_LOOKUP}"
     echo_stat
@@ -124,6 +126,18 @@ function config_generate {
 }
 
 function end_config(){
+    echo_lines
+    echo -e "Configuration has been completed successfully, if you've still not read through the instructions"
+    echo -e "please read through ${BLUE}https://github.com/vmstan/gravity-sync/wiki${NC} before you continue!"
+    echo_blank
+    echo -e "Your next step is to complete a sync of data from your remote Pi-hole to this local Pi-hole."
+    echo -e "ex: gravity-sync pull" 
+    echo -e "If this completes successfully you can automate future syncs using."
+    echo -e "ex: gravity-sync automate"
+    echo_blank
+    echo -e "Still confused? Please, seriously, refer back to the documentation."
+    echo_lines
+    
     exit_withchange
 }
 
@@ -351,7 +365,7 @@ function advanced_config_generate {
         fi
     fi
     
-    MESSAGE="${UI_ENABLE_REPLICATION_QUEST} ${UI_DNS_NAME}? ${UI_CONFIG_YESNOY}"
+    MESSAGE="${UI_ENABLE_REPLICATION_QUEST} ${UI_CUSTOM_NAME}? ${UI_CONFIG_YESNOY}"
     echo_need
     read INPUT_SKIP_CUSTOM
     INPUT_SKIP_CUSTOM="${INPUT_SKIP_CUSTOM:-Y}"
@@ -379,6 +393,8 @@ function advanced_config_generate {
             error_validate
         fi
     fi
+
+    end_config
 }
 
 ## Delete Existing Configuration
