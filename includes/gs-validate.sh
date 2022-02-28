@@ -262,4 +262,3 @@ function validate_cname_permissions() {
         error_validate
     fi
 }
-
