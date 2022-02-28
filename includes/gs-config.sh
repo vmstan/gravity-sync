@@ -50,7 +50,7 @@ function config_generate {
     MESSAGE="${PROGRAM} ${UI_CONFIG_REQUIRED}"
     echo_info
 
-    MESSAGE="Primary/Remote Pi-hole Host Address"
+    MESSAGE="${UI_CORE_APP} ${UI_CONFIG_REMOTE} ${UI_CONFIG_HOSTREQ}"
     echo_grav
 
     MESSAGE="IP"
@@ -67,7 +67,7 @@ function config_generate {
     sed -i "/REMOTE_HOST='192.168.1.10'/c\REMOTE_HOST='${INPUT_REMOTE_HOST}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
     error_validate
     
-    MESSAGE="Existing SSH User for ${INPUT_REMOTE_HOST}"
+    MESSAGE="${UI_CORE_APP} ${UI_CONFIG_REMOTE} ${UI_CONFIG_USERREQ} for ${INPUT_REMOTE_HOST}"
     echo_grav
 
     MESSAGE="User"

@@ -129,3 +129,6 @@ UI_CONFIG_ALIAS="You must reload your session for 'gravity-sync' alias to functi
 UI_CONFIG_ICMP_TEST='Testing network connection to'
 UI_CONFIG_REQUIRED='required settings'
 UI_CONFIG_ADVANCED='advanced settings'
+UI_CONFIG_REMOTE='remote host'
+UI_CONFIG_HOSTREQ='address required'
+UI_CONFIG_USERREQ='SSH user required'
