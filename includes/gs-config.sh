@@ -408,10 +408,10 @@ function advanced_config_generate {
     then
         MESSAGE="${UI_ENABLE_REPLICATION_QUEST} ${UI_CNAME_NAME}"
         echo_inf1
-        MESSAGE="${UI_CONFIG_YESNOY}"
+        MESSAGE="${UI_CONFIG_YESNON}"
         echo_need
         read INPUT_INCLUDE_CNAME
-        INPUT_INCLUDE_CNAME="${INPUT_INCLUDE_CNAME:-Y}"
+        INPUT_INCLUDE_CNAME="${INPUT_INCLUDE_CNAME:-N}"
         
         if [ "${INPUT_INCLUDE_CNAME}" == "Y" ]
         then
