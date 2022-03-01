@@ -62,7 +62,7 @@ function config_generate {
     ping -c 3 ${INPUT_REMOTE_HOST} >/dev/null 2>&1
     error_validate
 
-    MESSAGE="Saving ${INPUT_REMOTE_HOST} host to ${CONFIG_FILE}"
+    MESSAGE="${UI_CONFIG_SAVING} ${INPUT_REMOTE_HOST} host to ${CONFIG_FILE}"
     echo_stat
     sed -i "/REMOTE_HOST='192.168.1.10'/c\REMOTE_HOST='${INPUT_REMOTE_HOST}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
     error_validate
@@ -74,7 +74,7 @@ function config_generate {
     echo_need
     read INPUT_REMOTE_USER
     
-    MESSAGE="Saving ${INPUT_REMOTE_USER}@${INPUT_REMOTE_HOST} user to ${CONFIG_FILE}"
+    MESSAGE="${UI_CONFIG_SAVING} ${INPUT_REMOTE_USER}@${INPUT_REMOTE_HOST} user to ${CONFIG_FILE}"
     echo_stat
     sed -i "/REMOTE_USER='pi'/c\REMOTE_USER='${INPUT_REMOTE_USER}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
     error_validate
@@ -152,7 +152,7 @@ function advanced_config_generate {
     read INPUT_PH_IN_TYPE
     INPUT_PH_IN_TYPE="${INPUT_PH_IN_TYPE:-default}"
     
-    if [ "${INPUT_PH_IN_TYPE}" != "default" ] || [ "${INPUT_PH_IN_TYPE}" != "standard" ]
+    if [ "${INPUT_PH_IN_TYPE}" != "default" ]
     then
         if [ "${INPUT_PH_IN_TYPE}" != "docker" ] && [ "${INPUT_PH_IN_TYPE}" != "podman" ]
         then
@@ -220,7 +220,7 @@ function advanced_config_generate {
         
         if [ "${INPUT_DNSMAQ_DIR}" != "" ]
         then
-            MESSAGE="Saving Local/Secondary ${UI_CORE_APP_DNS} Volume to ${CONFIG_FILE}"
+            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
             echo_stat
             sed -i "/# DNSMAQ_DIR=''/c\DNSMAQ_DIR='${INPUT_DNSMAQ_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
@@ -231,7 +231,7 @@ function advanced_config_generate {
             exit_withchange
         fi
         
-        MESSAGE="Saving Local/Secondary Volume Ownership to ${CONFIG_FILE}"
+        MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} Volume Ownership to ${CONFIG_FILE}"
         echo_stat
         sed -i "/# FILE_OWNER=''/c\FILE_OWNER='999:999'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
@@ -252,7 +252,7 @@ function advanced_config_generate {
             echo_warn
             exit_withchange
         fi
-        MESSAGE="Saving ${UI_CONFIG_REMOTE} ${UI_CONFIG_CONTAINER_TYPE} to ${CONFIG_FILE}"
+        MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CONFIG_CONTAINER_TYPE} to ${CONFIG_FILE}"
         echo_stat
         sed -i "/# RH_IN_TYPE=''/c\RH_IN_TYPE='${INPUT_RH_IN_TYPE}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
@@ -264,19 +264,19 @@ function advanced_config_generate {
         
         if [ "${INPUT_ROCKER_CON}" != "pihole" ]
         then
-            MESSAGE="Saving Primary/Remote Container Name to ${CONFIG_FILE}"
+            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} Container Name to ${CONFIG_FILE}"
             echo_stat
             sed -i "/# ROCKER_CON=''/c\ROCKER_CON='${INPUT_ROCKER_CON}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
         fi
         
-        MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP} 'etc' Volume Path? (Required, no trailing slash)"
+        MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH} (Required, no trailing slash)"
         echo_need
         read INPUT_RIHOLE_DIR
         
         if [ "${INPUT_RIHOLE_DIR}" != "" ]
         then
-            MESSAGE="Saving Primary/Remote ${UI_CORE_APP} Volume to ${CONFIG_FILE}"
+            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
             echo_stat
             sed -i "/# RIHOLE_DIR=''/c\RIHOLE_DIR='${INPUT_RIHOLE_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
@@ -287,13 +287,13 @@ function advanced_config_generate {
             exit_withchange
         fi
         
-        MESSAGE="${UI_CONFIG_REMOTEPRI} DNSMASQ 'etc' Volume Path? (Required, no trailing slash)"
+        MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH} (Required, no trailing slash)"
         echo_need
         read INPUT_RNSMAQ_DIR
         
         if [ "${INPUT_RNSMAQ_DIR}" != "" ]
         then
-            MESSAGE="Saving Primary/Remote DNSMASQ Volume to ${CONFIG_FILE}"
+            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
             echo_stat
             sed -i "/# RNSMAQ_DIR=''/c\RNSMAQ_DIR='${INPUT_RNSMAQ_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
@@ -304,7 +304,7 @@ function advanced_config_generate {
             exit_withchange
         fi
         
-        MESSAGE="Saving Primary/Remote Volume Ownership to ${CONFIG_FILE}"
+        MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} Volume Ownership to ${CONFIG_FILE}"
         echo_stat
         sed -i "/# RILE_OWNER=''/c\RILE_OWNER='999:999'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
@@ -313,14 +313,14 @@ function advanced_config_generate {
         
     if [ "$SKIP_PIHOLE_DIR" != "1" ]
     then
-        MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP} Settings Directory Path? (Leave blank for default '/etc/pihole')"
+        MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP} ${UI_CONFIG_SETTING_DIR_PATH} (Leave blank for default '/etc/pihole')"
         echo_need
         read INPUT_PIHOLE_DIR
         INPUT_PIHOLE_DIR="${INPUT_PIHOLE_DIR:-/etc/pihole}"
         
         if [ "${INPUT_PIHOLE_DIR}" != "/etc/pihole" ]
         then
-            MESSAGE="Saving Local/Secondary ${UI_CORE_APP} Settings Directory Path to ${CONFIG_FILE}"
+            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP} ${UI_CONFIG_SETTING_DIR_PATH} to ${CONFIG_FILE}"
             echo_stat
             sed -i "/# PIHOLE_DIR=''/c\PIHOLE_DIR='${INPUT_PIHOLE_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
@@ -329,14 +329,14 @@ function advanced_config_generate {
     
     if [ "$SKIP_RIHOLE_DIR" != "1" ]
     then
-        MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP} Settings Directory Path? (Leave blank for default '/etc/pihole')"
+        MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP} ${UI_CONFIG_SETTING_DIR_PATH} (Leave blank for default '/etc/pihole')"
         echo_need
         read INPUT_RIHOLE_DIR
         INPUT_RIHOLE_DIR="${INPUT_RIHOLE_DIR:-/etc/pihole}"
         
         if [ "${INPUT_RIHOLE_DIR}" != "/etc/pihole" ]
         then
-            MESSAGE="Saving Primary/Remote ${UI_CORE_APP} Settings Directory Path to ${CONFIG_FILE}"
+            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CORE_APP} ${UI_CONFIG_SETTING_DIR_PATH} to ${CONFIG_FILE}"
             echo_stat
             sed -i "/# RIHOLE_DIR=''/c\RIHOLE_DIR='${INPUT_RIHOLE_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
@@ -345,14 +345,14 @@ function advanced_config_generate {
     
     if [ "$SKIP_DNSMASQ_DIR" != "1" ]
     then
-        MESSAGE="${UI_CONFIG_LOCALSEC} DNSMASQ Settings Directory Path? (Leave blank for default '/etc/dnsmasq.d')"
+        MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP_DNS} ${UI_CONFIG_SETTING_DIR_PATH} (Leave blank for default '/etc/dnsmasq.d')"
         echo_need
         read INPUT_DNSMASQ_DIR
         INPUT_DNSMASQ_DIR="${INPUT_DNSMASQ_DIR:-/etc/dnsmasq.d}"
         
         if [ "${INPUT_DNSMASQ_DIR}" != "/etc/dnsmasq.d" ]
         then
-            MESSAGE="Saving Local/Secondary DNSMASQ Settings Directory Path to ${CONFIG_FILE}"
+            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP_DNS} ${UI_CONFIG_SETTING_DIR_PATH} to ${CONFIG_FILE}"
             echo_stat
             sed -i "/# DNSMASQ_DIR=''/c\DNSMASQ_DIR='${INPUT_DNSMASQ_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
@@ -361,14 +361,14 @@ function advanced_config_generate {
     
     if [ "$SKIP_RNSMASQ_DIR" != "1" ]
     then
-        MESSAGE="${UI_CONFIG_REMOTEPRI} DNSMASQ Settings Directory Path? (Leave blank for default '/etc/dnsmasq.d')"
+        MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP_DNS} ${UI_CONFIG_SETTING_DIR_PATH} (Leave blank for default '/etc/dnsmasq.d')"
         echo_need
         read INPUT_RNSMASQ_DIR
         INPUT_RNSMASQ_DIR="${INPUT_RNSMASQ_DIR:-/etc/dnsmasq.d}"
         
         if [ "${INPUT_RNSMASQ_DIR}" != "/etc/dnsmasq.d" ]
         then
-            MESSAGE="Saving Primary/Remote DNSMASQ Settings Directory Path to ${CONFIG_FILE}"
+            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CORE_APP_DNS} ${UI_CONFIG_SETTING_DIR_PATH} to ${CONFIG_FILE}"
             echo_stat
             sed -i "/# RNSMASQ_DIR=''/c\RNSMASQ_DIR='${INPUT_RNSMASQ_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate

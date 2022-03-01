@@ -156,3 +156,4 @@ UI_CONFIG_ETC_VOLPATH="'etc' volume path"
 UI_CONFIG_ETC_VOLPATH_EXAMPLE="Example, /opt/pihole/etc-pihole"
 UI_CONFIG_ETC_VOLDNSQ_EXAMPLE="Example, /opt/pihole/etc-dnsmasq.d"
 UI_CONFIG_SETTING_REQUIRED='This setting is required!'
+UI_CONFIG_SETTING_DIR_PATH='settings directory path'
