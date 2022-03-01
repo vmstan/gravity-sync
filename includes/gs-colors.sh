@@ -20,7 +20,7 @@ WARN="${PURPLE}!${NC}"
 GOOD="${GREEN}✓${NC}"
 STAT="${CYAN}∞${NC}"
 INFO="${YELLOW}»${NC}"
-BLUE="${CYAN}»${NC}"
+INF1="${CYAN}»${NC}"
 NEED="${BLUE}?${NC}"
 LOGO="${PURPLE}∞${NC}"
 
@@ -31,7 +31,7 @@ function echo_info {
 }
 
 function echo_blue {
-    echo -e "${BLUE} ${CYAN}${MESSAGE}${NC}"
+    echo -e "${INF1} ${CYAN}${MESSAGE}${NC}"
 }
 
 ### Warning
