@@ -20,8 +20,8 @@ WARN="${PURPLE}!${NC}"
 GOOD="${GREEN}✓${NC}"
 STAT="${CYAN}∞${NC}"
 INFO="${YELLOW}»${NC}"
-BLUE="${CYAN}›${NC}"
-NEED="${BLUE}?${NC}"
+BLUE="${CYAN}?${NC}"
+NEED="${BLUE}›${NC}"
 LOGO="${PURPLE}∞${NC}"
 
 ## Echo Stack
