@@ -15,18 +15,23 @@ BOLD='\033[1m'
 NC='\033[0m'
 
 ## Message Codes
-FAIL="[${RED}✗${NC}]"
-WARN="[${PURPLE}!${NC}]"
-GOOD="[${GREEN}✓${NC}]"
-STAT="[${CYAN}e${NC}]"
-INFO="[${YELLOW}i${NC}]"
-NEED="[${BLUE}?${NC}]"
-LOGO="[${PURPLE}∞${NC}]"
+FAIL="${RED}✗${NC}"
+WARN="${PURPLE}!${NC}"
+GOOD="${GREEN}✓${NC}"
+STAT="${CYAN}∞${NC}"
+INFO="${YELLOW}»${NC}"
+INF1="${CYAN}›${NC}"
+NEED="${BLUE}?${NC}"
+LOGO="${PURPLE}∞${NC}"
 
 ## Echo Stack
 ### Informative
 function echo_info {
     echo -e "${INFO} ${YELLOW}${MESSAGE}${NC}"
+}
+
+function echo_inf1 {
+    echo -e "${INF1} ${CYAN}${MESSAGE}${NC}"
 }
 
 ### Warning
@@ -41,6 +46,11 @@ function echo_stat {
 
 ### Success
 function echo_good {
+    echo -e "\r${GOOD} ${MESSAGE}"
+}
+
+### Success
+function echo_good_clean {
     echo -e "\r${GOOD} ${MESSAGE}"
 }
 

@@ -13,7 +13,6 @@ function task_purge {
     echo_lines
     echo -e "THIS WILL RESET YOUR ENTIRE GRAVITY SYNC INSTALLATION"
     echo -e "This will remove:"
-    echo -e "- All backups files."
     echo -e "- Your ${CONFIG_FILE} file."
         
     if [ -f "${LOCAL_FOLDR}/dev" ]

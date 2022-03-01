@@ -43,24 +43,17 @@ function update_gs {
 
 ## Show Version
 function show_version {
-    echo_lines
-    MESSAGE="${PURPLE}${PROGRAM}${NC} for Pi-hole"
-    echo_info
-    
-    MESSAGE="${BLUE}https://github.com/vmstan/gravity-sync${NC}"
-    echo_info
-    
     if [ -f ${LOCAL_FOLDR}/dev ]
     then
-        DEVVERSION="dev"
+        DEVVERSION="-dev"
     elif [ -f ${LOCAL_FOLDR}/beta ]
     then
-        DEVVERSION="beta"
+        DEVVERSION="-beta"
     else
         DEVVERSION=""
     fi
     
-    MESSAGE="Running version: ${GREEN}${VERSION}${NC} ${DEVVERSION}"
+    MESSAGE="Running version: ${GREEN}${VERSION}${NC}${DEVVERSION}"
     echo_info
     
     GITVERSION=$(curl -sf https://raw.githubusercontent.com/vmstan/gravity-sync/master/VERSION)
@@ -76,7 +69,6 @@ function show_version {
         fi
     fi
     echo_info
-    echo_lines
 }
 
 function show_info() {
@@ -187,16 +179,6 @@ function show_info() {
     else
         echo -e "Ping Test: Invalid Configuration"
     fi
-    
-    if [ ${BACKUP_RETAIN} == '7' ]
-    then
-        echo -e "Backup Retention: 7 days (default)"
-    elif [ ${BACKUP_RETAIN} == '1' ]
-    then
-        echo -e "Backup Retention: 1 day (custom)"
-    else
-        echo -e "Backup Retention: ${BACKUP_RETAIN} days (custom)"
-    fi
 
     BACKUP_FOLDER_SIZE=$(du -h ${LOCAL_FOLDR}/${BACKUP_FOLD}  | sed 's/\s.*$//')
     echo -e "Backup Folder Size: ${BACKUP_FOLDER_SIZE}"
@@ -270,7 +252,6 @@ function task_devmode {
     fi
     
     update_gs
-    
     exit_withchange
 }
 
@@ -279,11 +260,7 @@ function task_update {
     TASKTYPE='UPDATE'
     MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
-    
-    dbclient_warning
-    
     update_gs
-    
     exit_withchange
 }
 
@@ -292,7 +269,6 @@ function task_version {
     TASKTYPE='VERSION'
     MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
-    
     show_version
     exit_nochange
 }
@@ -303,8 +279,6 @@ function task_info() {
     TASKTYPE='INFO'
     MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
-    
     show_info
-    
     exit_nochange
 }

@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='3.5.0'
+VERSION='3.6.0'
 
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
 # Requires Pi-Hole 5.x or higher already be installed, for help visit https://pi-hole.net
@@ -91,7 +91,6 @@ source ${LOCAL_FOLDR}/includes/gs-core.sh
 source ${LOCAL_FOLDR}/includes/gs-pull.sh
 source ${LOCAL_FOLDR}/includes/gs-push.sh
 source ${LOCAL_FOLDR}/includes/gs-smart.sh
-source ${LOCAL_FOLDR}/includes/gs-restore.sh
 source ${LOCAL_FOLDR}/includes/gs-backup.sh
 
 # Hashing & SSH Functions
@@ -165,6 +164,9 @@ case $# in
             info)
                 start_gs
                 task_info ;;
+            cname)
+                start_gs
+                task_cname ;;    
             *)
                 start_gs
                 task_invalid ;;

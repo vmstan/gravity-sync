@@ -9,7 +9,6 @@ function task_logs {
     TASKTYPE='LOGS'
     MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
-    
     logs_gs
 }
 
@@ -48,10 +47,6 @@ function logs_gs {
     tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PULL
     echo -e "${UI_LOGGING_RECENT_COMPLETE} ${YELLOW}PUSH${NC}"
     tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PUSH
-    echo -e "${UI_LOGGING_RECENT_COMPLETE} ${YELLOW}BACKUP${NC}"
-    tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep BACKUP
-    echo -e "${UI_LOGGING_RECENT_COMPLETE} ${YELLOW}RESTORE${NC}"
-    tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep RESTORE
     echo_lines
     
     exit_nochange

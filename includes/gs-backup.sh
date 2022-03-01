@@ -5,23 +5,6 @@
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
 # This code is called from the main gravity-sync.sh file and should not execute directly!
 
-## Backup Task
-function task_backup() {
-    TASKTYPE='BACKUP'
-    MESSAGE="${MESSAGE}: ${TASKTYPE}"
-    echo_good
-    
-    backup_settime
-    backup_local_gravity
-    backup_local_gravity_integrity
-    backup_local_custom
-    backup_local_cname
-    # backup_cleanup
-    
-    logs_export
-    exit_withchange
-}
-
 function backup_settime() {
     BACKUPTIMESTAMP=$(date +%F-%H%M%S)
 }
@@ -116,7 +99,7 @@ function backup_remote_gravity_integrity() {
         MESSAGE="{UI_BACKUP_INTEGRITY_DELETE} ${UI_GRAVITY_NAME}"
         echo_stat
         
-        CMD_TIMEOUT='15'
+        CMD_TIMEOUT=$BACKUP_TIMEOUT
         CMD_REQUESTED="sudo rm ${RIHOLE_DIR}/${GRAVITY_FI}.backup"
         create_sshcmd
         
@@ -130,7 +113,7 @@ function backup_remote_custom() {
         MESSAGE="${UI_BACKUP_PRIMARY} ${UI_CUSTOM_NAME}"
         echo_stat
         
-        CMD_TIMEOUT='15'
+        CMD_TIMEOUT=$BACKUP_TIMEOUT
         CMD_REQUESTED="sudo cp ${RIHOLE_DIR}/${CUSTOM_DNS} ${RIHOLE_DIR}/${CUSTOM_DNS}.backup"
         create_sshcmd
     fi
@@ -142,7 +125,7 @@ function backup_remote_cname() {
         MESSAGE="${UI_BACKUP_PRIMARY} ${UI_CNAME_NAME}"
         echo_stat
         
-        CMD_TIMEOUT='15'
+        CMD_TIMEOUT=$BACKUP_TIMEOUT
         CMD_REQUESTED="sudo cp ${RNSMAQ_DIR}/${CNAME_CONF} ${RIHOLE_DIR}/dnsmasq.d-${CNAME_CONF}.backup"
         create_sshcmd
     fi
@@ -151,7 +134,6 @@ function backup_remote_cname() {
 function backup_cleanup() {
     MESSAGE="${UI_BACKUP_PURGE}"
     echo_stat
-
     git clean -fq
     error_validate
 }

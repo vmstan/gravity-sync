@@ -39,7 +39,7 @@ function generate_sshkey {
         if [ -f $HOME/${SSH_PKIF} ]
         then
             MESSAGE="Using existing ~/${SSH_PKIF} file"
-            echo_info
+            echo_good_clean
         else
             if hash ssh-keygen >/dev/null 2>&1
             then
