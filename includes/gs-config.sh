@@ -231,7 +231,7 @@ function advanced_config_generate {
             exit_withchange
         fi
         
-        MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} Volume Ownership to ${CONFIG_FILE}"
+        MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_VOLUME_OWNER} to ${CONFIG_FILE}"
         echo_stat
         sed -i "/# FILE_OWNER=''/c\FILE_OWNER='999:999'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
@@ -257,20 +257,24 @@ function advanced_config_generate {
         sed -i "/# RH_IN_TYPE=''/c\RH_IN_TYPE='${INPUT_RH_IN_TYPE}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
         
-        MESSAGE="${UI_CONFIG_REMOTEPRI} Container Name? (Leave blank for default 'pihole')"
+        MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CONFIG_CONTAINER_NAME}"
+        echo_inf1
+        MESSAGE="${UI_CONFIG_DEFAULT_LEAVE} 'pihole'"
         echo_need
         read INPUT_ROCKER_CON
         INPUT_ROCKER_CON="${INPUT_ROCKER_CON:-pihole}"
         
         if [ "${INPUT_ROCKER_CON}" != "pihole" ]
         then
-            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} Container Name to ${CONFIG_FILE}"
+            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CONFIG_CONTAINER_NAME} to ${CONFIG_FILE}"
             echo_stat
             sed -i "/# ROCKER_CON=''/c\ROCKER_CON='${INPUT_ROCKER_CON}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
         fi
         
-        MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH} (Required, no trailing slash)"
+        MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH}"
+        echo_inf1
+        MESSAGE="${UI_CONFIG_ETC_VOLPATH_EXAMPLE}"
         echo_need
         read INPUT_RIHOLE_DIR
         
@@ -287,7 +291,9 @@ function advanced_config_generate {
             exit_withchange
         fi
         
-        MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH} (Required, no trailing slash)"
+        MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH}"
+        echo_inf1
+        MESSAGE="${UI_CONFIG_ETC_VOLDNSQ_EXAMPLE}"
         echo_need
         read INPUT_RNSMAQ_DIR
         
@@ -304,7 +310,7 @@ function advanced_config_generate {
             exit_withchange
         fi
         
-        MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} Volume Ownership to ${CONFIG_FILE}"
+        MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CONFIG_VOLUME_OWNER} to ${CONFIG_FILE}"
         echo_stat
         sed -i "/# RILE_OWNER=''/c\RILE_OWNER='999:999'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
@@ -313,7 +319,9 @@ function advanced_config_generate {
         
     if [ "$SKIP_PIHOLE_DIR" != "1" ]
     then
-        MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP} ${UI_CONFIG_SETTING_DIR_PATH} (Leave blank for default '/etc/pihole')"
+        MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP} ${UI_CONFIG_SETTING_DIR_PATH}"
+        echo_inf1
+        MESSAGE="${UI_CONFIG_DEFAULT_LEAVE} ${UI_CONFIG_DEFAULT_PIHOLE_ETC}"
         echo_need
         read INPUT_PIHOLE_DIR
         INPUT_PIHOLE_DIR="${INPUT_PIHOLE_DIR:-/etc/pihole}"
@@ -329,7 +337,9 @@ function advanced_config_generate {
     
     if [ "$SKIP_RIHOLE_DIR" != "1" ]
     then
-        MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP} ${UI_CONFIG_SETTING_DIR_PATH} (Leave blank for default '/etc/pihole')"
+        MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP} ${UI_CONFIG_SETTING_DIR_PATH}"
+        echo_inf1
+        MESSAGE="${UI_CONFIG_DEFAULT_LEAVE} ${UI_CONFIG_DEFAULT_PIHOLE_ETC}"
         echo_need
         read INPUT_RIHOLE_DIR
         INPUT_RIHOLE_DIR="${INPUT_RIHOLE_DIR:-/etc/pihole}"
@@ -345,7 +355,9 @@ function advanced_config_generate {
     
     if [ "$SKIP_DNSMASQ_DIR" != "1" ]
     then
-        MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP_DNS} ${UI_CONFIG_SETTING_DIR_PATH} (Leave blank for default '/etc/dnsmasq.d')"
+        MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP_DNS} ${UI_CONFIG_SETTING_DIR_PATH}"
+        echo_inf1
+        MESSAGE="${UI_CONFIG_DEFAULT_LEAVE} '/etc/dnsmasq.d'"
         echo_need
         read INPUT_DNSMASQ_DIR
         INPUT_DNSMASQ_DIR="${INPUT_DNSMASQ_DIR:-/etc/dnsmasq.d}"
@@ -361,7 +373,9 @@ function advanced_config_generate {
     
     if [ "$SKIP_RNSMASQ_DIR" != "1" ]
     then
-        MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP_DNS} ${UI_CONFIG_SETTING_DIR_PATH} (Leave blank for default '/etc/dnsmasq.d')"
+        MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP_DNS} ${UI_CONFIG_SETTING_DIR_PATH}"
+        echo_inf1
+        MESSAGE="${UI_CONFIG_DEFAULT_LEAVE} ${UI_CONFIG_DEFAULT_DNSMASQ_ETC}"
         echo_need
         read INPUT_RNSMASQ_DIR
         INPUT_RNSMASQ_DIR="${INPUT_RNSMASQ_DIR:-/etc/dnsmasq.d}"
@@ -375,7 +389,9 @@ function advanced_config_generate {
         fi
     fi
     
-    MESSAGE="${UI_ENABLE_REPLICATION_QUEST} ${UI_CUSTOM_NAME}? ${UI_CONFIG_YESNOY}"
+    MESSAGE="${UI_ENABLE_REPLICATION_QUEST} ${UI_CUSTOM_NAME}"
+    echo_inf1
+    MESSAGE="${UI_CONFIG_YESNOY}"
     echo_need
     read INPUT_SKIP_CUSTOM
     INPUT_SKIP_CUSTOM="${INPUT_SKIP_CUSTOM:-Y}"
@@ -390,7 +406,9 @@ function advanced_config_generate {
     
     if [ "${INPUT_SKIP_CUSTOM}" == "Y" ]
     then
-        MESSAGE="${UI_ENABLE_REPLICATION_QUEST} ${UI_CNAME_NAME}? ${UI_CONFIG_YESNOY}"
+        MESSAGE="${UI_ENABLE_REPLICATION_QUEST} ${UI_CNAME_NAME}"
+        echo_inf1
+        MESSAGE="${UI_CONFIG_YESNOY}"
         echo_need
         read INPUT_INCLUDE_CNAME
         INPUT_INCLUDE_CNAME="${INPUT_INCLUDE_CNAME:-Y}"
@@ -410,7 +428,7 @@ function advanced_config_generate {
 ## Delete Existing Configuration
 function config_delete {
     source ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
-    MESSAGE="${CONFIG_FILE} already exists"
+    MESSAGE="${CONFIG_FILE} ${UI_CONFIG_ALREADY}"
     echo_info  
   
     MESSAGE="${UI_CONFIG_AREYOUSURE}"
