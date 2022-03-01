@@ -164,6 +164,9 @@ case $# in
             info)
                 start_gs
                 task_info ;;
+            cname)
+                start_gs
+                task_cname ;;    
             *)
                 start_gs
                 task_invalid ;;

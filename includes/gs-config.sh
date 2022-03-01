@@ -415,14 +415,27 @@ function advanced_config_generate {
         
         if [ "${INPUT_INCLUDE_CNAME}" == "Y" ]
         then
-            MESSAGE="${UI_CNAME_NAME} ${UI_CONFIG_PREF_SAVED} ${CONFIG_FILE}"
-            echo_stat
-            sed -i "/# INCLUDE_CNAME=''/c\INCLUDE_CNAME='1'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
-            error_validate
+            config_enablecname
         fi
     fi
 
     end_config
+}
+
+function task_cname {
+    TASKTYPE='CNAME'
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    echo_good
+
+    config_enablecname
+    exit_withchange
+}
+
+function config_enablecname {
+    MESSAGE="${UI_CNAME_NAME} ${UI_CONFIG_PREF_SAVED} ${CONFIG_FILE}"
+    echo_stat
+    sed -i "/# INCLUDE_CNAME=''/c\INCLUDE_CNAME='1'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+    error_validate
 }
 
 ## Delete Existing Configuration
