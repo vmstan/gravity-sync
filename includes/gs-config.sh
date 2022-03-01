@@ -51,7 +51,7 @@ function config_generate {
     echo_info
 
     MESSAGE="${UI_CORE_APP} ${UI_CONFIG_REMOTE} ${UI_CONFIG_HOSTREQ}"
-    echo_grav
+    echo_blue
 
     MESSAGE="IP"
     echo_need
@@ -68,7 +68,7 @@ function config_generate {
     error_validate
     
     MESSAGE="${UI_CORE_APP} ${UI_CONFIG_REMOTE} ${UI_CONFIG_USERREQ} for ${INPUT_REMOTE_HOST}"
-    echo_grav
+    echo_blue
 
     MESSAGE="User"
     echo_need
@@ -110,7 +110,7 @@ function config_generate {
         MESSAGE="${UI_CONFIG_CONT_DETECT} ${UI_CONFIG_CONT_DETECTNA}"
         echo_good
         MESSAGE="${UI_CONFIG_DOADVANCED}"
-        echo_grav
+        echo_blue
         MESSAGE="${UI_CONFIG_YESNON}"
         echo_need
         read INPUT_ADVANCED_INSTALL
@@ -146,7 +146,7 @@ function end_config(){
 ## Advanced Configuration Options
 function advanced_config_generate {
     MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP} ${UI_CONFIG_INSTANCEREQ}"
-    echo_grav
+    echo_blue
     MESSAGE="${UI_CONFIG_INSTANCETYPE}"
     echo_need
     read INPUT_PH_IN_TYPE
@@ -179,7 +179,7 @@ function advanced_config_generate {
         echo_lines
         
         MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP} ${UI_CONFIG_INSTANCENAME}"
-        echo_grav
+        echo_blue
         MESSAGE="${UI_CONFIG_PIHOLE_DEFAULT}"
         echo_need
         read INPUT_DOCKER_CON
@@ -194,7 +194,7 @@ function advanced_config_generate {
         fi
         
         MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH}" 
-        echo_grav
+        echo_blue
         MESSAGE="${UI_CONFIG_ETC_VOLPATH_EXAMPLE}"
         echo_need
         read INPUT_PIHOLE_DIR
@@ -213,7 +213,7 @@ function advanced_config_generate {
         fi
         
         MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH}"
-        echo_grav
+        echo_blue
         MESSAGE="${UI_CONFIG_ETC_VOLDNSQ_EXAMPLE}"
         echo_need
         read INPUT_DNSMAQ_DIR
@@ -238,7 +238,7 @@ function advanced_config_generate {
     fi
     
     MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP} ${UI_CONFIG_INSTANCEREQ}"
-    echo_grav
+    echo_blue
     MESSAGE="${UI_CONFIG_INSTANCETYPE}"
     echo_need
     read INPUT_RH_IN_TYPE
@@ -414,7 +414,7 @@ function config_delete {
     echo_info  
   
     MESSAGE="${UI_CONFIG_AREYOUSURE}"
-    echo_grav
+    echo_blue
 
     intent_validate
 
