@@ -152,7 +152,7 @@ function advanced_config_generate {
     read INPUT_PH_IN_TYPE
     INPUT_PH_IN_TYPE="${INPUT_PH_IN_TYPE:-default}"
     
-    if [ "${INPUT_PH_IN_TYPE}" != "default" ]
+    if [ "${INPUT_PH_IN_TYPE}" != "default" ] || [ "${INPUT_PH_IN_TYPE}" != "standard" ]
     then
         if [ "${INPUT_PH_IN_TYPE}" != "docker" ] && [ "${INPUT_PH_IN_TYPE}" != "podman" ]
         then
@@ -166,7 +166,7 @@ function advanced_config_generate {
         sed -i "/# PH_IN_TYPE=''/c\PH_IN_TYPE='${INPUT_PH_IN_TYPE}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
         
-        MESSAGE="${UI_CONFIG_CONT_DETECT} ${UI_CONFIG_IMAGES} ${UI_CONFIG_CONT_DETECTED}"
+        MESSAGE="${UI_CONFIG_CONT_DETECT} ${UI_CONFIG_IMAGES}"
         echo_info
         echo_lines
         if [ "${INPUT_PH_IN_TYPE}" == "docker" ] 
