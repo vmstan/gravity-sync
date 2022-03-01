@@ -152,3 +152,7 @@ UI_CONFIG_INSTANCE_ERROR="${UI_CONFIG_CONTAINER_TYPE} must either be 'docker' or
 UI_CONFIG_IMAGES='running instances'
 UI_CONFIG_SAVING='Saving'
 UI_CONFIG_PIHOLE_DEFAULT="(Enter container name or blank for default 'pihole')"
+UI_CONFIG_ETC_VOLPATH="'etc' volume path"
+UI_CONFIG_ETC_VOLPATH_EXAMPLE:"(ex: /opt/pihole/etc-pihole)"
+UI_CONFIG_ETC_VOLDNSQ_EXAMPLE:"(ex: /opt/pihole/etc-dnsmasq.d)"
+UI_CONFIG_SETTING_REQUIRED='This setting is required!'

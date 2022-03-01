@@ -193,36 +193,40 @@ function advanced_config_generate {
             error_validate
         fi
         
-        MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP} 'etc' Volume Path? (Required, no trailing slash)"
+        MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH}" 
+        echo_grav
+        MESSAGE="${UI_CONFIG_ETC_VOLPATH_EXAMPLE}"
         echo_need
         read INPUT_PIHOLE_DIR
         
         if [ "${INPUT_PIHOLE_DIR}" != "" ]
         then
-            MESSAGE="Saving Local/Secondary ${UI_CORE_APP} Volume to ${CONFIG_FILE}"
+            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
             echo_stat
             sed -i "/# PIHOLE_DIR=''/c\PIHOLE_DIR='${INPUT_PIHOLE_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
             SKIP_PIHOLE_DIR="1"
         else
-            MESSAGE="This setting is required!"
+            MESSAGE="${UI_CONFIG_SETTING_REQUIRED}"
             echo_warn
             exit_withchange
         fi
         
-        MESSAGE="${UI_CONFIG_LOCALSEC} DNSMASQ 'etc' Volume Path? (Required, no trailing slash)"
+        MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH}"
+        echo_grav
+        MESSAGE="${UI_CONFIG_ETC_VOLDNSQ_EXAMPLE}"
         echo_need
         read INPUT_DNSMAQ_DIR
         
         if [ "${INPUT_DNSMAQ_DIR}" != "" ]
         then
-            MESSAGE="Saving Local/Secondary DNSMASQ Volume to ${CONFIG_FILE}"
+            MESSAGE="Saving Local/Secondary ${UI_CORE_APP_DNS} Volume to ${CONFIG_FILE}"
             echo_stat
             sed -i "/# DNSMAQ_DIR=''/c\DNSMAQ_DIR='${INPUT_DNSMAQ_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
             SKIP_DNSMASQ_DIR="1"
         else
-            MESSAGE="This setting is required!"
+            MESSAGE="${UI_CONFIG_SETTING_REQUIRED}"
             echo_warn
             exit_withchange
         fi
@@ -278,7 +282,7 @@ function advanced_config_generate {
             error_validate
             SKIP_RIHOLE_DIR="1"
         else
-            MESSAGE="This setting is required!"
+            MESSAGE="${UI_CONFIG_SETTING_REQUIRED}"
             echo_warn
             exit_withchange
         fi
@@ -295,7 +299,7 @@ function advanced_config_generate {
             error_validate
             SKIP_RNSMASQ_DIR="1"
         else
-            MESSAGE="This setting is required!"
+            MESSAGE="${UI_CONFIG_SETTING_REQUIRED}"
             echo_warn
             exit_withchange
         fi
