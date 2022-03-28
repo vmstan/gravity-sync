@@ -41,14 +41,14 @@ function task_automate {
         
         # if [[ ${PATH} != *"/usr/sbin"* ]]
         # then
-            CRON_ENV_PATH="$PATH"
+        #    CRON_ENV_PATH="$PATH"
         # else
         #    CRON_ENV_PATH=""
         # fi
         
         MESSAGE="${UI_AUTO_CRON_SAVING}"
         echo_stat
-        (crontab -l 2>/dev/null; echo "*/${INPUT_AUTO_FREQ} * * * * ${BASH_PATH} PATH=${CRON_EVN_PATH} ${LOCAL_FOLDR}/${GS_FILENAME} smart > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
+        (crontab -l 2>/dev/null; echo "*/${INPUT_AUTO_FREQ} * * * * ${BASH_PATH} PATH=$PATH ${LOCAL_FOLDR}/${GS_FILENAME} smart > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
         error_validate
     elif [ $INPUT_AUTO_FREQ == 0 ]
     then
