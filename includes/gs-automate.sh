@@ -39,12 +39,12 @@ function task_automate {
             clear_cron
         fi
         
-        if [[ ${PATH} != *"/usr/sbin"* ]]
-        then
-            CRON_ENV_PATH=$'PATH=/bin:/usr/bin:/usr/sbin\n'
-        else
-            CRON_ENV_PATH=""
-        fi
+        # if [[ ${PATH} != *"/usr/sbin"* ]]
+        # then
+            CRON_ENV_PATH=$PATH
+        # else
+        #    CRON_ENV_PATH=""
+        # fi
         
         MESSAGE="${UI_AUTO_CRON_SAVING}"
         echo_stat
