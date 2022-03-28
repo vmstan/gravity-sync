@@ -111,10 +111,21 @@ function pull_gs_reload {
     ${PH_EXEC} restartdns reload-lists >/dev/null 2>&1
     error_validate
     
-    MESSAGE="${UI_FTLDNS_CONFIG_RELOAD}"
-    echo_stat
-    ${PH_EXEC} restartdns >/dev/null 2>&1
-    error_validate
+    if [ "${TASKTYPE}" == SMART ]
+    then 
+        if [ "${PRICLCHANGE}" == "1" ] || [ "${SECCLCHANGE}" == "1" ] || [ "${PRICNCHANGE}" == "1" ] || [ "${SECCNCHANGE}" == "1" ]
+        then
+            MESSAGE="${UI_FTLDNS_CONFIG_RELOAD}"
+            echo_stat
+            ${PH_EXEC} restartdns >/dev/null 2>&1
+            error_validate
+        fi
+    else
+        MESSAGE="${UI_FTLDNS_CONFIG_RELOAD}"
+        echo_stat
+        ${PH_EXEC} restartdns >/dev/null 2>&1
+        error_validate
+    fi
 }
 
 ## Pull Function
