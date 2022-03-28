@@ -41,7 +41,7 @@ function task_automate {
         
         # if [[ ${PATH} != *"/usr/sbin"* ]]
         # then
-            CRON_ENV_PATH=$PATH
+            CRON_ENV_PATH="$PATH"
         # else
         #    CRON_ENV_PATH=""
         # fi
