@@ -70,7 +70,7 @@ function clear_cron {
     
     crontab -l > cronjob-old.tmp
     sed "/${GS_FILENAME}/d" cronjob-old.tmp > cronjob-new.tmp
-    sed "/$PATH/d" > cronjob-new.tmp
+    sed "/:${LOCAL_FOLDR}/d" cronjob-new.tmp > cronjob-new.tmp
     crontab cronjob-new.tmp 2>/dev/null
     error_validate
     rm cronjob-old.tmp
@@ -89,6 +89,6 @@ function task_cron {
 function path_fix {
     MESSAGE="Adding user path to Crontab"
     echo_stat
-    (crontab -l 2>/dev/null; echo "PATH=$PATH") | crontab -
+    (crontab -l 2>/dev/null; echo "PATH=$PATH:${LOCAL_FOLDR}") | crontab -
     error_validate
 }
