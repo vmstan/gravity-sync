@@ -148,8 +148,17 @@ function push_gs_reload {
     CMD_REQUESTED="${RH_EXEC} restartdns reload-lists"
     create_sshcmd
     
-    if [ "${PRICLCHANGE}" == "1" ] || [ "${SECCLCHANGE}" == "1" ] || [ "${PRICNCHANGE}" == "1" ] || [ "${SECCNCHANGE}" == "1" ]
-    then
+    if [ "${TASKTYPE}" == SMART ]
+    then 
+        if [ "${PRICLCHANGE}" == "1" ] || [ "${SECCLCHANGE}" == "1" ] || [ "${PRICNCHANGE}" == "1" ] || [ "${SECCNCHANGE}" == "1" ]
+        then
+            MESSAGE="${UI_FTLDNS_CONFIG_PUSH_RELOAD}"
+            echo_stat
+            CMD_TIMEOUT=$BACKUP_TIMEOUT
+            CMD_REQUESTED="${RH_EXEC} restartdns"
+            create_sshcmd
+        fi
+    else
         MESSAGE="${UI_FTLDNS_CONFIG_PUSH_RELOAD}"
         echo_stat
         CMD_TIMEOUT=$BACKUP_TIMEOUT
