@@ -70,6 +70,7 @@ function clear_cron {
     
     crontab -l > cronjob-old.tmp
     sed "/${GS_FILENAME}/d" cronjob-old.tmp > cronjob-new.tmp
+    sed "/$PATH/d" > cronjob-new.tmp
     crontab cronjob-new.tmp 2>/dev/null
     error_validate
     rm cronjob-old.tmp
