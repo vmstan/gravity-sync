@@ -1,0 +1,6 @@
+[Unit]
+Description="Synchronize the blocklist and local DNS configurations of multiple Pi-hole 5.x instances"
+
+[Service]
+Type=simple
+ExecStart=/root/gravity-sync/gravity-sync.sh
