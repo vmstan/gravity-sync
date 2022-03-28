@@ -111,10 +111,10 @@ function pull_gs_reload {
     ${PH_EXEC} restartdns reload-lists >/dev/null 2>&1
     error_validate
     
-    MESSAGE="${UI_FTLDNS_CONFIG_RELOAD}"
-    echo_stat
-    ${PH_EXEC} restartdns >/dev/null 2>&1
-    error_validate
+    # MESSAGE="${UI_FTLDNS_CONFIG_RELOAD}"
+    # echo_stat
+    # ${PH_EXEC} restartdns >/dev/null 2>&1
+    # error_validate
 }
 
 ## Pull Function
