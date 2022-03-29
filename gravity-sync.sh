@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='3.6.4'
+VERSION='3.7.0'
 
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
 # Requires Pi-Hole 5.x or higher already be installed, for help visit https://pi-hole.net
@@ -148,7 +148,7 @@ case $# in
                 task_compare ;;
             cron)
                 start_gs
-                task_cron ;;
+                task_autocron ;;
             config|configure)
                 start_gs_noconfig
                 task_configure ;;
