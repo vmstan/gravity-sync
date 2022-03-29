@@ -18,6 +18,13 @@ function task_automate {
         echo_warn
         clear_cron
     fi
+
+    cp templates/gravity-sync.timer /etc/systemd/system
+    cp templates/gravity-sync.service /etc/systemd/system
+    systemctl stop gravity-sync
+    systemctl daemon-reload
+    systemctl enable gravity-sync.timer
+    systemctl start gravity-sync
     
     exit_withchange
 }
