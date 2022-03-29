@@ -61,3 +61,4 @@ REMOTE_USER='pi'
 
 ### OS Settings
 # BASH_PATH=''				# default OS bash path
+# DAEMON_PATH=''            # systemd timer/service folder

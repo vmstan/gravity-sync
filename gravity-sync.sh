@@ -71,6 +71,7 @@ HISTORY_MD5='gravity-sync.md5'		# replace in gravity-sync.conf to overwrite
 
 # OS Settings
 BASH_PATH='/bin/bash'				# default OS bash path
+DAEMON_PATH='/etc/systemd/system'   # systemd timer/service folder
 
 ##############################################
 ### NEVER CHANGE ANYTHING BELOW THIS LINE! ###

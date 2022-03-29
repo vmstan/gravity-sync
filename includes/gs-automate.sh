@@ -24,27 +24,27 @@ function task_automate {
     error_validate
 
     MESSAGE="Stopping existing systemd service"
-    systemctl stop gravity-sync
+    sudo systemctl stop gravity-sync
     error_validate
 
     MESSAGE="Moving systemd timer into place"
-    cp ${LOCAL_FOLDR}/templates/gravity-sync.timer /etc/systemd/system
+    sudo cp ${LOCAL_FOLDR}/templates/gravity-sync.timer ${DAEMON_PATH}
     error_validate
 
     MESSAGE="Moving systemd service into place"
-    cp ${LOCAL_FOLDR}/templates/gravity-sync.service /etc/systemd/system
+    sudo cp ${LOCAL_FOLDR}/templates/gravity-sync.service ${DAEMON_PATH}
     error_validate
 
     MESSAGE="Reloading systemd daemon"
-    systemctl daemon-reload
+    sudo systemctl daemon-reload
     error_validate
 
     MESSAGE="Enabling Gravity Sync timer"
-    systemctl enable gravity-sync.timer
+    sudo systemctl enable gravity-sync.timer
     error_validate
 
     MESSAGE="Starting Gravity Sync service"
-    systemctl start gravity-sync
+    sudo systemctl start gravity-sync
     error_validate
     
     exit_withchange

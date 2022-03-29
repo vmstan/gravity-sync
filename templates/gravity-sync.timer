@@ -8,8 +8,8 @@ Requires=gravity-sync.service
 Unit=gravity-sync.service
 Persistent=true
 OnBootSec=120
-OnUnitInactiveSec=7m
-RandomizedDelaySec=3m
+OnUnitInactiveSec=5m
+RandomizedDelaySec=5m
 
 [Install]
 WantedBy=timers.target
