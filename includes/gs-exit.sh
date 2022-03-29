@@ -43,7 +43,8 @@ function list_gs_arguments {
     echo_lines
     echo -e "Setup Options:"
     echo -e " ${YELLOW}config${NC}      Creates a new ${PROGRAM} configuration file"
-    echo -e " ${YELLOW}automate${NC}    Schedules the ${PROGRAM} replication task using crontab"
+    echo -e " ${YELLOW}automate${NC}    Schedules the ${PROGRAM} replication task using systemd"
+    echo -e " ${YELLOW}cron${NC}        Schedules the ${PROGRAM} replication task using crontab (legacy)"
     echo -e " ${YELLOW}version${NC}     Shows the installed version of ${PROGRAM} and check for updates"
     echo -e " ${YELLOW}update${NC}      Upgrades ${PROGRAM} to the latest available version using Git"
     echo -e " ${YELLOW}dev${NC}         Sets update command to use a development version of ${PROGRAM}"
@@ -57,7 +58,6 @@ function list_gs_arguments {
     echo_blank
     echo -e "Debug Options:"
     echo -e " ${YELLOW}logs${NC}        Shows the recent successful replication jobs/times"
-    echo -e " ${YELLOW}cron${NC}        Displays the output of last crontab execution"
     echo -e " ${YELLOW}info${NC}        Shows information about the current configuration"
     echo_lines
     exit_nochange

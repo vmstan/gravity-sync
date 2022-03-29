@@ -58,9 +58,12 @@ function task_automate {
 }
 
 function task_autocron {
-    TASKTYPE='AUTOMATE'
+    TASKTYPE='AUTOCRON'
     MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
+
+    MESSAGE="Crontab automation is deprecated and will be removed in a future release"
+    echo_warn
     
     CRON_EXIST='0'
     CRON_CHECK=$(crontab -l | grep -q "${GS_FILENAME}"  && echo '1' || echo '0')
