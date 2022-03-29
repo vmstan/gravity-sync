@@ -6,8 +6,10 @@ Requires=gravity-sync.service
 
 [Timer]
 Unit=gravity-sync.service
-OnUnitInactiveSec=2m
-RandomizedDelaySec=5m
+Persistent=true
+OnBootSec=120
+OnUnitInactiveSec=7m
+RandomizedDelaySec=3m
 
 [Install]
 WantedBy=timers.target

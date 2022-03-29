@@ -19,16 +19,20 @@ function task_automate {
         clear_cron
     fi
 
+    MESSAGE="Customizing service file"
+    sed -i "/User=unknown/c\User=$USER" ${LOCAL_FOLDR}/templates/gravity-sync.service
+    error_validate
+
     MESSAGE="Stopping existing systemd service"
     systemctl stop gravity-sync
     error_validate
 
     MESSAGE="Moving systemd timer into place"
-    cp templates/gravity-sync.timer /etc/systemd/system
+    cp ${LOCAL_FOLDR}/templates/gravity-sync.timer /etc/systemd/system
     error_validate
 
     MESSAGE="Moving systemd service into place"
-    cp templates/gravity-sync.service /etc/systemd/system
+    cp ${LOCAL_FOLDR}/templates/gravity-sync.service /etc/systemd/system
     error_validate
 
     MESSAGE="Reloading systemd daemon"

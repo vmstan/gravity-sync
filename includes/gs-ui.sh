@@ -116,7 +116,7 @@ UI_AUTO_CRON_EXISTS='Automation task already exists in crontab'
 UI_AUTO_CRON_DISPLAY_FREQ='Select synchronization frequency (in minutes)'
 UI_AUTO_CRON_SELECT_FREQ='Valid options are 5, 10, 15, 30 or 0 to disable (default: 15)'
 UI_AUTO_CRON_SAVING='Saving new synchronization task to crontab'
-UI_AUTO_CRON_DISABLED='Synchronization automation has been disabled'
+UI_AUTO_CRON_DISABLED='Automation with crontab has been disabled'
 
 # Configuration
 UI_CONFIG_YESNOY="'Yes' or 'No', blank is default 'Yes'"

@@ -4,7 +4,7 @@ Wants=gravity-sync.timer
 
 [Service]
 Type=simple
-User=root
+User=unknown
 ExecStart=/root/gravity-sync/gravity-sync.sh
 
 [Install]
