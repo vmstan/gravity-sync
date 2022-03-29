@@ -39,15 +39,15 @@ function task_automate {
     error_validate
 
     MESSAGE="Reloading systemd daemon"
-    sudo systemctl daemon-reload
+    sudo systemctl daemon-reload --quiet
     error_validate
 
     MESSAGE="Enabling Gravity Sync timer"
-    sudo systemctl enable gravity-sync.timer
+    sudo systemctl enable gravity-sync.timer --quiet
     error_validate
 
     MESSAGE="Starting Gravity Sync service"
-    sudo systemctl start gravity-sync
+    sudo systemctl start gravity-sync --quiet
     error_validate
     
     exit_withchange
