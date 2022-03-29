@@ -1,10 +1,13 @@
 [Unit]
-Description="Synchronize the blocklist and local DNS configurations of multiple Pi-hole 5.x instances"
+Description=Synchronize Pi-hole instances
 RefuseManualStart=no
 RefuseManualStop=no
+Requires=gravity-sync.service
 
 [Timer]
-Persistent=true
-OnBootSec=120
-OnUnitActiveSec=300
 Unit=gravity-sync.service
+OnUnitInactiveSec=2m
+RandomizedDelaySec=5m
+
+[Install]
+WantedBy=timers.target

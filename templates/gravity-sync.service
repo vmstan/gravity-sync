@@ -1,6 +1,10 @@
 [Unit]
-Description="Synchronize the blocklist and local DNS configurations of multiple Pi-hole 5.x instances"
+Description=Synchronize Pi-hole instances
+Wants=gravity-sync.timer
 
 [Service]
 Type=simple
 ExecStart=/root/gravity-sync/gravity-sync.sh
+
+[Install]
+WantedBy=multi-user.target
