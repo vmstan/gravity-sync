@@ -1,11 +1,12 @@
 [Unit]
 Description=Synchronize Pi-hole instances
+After=network-online.target
 Wants=gravity-sync.timer
 
 [Service]
 Type=simple
 User=unknown
-ExecStart=/root/gravity-sync/gravity-sync.sh
+ExecStart=/path/to/gravity-sync.sh
 
 [Install]
 WantedBy=multi-user.target

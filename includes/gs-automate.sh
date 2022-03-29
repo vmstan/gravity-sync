@@ -19,8 +19,12 @@ function task_automate {
         clear_cron
     fi
 
-    MESSAGE="Customizing service file"
+    MESSAGE="Customizing service file username"
     sed -i "/User=unknown/c\User=$USER" ${LOCAL_FOLDR}/templates/gravity-sync.service
+    error_validate
+
+    MESSAGE="Customizing service file executable"
+    sed -i "/ExecStart=/path/to/gravity-sync.sh/c\ExecStart=${LOCAL_FOLDR}/${GS_FILENAME}"
     error_validate
 
     if systemctl is-active --quiet gravity-sync
