@@ -6,7 +6,7 @@ Wants=gravity-sync.timer
 [Service]
 Type=simple
 User=unknown
-ExecStart=/path/to/gravity-sync.sh
+ExecStart=
 
 [Install]
 WantedBy=multi-user.target

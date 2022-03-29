@@ -24,7 +24,7 @@ function task_automate {
     error_validate
 
     MESSAGE="Customizing service file executable"
-    sed -i "/ExecStart=/path/to/gravity-sync.sh/c\ExecStart=${LOCAL_FOLDR}/${GS_FILENAME}"
+    sed -i "/ExecStart=/c\ExecStart=${LOCAL_FOLDR}/${GS_FILENAME}" ${LOCAL_FOLDR}/templates/gravity-sync.service
     error_validate
 
     if systemctl is-active --quiet gravity-sync
