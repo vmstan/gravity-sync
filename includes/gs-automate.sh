@@ -23,9 +23,12 @@ function task_automate {
     sed -i "/User=unknown/c\User=$USER" ${LOCAL_FOLDR}/templates/gravity-sync.service
     error_validate
 
-    MESSAGE="Stopping existing systemd service"
-    sudo systemctl stop gravity-sync
-    error_validate
+    if systemctl is-active --quiet gravity-sync
+    then
+        MESSAGE="Stopping existing systemd service"
+        sudo systemctl stop gravity-sync
+        error_validate
+    fi
 
     MESSAGE="Moving systemd timer into place"
     sudo cp ${LOCAL_FOLDR}/templates/gravity-sync.timer ${DAEMON_PATH}
