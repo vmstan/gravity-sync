@@ -1,0 +1,15 @@
+[Unit]
+Description=Synchronize Pi-hole instances
+RefuseManualStart=no
+RefuseManualStop=no
+Requires=gravity-sync.service
+
+[Timer]
+Unit=gravity-sync.service
+Persistent=true
+OnBootSec=120
+OnUnitInactiveSec=5m
+RandomizedDelaySec=5m
+
+[Install]
+WantedBy=timers.target

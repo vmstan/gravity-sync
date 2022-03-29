@@ -1,0 +1,12 @@
+[Unit]
+Description=Synchronize Pi-hole instances
+After=network-online.target
+Wants=gravity-sync.timer
+
+[Service]
+Type=simple
+User=unknown
+ExecStart=
+
+[Install]
+WantedBy=multi-user.target

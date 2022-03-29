@@ -3,7 +3,7 @@ SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='3.6.3'
+VERSION='3.7.0'
 
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
 # Requires Pi-Hole 5.x or higher already be installed, for help visit https://pi-hole.net
@@ -71,6 +71,7 @@ HISTORY_MD5='gravity-sync.md5'		# replace in gravity-sync.conf to overwrite
 
 # OS Settings
 BASH_PATH='/bin/bash'				# default OS bash path
+DAEMON_PATH='/etc/systemd/system'   # systemd timer/service folder
 
 ##############################################
 ### NEVER CHANGE ANYTHING BELOW THIS LINE! ###
@@ -148,7 +149,7 @@ case $# in
                 task_compare ;;
             cron)
                 start_gs
-                task_cron ;;
+                task_autocron ;;
             config|configure)
                 start_gs_noconfig
                 task_configure ;;

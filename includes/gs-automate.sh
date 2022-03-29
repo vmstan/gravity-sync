@@ -16,6 +16,61 @@ function task_automate {
     then
         MESSAGE="${UI_AUTO_CRON_EXISTS}"
         echo_warn
+        clear_cron
+    fi
+
+    MESSAGE="Customizing service file username"
+    sed -i "/User=unknown/c\User=$USER" ${LOCAL_FOLDR}/templates/gravity-sync.service
+    error_validate
+
+    MESSAGE="Customizing service file executable"
+    sed -i "/ExecStart=/c\ExecStart=${LOCAL_FOLDR}/${GS_FILENAME}" ${LOCAL_FOLDR}/templates/gravity-sync.service
+    error_validate
+
+    if systemctl is-active --quiet gravity-sync
+    then
+        MESSAGE="Stopping existing systemd service"
+        sudo systemctl stop gravity-sync
+        error_validate
+    fi
+
+    MESSAGE="Moving systemd timer into place"
+    sudo cp ${LOCAL_FOLDR}/templates/gravity-sync.timer ${DAEMON_PATH}
+    error_validate
+
+    MESSAGE="Moving systemd service into place"
+    sudo cp ${LOCAL_FOLDR}/templates/gravity-sync.service ${DAEMON_PATH}
+    error_validate
+
+    MESSAGE="Reloading systemd daemon"
+    sudo systemctl daemon-reload --quiet
+    error_validate
+
+    MESSAGE="Enabling Gravity Sync timer"
+    sudo systemctl enable gravity-sync.timer --quiet
+    error_validate
+
+    MESSAGE="Starting Gravity Sync service"
+    sudo systemctl start gravity-sync --quiet
+    error_validate
+    
+    exit_withchange
+}
+
+function task_autocron {
+    TASKTYPE='AUTOCRON'
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    echo_good
+
+    MESSAGE="Crontab automation is deprecated and will be removed in a future release"
+    echo_warn
+    
+    CRON_EXIST='0'
+    CRON_CHECK=$(crontab -l | grep -q "${GS_FILENAME}"  && echo '1' || echo '0')
+    if [ ${CRON_CHECK} == 1 ]
+    then
+        MESSAGE="${UI_AUTO_CRON_EXISTS}"
+        echo_warn
         CRON_EXIST='1'
     fi
     
