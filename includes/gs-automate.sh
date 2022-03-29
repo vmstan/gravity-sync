@@ -19,12 +19,29 @@ function task_automate {
         clear_cron
     fi
 
+    MESSAGE="Stopping existing systemd service"
     systemctl stop gravity-sync
+    error_validate
+
+    MESSAGE="Moving systemd timer into place"
     cp templates/gravity-sync.timer /etc/systemd/system
+    error_validate
+
+    MESSAGE="Moving systemd service into place"
     cp templates/gravity-sync.service /etc/systemd/system
+    error_validate
+
+    MESSAGE="Reloading systemd daemon"
     systemctl daemon-reload
+    error_validate
+
+    MESSAGE="Enabling Gravity Sync timer"
     systemctl enable gravity-sync.timer
+    error_validate
+
+    MESSAGE="Starting Gravity Sync service"
     systemctl start gravity-sync
+    error_validate
     
     exit_withchange
 }
