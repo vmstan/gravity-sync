@@ -358,9 +358,9 @@ function start_gs_noconfig {
 function import_gs {
     MESSAGE="${UI_CORE_LOADING} ${CONFIG_FILE}"
     echo -en "${STAT} $MESSAGE"
-    if [ -f ${GSETC_PATH} ]
+    if [ -f ${GSETC_PATH}/${CONFIG_FILE} ]
     then
-        source ${GSETC_PATH}
+        source ${GSETC_PATH}/${CONFIG_FILE}
         error_validate
     else
         echo_fail
