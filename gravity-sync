@@ -27,10 +27,10 @@ DNSMAQ_DIR='/etc/dnsmasq.d'         # default DNSMASQ data directory (local)
 RNSMAQ_DIR='/etc/dnsmasq.d'         # default DNSMASQ data directory (remote)
 LOCAL_PIHOLE_BINARY='/usr/local/bin/pihole' 	# default Pi-hole binary directory (local)
 REMOTE_PIHOLE_BINARY='/usr/local/bin/pihole' 	# default Pi-hole binary directory (remote)
-DOCKER_BIN='/usr/bin/docker'		# default Docker binary directory (local)
-ROCKER_BIN='/usr/bin/docker'		# default Docker binary directory (remote)
-PODMAN_BIN='/usr/bin/podman'        # default Podman binary directory (local)
-RODMAN_BIN='/usr/bin/podman'        # default Podman binary directory (remote)
+LOCAL_DOCKER_BINARY='/usr/bin/docker'		# default Docker binary directory (local)
+REMOTE_DOCKER_BINARY='/usr/bin/docker'		# default Docker binary directory (remote)
+LOCAL_PODMAN_BINARY='/usr/bin/podman'        # default Podman binary directory (local)
+REMOTE_PODMAN_BINARY='/usr/bin/podman'        # default Podman binary directory (remote)
 FILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (local)
 RILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (remote)
 DOCKER_CON='pihole'					# default Pi-hole container name (local)
@@ -446,10 +446,10 @@ function ph_type {
         PH_EXEC="${LOCAL_PIHOLE_BINARY}"
     elif [ "$PH_IN_TYPE" == "docker" ]
     then
-        PH_EXEC="sudo ${DOCKER_BIN} exec $(sudo ${DOCKER_BIN} ps -qf name=${DOCKER_CON}) pihole"
+        PH_EXEC="sudo ${LOCAL_DOCKER_BINARY} exec $(sudo ${LOCAL_DOCKER_BINARY} ps -qf name=${DOCKER_CON}) pihole"
     elif [ "$PH_IN_TYPE" == "podman" ]
     then
-        PH_EXEC="sudo ${PODMAN_BIN} exec ${DOCKER_CON} pihole"
+        PH_EXEC="sudo ${LOCAL_PODMAN_BINARY} exec ${DOCKER_CON} pihole"
     fi
     
     if [ "$RH_IN_TYPE" == "default" ]
@@ -457,10 +457,10 @@ function ph_type {
         RH_EXEC="${REMOTE_PIHOLE_BINARY}"
     elif [ "$RH_IN_TYPE" == "docker" ]
     then
-        RH_EXEC="sudo ${ROCKER_BIN} exec \$(sudo ${ROCKER_BIN} ps -qf name=${ROCKER_CON}) pihole"
+        RH_EXEC="sudo ${REMOTE_DOCKER_BINARY} exec \$(sudo ${REMOTE_DOCKER_BINARY} ps -qf name=${ROCKER_CON}) pihole"
     elif [ "$RH_IN_TYPE" == "podman" ]
     then
-        RH_EXEC="sudo ${RODMAN_BIN} exec ${ROCKER_CON} pihole"
+        RH_EXEC="sudo ${REMOTE_PODMAN_BINARY} exec ${ROCKER_CON} pihole"
     fi
 }
 
@@ -2578,11 +2578,11 @@ function show_info() {
     elif [ "${PH_IN_TYPE}" == "docker" ]
     then 
         echo -e "Local Pi-hole Container Name: ${DOCKER_CON}"
-        echo -e "Local Docker Binary Directory: ${DOCKER_BIN}"
+        echo -e "Local Docker Binary Directory: ${LOCAL_DOCKER_BINARY}"
     elif [ "${PH_IN_TYPE}" == "podman" ]
     then 
         echo -e "Local Pi-hole Container Name: ${DOCKER_CON}"
-        echo -e "Local Podman Binary Directory: ${PODMAN_BIN}"
+        echo -e "Local Podman Binary Directory: ${LOCAL_PODMAN_BINARY}"
     fi
     
     echo -e "Local File Owner Settings: ${FILE_OWNER}"
@@ -2641,11 +2641,11 @@ function show_info() {
     elif [ "${RH_IN_TYPE}" == "docker" ]
     then 
         echo -e "Remote Pi-hole Container Name: ${ROCKER_CON}"
-        echo -e "Remote Docker Binary Directory: ${ROCKER_BIN}"
+        echo -e "Remote Docker Binary Directory: ${REMOTE_DOCKER_BINARY}"
     elif [ "${RH_IN_TYPE}" == "podman" ]
     then 
         echo -e "Remote Pi-hole Container Name: ${ROCKER_CON}"
-        echo -e "Remote Podman Binary Directory: ${RODMAN_BIN}"
+        echo -e "Remote Podman Binary Directory: ${REMOTE_PODMAN_BINARY}"
     fi
 
     echo -e "Remote File Owner Settings: ${RILE_OWNER}"
