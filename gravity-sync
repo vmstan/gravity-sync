@@ -115,18 +115,18 @@ UI_EXIT_COMPLETE='completed'
 UI_EXIT_CALC_TIMER='seconds'
 
 # Hashing
-UI_HASHING_HASHING='Hashing the primary'
-UI_HASHING_COMPARING='Comparing to the secondary'
+UI_HASHING_HASHING='Hashing the remote'
+UI_HASHING_COMPARING='Comparing to the local'
 UI_HASHING_DIFFERNCE='Differences detected in the'
 UI_HASHING_DETECTED='has been detected on the'
 UI_HASHING_NOTDETECTED='not detected on the'
-UI_HASHING_PRIMARY='primary host'
-UI_HASHING_SECONDARY='secondary host'
+UI_HASHING_PRIMARY='remote host'
+UI_HASHING_SECONDARY='local host'
 UI_HASHING_REQUIRED='Replication of Pi-hole settings is required'
 UI_HASHING_NOREP='No replication is required at this time'
 UI_HASHING_DIAGNOSTICS='Performing replicator diagnostics'
-UI_HASHING_REHASHING='Rehashing the primary'
-UI_HASHING_RECOMPARING='Recomparing to the secondary'
+UI_HASHING_REHASHING='Rehashing the remote'
+UI_HASHING_RECOMPARING='Recomparing to the local'
 
 # Validation
 UI_VALIDATING='Validating configuration of'
@@ -140,9 +140,6 @@ UI_VAL_LOCAL_FILE_OWNERSHIP='Validating file ownership on'
 UI_VAL_FILE_PERMISSION='Validating file permissions on'
 UI_VAL_GS_FOLDERS="Validating ${PROGRAM} folders on $HOSTNAME"
 UI_VAL_GS_FOLDERS_FAIL="Unable to validate ${PROGRAM} folders on $HOSTNAME"
-
-# Configuration
-UI_DROPBEAR_DEP='Dropbear support has been deprecated'
 
 # Pull/Push
 UI_PULL_PRIMARY='Pulling the primary'
@@ -1449,17 +1446,9 @@ function detect_ssh {
     MESSAGE="${UI_VALIDATING} ${UI_CORE_OPENSSH}"
     echo_stat
     
-    if hash ssh 2>/dev/null
-    then
+    if hash ssh 2>/dev/null; then
         echo_good
         SSH_CMD='ssh'
-    elif hash dbclient 2>/dev/null
-    then
-        echo_fail
-        
-        MESSAGE="${UI_DROPBEAR_DEP}"
-        echo_warn
-        exit_nochange
     else
         echo_fail
         exit_nochange
@@ -1468,8 +1457,7 @@ function detect_ssh {
     MESSAGE="${UI_VALIDATING} ${UI_CORE_RSYNC}"
     echo_stat
     
-    if hash rsync 2>/dev/null
-    then
+    if hash rsync 2>/dev/null; then
         echo_good
     else
         echo_fail
@@ -1672,20 +1660,6 @@ function distro_check {
         MESSAGE="Unable to find OS Package Manager"
         echo_info
         exit_nochange
-    fi
-}
-
-## Dropbear Warning
-function dbclient_warning {
-    if hash dbclient 2>/dev/null
-    then
-        if hash ssh 2>/dev/null
-        then
-            NOEMPTYBASHIF="1"
-        else
-            MESSAGE="${UI_DROPBEAR_DEP}"
-            echo_warn
-        fi
     fi
 }
 
