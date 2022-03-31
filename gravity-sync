@@ -2243,7 +2243,9 @@ function podman_detect {
 
 ## Master Branch
 function update_gs {
+    echo_lines
     sh ${GS_LOCAL_REPO}/update.sh
+    echo_lines
 }
 
 ## Show Version
