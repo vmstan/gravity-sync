@@ -2279,19 +2279,8 @@ function show_version {
 }
 
 function show_info() {
-    if [ -f ${GS_LOCAL_REPO}/dev ]
-    then
-        DEVVERSION="-dev"
-    elif [ -f ${GS_LOCAL_REPO}/beta ]
-    then
-        DEVVERSION="-beta"
-    else
-        DEVVERSION=""
-    fi
-    
     echo_lines
     echo -e "${YELLOW}Local Software Versions${NC}"
-    echo -e "${PURPLE}Gravity Sync${NC} ${VERSION}${DEVVERSION}"
     echo -e "${BLUE}Pi-hole${NC}"
     if [ "${LOCAL_PIHOLE_TYPE}" == "default" ]
     then
@@ -2304,12 +2293,11 @@ function show_info() {
         sudo podman exec -it pihole pihole -v
     fi
     
+    lsb_release -d
     uname -srm
     echo -e "bash $BASH_VERSION"
     ssh -V
     rsync --version | grep version
-    SQLITE3_VERSION=$(sqlite3 --version)
-    echo -e "sqlite3 ${SQLITE3_VERSION}"
     sudo --version | grep "Sudo version"
     git --version
     
@@ -2325,29 +2313,7 @@ function show_info() {
 
     echo -e ""
     
-    echo -e "${YELLOW}Local/Secondary Instance Settings${NC}"
-    echo -e "Local Hostname: $HOSTNAME"
-    echo -e "Local Pi-hole Type: ${LOCAL_PIHOLE_TYPE}"
-    echo -e "Local Pi-hole Config Directory: ${LOCAL_PIHOLE_DIRECTORY}"
-    echo -e "Local DNSMASQ Config Directory: ${LOCAL_DNSMASQ_DIRECTORY}"
-    echo -e "Local Gravity Sync Binary: ${GS_FILEPATH}"
-    echo -e "Local Gravity Sync Config Directory: ${GSETC_PATH}"
-    
-    if [ "${LOCAL_PIHOLE_TYPE}" == "default" ]
-    then
-        echo -e "Local Pi-hole Binary Directory: ${LOCAL_PIHOLE_BINARY}"
-    elif [ "${LOCAL_PIHOLE_TYPE}" == "docker" ]
-    then 
-        echo -e "Local Pi-hole Container Name: ${LOCAL_DOCKER_CONTAINER}"
-        echo -e "Local Docker Binary Directory: ${LOCAL_DOCKER_BINARY}"
-    elif [ "${LOCAL_PIHOLE_TYPE}" == "podman" ]
-    then 
-        echo -e "Local Pi-hole Container Name: ${LOCAL_DOCKER_CONTAINER}"
-        echo -e "Local Podman Binary Directory: ${LOCAL_PODMAN_BINARY}"
-    fi
-    
-    echo -e "Local File Owner Settings: ${LOCAL_FILE_OWNER}"
-    
+    echo -e "${YELLOW}Global Instance Settings${NC}"
     if [ ${SKIP_CUSTOM} == '0' ]
     then
         echo -e "DNS Replication: Enabled (default)"
@@ -2360,10 +2326,10 @@ function show_info() {
     
     if [ ${INCLUDE_CNAME} == '1' ]
     then
-        echo -e "CNAME Replication: Enabled (custom)"
+        echo -e "CNAME Replication: Enabled (default)"
     elif [ ${INCLUDE_CNAME} == '0' ]
     then
-        echo -e "CNAME Replication: Disabled (default)"
+        echo -e "CNAME Replication: Disabled (custom)"
     else
         echo -e "CNAME Replication: Invalid Configuration"
     fi
@@ -2387,9 +2353,34 @@ function show_info() {
     else
         echo -e "Ping Test: Invalid Configuration"
     fi
+
+    echo -e ""
+
+    echo -e "${YELLOW}Local Instance Settings${NC}"
+    echo -e "Local Hostname: $HOSTNAME"
+    echo -e "Local Pi-hole Type: ${LOCAL_PIHOLE_TYPE}"
+    echo -e "Local Pi-hole Config Directory: ${LOCAL_PIHOLE_DIRECTORY}"
+    echo -e "Local DNSMASQ Config Directory: ${LOCAL_DNSMASQ_DIRECTORY}"
+    echo -e "Local Gravity Sync Binary: ${GS_FILEPATH}"
+    echo -e "Local Gravity Sync Config Directory: ${GSETC_PATH}"
+    
+    if [ "${LOCAL_PIHOLE_TYPE}" == "default" ]
+    then
+        echo -e "Local Pi-hole Binary Directory: ${LOCAL_PIHOLE_BINARY}"
+    elif [ "${LOCAL_PIHOLE_TYPE}" == "docker" ]
+    then 
+        echo -e "Local Pi-hole Container Name: ${LOCAL_DOCKER_CONTAINER}"
+        echo -e "Local Docker Binary Directory: ${LOCAL_DOCKER_BINARY}"
+    elif [ "${LOCAL_PIHOLE_TYPE}" == "podman" ]
+    then 
+        echo -e "Local Pi-hole Container Name: ${LOCAL_DOCKER_CONTAINER}"
+        echo -e "Local Podman Binary Directory: ${LOCAL_PODMAN_BINARY}"
+    fi
+    
+    echo -e "Local File Owner Settings: ${LOCAL_FILE_OWNER}"
         
     echo -e ""
-    echo -e "${YELLOW}Remote/Primary Instance Settings${NC}"
+    echo -e "${YELLOW}Remote Instance Settings${NC}"
     echo -e "Remote Hostname/IP: ${REMOTE_HOST}"
     echo -e "Remote Username: ${REMOTE_USER}"
     echo -e "Remote Pi-hole Type: ${REMOTE_PIHOLE_TYPE}"
