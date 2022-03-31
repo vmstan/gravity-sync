@@ -13,7 +13,7 @@ function update_gs {
         echo -e "Pulling from ${BRANCH}"
     fi
     
-    cd ${GS_LOCAL_REPO}; git fetch --all; git reset --hard ${BRANCH}; sudo cp gravity-sync /usr/local/bin; git clean -fq)
+    (cd ${GS_LOCAL_REPO}; git fetch --all; git reset --hard ${BRANCH}; sudo cp gravity-sync /usr/local/bin; git clean -fq)
 }
 
 update_gs
