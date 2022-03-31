@@ -68,7 +68,6 @@ GS_FILENAME='gravity-sync'		    # must exist because it's this script
 GSETC_PATH="/etc/gravity-sync"		# replace in gravity-sync.conf to overwrite
 CONFIG_FILE='gravity-sync.conf' 	# must exist with primary host/user configured
 SYNCING_LOG='gravity-sync.log' 		# replace in gravity-sync.conf to overwrite
-CRONJOB_LOG='gravity-sync.cron' 	# replace in gravity-sync.conf to overwrite
 HISTORY_MD5='gravity-sync.md5'		# replace in gravity-sync.conf to overwrite
 
 GS_GITHUB_REPO='https://github.com/vmstan/gravity-sync.git'
@@ -188,13 +187,6 @@ UI_RESTORE_PUSH_NOPUSH="Configuration will not be pushed to the primaryp Pi-hole
 UI_PURGE_MATRIX_ALIGNMENT='Realigning dilithium crystal matrix'
 UI_PURGE_DELETE_SSH_KEYS='Deleting SSH key-files'
 UI_PURGE_CLEANING_DIR="Purging ${PROGRAM} directory"
-
-# Automation
-UI_AUTO_CRON_EXISTS='Automation task exists in crontab'
-UI_AUTO_CRON_DISPLAY_FREQ='Select synchronization frequency (in minutes)'
-UI_AUTO_CRON_SELECT_FREQ='Valid options are 5, 10, 15, 30 or 0 to disable (default: 15)'
-UI_AUTO_CRON_SAVING='Saving new synchronization task to crontab'
-UI_AUTO_CRON_DISABLED='Automation with crontab has been disabled'
 
 # Configuration
 UI_CONFIG_YESNOY="'Yes' or 'No', blank is default 'Yes'"
@@ -1571,41 +1563,6 @@ function logs_gs {
     exit_nochange
 }
 
-## Crontab Logs
-### Core Crontab Logs
-function show_crontab {
-    MESSAGE="${UI_LOGGING_DISPLAY}"
-    echo_stat
-    
-    if [ -f ${GSETC_PATH}/${CRONJOB_LOG} ]
-    then
-        if [ -s ${GSETC_PATH}/${CRONJOB_LOG} ]
-        echo_good
-        
-        echo_lines
-        date -r ${GSETC_PATH}/${CRONJOB_LOG}
-        cat ${GSETC_PATH}/${CRONJOB_LOG}
-        echo_lines
-        
-        exit_nochange
-        then
-            echo_fail
-            
-            MESSAGE="${GSETC_PATH}/${CRONJOB_LOG} ${UI_LOGGING_EMPTY}"
-            echo_info
-            
-            exit_nochange
-        fi
-    else
-        echo_fail
-        
-        MESSAGE="${GSETC_PATH}/${CRONJOB_LOG} ${UI_LOGGING_MISSING}"
-        echo_info
-        
-        exit_nochange
-    fi
-}
-
 function validate_gs_folders {
     MESSAGE="${UI_VAL_GS_FOLDERS}"
     echo_stat
@@ -2677,15 +2634,6 @@ function task_automate {
     TASKTYPE='AUTOMATE'
     MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
-    
-    CRON_EXIST='0'
-    CRON_CHECK=$(crontab -l | grep -q "${GS_FILENAME}"  && echo '1' || echo '0')
-    if [ ${CRON_CHECK} == 1 ]
-    then
-        MESSAGE="${UI_AUTO_CRON_EXISTS}"
-        echo_warn
-        clear_cron
-    fi
 
     MESSAGE="Customizing service file username"
     sed -i "/User=unknown/c\User=$USER" ${GS_LOCAL_REPO}/templates/gravity-sync.service
@@ -2744,7 +2692,7 @@ function task_purge {
         echo -e "- Your beta branch updater."
     fi
         
-    echo -e "- All cronjob/automation tasks."
+    echo -e "- All automation tasks."
     echo -e "- All job history/logs."
     echo -e "- Associated SSH id_rsa keys."
     echo -e ""
@@ -2764,8 +2712,9 @@ function task_purge {
     
     git clean -f -X -d >/dev/null 2>&1
     error_validate
-    
-    clear_cron
+
+    systemctl stop gravity-sync.timer
+    systemctl disable gravity-sync
     
     MESSAGE="${UI_PURGE_DELETE_SSH_KEYS}"
     echo_stat
@@ -2822,7 +2771,6 @@ function list_gs_arguments {
     echo -e "Setup Options:"
     echo -e " ${YELLOW}config${NC}      Creates a new ${PROGRAM} configuration file"
     echo -e " ${YELLOW}automate${NC}    Schedules the ${PROGRAM} replication task using systemd"
-    echo -e " ${YELLOW}cron${NC}        Schedules the ${PROGRAM} replication task using crontab (legacy)"
     echo -e " ${YELLOW}version${NC}     Shows the installed version of ${PROGRAM} and check for updates"
     echo -e " ${YELLOW}update${NC}      Upgrades ${PROGRAM} to the latest available version using Git"
     echo -e " ${YELLOW}dev${NC}         Sets update command to use a development version of ${PROGRAM}"
@@ -2873,9 +2821,6 @@ case $# in
             compare)
                 start_gs
                 task_compare ;;
-            cron)
-                start_gs
-                task_autocron ;;
             config|configure)
                 start_gs_noconfig
                 task_configure ;;
