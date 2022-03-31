@@ -130,7 +130,7 @@ UI_HASHING_REHASHING='Rehashing the remote'
 UI_HASHING_RECOMPARING='Recomparing to the local'
 
 # Validation
-UI_VALIDATING='Validating existance of'
+UI_VALIDATING='Validating pathways to'
 UI_VALIDATING_FAIL_CONTAINER='Unable to validate running container instance of'
 UI_VALIDATING_FAIL_FOLDER='Unable to validate configuration folder for'
 UI_VALIDATING_FAIL_BINARY='Unable to validate the availibility of'
@@ -196,7 +196,7 @@ UI_CONFIG_YESNON="'Yes' or 'No', blank is default 'No'"
 UI_CONFIG_ALREADY='already exists'
 UI_ENABLE_REPLICATION_QUEST='Enable replication of'
 UI_CONFIG_PREF_SAVED='preference saved to'
-UI_CONFIG_AREYOUSURE='Proceeding will wipe out your existing configuration'
+UI_CONFIG_AREYOUSURE='Proceeding will replace your existing configuration'
 UI_CONFIG_DOADVANCED='Do you want to enable advanced installation options'
 UI_CONFIG_ERASING='Erasing existing'
 UI_CONFIG_CREATING='Creating new'
