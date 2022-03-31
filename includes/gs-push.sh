@@ -42,7 +42,7 @@ function push_gs_grav {
     MESSAGE="${UI_PUSH_SECONDARY} ${UI_GRAVITY_NAME}"
     echo_stat
     RSYNC_REPATH="sudo rsync"
-    RSYNC_SOURCE="${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.gsbackup"
+    RSYNC_SOURCE="${PIHOLE_DIR}/${GRAVITY_FI}.gsbackup"
     RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${GRAVITY_FI}"
     create_rsynccmd
     
@@ -72,13 +72,13 @@ function push_gs_cust {
             echo_stat
             RSYNC_REPATH="rsync"
             RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${CUSTOM_DNS}.gsbackup"
-            RSYNC_TARGET="${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.push"
+            RSYNC_TARGET="${PIHOLE_DIR}/${CUSTOM_DNS}.push"
             create_rsynccmd
             
             MESSAGE="${UI_PUSH_SECONDARY} ${UI_CUSTOM_NAME}"
             echo_stat
             RSYNC_REPATH="sudo rsync"
-            RSYNC_SOURCE="${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.gsbackup"
+            RSYNC_SOURCE="${PIHOLE_DIR}/${CUSTOM_DNS}.gsbackup"
             RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${CUSTOM_DNS}"
             create_rsynccmd
             
@@ -110,14 +110,14 @@ function push_gs_cname {
             echo_stat
             RSYNC_REPATH="rsync"
             RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/dnsmasq.d-${CNAME_CONF}.gsbackup"
-            RSYNC_TARGET="${LOCAL_FOLDR}/${BACKUP_FOLD}/${CNAME_CONF}.push"
+            RSYNC_TARGET="${PIHOLE_DIR}/${CNAME_CONF}.push"
             create_rsynccmd
             
             MESSAGE="${UI_PUSH_SECONDARY} ${UI_CNAME_NAME}"
             echo_stat
             RSYNC_REPATH="sudo rsync"
             RSYNC_SOURCE="${LOCAL_FOLDR}/${BACKUP_FOLD}/${CNAME_CONF}.gsbackup"
-            RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${RNSMAQ_DIR}/${CNAME_CONF}"
+            RSYNC_TARGET="${PIHOLE_DIR}:${RNSMAQ_DIR}/${CNAME_CONF}"
             create_rsynccmd
             
             MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_CNAME_NAME}"
