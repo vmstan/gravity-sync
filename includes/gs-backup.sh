@@ -132,8 +132,15 @@ function backup_remote_cname() {
 }
 
 function backup_cleanup() {
-    MESSAGE="${UI_BACKUP_PURGE}"
+    MESSAGE="${UI_BACKUP_PURGE} on local"
     echo_stat
-    git clean -fq
+    # git clean -fq
+    rm -f ${PIHOLE_DIR}/*.gsbackup
     error_validate
+
+    MESSAGE="${UI_BACKUP_PURGE} on remote"
+    echo_stat
+    CMD_TIMEOUT=$BACKUP_TIMEOUT
+    CMD_REQUESTED="rm -f ${RIHOLE_DIR}/*.gsbackup"
+    create_sshcmd
 }
