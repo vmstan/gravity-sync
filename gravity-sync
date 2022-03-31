@@ -79,7 +79,6 @@ GS_GITHUB_REPO='https://github.com/vmstan/gravity-sync.git'
 GS_LOCAL_REPO="${GSETC_PATH}/.gs"
 
 # OS Settings
-BASH_PATH='/bin/bash'				# default OS bash path
 DAEMON_PATH='/etc/systemd/system'   # systemd timer/service folder
 
 ##############################################
@@ -2314,45 +2313,45 @@ function show_info() {
     echo -e ""
     
     echo -e "${YELLOW}Global Instance Settings${NC}"
-    if [ ${SKIP_CUSTOM} == '0' ]
-    then
+    if [ ${SKIP_CUSTOM} == '0' ]; then
         echo -e "DNS Replication: Enabled (default)"
-    elif [ ${SKIP_CUSTOM} == '1' ]
-    then
+    elif [ ${SKIP_CUSTOM} == '1' ]; then
         echo -e "DNS Replication: Disabled (custom)"
     else
         echo -e "DNS Replication: Invalid Configuration"
     fi
     
-    if [ ${INCLUDE_CNAME} == '1' ]
-    then
+    if [ ${INCLUDE_CNAME} == '1' ]; then
         echo -e "CNAME Replication: Enabled (default)"
-    elif [ ${INCLUDE_CNAME} == '0' ]
-    then
+    elif [ ${INCLUDE_CNAME} == '0' ]; then
         echo -e "CNAME Replication: Disabled (custom)"
     else
         echo -e "CNAME Replication: Invalid Configuration"
     fi
     
-    if [ ${VERIFY_PASS} == '1' ]
-    then
+    if [ ${VERIFY_PASS} == '0' ]; then
         echo -e "Verify Operations: Enabled (default)"
-    elif [ ${VERIFY_PASS} == '0' ]
-    then
+    elif [ ${VERIFY_PASS} == '1' ]; then
         echo -e "Verify Operations: Disabled (custom)"
     else
         echo -e "Verify Operations: Invalid Configuration"
     fi
     
-    if [ ${PING_AVOID} == '0' ]
-    then
+    if [ ${PING_AVOID} == '0' ]; then
         echo -e "Ping Test: Enabled (default)"
-    elif [ ${PING_AVOID} == '1' ]
-    then
+    elif [ ${PING_AVOID} == '1' ]; then
         echo -e "Ping Test: Disabled (custom)"
     else
         echo -e "Ping Test: Invalid Configuration"
     fi
+
+    if [ ${SSH_PORT} == '22' ]; then
+        echo -e "SSH Port: 22 (default)"
+    else
+        echo -e "SSH Port: ${SSH_PORT} (custom)"
+    fi
+
+    echo -e "SSH Keyfile: ${SSH_PKIF}"
 
     echo -e ""
 
