@@ -62,18 +62,19 @@ CNAME_CONF='05-pihole-custom-cname.conf'        # DNSMASQ CNAME alias file
 BACKUP_TIMEOUT='240'                            # replace in gravity-sync.conf to overwrite
 BACKUP_INTEGRITY_WAIT='5'                       # replace in gravity-sync.conf to overwrite
 
-# SSH Customization
-SSH_PORT='22' 						            # replace in gravity-sync.conf to overwrite
-SSH_PKIF='.ssh/id_rsa'				            # replace in gravity-sync.conf to overwrite
-
 # GS Folder/File Locations
 GS_FILEPATH='/usr/local/bin/gravity-sync'			
-GS_FILENAME='gravity-sync'		    # must exist because it's this script
-GSETC_PATH="/etc/gravity-sync"		# replace in gravity-sync.conf to overwrite
-CONFIG_FILE='gravity-sync.conf' 	# must exist with primary host/user configured
-SYNCING_LOG='gravity-sync.log' 		# replace in gravity-sync.conf to overwrite
-HISTORY_MD5='gravity-sync.md5'		# replace in gravity-sync.conf to overwrite
+GS_FILENAME='gravity-sync'		                # must exist because it's this script
+GSETC_PATH="/etc/gravity-sync"		            # replace in gravity-sync.conf to overwrite
+CONFIG_FILE='gravity-sync.conf' 	            # must exist with primary host/user configured
+SYNCING_LOG='gravity-sync.log' 		            # replace in gravity-sync.conf to overwrite
+HISTORY_MD5='gravity-sync.md5'		            # replace in gravity-sync.conf to overwrite
 
+# SSH Customization
+SSH_PORT='22' 						            # replace in gravity-sync.conf to overwrite
+SSH_PKIF="${GSETC_PATH}/gravity-sync.rsa"       # replace in gravity-sync.conf to overwrite
+
+# Github Customization
 GS_GITHUB_REPO='https://github.com/vmstan/gravity-sync.git'
 GS_LOCAL_REPO="${GSETC_PATH}/.gs"
 
@@ -803,7 +804,7 @@ function smart_gs {
             MESSAGE="Both ${GRAVITY_FI} Have Changed"
             echo_warn
             
-            PRIDBDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}")
+            PRIDBDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}")
             SECDBDATE=$(stat -c %Y ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI})
             
             if (( "$PRIDBDATE" >= "$SECDBDATE" ))
@@ -854,7 +855,7 @@ function smart_gs {
                     MESSAGE="Both ${CUSTOM_DNS} Have Changed"
                     echo_warn
                     
-                    PRICLDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}")
+                    PRICLDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}")
                     SECCLDATE=$(stat -c %Y ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS})
                     
                     if (( "$PRICLDATE" >= "$SECCLDATE" ))
@@ -910,7 +911,7 @@ function smart_gs {
                     MESSAGE="Both ${CNAME_CONF} Have Changed"
                     echo_warn
                     
-                    PRICNDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}")
+                    PRICNDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}")
                     SECCNDATE=$(stat -c %Y ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF})
                     
                     if (( "$PRICNDATE" >= "$SECCNDATE" ))
@@ -1073,13 +1074,13 @@ function backup_remote_gravity_integrity() {
     sleep $BACKUP_INTEGRITY_WAIT
 
     if [ "$REMOTE_PIHOLE_TYPE" == "default" ]; then
-        primaryIntegrity=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
+        primaryIntegrity=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
         error_validate
     elif [ "$REMOTE_PIHOLE_TYPE" == "docker" ]; then
-        primaryIntegrity=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
+        primaryIntegrity=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
         error_validate
     elif [ "$REMOTE_PIHOLE_TYPE" == "podman" ]; then
-        primaryIntegrity=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
+        primaryIntegrity=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
         error_validate
     fi
     
@@ -1142,7 +1143,7 @@ function md5_compare {
     
     MESSAGE="${UI_HASHING_HASHING} ${UI_GRAVITY_NAME}"
     echo_stat
-    primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}" | sed 's/\s.*$//')
+    primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}" | sed 's/\s.*$//')
     error_validate
     
     MESSAGE="${UI_HASHING_COMPARING} ${UI_GRAVITY_NAME}"
@@ -1163,13 +1164,13 @@ function md5_compare {
     then
         if [ -f ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ]
         then
-            if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}
+            if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}
             then
                 REMOTE_CUSTOM_DNS="1"
                 MESSAGE="${UI_HASHING_HASHING} ${UI_CUSTOM_NAME}"
                 echo_stat
                 
-                primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS} | sed 's/\s.*$//'")
+                primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS} | sed 's/\s.*$//'")
                 error_validate
                 
                 MESSAGE="${UI_HASHING_COMPARING} ${UI_CUSTOM_NAME}"
@@ -1190,7 +1191,7 @@ function md5_compare {
                 echo_info
             fi
         else
-            if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}
+            if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}
             then
                 REMOTE_CUSTOM_DNS="1"
                 MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_PRIMARY}"
@@ -1208,13 +1209,13 @@ function md5_compare {
         then
             if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} ]
             then
-                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}
+                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}
                 then
                     REMOTE_CNAME_DNS="1"
                     MESSAGE="${UI_HASHING_HASHING} ${UI_CNAME_NAME}"
                     echo_stat
                     
-                    primaryCNMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF} | sed 's/\s.*$//'")
+                    primaryCNMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF} | sed 's/\s.*$//'")
                     error_validate
                     
                     MESSAGE="${UI_HASHING_COMPARING} ${UI_CNAME_NAME}"
@@ -1235,7 +1236,7 @@ function md5_compare {
                     echo_info
                 fi
             else
-                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}
+                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}
                 then
                     REMOTE_CNAME_DNS="1"
                     MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_PRIMARY}"
@@ -1288,7 +1289,7 @@ function md5_recheck {
     
     MESSAGE="${UI_HASHING_REHASHING} ${UI_GRAVITY_NAME}"
     echo_stat
-    primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}" | sed 's/\s.*$//')
+    primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}" | sed 's/\s.*$//')
     error_validate
     
     MESSAGE="${UI_HASHING_RECOMPARING} ${UI_GRAVITY_NAME}"
@@ -1300,13 +1301,13 @@ function md5_recheck {
     then
         if [ -f ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ]
         then
-            if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}
+            if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}
             then
                 REMOTE_CUSTOM_DNS="1"
                 MESSAGE="${UI_HASHING_REHASHING} ${UI_CUSTOM_NAME}"
                 echo_stat
                 
-                primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS} | sed 's/\s.*$//'")
+                primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS} | sed 's/\s.*$//'")
                 error_validate
                 
                 MESSAGE="${UI_HASHING_RECOMPARING} ${UI_CUSTOM_NAME}"
@@ -1318,7 +1319,7 @@ function md5_recheck {
                 echo_info
             fi
         else
-            if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}
+            if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}
             then
                 REMOTE_CUSTOM_DNS="1"
                 MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_PRIMARY}"
@@ -1335,13 +1336,13 @@ function md5_recheck {
         then
             if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} ]
             then
-                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}
+                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}
                 then
                     REMOTE_CNAME_DNS="1"
                     MESSAGE="${UI_HASHING_REHASHING} ${UI_CNAME_NAME}"
                     echo_stat
                     
-                    primaryCNMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF} | sed 's/\s.*$//'")
+                    primaryCNMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF} | sed 's/\s.*$//'")
                     error_validate
                     
                     MESSAGE="${UI_HASHING_RECOMPARING} ${UI_CNAME_NAME}"
@@ -1353,7 +1354,7 @@ function md5_recheck {
                     echo_info
                 fi
             else
-                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}
+                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}
                 then
                     REMOTE_CNAME_DNS="1"
                     MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_PRIMARY}"
@@ -1369,13 +1370,13 @@ function md5_recheck {
 
 ## Determine SSH Pathways
 function create_sshcmd {
-    timeout --preserve-status ${CMD_TIMEOUT} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} "${CMD_REQUESTED}"
+    timeout --preserve-status ${CMD_TIMEOUT} ${SSH_CMD} -p ${SSH_PORT} -i ${SSH_PKIF} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} "${CMD_REQUESTED}"
     error_validate
 }
 
 ## Determine SSH Pathways
 function create_rsynccmd {
-    rsync --rsync-path="${RSYNC_REPATH}" -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
+    rsync --rsync-path="${RSYNC_REPATH}" -e "${SSH_CMD} -p ${SSH_PORT} -i ${SSH_PKIF}" ${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
     error_validate
 }
 
@@ -1399,7 +1400,7 @@ function detect_sshkeygen {
 function generate_sshkey {
     if [ -z $INPUT_REMOTE_PASS ]
     then
-        if [ -f $HOME/${SSH_PKIF} ]
+        if [ -f ${SSH_PKIF} ]
         then
             MESSAGE="Using existing ~/${SSH_PKIF} file"
             echo_good_clean
@@ -1409,7 +1410,7 @@ function generate_sshkey {
                 MESSAGE="Generating ~/${SSH_PKIF} file"
                 echo_stat
                 
-                ssh-keygen -q -P "" -t rsa -f $HOME/${SSH_PKIF} >/dev/null 2>&1
+                ssh-keygen -q -P "" -t rsa -f ${SSH_PKIF} >/dev/null 2>&1
                 error_validate
             else
                 MESSAGE="No SSH-KEYGEN available"
@@ -1423,12 +1424,12 @@ function generate_sshkey {
 function export_sshkey {
     if [ -z $REMOTE_PASS ]
     then
-        if [ -f $HOME/${SSH_PKIF} ]
+        if [ -f ${SSH_PKIF} ]
         then
             MESSAGE="Registering key-pair to ${REMOTE_HOST}"
             echo_info
             
-            ssh-copy-id -f -p ${SSH_PORT} -i $HOME/${SSH_PKIF}.pub ${REMOTE_USER}@${REMOTE_HOST}
+            ssh-copy-id -f -p ${SSH_PORT} -i ${SSH_PKIF}.pub ${REMOTE_USER}@${REMOTE_HOST}
         else
             MESSAGE="Error registering key-pair to ${REMOTE_HOST}"
             echo_warn
@@ -2575,8 +2576,8 @@ function task_purge {
     MESSAGE="${UI_PURGE_DELETE_SSH_KEYS}"
     echo_stat
     
-    rm -f $HOME/${SSH_PKIF} >/dev/null 2>&1
-    rm -f $HOME/${SSH_PKIF}.pub >/dev/null 2>&1
+    rm -f ${SSH_PKIF} >/dev/null 2>&1
+    rm -f {SSH_PKIF}.pub >/dev/null 2>&1
     error_validate
     
     MESSAGE="${UI_PURGE_MATRIX_ALIGNMENT}"
