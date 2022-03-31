@@ -60,11 +60,10 @@ SSH_PORT='22' 						# default SSH port
 SSH_PKIF='.ssh/id_rsa'				# default local SSH key
 
 # GS Folder/File Locations
-GS_FILEPATH='/usr/local/bin/gravity-sync'			# auto determined - do not change!
-# LOCAL_FOLDR=$(dirname $GS_FILEPATH) # auto determined - do not change!
-CONFIG_FILE='gravity-sync.conf' 	# must exist with primary host/user configured
+GS_FILEPATH='/usr/local/bin/gravity-sync'			
 GS_FILENAME='gravity-sync'		    # must exist because it's this script
 GSETC_PATH="/etc/gravity-sync"		# replace in gravity-sync.conf to overwrite
+CONFIG_FILE='gravity-sync.conf' 	# must exist with primary host/user configured
 SYNCING_LOG='gravity-sync.log' 		# replace in gravity-sync.conf to overwrite
 CRONJOB_LOG='gravity-sync.cron' 	# replace in gravity-sync.conf to overwrite
 HISTORY_MD5='gravity-sync.md5'		# replace in gravity-sync.conf to overwrite
@@ -2664,7 +2663,7 @@ function task_automate {
     error_validate
 
     MESSAGE="Customizing service file executable"
-    sed -i "/ExecStart=/c\ExecStart=${GS_FILENAME}" ${GS_LOCAL_REPO}/templates/gravity-sync.service
+    sed -i "/ExecStart=/c\ExecStart=${GS_FILEPATH}" ${GS_LOCAL_REPO}/templates/gravity-sync.service
     error_validate
 
     if systemctl is-active --quiet gravity-sync
