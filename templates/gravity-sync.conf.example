@@ -1,4 +1,4 @@
-# REQUIRED SETTINGS ######################
+# REQUIRED SETTINGS ##########################
 
 # Primary Pi-hole host (in IP or DNS name)
 REMOTE_HOST='192.168.1.10'
@@ -22,5 +22,5 @@ REMOTE_USER='pi'
 # LOCAL_DOCKER_CONTAINER=''				    # Local Pi-hole container name
 # REMOTE_DOCKER_CONTAINER=''				# Remote Pi-hole container name
 
-# Interaction Customization
+# HIDDEN FIGURES #############################
 # See https://github.com/vmstan/gravity-sync/wiki/Hidden-Figures
