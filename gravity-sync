@@ -2249,12 +2249,8 @@ function update_gs {
 
 ## Show Version
 function show_version {
-    if [ -f ${GS_LOCAL_REPO}/dev ]
-    then
+    if [ -f ${GS_LOCAL_REPO}/dev ]; then
         DEVVERSION="-dev"
-    elif [ -f ${GS_LOCAL_REPO}/beta ]
-    then
-        DEVVERSION="-beta"
     else
         DEVVERSION=""
     fi
@@ -2281,14 +2277,11 @@ function show_info() {
     echo_lines
     echo -e "${YELLOW}Local Software Versions${NC}"
     echo -e "${BLUE}Pi-hole${NC}"
-    if [ "${LOCAL_PIHOLE_TYPE}" == "default" ]
-    then
+    if [ "${LOCAL_PIHOLE_TYPE}" == "default" ]; then
         pihole version
-    elif [ "${LOCAL_PIHOLE_TYPE}" == "docker" ]
-    then 
+    elif [ "${LOCAL_PIHOLE_TYPE}" == "docker" ]; then 
         sudo docker exec -it pihole pihole -v
-    elif [ "${LOCAL_PIHOLE_TYPE}" == "podman" ]
-    then 
+    elif [ "${LOCAL_PIHOLE_TYPE}" == "podman" ]; then 
         sudo podman exec -it pihole pihole -v
     fi
     
@@ -2300,13 +2293,11 @@ function show_info() {
     sudo --version | grep "Sudo version"
     git --version
     
-    if hash docker 2>/dev/null
-    then
+    if hash docker 2>/dev/null; then
         docker --version
     fi
 
-    if hash podman 2>/dev/null
-    then
+    if hash podman 2>/dev/null; then
         podman --version
     fi
 
@@ -2369,15 +2360,12 @@ function show_info() {
     echo -e "Local Gravity Sync Binary: ${GS_FILEPATH}"
     echo -e "Local Gravity Sync Config Directory: ${GSETC_PATH}"
     
-    if [ "${LOCAL_PIHOLE_TYPE}" == "default" ]
-    then
+    if [ "${LOCAL_PIHOLE_TYPE}" == "default" ]; then
         echo -e "Local Pi-hole Binary Directory: ${LOCAL_PIHOLE_BINARY}"
-    elif [ "${LOCAL_PIHOLE_TYPE}" == "docker" ]
-    then 
+    elif [ "${LOCAL_PIHOLE_TYPE}" == "docker" ]; then 
         echo -e "Local Pi-hole Container Name: ${LOCAL_DOCKER_CONTAINER}"
         echo -e "Local Docker Binary Directory: ${LOCAL_DOCKER_BINARY}"
-    elif [ "${LOCAL_PIHOLE_TYPE}" == "podman" ]
-    then 
+    elif [ "${LOCAL_PIHOLE_TYPE}" == "podman" ]; then 
         echo -e "Local Pi-hole Container Name: ${LOCAL_DOCKER_CONTAINER}"
         echo -e "Local Podman Binary Directory: ${LOCAL_PODMAN_BINARY}"
     fi
@@ -2392,15 +2380,12 @@ function show_info() {
     echo -e "Remote Pi-hole Config Directory: ${REMOTE_PIHOLE_DIRECTORY}"
     echo -e "Remote DNSMASQ Config Directory: ${REMOTE_DNSMASQ_DIRECTORY}"
 
-    if [ "${REMOTE_PIHOLE_TYPE}" == "default" ]
-    then
+    if [ "${REMOTE_PIHOLE_TYPE}" == "default" ]; then
         echo -e "Remote Pi-hole Binary Directory: ${REMOTE_PIHOLE_BINARY}"
-    elif [ "${REMOTE_PIHOLE_TYPE}" == "docker" ]
-    then 
+    elif [ "${REMOTE_PIHOLE_TYPE}" == "docker" ]; then 
         echo -e "Remote Pi-hole Container Name: ${REMOTE_DOCKER_CONTAINER}"
         echo -e "Remote Docker Binary Directory: ${REMOTE_DOCKER_BINARY}"
-    elif [ "${REMOTE_PIHOLE_TYPE}" == "podman" ]
-    then 
+    elif [ "${REMOTE_PIHOLE_TYPE}" == "podman" ]; then 
         echo -e "Remote Pi-hole Container Name: ${REMOTE_DOCKER_CONTAINER}"
         echo -e "Remote Podman Binary Directory: ${REMOTE_PODMAN_BINARY}"
     fi
@@ -2415,22 +2400,10 @@ function task_devmode {
     MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
-    if [ -f ${GS_LOCAL_REPO}/dev ]
-    then
+    if [ -f ${GS_LOCAL_REPO}/dev ]; then
         MESSAGE="Disabling ${TASKTYPE}"
         echo_stat
         rm -f ${GS_LOCAL_REPO}/dev
-        error_validate
-    elif [ -f ${GS_LOCAL_REPO}/beta ]
-    then
-        MESSAGE="Disabling BETA"
-        echo_stat
-        rm -f ${GS_LOCAL_REPO}/beta
-        error_validate
-        
-        MESSAGE="Enabling ${TASKTYPE}"
-        echo_stat
-        touch ${GS_LOCAL_REPO}/dev
         error_validate
     else
         MESSAGE="Enabling ${TASKTYPE}"
@@ -2440,10 +2413,10 @@ function task_devmode {
         
         MESSAGE="Checking available branches"
         echo_stat
-        git fetch --all >/dev/null 2>&1
+        (cd ${GS_LOCAL_REPO}; git fetch --all >/dev/null 2>&1)
         error_validate
         
-        git branch -r
+        (cd ${GS_LOCAL_REPO}; git branch -r)
         
         MESSAGE="Select GitHub branch to update against"
         echo_need
