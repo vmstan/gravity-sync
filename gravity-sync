@@ -474,7 +474,6 @@ function task_pull {
         validate_dns_folders
     fi
     
-    validate_sqlite3
     validate_os_sshpass
     
     pull_gs
@@ -615,7 +614,6 @@ function task_push {
         validate_dns_folders
     fi
     
-    validate_sqlite3
     validate_os_sshpass
     
     push_gs
@@ -776,7 +774,6 @@ function task_smart {
         validate_dns_folders
     fi
     
-    validate_sqlite3
     validate_os_sshpass
     
     smart_gs
@@ -1678,19 +1675,6 @@ function validate_dns_folders {
         exit_nochange
     fi
     echo_good
-}
-
-## Validate SQLite3
-function validate_sqlite3 {
-    MESSAGE="${UI_VALIDATING} ${UI_CORE_APP_SQL}"
-    echo_stat
-    if hash sqlite3 2>/dev/null
-    then
-        echo_good
-    else
-        MESSAGE="${UI_VALIDATING_FAIL_BINARY} ${UI_CORE_APP_SQL}"
-        echo_warn
-    fi
 }
 
 ## Validate SSHPASS
