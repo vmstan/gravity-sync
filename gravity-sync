@@ -65,7 +65,7 @@ LOCAL_FOLDR=$(dirname $GS_FILEPATH) # auto determined - do not change!
 CONFIG_FILE='gravity-sync.conf' 	# must exist with primary host/user configured
 GS_FILENAME='gravity-sync'		    # must exist because it's this script
 BACKUP_FOLD='backup' 				# must exist as subdirectory in LOCAL_FOLDR
-LOG_PATH="${LOCAL_FOLDR}/logs"		# replace in gravity-sync.conf to overwrite
+GSETC_PATH="/etc/gravity-sync"		# replace in gravity-sync.conf to overwrite
 SYNCING_LOG='gravity-sync.log' 		# replace in gravity-sync.conf to overwrite
 CRONJOB_LOG='gravity-sync.cron' 	# replace in gravity-sync.conf to overwrite
 HISTORY_MD5='gravity-sync.md5'		# replace in gravity-sync.conf to overwrite
@@ -356,13 +356,11 @@ function start_gs_noconfig {
 
 ## Import Settings
 function import_gs {
-    relocate_config_gs
-    
     MESSAGE="${UI_CORE_LOADING} ${CONFIG_FILE}"
     echo -en "${STAT} $MESSAGE"
-    if [ -f ${LOCAL_FOLDR}/settings/${CONFIG_FILE} ]
+    if [ -f ${GSETC_PATH} ]
     then
-        source ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+        source ${GSETC_PATH}
         error_validate
     else
         echo_fail
@@ -372,44 +370,6 @@ function import_gs {
         
         TASKTYPE='CONFIG'
         config_generate
-    fi
-}
-
-function relocate_config_gs {
-    if [ -f ${LOCAL_FOLDR}/${CONFIG_FILE} ]
-    then
-        MESSAGE="${UI_CORE_RELOCATING} ${CONFIG_FILE}"
-        echo -en "${STAT} $MESSAGE"
-        
-        mv ${LOCAL_FOLDR}/${CONFIG_FILE} ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
-        error_validate
-    fi
-    
-    if [ -f ${LOCAL_FOLDR}/${SYNCING_LOG} ]
-    then
-        MESSAGE="${UI_CORE_RELOCATING} ${SYNCING_LOG}"
-        echo -en "${STAT} $MESSAGE"
-        
-        mv ${LOCAL_FOLDR}/${SYNCING_LOG} ${LOG_PATH}/${SYNCING_LOG}
-        error_validate
-    fi
-    
-    if [ -f ${LOCAL_FOLDR}/${CRONJOB_LOG} ]
-    then
-        MESSAGE="${UI_CORE_RELOCATING} ${CRONJOB_LOG}"
-        echo -en "${STAT} $MESSAGE"
-        
-        mv ${LOCAL_FOLDR}/${CRONJOB_LOG} ${LOG_PATH}/${CRONJOB_LOG}
-        error_validate
-    fi
-    
-    if [ -f ${LOCAL_FOLDR}/${HISTORY_MD5} ]
-    then
-        MESSAGE="${UI_CORE_RELOCATING} ${HISTORY_MD5}"
-        echo -en "${STAT} $MESSAGE"
-        
-        mv ${LOCAL_FOLDR}/${HISTORY_MD5} ${LOG_PATH}/${HISTORY_MD5}
-        error_validate
     fi
 }
 
@@ -1271,14 +1231,14 @@ function md5_compare {
 }
 
 function previous_md5 {
-    if [ -f "${LOG_PATH}/${HISTORY_MD5}" ]
+    if [ -f "${GSETC_PATH}/${HISTORY_MD5}" ]
     then
-        last_primaryDBMD5=$(sed "1q;d" ${LOG_PATH}/${HISTORY_MD5})
-        last_secondDBMD5=$(sed "2q;d" ${LOG_PATH}/${HISTORY_MD5})
-        last_primaryCLMD5=$(sed "3q;d" ${LOG_PATH}/${HISTORY_MD5})
-        last_secondCLMD5=$(sed "4q;d" ${LOG_PATH}/${HISTORY_MD5})
-        last_primaryCNMD5=$(sed "5q;d" ${LOG_PATH}/${HISTORY_MD5})
-        last_secondCNMD5=$(sed "6q;d" ${LOG_PATH}/${HISTORY_MD5})
+        last_primaryDBMD5=$(sed "1q;d" ${GSETC_PATH}/${HISTORY_MD5})
+        last_secondDBMD5=$(sed "2q;d" ${GSETC_PATH}/${HISTORY_MD5})
+        last_primaryCLMD5=$(sed "3q;d" ${GSETC_PATH}/${HISTORY_MD5})
+        last_secondCLMD5=$(sed "4q;d" ${GSETC_PATH}/${HISTORY_MD5})
+        last_primaryCNMD5=$(sed "5q;d" ${GSETC_PATH}/${HISTORY_MD5})
+        last_secondCNMD5=$(sed "6q;d" ${GSETC_PATH}/${HISTORY_MD5})
     else
         last_primaryDBMD5="0"
         last_secondDBMD5="0"
@@ -1535,19 +1495,19 @@ function logs_export {
     then
         MESSAGE="${UI_LOGGING_HASHES}"
         echo_stat
-        rm -f ${LOG_PATH}/${HISTORY_MD5}
-        echo -e ${primaryDBMD5} >> ${LOG_PATH}/${HISTORY_MD5}
-        echo -e ${secondDBMD5} >> ${LOG_PATH}/${HISTORY_MD5}
-        echo -e ${primaryCLMD5} >> ${LOG_PATH}/${HISTORY_MD5}
-        echo -e ${secondCLMD5} >> ${LOG_PATH}/${HISTORY_MD5}
-        echo -e ${primaryCNMD5} >> ${LOG_PATH}/${HISTORY_MD5}
-        echo -e ${secondCNMD5} >> ${LOG_PATH}/${HISTORY_MD5}
+        rm -f ${GSETC_PATH}/${HISTORY_MD5}
+        echo -e ${primaryDBMD5} >> ${GSETC_PATH}/${HISTORY_MD5}
+        echo -e ${secondDBMD5} >> ${GSETC_PATH}/${HISTORY_MD5}
+        echo -e ${primaryCLMD5} >> ${GSETC_PATH}/${HISTORY_MD5}
+        echo -e ${secondCLMD5} >> ${GSETC_PATH}/${HISTORY_MD5}
+        echo -e ${primaryCNMD5} >> ${GSETC_PATH}/${HISTORY_MD5}
+        echo -e ${secondCNMD5} >> ${GSETC_PATH}/${HISTORY_MD5}
         error_validate
     fi
     
     MESSAGE="${UI_LOGGING_SUCCESS} ${TASKTYPE}"
     echo_stat
-    echo -e $(date) "[${TASKTYPE}]" >> ${LOG_PATH}/${SYNCING_LOG}
+    echo -e $(date) "[${TASKTYPE}]" >> ${GSETC_PATH}/${SYNCING_LOG}
     error_validate
 }
 
@@ -1558,11 +1518,11 @@ function logs_gs {
     
     echo_lines
     echo -e "${UI_LOGGING_RECENT_COMPLETE} ${YELLOW}SMART${NC}"
-    tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep SMART
+    tail -n 7 "${GSETC_PATH}/${SYNCING_LOG}" | grep SMART
     echo -e "${UI_LOGGING_RECENT_COMPLETE} ${YELLOW}PULL${NC}"
-    tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PULL
+    tail -n 7 "${GSETC_PATH}/${SYNCING_LOG}" | grep PULL
     echo -e "${UI_LOGGING_RECENT_COMPLETE} ${YELLOW}PUSH${NC}"
-    tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PUSH
+    tail -n 7 "${GSETC_PATH}/${SYNCING_LOG}" | grep PUSH
     echo_lines
     
     exit_nochange
@@ -1574,21 +1534,21 @@ function show_crontab {
     MESSAGE="${UI_LOGGING_DISPLAY}"
     echo_stat
     
-    if [ -f ${LOG_PATH}/${CRONJOB_LOG} ]
+    if [ -f ${GSETC_PATH}/${CRONJOB_LOG} ]
     then
-        if [ -s ${LOG_PATH}/${CRONJOB_LOG} ]
+        if [ -s ${GSETC_PATH}/${CRONJOB_LOG} ]
         echo_good
         
         echo_lines
-        date -r ${LOG_PATH}/${CRONJOB_LOG}
-        cat ${LOG_PATH}/${CRONJOB_LOG}
+        date -r ${GSETC_PATH}/${CRONJOB_LOG}
+        cat ${GSETC_PATH}/${CRONJOB_LOG}
         echo_lines
         
         exit_nochange
         then
             echo_fail
             
-            MESSAGE="${LOG_PATH}/${CRONJOB_LOG} ${UI_LOGGING_EMPTY}"
+            MESSAGE="${GSETC_PATH}/${CRONJOB_LOG} ${UI_LOGGING_EMPTY}"
             echo_info
             
             exit_nochange
@@ -1596,7 +1556,7 @@ function show_crontab {
     else
         echo_fail
         
-        MESSAGE="${LOG_PATH}/${CRONJOB_LOG} ${UI_LOGGING_MISSING}"
+        MESSAGE="${GSETC_PATH}/${CRONJOB_LOG} ${UI_LOGGING_MISSING}"
         echo_info
         
         exit_nochange
@@ -1607,7 +1567,7 @@ function validate_gs_folders {
     MESSAGE="${UI_VAL_GS_FOLDERS}"
     echo_stat
     
-    if [ ! -d ${LOCAL_FOLDR} ] || [ ! -d ${LOCAL_FOLDR}/settings ] || [ ! -d ${LOG_PATH} ]
+    if [ ! -d ${LOCAL_FOLDR} ] || [ ! -d ${LOCAL_FOLDR}/settings ] || [ ! -d ${GSETC_PATH} ]
     then
         MESSAGE="${UI_VAL_GS_FOLDERS_FAIL}"
         echo_fail
@@ -1969,9 +1929,7 @@ function task_configure {
     MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
-    relocate_config_gs
-    
-    if [ -f ${LOCAL_FOLDR}/settings/${CONFIG_FILE} ]
+    if [ -f ${GSETC_PATH}/${CONFIG_FILE} ]
     then		
         config_delete
     else
@@ -1986,7 +1944,7 @@ function task_configure {
 function config_generate {  
     MESSAGE="${UI_CONFIG_CREATING} ${CONFIG_FILE}"
     echo_stat
-    cp ${LOCAL_FOLDR}/templates/${CONFIG_FILE}.example ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+    cp ${LOCAL_FOLDR}/templates/${CONFIG_FILE}.example ${GSETC_PATH}
     error_validate
     
     echo_lines
@@ -2023,7 +1981,7 @@ function config_generate {
 
     MESSAGE="${UI_CONFIG_SAVING} ${INPUT_REMOTE_HOST} host to ${CONFIG_FILE}"
     echo_stat
-    sed -i "/REMOTE_HOST='192.168.1.10'/c\REMOTE_HOST='${INPUT_REMOTE_HOST}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+    sed -i "/REMOTE_HOST='192.168.1.10'/c\REMOTE_HOST='${INPUT_REMOTE_HOST}'" ${GSETC_PATH}
     error_validate
     
     MESSAGE="${UI_CORE_APP} ${UI_CONFIG_REMOTE} ${UI_CONFIG_USERREQ} for ${INPUT_REMOTE_HOST}"
@@ -2035,14 +1993,14 @@ function config_generate {
     
     MESSAGE="${UI_CONFIG_SAVING} ${INPUT_REMOTE_USER}@${INPUT_REMOTE_HOST} user to ${CONFIG_FILE}"
     echo_stat
-    sed -i "/REMOTE_USER='pi'/c\REMOTE_USER='${INPUT_REMOTE_USER}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+    sed -i "/REMOTE_USER='pi'/c\REMOTE_USER='${INPUT_REMOTE_USER}'" ${GSETC_PATH}
     error_validate
 
     generate_sshkey
     
     MESSAGE="${UI_CORE_LOADING} ${CONFIG_FILE}"
     echo_stat
-    source ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+    source ${GSETC_PATH}
     error_validate
 
     echo_lines
@@ -2122,7 +2080,7 @@ function advanced_config_generate {
 
         MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_CONTAINER_TYPE} to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# LOCAL_PIHOLE_TYPE=''/c\LOCAL_PIHOLE_TYPE='${INPUT_LOCAL_PIHOLE_TYPE}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+        sed -i "/# LOCAL_PIHOLE_TYPE=''/c\LOCAL_PIHOLE_TYPE='${INPUT_LOCAL_PIHOLE_TYPE}'" ${GSETC_PATH}
         error_validate
         
         MESSAGE="${UI_CONFIG_CONT_DETECT} ${UI_CONFIG_IMAGES}"
@@ -2148,7 +2106,7 @@ function advanced_config_generate {
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_CONTAINER_NAME} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# LOCAL_DOCKER_CONTAINER=''/c\LOCAL_DOCKER_CONTAINER='${INPUT_LOCAL_DOCKER_CONTAINER}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+            sed -i "/# LOCAL_DOCKER_CONTAINER=''/c\LOCAL_DOCKER_CONTAINER='${INPUT_LOCAL_DOCKER_CONTAINER}'" ${GSETC_PATH}
             error_validate
         fi
         
@@ -2162,7 +2120,7 @@ function advanced_config_generate {
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# LOCAL_PIHOLE_DIRECTORY=''/c\LOCAL_PIHOLE_DIRECTORY='${INPUT_LOCAL_PIHOLE_DIRECTORY}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+            sed -i "/# LOCAL_PIHOLE_DIRECTORY=''/c\LOCAL_PIHOLE_DIRECTORY='${INPUT_LOCAL_PIHOLE_DIRECTORY}'" ${GSETC_PATH}
             error_validate
             SKIP_LOCAL_PIHOLE_DIRECTORY="1"
         else
@@ -2181,7 +2139,7 @@ function advanced_config_generate {
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# LOCAL_DNSMASQ_DIRECTORY=''/c\LOCAL_DNSMASQ_DIRECTORY='${INPUT_LOCAL_DNSMASQ_DIRECTORY}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+            sed -i "/# LOCAL_DNSMASQ_DIRECTORY=''/c\LOCAL_DNSMASQ_DIRECTORY='${INPUT_LOCAL_DNSMASQ_DIRECTORY}'" ${GSETC_PATH}
             error_validate
             SKIP_DNSMASQ_DIR="1"
         else
@@ -2192,7 +2150,7 @@ function advanced_config_generate {
         
         MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_VOLUME_OWNER} to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# LOCAL_FILE_OWNER=''/c\LOCAL_FILE_OWNER='999:999'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+        sed -i "/# LOCAL_FILE_OWNER=''/c\LOCAL_FILE_OWNER='999:999'" ${GSETC_PATH}
         error_validate
     fi
     
@@ -2213,7 +2171,7 @@ function advanced_config_generate {
         fi
         MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CONFIG_CONTAINER_TYPE} to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# REMOTE_PIHOLE_TYPE=''/c\REMOTE_PIHOLE_TYPE='${INPUT_REMOTE_PIHOLE_TYPE}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+        sed -i "/# REMOTE_PIHOLE_TYPE=''/c\REMOTE_PIHOLE_TYPE='${INPUT_REMOTE_PIHOLE_TYPE}'" ${GSETC_PATH}
         error_validate
         
         MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CONFIG_CONTAINER_NAME}"
@@ -2227,7 +2185,7 @@ function advanced_config_generate {
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CONFIG_CONTAINER_NAME} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# REMOTE_DOCKER_CONTAINER=''/c\REMOTE_DOCKER_CONTAINER='${INPUT_REMOTE_DOCKER_CONTAINER}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+            sed -i "/# REMOTE_DOCKER_CONTAINER=''/c\REMOTE_DOCKER_CONTAINER='${INPUT_REMOTE_DOCKER_CONTAINER}'" ${GSETC_PATH}
             error_validate
         fi
         
@@ -2241,7 +2199,7 @@ function advanced_config_generate {
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# REMOTE_PIHOLE_DIRECTORY=''/c\REMOTE_PIHOLE_DIRECTORY='${INPUT_REMOTE_PIHOLE_DIRECTORY}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+            sed -i "/# REMOTE_PIHOLE_DIRECTORY=''/c\REMOTE_PIHOLE_DIRECTORY='${INPUT_REMOTE_PIHOLE_DIRECTORY}'" ${GSETC_PATH}
             error_validate
             SKIP_REMOTE_PIHOLE_DIRECTORY="1"
         else
@@ -2260,7 +2218,7 @@ function advanced_config_generate {
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# REMOTE_DNSMASQ_DIRECTORY=''/c\REMOTE_DNSMASQ_DIRECTORY='${INPUT_REMOTE_DNSMASQ_DIRECTORY}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+            sed -i "/# REMOTE_DNSMASQ_DIRECTORY=''/c\REMOTE_DNSMASQ_DIRECTORY='${INPUT_REMOTE_DNSMASQ_DIRECTORY}'" ${GSETC_PATH}
             error_validate
             SKIP_RNSMASQ_DIR="1"
         else
@@ -2271,7 +2229,7 @@ function advanced_config_generate {
         
         MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CONFIG_VOLUME_OWNER} to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# REMOTE_FILE_OWNER=''/c\REMOTE_FILE_OWNER='999:999'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+        sed -i "/# REMOTE_FILE_OWNER=''/c\REMOTE_FILE_OWNER='999:999'" ${GSETC_PATH}
         error_validate
     fi
     
@@ -2289,7 +2247,7 @@ function advanced_config_generate {
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP} ${UI_CONFIG_SETTING_DIR_PATH} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# LOCAL_PIHOLE_DIRECTORY=''/c\LOCAL_PIHOLE_DIRECTORY='${INPUT_LOCAL_PIHOLE_DIRECTORY}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+            sed -i "/# LOCAL_PIHOLE_DIRECTORY=''/c\LOCAL_PIHOLE_DIRECTORY='${INPUT_LOCAL_PIHOLE_DIRECTORY}'" ${GSETC_PATH}
             error_validate
         fi
     fi
@@ -2307,7 +2265,7 @@ function advanced_config_generate {
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CORE_APP} ${UI_CONFIG_SETTING_DIR_PATH} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# REMOTE_PIHOLE_DIRECTORY=''/c\REMOTE_PIHOLE_DIRECTORY='${INPUT_REMOTE_PIHOLE_DIRECTORY}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+            sed -i "/# REMOTE_PIHOLE_DIRECTORY=''/c\REMOTE_PIHOLE_DIRECTORY='${INPUT_REMOTE_PIHOLE_DIRECTORY}'" ${GSETC_PATH}
             error_validate
         fi
     fi
@@ -2325,7 +2283,7 @@ function advanced_config_generate {
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP_DNS} ${UI_CONFIG_SETTING_DIR_PATH} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# DNSMASQ_DIR=''/c\DNSMASQ_DIR='${INPUT_DNSMASQ_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+            sed -i "/# DNSMASQ_DIR=''/c\DNSMASQ_DIR='${INPUT_DNSMASQ_DIR}'" ${GSETC_PATH}
             error_validate
         fi
     fi
@@ -2343,7 +2301,7 @@ function advanced_config_generate {
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CORE_APP_DNS} ${UI_CONFIG_SETTING_DIR_PATH} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# RNSMASQ_DIR=''/c\RNSMASQ_DIR='${INPUT_RNSMASQ_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+            sed -i "/# RNSMASQ_DIR=''/c\RNSMASQ_DIR='${INPUT_RNSMASQ_DIR}'" ${GSETC_PATH}
             error_validate
         fi
     fi
@@ -2359,7 +2317,7 @@ function advanced_config_generate {
     then
         MESSAGE="${UI_DNS_NAME} ${UI_CONFIG_PREF_SAVED} ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# SKIP_CUSTOM=''/c\SKIP_CUSTOM='1'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+        sed -i "/# SKIP_CUSTOM=''/c\SKIP_CUSTOM='1'" ${GSETC_PATH}
         error_validate
     fi
     
@@ -2393,13 +2351,13 @@ function task_cname {
 function config_enablecname {
     MESSAGE="${UI_CNAME_NAME} ${UI_CONFIG_PREF_SAVED} ${CONFIG_FILE}"
     echo_stat
-    sed -i "/# INCLUDE_CNAME=''/c\INCLUDE_CNAME='1'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+    sed -i "/# INCLUDE_CNAME=''/c\INCLUDE_CNAME='1'" ${GSETC_PATH}
     error_validate
 }
 
 ## Delete Existing Configuration
 function config_delete {
-    source ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+    source ${GSETC_PATH}
     MESSAGE="${CONFIG_FILE} ${UI_CONFIG_ALREADY}"
     echo_info  
   
@@ -2410,7 +2368,7 @@ function config_delete {
 
     MESSAGE="${UI_CONFIG_ERASING} ${CONFIG_FILE}"
     echo_stat
-    rm -f ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+    rm -f ${GSETC_PATH}
         error_validate
 
     config_generate
@@ -2822,7 +2780,7 @@ function task_autocron {
         
         MESSAGE="${UI_AUTO_CRON_SAVING}"
         echo_stat
-        (crontab -l 2>/dev/null; echo "*/${INPUT_AUTO_FREQ} * * * * ${BASH_PATH} ${LOCAL_FOLDR}/${GS_FILENAME} smart > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
+        (crontab -l 2>/dev/null; echo "*/${INPUT_AUTO_FREQ} * * * * ${BASH_PATH} ${LOCAL_FOLDR}/${GS_FILENAME} smart > ${GSETC_PATH}/${CRONJOB_LOG}") | crontab -
         error_validate
     elif [ $INPUT_AUTO_FREQ == 0 ]
     then
