@@ -25,8 +25,8 @@ PIHOLE_DIR='/etc/pihole' 			# default Pi-hole data directory (local)
 RIHOLE_DIR='/etc/pihole'			# default Pi-hole data directory (remote)
 DNSMAQ_DIR='/etc/dnsmasq.d'         # default DNSMASQ data directory (local)
 RNSMAQ_DIR='/etc/dnsmasq.d'         # default DNSMASQ data directory (remote)
-PIHOLE_BIN='/usr/local/bin/pihole' 	# default Pi-hole binary directory (local)
-RIHOLE_BIN='/usr/local/bin/pihole' 	# default Pi-hole binary directory (remote)
+LOCAL_PIHOLE_BINARY='/usr/local/bin/pihole' 	# default Pi-hole binary directory (local)
+REMOTE_PIHOLE_BINARY='/usr/local/bin/pihole' 	# default Pi-hole binary directory (remote)
 DOCKER_BIN='/usr/bin/docker'		# default Docker binary directory (local)
 ROCKER_BIN='/usr/bin/docker'		# default Docker binary directory (remote)
 PODMAN_BIN='/usr/bin/podman'        # default Podman binary directory (local)
@@ -443,7 +443,7 @@ function silent_error_validate {
 function ph_type {
     if [ "$PH_IN_TYPE" == "default" ]
     then
-        PH_EXEC="${PIHOLE_BIN}"
+        PH_EXEC="${LOCAL_PIHOLE_BINARY}"
     elif [ "$PH_IN_TYPE" == "docker" ]
     then
         PH_EXEC="sudo ${DOCKER_BIN} exec $(sudo ${DOCKER_BIN} ps -qf name=${DOCKER_CON}) pihole"
@@ -454,7 +454,7 @@ function ph_type {
     
     if [ "$RH_IN_TYPE" == "default" ]
     then
-        RH_EXEC="${RIHOLE_BIN}"
+        RH_EXEC="${REMOTE_PIHOLE_BINARY}"
     elif [ "$RH_IN_TYPE" == "docker" ]
     then
         RH_EXEC="sudo ${ROCKER_BIN} exec \$(sudo ${ROCKER_BIN} ps -qf name=${ROCKER_CON}) pihole"
@@ -1623,7 +1623,7 @@ function validate_ph_folders {
     
     if [ "$PH_IN_TYPE" == "default" ]
     then
-        if [ ! -f ${PIHOLE_BIN} ]
+        if [ ! -f ${LOCAL_PIHOLE_BINARY} ]
         then
             MESSAGE="${UI_VALIDATING_FAIL_BINARY} ${UI_CORE_APP}"
             echo_fail
@@ -2574,7 +2574,7 @@ function show_info() {
     
     if [ "${PH_IN_TYPE}" == "default" ]
     then
-        echo -e "Local Pi-hole Binary Directory: ${PIHOLE_BIN}"
+        echo -e "Local Pi-hole Binary Directory: ${LOCAL_PIHOLE_BINARY}"
     elif [ "${PH_IN_TYPE}" == "docker" ]
     then 
         echo -e "Local Pi-hole Container Name: ${DOCKER_CON}"
@@ -2637,7 +2637,7 @@ function show_info() {
 
     if [ "${RH_IN_TYPE}" == "default" ]
     then
-        echo -e "Remote Pi-hole Binary Directory: ${RIHOLE_BIN}"
+        echo -e "Remote Pi-hole Binary Directory: ${REMOTE_PIHOLE_BINARY}"
     elif [ "${RH_IN_TYPE}" == "docker" ]
     then 
         echo -e "Remote Pi-hole Container Name: ${ROCKER_CON}"
