@@ -2353,6 +2353,12 @@ function show_info() {
 
     echo -e "SSH Keyfile: ${SSH_PKIF}"
 
+    if systemctl is-active --quiet gravity-sync; then
+        echo -e "Automated Replication: Enabled"
+    else
+        echo -e "Automated Replication: Disabled"
+    fi
+
     echo -e ""
 
     echo -e "${YELLOW}Local Instance Settings${NC}"
