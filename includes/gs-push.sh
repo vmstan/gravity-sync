@@ -116,8 +116,8 @@ function push_gs_cname {
             MESSAGE="${UI_PUSH_SECONDARY} ${UI_CNAME_NAME}"
             echo_stat
             RSYNC_REPATH="sudo rsync"
-            RSYNC_SOURCE="${LOCAL_FOLDR}/${BACKUP_FOLD}/${CNAME_CONF}.gsbackup"
-            RSYNC_TARGET="${PIHOLE_DIR}:${RNSMAQ_DIR}/${CNAME_CONF}"
+            RSYNC_SOURCE="${PIHOLE_DIR}/${CNAME_CONF}.gsbackup"
+            RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${RNSMAQ_DIR}/${CNAME_CONF}"
             create_rsynccmd
             
             MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_CNAME_NAME}"
