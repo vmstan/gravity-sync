@@ -2401,42 +2401,7 @@ function podman_detect {
 
 ## Master Branch
 function update_gs {
-    if [ -f "${GS_LOCAL_REPO}/dev" ]
-    then
-        source ${GS_LOCAL_REPO}/dev
-    else
-        BRANCH='origin/master'
-    fi
-    
-    if [ "$BRANCH" != "origin/master" ]
-    then
-        MESSAGE="Pulling from ${BRANCH}"
-        echo_info
-    fi
-    
-    GIT_CHECK=$(git status | awk '{print $1}')
-    if [ "$GIT_CHECK" == "fatal:" ]
-    then
-        MESSAGE="Updater usage requires GitHub installation"
-        echo_warn
-        exit_nochange
-    else
-        MESSAGE="Checking for updates on GitHub"
-        echo_stat
-        cd ${GS_LOCAL_REPO}
-        git fetch --all >/dev/null 2>&1
-        error_validate
-        MESSAGE="Downloading updates from GitHub"
-        echo_stat
-        git reset --hard ${BRANCH} >/dev/null 2>&1
-        error_validate
-        MESSAGE="Replacing Gravity Sync binary"
-        sudo cp gravity-sync /usr/local/bin
-        MESSAGE="Cleaning things up"
-        echo_stat
-        git clean -fq
-        error_validate
-    fi
+    sh ${GS_LOCAL_REPO}/update.sh
 }
 
 ## Show Version
