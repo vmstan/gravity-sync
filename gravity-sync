@@ -2421,14 +2421,17 @@ function update_gs {
         echo_warn
         exit_nochange
     else
-        MESSAGE="Downloading updates via GitHub"
+        MESSAGE="Checking for updates on GitHub"
         echo_stat
+        cd ${GS_LOCAL_REPO}
         git fetch --all >/dev/null 2>&1
         error_validate
-        MESSAGE="Deploying the latest ${PROGRAM} code"
+        MESSAGE="Downloading updates from GitHub"
         echo_stat
         git reset --hard ${BRANCH} >/dev/null 2>&1
         error_validate
+        MESSAGE="Replacing Gravity Sync binary"
+        sudo cp gravity-sync /usr/local/bin
         MESSAGE="Cleaning things up"
         echo_stat
         git clean -fq
