@@ -21,8 +21,8 @@ PH_IN_TYPE='default'				# Pi-hole install type, `default`, `docker`, or `podman`
 RH_IN_TYPE='default'				# Pi-hole install type, `default`, `docker`, or `podman` (remote)
 
 # Pi-hole Folder/File Customization
-PIHOLE_DIR='/etc/pihole' 			# default Pi-hole data directory (local)
-RIHOLE_DIR='/etc/pihole'			# default Pi-hole data directory (remote)
+LOCAL_PIHOLE_DIRECTORY='/etc/pihole' 			# default Pi-hole data directory (local)
+REMOTE_PIHOLE_DIRECTORY='/etc/pihole'			# default Pi-hole data directory (remote)
 DNSMAQ_DIR='/etc/dnsmasq.d'         # default DNSMASQ data directory (local)
 RNSMAQ_DIR='/etc/dnsmasq.d'         # default DNSMASQ data directory (remote)
 LOCAL_PIHOLE_BINARY='/usr/local/bin/pihole' 	# default Pi-hole binary directory (local)
@@ -520,13 +520,13 @@ function pull_gs_grav {
     MESSAGE="${UI_PULL_PRIMARY} ${UI_GRAVITY_NAME}"
     echo_stat
     RSYNC_REPATH="rsync"
-    RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${GRAVITY_FI}.gsbackup"
-    RSYNC_TARGET="${PIHOLE_DIR}/${GRAVITY_FI}.gsbackup"
+    RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup"
+    RSYNC_TARGET="${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup"
     create_rsynccmd
     
     MESSAGE="${UI_REPLACE_SECONDARY} ${UI_GRAVITY_NAME}"
     echo_stat
-    sudo cp ${PIHOLE_DIR}/${GRAVITY_FI}.gsbackup ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+    sudo cp ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} >/dev/null 2>&1
     error_validate
     
     validate_gravity_permissions
@@ -544,13 +544,13 @@ function pull_gs_cust {
             MESSAGE="${UI_PULL_PRIMARY} ${UI_CUSTOM_NAME}"
             echo_stat
             RSYNC_REPATH="rsync"
-            RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${CUSTOM_DNS}.gsbackup"
-            RSYNC_TARGET="${PIHOLE_DIR}/${CUSTOM_DNS}.gsbackup"
+            RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}.gsbackup"
+            RSYNC_TARGET="${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS}.gsbackup"
             create_rsynccmd
             
             MESSAGE="${UI_REPLACE_SECONDARY} ${UI_CUSTOM_NAME}"
             echo_stat
-            sudo cp ${PIHOLE_DIR}/${CUSTOM_DNS}.gsbackup ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+            sudo cp ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS}.gsbackup ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} >/dev/null 2>&1
             error_validate
             
             validate_custom_permissions
@@ -570,13 +570,13 @@ function pull_gs_cname {
             MESSAGE="${UI_PULL_PRIMARY} ${UI_CNAME_NAME}"
             echo_stat
             RSYNC_REPATH="rsync"
-            RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/dnsmasq.d-${CNAME_CONF}.gsbackup"
-            RSYNC_TARGET="${PIHOLE_DIR}/${CNAME_CONF}.gsbackup"
+            RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/dnsmasq.d-${CNAME_CONF}.gsbackup"
+            RSYNC_TARGET="${LOCAL_PIHOLE_DIRECTORY}/${CNAME_CONF}.gsbackup"
             create_rsynccmd
             
             MESSAGE="${UI_REPLACE_SECONDARY} ${UI_CNAME_NAME}"
             echo_stat
-            sudo cp ${PIHOLE_DIR}/${CNAME_CONF}.gsbackup ${DNSMAQ_DIR}/${CNAME_CONF} >/dev/null 2>&1
+            sudo cp ${LOCAL_PIHOLE_DIRECTORY}/${CNAME_CONF}.gsbackup ${DNSMAQ_DIR}/${CNAME_CONF} >/dev/null 2>&1
             error_validate
             
             validate_cname_permissions
@@ -660,20 +660,20 @@ function push_gs_grav {
     MESSAGE="${UI_PUSH_SECONDARY} ${UI_GRAVITY_NAME}"
     echo_stat
     RSYNC_REPATH="sudo rsync"
-    RSYNC_SOURCE="${PIHOLE_DIR}/${GRAVITY_FI}.gsbackup"
-    RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${GRAVITY_FI}"
+    RSYNC_SOURCE="${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup"
+    RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}"
     create_rsynccmd
     
     MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_GRAVITY_NAME}"
     echo_stat
     CMD_TIMEOUT=$BACKUP_TIMEOUT
-    CMD_REQUESTED="sudo chown ${RILE_OWNER} ${RIHOLE_DIR}/${GRAVITY_FI}"
+    CMD_REQUESTED="sudo chown ${RILE_OWNER} ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}"
     create_sshcmd
     
     MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_GRAVITY_NAME}"
     echo_stat
     CMD_TIMEOUT=$BACKUP_TIMEOUT
-    CMD_REQUESTED="sudo chmod 664 ${RIHOLE_DIR}/${GRAVITY_FI}"
+    CMD_REQUESTED="sudo chmod 664 ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}"
     create_sshcmd
 }
 
@@ -689,20 +689,20 @@ function push_gs_cust {
             MESSAGE="${UI_PUSH_SECONDARY} ${UI_CUSTOM_NAME}"
             echo_stat
             RSYNC_REPATH="sudo rsync"
-            RSYNC_SOURCE="${PIHOLE_DIR}/${CUSTOM_DNS}.gsbackup"
-            RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${CUSTOM_DNS}"
+            RSYNC_SOURCE="${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS}.gsbackup"
+            RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}"
             create_rsynccmd
             
             MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_CUSTOM_NAME}"
             echo_stat
             CMD_TIMEOUT=$BACKUP_TIMEOUT
-            CMD_REQUESTED="sudo chown root:root ${RIHOLE_DIR}/${CUSTOM_DNS}"
+            CMD_REQUESTED="sudo chown root:root ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}"
             create_sshcmd
             
             MESSAGE="${UI_SET_FILE_PERMISSIONS} ${UI_CUSTOM_NAME}"
             echo_stat
             CMD_TIMEOUT=$BACKUP_TIMEOUT
-            CMD_REQUESTED="sudo chmod 644 ${RIHOLE_DIR}/${CUSTOM_DNS}"
+            CMD_REQUESTED="sudo chmod 644 ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}"
             create_sshcmd
         fi
     fi
@@ -720,7 +720,7 @@ function push_gs_cname {
             MESSAGE="${UI_PUSH_SECONDARY} ${UI_CNAME_NAME}"
             echo_stat
             RSYNC_REPATH="sudo rsync"
-            RSYNC_SOURCE="${PIHOLE_DIR}/${CNAME_CONF}.gsbackup"
+            RSYNC_SOURCE="${LOCAL_PIHOLE_DIRECTORY}/${CNAME_CONF}.gsbackup"
             RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${RNSMAQ_DIR}/${CNAME_CONF}"
             create_rsynccmd
             
@@ -845,8 +845,8 @@ function smart_gs {
             MESSAGE="Both ${GRAVITY_FI} Have Changed"
             echo_warn
             
-            PRIDBDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${RIHOLE_DIR}/${GRAVITY_FI}")
-            SECDBDATE=$(stat -c %Y ${PIHOLE_DIR}/${GRAVITY_FI})
+            PRIDBDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}")
+            SECDBDATE=$(stat -c %Y ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI})
             
             if (( "$PRIDBDATE" >= "$SECDBDATE" ))
             then
@@ -887,7 +887,7 @@ function smart_gs {
     
     if [ "$SKIP_CUSTOM" != '1' ]
     then
-        if [ -f "${PIHOLE_DIR}/${CUSTOM_DNS}" ]
+        if [ -f "${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS}" ]
         then
             if [ "${PRICLCHANGE}" == "${SECCLCHANGE}" ]
             then
@@ -896,8 +896,8 @@ function smart_gs {
                     MESSAGE="Both ${CUSTOM_DNS} Have Changed"
                     echo_warn
                     
-                    PRICLDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${RIHOLE_DIR}/${CUSTOM_DNS}")
-                    SECCLDATE=$(stat -c %Y ${PIHOLE_DIR}/${CUSTOM_DNS})
+                    PRICLDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}")
+                    SECCLDATE=$(stat -c %Y ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS})
                     
                     if (( "$PRICLDATE" >= "$SECCLDATE" ))
                     then
@@ -1012,7 +1012,7 @@ function backup_local_gravity() {
     MESSAGE="${UI_BACKUP_SECONDARY} ${UI_GRAVITY_NAME}"
     echo_stat
     
-    sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} ".backup '${PIHOLE_DIR}/${GRAVITY_FI}.gsbackup'"
+    sqlite3 ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} ".backup '${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup'"
     error_validate
 }
 
@@ -1021,7 +1021,7 @@ function backup_local_gravity_integrity() {
     echo_stat
     
     sleep $BACKUP_INTEGRITY_WAIT
-    secondaryIntegrity=$(sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;' | sed 's/\s.*$//')
+    secondaryIntegrity=$(sqlite3 ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;' | sed 's/\s.*$//')
     error_validate
     
     if [ "$secondaryIntegrity" != 'ok' ]
@@ -1032,7 +1032,7 @@ function backup_local_gravity_integrity() {
         MESSAGE="${UI_BACKUP_INTEGRITY_DELETE} ${UI_GRAVITY_NAME}"
         echo_stat
             
-        sudo rm ${PIHOLE_DIR}/${GRAVITY_FI}.gsbackup
+        sudo rm ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup
         error_validate
         
         exit_nochange
@@ -1042,12 +1042,12 @@ function backup_local_gravity_integrity() {
 function backup_local_custom() {
     if [ "$SKIP_CUSTOM" != '1' ]
     then
-        if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
+        if [ -f ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ]
         then
             MESSAGE="${UI_BACKUP_SECONDARY} ${UI_CUSTOM_NAME}"
             echo_stat
             
-            cp ${PIHOLE_DIR}/${CUSTOM_DNS} ${PIHOLE_DIR}/${CUSTOM_DNS}.gsbackup
+            cp ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS}.gsbackup
             error_validate
         else
             MESSAGE="No local ${CUSTOM_DNS} detected"
@@ -1064,7 +1064,7 @@ function backup_local_cname() {
             MESSAGE="${UI_BACKUP_SECONDARY} ${UI_CNAME_NAME}"
             echo_stat
             
-            cp ${DNSMAQ_DIR}/${CNAME_CONF} ${PIHOLE_DIR}/${CNAME_CONF}.gsbackup
+            cp ${DNSMAQ_DIR}/${CNAME_CONF} ${LOCAL_PIHOLE_DIRECTORY}/${CNAME_CONF}.gsbackup
             error_validate
         else
             MESSAGE="No local ${CNAME_CONF} detected"
@@ -1078,7 +1078,7 @@ function backup_remote_gravity() {
     echo_stat
     
     CMD_TIMEOUT=$BACKUP_TIMEOUT
-    CMD_REQUESTED="sudo sqlite3 ${RIHOLE_DIR}/${GRAVITY_FI} \".backup '${RIHOLE_DIR}/${GRAVITY_FI}.gsbackup'\""
+    CMD_REQUESTED="sudo sqlite3 ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI} \".backup '${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup'\""
     create_sshcmd
 }
 
@@ -1087,7 +1087,7 @@ function backup_remote_gravity_integrity() {
     echo_stat
     
     sleep $BACKUP_INTEGRITY_WAIT
-    primaryIntegrity=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sqlite3 ${RIHOLE_DIR}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
+    primaryIntegrity=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sqlite3 ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
     error_validate
     
     if [ "$primaryIntegrity" != 'ok' ]
@@ -1099,7 +1099,7 @@ function backup_remote_gravity_integrity() {
         echo_stat
         
         CMD_TIMEOUT=$BACKUP_TIMEOUT
-        CMD_REQUESTED="sudo rm ${RIHOLE_DIR}/${GRAVITY_FI}.gsbackup"
+        CMD_REQUESTED="sudo rm ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup"
         create_sshcmd
         
         exit_nochange
@@ -1113,7 +1113,7 @@ function backup_remote_custom() {
         echo_stat
         
         CMD_TIMEOUT=$BACKUP_TIMEOUT
-        CMD_REQUESTED="sudo cp ${RIHOLE_DIR}/${CUSTOM_DNS} ${RIHOLE_DIR}/${CUSTOM_DNS}.gsbackup"
+        CMD_REQUESTED="sudo cp ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}.gsbackup"
         create_sshcmd
     fi
 }
@@ -1125,7 +1125,7 @@ function backup_remote_cname() {
         echo_stat
         
         CMD_TIMEOUT=$BACKUP_TIMEOUT
-        CMD_REQUESTED="sudo cp ${RNSMAQ_DIR}/${CNAME_CONF} ${RIHOLE_DIR}/${CNAME_CONF}.gsbackup"
+        CMD_REQUESTED="sudo cp ${RNSMAQ_DIR}/${CNAME_CONF} ${REMOTE_PIHOLE_DIRECTORY}/${CNAME_CONF}.gsbackup"
         create_sshcmd
     fi
 }
@@ -1134,13 +1134,13 @@ function backup_cleanup() {
     MESSAGE="${UI_BACKUP_PURGE} on local"
     echo_stat
     # git clean -fq
-    rm -f ${PIHOLE_DIR}/*.gsbackup
+    rm -f ${LOCAL_PIHOLE_DIRECTORY}/*.gsbackup
     error_validate
 
     MESSAGE="${UI_BACKUP_PURGE} on remote"
     echo_stat
     CMD_TIMEOUT=$BACKUP_TIMEOUT
-    CMD_REQUESTED="rm -f ${RIHOLE_DIR}/*.gsbackup"
+    CMD_REQUESTED="rm -f ${REMOTE_PIHOLE_DIRECTORY}/*.gsbackup"
     create_sshcmd
 }
 
@@ -1149,12 +1149,12 @@ function md5_compare {
     
     MESSAGE="${UI_HASHING_HASHING} ${UI_GRAVITY_NAME}"
     echo_stat
-    primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${GRAVITY_FI}" | sed 's/\s.*$//')
+    primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}" | sed 's/\s.*$//')
     error_validate
     
     MESSAGE="${UI_HASHING_COMPARING} ${UI_GRAVITY_NAME}"
     echo_stat
-    secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI} | sed 's/\s.*$//')
+    secondDBMD5=$(md5sum ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} | sed 's/\s.*$//')
     error_validate
     
     if [ "$primaryDBMD5" == "$last_primaryDBMD5" ] && [ "$secondDBMD5" == "$last_secondDBMD5" ]
@@ -1168,20 +1168,20 @@ function md5_compare {
     
     if [ "$SKIP_CUSTOM" != '1' ]
     then
-        if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
+        if [ -f ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ]
         then
-            if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RIHOLE_DIR}/${CUSTOM_DNS}
+            if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}
             then
                 REMOTE_CUSTOM_DNS="1"
                 MESSAGE="${UI_HASHING_HASHING} ${UI_CUSTOM_NAME}"
                 echo_stat
                 
-                primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//'")
+                primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS} | sed 's/\s.*$//'")
                 error_validate
                 
                 MESSAGE="${UI_HASHING_COMPARING} ${UI_CUSTOM_NAME}"
                 echo_stat
-                secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//')
+                secondCLMD5=$(md5sum ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} | sed 's/\s.*$//')
                 error_validate
                 
                 if [ "$primaryCLMD5" == "$last_primaryCLMD5" ] && [ "$secondCLMD5" == "$last_secondCLMD5" ]
@@ -1197,7 +1197,7 @@ function md5_compare {
                 echo_info
             fi
         else
-            if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RIHOLE_DIR}/${CUSTOM_DNS}
+            if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}
             then
                 REMOTE_CUSTOM_DNS="1"
                 MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_PRIMARY}"
@@ -1296,37 +1296,37 @@ function md5_recheck {
     
     MESSAGE="${UI_HASHING_REHASHING} ${UI_GRAVITY_NAME}"
     echo_stat
-    primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${GRAVITY_FI}" | sed 's/\s.*$//')
+    primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}" | sed 's/\s.*$//')
     error_validate
     
     MESSAGE="${UI_HASHING_RECOMPARING} ${UI_GRAVITY_NAME}"
     echo_stat
-    secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI} | sed 's/\s.*$//')
+    secondDBMD5=$(md5sum ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} | sed 's/\s.*$//')
     error_validate
     
     if [ "$SKIP_CUSTOM" != '1' ]
     then
-        if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
+        if [ -f ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ]
         then
-            if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RIHOLE_DIR}/${CUSTOM_DNS}
+            if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}
             then
                 REMOTE_CUSTOM_DNS="1"
                 MESSAGE="${UI_HASHING_REHASHING} ${UI_CUSTOM_NAME}"
                 echo_stat
                 
-                primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//'")
+                primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS} | sed 's/\s.*$//'")
                 error_validate
                 
                 MESSAGE="${UI_HASHING_RECOMPARING} ${UI_CUSTOM_NAME}"
                 echo_stat
-                secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//')
+                secondCLMD5=$(md5sum ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} | sed 's/\s.*$//')
                 error_validate
             else
                 MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_PRIMARY}"
                 echo_info
             fi
         else
-            if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RIHOLE_DIR}/${CUSTOM_DNS}
+            if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}
             then
                 REMOTE_CUSTOM_DNS="1"
                 MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_PRIMARY}"
@@ -1649,7 +1649,7 @@ function validate_ph_folders {
         fi
     fi
     
-    if [ ! -d ${PIHOLE_DIR} ]
+    if [ ! -d ${LOCAL_PIHOLE_DIRECTORY} ]
     then
         MESSAGE="${UI_VALIDATING_FAIL_FOLDER} ${UI_CORE_APP}"
         echo_fail
@@ -1742,7 +1742,7 @@ function validate_gravity_permissions() {
     MESSAGE="${UI_VAL_FILE_OWNERSHIP} ${UI_GRAVITY_NAME}"
     echo_stat
     
-    GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk 'OFS=":" {print $3,$4}')
+    GRAVDB_OWN=$(ls -ld ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} | awk 'OFS=":" {print $3,$4}')
     if [ "$GRAVDB_OWN" == "$FILE_OWNER" ]
     then
         echo_good
@@ -1754,14 +1754,14 @@ function validate_gravity_permissions() {
         
         MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_GRAVITY_NAME}"
         echo_stat
-        sudo chown ${FILE_OWNER} ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+        sudo chown ${FILE_OWNER} ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} >/dev/null 2>&1
         error_validate
     fi
     
     MESSAGE="${UI_VAL_FILE_PERMISSION} of ${UI_GRAVITY_NAME}"
     echo_stat
     
-    GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | awk '{print $1}')
+    GRAVDB_RWE=$(namei -m ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | awk '{print $1}')
     if [ "$GRAVDB_RWE" = "-rw-rw-r--" ]
     then
         echo_good
@@ -1773,7 +1773,7 @@ function validate_gravity_permissions() {
         
         MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_GRAVITY_NAME}"
         echo_stat
-        sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+        sudo chmod 664 ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} >/dev/null 2>&1
         error_validate
     fi
 }
@@ -1783,7 +1783,7 @@ function validate_custom_permissions() {
     MESSAGE="${UI_VAL_FILE_OWNERSHIP} ${UI_CUSTOM_NAME}"
     echo_stat
     
-    CUSTOMLS_OWN=$(ls -ld ${PIHOLE_DIR}/${CUSTOM_DNS} | awk '{print $3 $4}')
+    CUSTOMLS_OWN=$(ls -ld ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} | awk '{print $3 $4}')
     if [ "$CUSTOMLS_OWN" == "rootroot" ]
     then
         echo_good
@@ -1795,14 +1795,14 @@ function validate_custom_permissions() {
         
         MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_CUSTOM_NAME}"
         echo_stat
-        sudo chown root:root ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+        sudo chown root:root ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} >/dev/null 2>&1
         error_validate
     fi
     
     MESSAGE="${UI_VAL_FILE_PERMISSION} ${UI_CUSTOM_NAME}"
     echo_stat
     
-    CUSTOMLS_RWE=$(namei -m ${PIHOLE_DIR}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | awk '{print $1}')
+    CUSTOMLS_RWE=$(namei -m ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | awk '{print $1}')
     if [ "$CUSTOMLS_RWE" == "-rw-r--r--" ]
     then
         echo_good
@@ -1814,7 +1814,7 @@ function validate_custom_permissions() {
         
         MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_CUSTOM_NAME}"
         echo_stat
-        sudo chmod 644 ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+        sudo chmod 644 ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} >/dev/null 2>&1
         error_validate
     fi
 }
@@ -2155,15 +2155,15 @@ function advanced_config_generate {
         echo_inf1
         MESSAGE="${UI_CONFIG_ETC_VOLPATH_EXAMPLE}"
         echo_need
-        read INPUT_PIHOLE_DIR
+        read INPUT_LOCAL_PIHOLE_DIRECTORY
         
-        if [ "${INPUT_PIHOLE_DIR}" != "" ]
+        if [ "${INPUT_LOCAL_PIHOLE_DIRECTORY}" != "" ]
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# PIHOLE_DIR=''/c\PIHOLE_DIR='${INPUT_PIHOLE_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+            sed -i "/# LOCAL_PIHOLE_DIRECTORY=''/c\LOCAL_PIHOLE_DIRECTORY='${INPUT_LOCAL_PIHOLE_DIRECTORY}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
-            SKIP_PIHOLE_DIR="1"
+            SKIP_LOCAL_PIHOLE_DIRECTORY="1"
         else
             MESSAGE="${UI_CONFIG_SETTING_REQUIRED}"
             echo_warn
@@ -2234,15 +2234,15 @@ function advanced_config_generate {
         echo_inf1
         MESSAGE="${UI_CONFIG_ETC_VOLPATH_EXAMPLE}"
         echo_need
-        read INPUT_RIHOLE_DIR
+        read INPUT_REMOTE_PIHOLE_DIRECTORY
         
-        if [ "${INPUT_RIHOLE_DIR}" != "" ]
+        if [ "${INPUT_REMOTE_PIHOLE_DIRECTORY}" != "" ]
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# RIHOLE_DIR=''/c\RIHOLE_DIR='${INPUT_RIHOLE_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+            sed -i "/# REMOTE_PIHOLE_DIRECTORY=''/c\REMOTE_PIHOLE_DIRECTORY='${INPUT_REMOTE_PIHOLE_DIRECTORY}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
-            SKIP_RIHOLE_DIR="1"
+            SKIP_REMOTE_PIHOLE_DIRECTORY="1"
         else
             MESSAGE="${UI_CONFIG_SETTING_REQUIRED}"
             echo_warn
@@ -2275,38 +2275,38 @@ function advanced_config_generate {
     fi
     
         
-    if [ "$SKIP_PIHOLE_DIR" != "1" ]
+    if [ "$SKIP_LOCAL_PIHOLE_DIRECTORY" != "1" ]
     then
         MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP} ${UI_CONFIG_SETTING_DIR_PATH}"
         echo_inf1
         MESSAGE="${UI_CONFIG_DEFAULT_LEAVE} ${UI_CONFIG_DEFAULT_PIHOLE_ETC}"
         echo_need
-        read INPUT_PIHOLE_DIR
-        INPUT_PIHOLE_DIR="${INPUT_PIHOLE_DIR:-/etc/pihole}"
+        read INPUT_LOCAL_PIHOLE_DIRECTORY
+        INPUT_LOCAL_PIHOLE_DIRECTORY="${INPUT_LOCAL_PIHOLE_DIRECTORY:-/etc/pihole}"
         
-        if [ "${INPUT_PIHOLE_DIR}" != "/etc/pihole" ]
+        if [ "${INPUT_LOCAL_PIHOLE_DIRECTORY}" != "/etc/pihole" ]
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP} ${UI_CONFIG_SETTING_DIR_PATH} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# PIHOLE_DIR=''/c\PIHOLE_DIR='${INPUT_PIHOLE_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+            sed -i "/# LOCAL_PIHOLE_DIRECTORY=''/c\LOCAL_PIHOLE_DIRECTORY='${INPUT_LOCAL_PIHOLE_DIRECTORY}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
         fi
     fi
     
-    if [ "$SKIP_RIHOLE_DIR" != "1" ]
+    if [ "$SKIP_REMOTE_PIHOLE_DIRECTORY" != "1" ]
     then
         MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP} ${UI_CONFIG_SETTING_DIR_PATH}"
         echo_inf1
         MESSAGE="${UI_CONFIG_DEFAULT_LEAVE} ${UI_CONFIG_DEFAULT_PIHOLE_ETC}"
         echo_need
-        read INPUT_RIHOLE_DIR
-        INPUT_RIHOLE_DIR="${INPUT_RIHOLE_DIR:-/etc/pihole}"
+        read INPUT_REMOTE_PIHOLE_DIRECTORY
+        INPUT_REMOTE_PIHOLE_DIRECTORY="${INPUT_REMOTE_PIHOLE_DIRECTORY:-/etc/pihole}"
         
-        if [ "${INPUT_RIHOLE_DIR}" != "/etc/pihole" ]
+        if [ "${INPUT_REMOTE_PIHOLE_DIRECTORY}" != "/etc/pihole" ]
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CORE_APP} ${UI_CONFIG_SETTING_DIR_PATH} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# RIHOLE_DIR=''/c\RIHOLE_DIR='${INPUT_RIHOLE_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+            sed -i "/# REMOTE_PIHOLE_DIRECTORY=''/c\REMOTE_PIHOLE_DIRECTORY='${INPUT_REMOTE_PIHOLE_DIRECTORY}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
         fi
     fi
@@ -2568,7 +2568,7 @@ function show_info() {
     echo -e "${YELLOW}Local/Secondary Instance Settings${NC}"
     echo -e "Local Hostname: $HOSTNAME"
     echo -e "Local Pi-hole Type: ${PH_IN_TYPE}"
-    echo -e "Local Pi-hole Config Directory: ${PIHOLE_DIR}"
+    echo -e "Local Pi-hole Config Directory: ${LOCAL_PIHOLE_DIRECTORY}"
     echo -e "Local DNSMASQ Config Directory: ${DNSMAQ_DIR}"
     echo -e "Local Gravity Sync Directory: ${LOCAL_FOLDR}" 
     
@@ -2632,7 +2632,7 @@ function show_info() {
     echo -e "Remote Hostname/IP: ${REMOTE_HOST}"
     echo -e "Remote Username: ${REMOTE_USER}"
     echo -e "Remote Pi-hole Type: ${RH_IN_TYPE}"
-    echo -e "Remote Pi-hole Config Directory: ${RIHOLE_DIR}"
+    echo -e "Remote Pi-hole Config Directory: ${REMOTE_PIHOLE_DIRECTORY}"
     echo -e "Remote DNSMASQ Config Directory: ${RNSMAQ_DIR}"
 
     if [ "${RH_IN_TYPE}" == "default" ]

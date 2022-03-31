@@ -13,8 +13,8 @@ REMOTE_USER='pi'
 # RH_IN_TYPE=''				# Pi-hole install type, `default`, `docker`, or `podman` (remote)
 
 ### Pi-hole Folder/File Customization
-# PIHOLE_DIR='' 			# default Pi-hole data directory (local)
-# RIHOLE_DIR=''				# default Pi-hole data directory (remote)
+# LOCAL_PIHOLE_DIRECTORY='' 			# default Pi-hole data directory (local)
+# REMOTE_PIHOLE_DIRECTORY=''				# default Pi-hole data directory (remote)
 # DNSMAQ_DIR=''             # default DNSMASQ data directory (local)
 # RNSMAQ_DIR=''             # default DNSMASQ data directory (remote)
 # LOCAL_PIHOLE_BINARY='' 			# default Pi-hole binary directory (local)
