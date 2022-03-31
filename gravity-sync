@@ -129,7 +129,7 @@ UI_HASHING_REHASHING='Rehashing the remote'
 UI_HASHING_RECOMPARING='Recomparing to the local'
 
 # Validation
-UI_VALIDATING='Validating configuration of'
+UI_VALIDATING='Validating existance of'
 UI_VALIDATING_FAIL_CONTAINER='Unable to validate running container instance of'
 UI_VALIDATING_FAIL_FOLDER='Unable to validate configuration folder for'
 UI_VALIDATING_FAIL_BINARY='Unable to validate the availibility of'
@@ -435,7 +435,7 @@ function task_compare {
     echo_good
     
     show_target
-    validate_gs_folders
+    #validate_gs_folders
     validate_ph_folders
     
     if [ "${INCLUDE_CNAME}" == "1" ]
@@ -458,7 +458,7 @@ function task_pull {
     echo_good
     
     show_target
-    validate_gs_folders
+    #validate_gs_folders
     validate_ph_folders
     
     if [ "${INCLUDE_CNAME}" == "1" ]
@@ -597,7 +597,7 @@ function task_push {
     echo_good
     
     show_target
-    validate_gs_folders
+    #validate_gs_folders
     validate_ph_folders
     
     if [ "${INCLUDE_CNAME}" == "1" ]
@@ -756,7 +756,7 @@ function task_smart {
     echo_good
     
     show_target
-    validate_gs_folders
+    #validate_gs_folders
     validate_ph_folders
     
     if [ "${INCLUDE_CNAME}" == "1" ]
