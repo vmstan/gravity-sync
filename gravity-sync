@@ -447,7 +447,6 @@ function task_compare {
     
     previous_md5
     md5_compare
-    backup_cleanup
     
     exit_withchange
 }
@@ -586,7 +585,6 @@ function pull_gs {
     pull_gs_cname
     pull_gs_reload
     md5_recheck
-    backup_cleanup
     
     logs_export
     exit_withchange
@@ -746,7 +744,6 @@ function push_gs {
     push_gs_cname
     push_gs_reload
     md5_recheck
-    backup_cleanup
     
     logs_export
     exit_withchange
@@ -959,7 +956,6 @@ function smart_gs {
     fi
     
     md5_recheck
-    backup_cleanup
     
     logs_export
     exit_withchange
@@ -1261,7 +1257,6 @@ function md5_compare {
     else
         MESSAGE="${UI_HASHING_NOREP}"
         echo_info
-        backup_cleanup
         exit_nochange
     fi
 }
@@ -2585,8 +2580,8 @@ function task_purge {
     MESSAGE="${UI_PURGE_CLEANING_DIR}"
     echo_stat
     
-    git clean -f -X -d >/dev/null 2>&1
-    error_validate
+    #git clean -f -X -d >/dev/null 2>&1
+    backup_cleanup
 
     systemctl stop gravity-sync.timer
     systemctl disable gravity-sync
