@@ -15,8 +15,8 @@ REMOTE_USER='pi'
 ### Pi-hole Folder/File Customization
 # LOCAL_PIHOLE_DIRECTORY='' 			# default Pi-hole data directory (local)
 # REMOTE_PIHOLE_DIRECTORY=''				# default Pi-hole data directory (remote)
-# DNSMAQ_DIR=''             # default DNSMASQ data directory (local)
-# RNSMAQ_DIR=''             # default DNSMASQ data directory (remote)
+# LOCAL_DNSMASQ_DIRECTORY=''             # default DNSMASQ data directory (local)
+# REMOTE_DNSMASQ_DIRECTORY=''             # default DNSMASQ data directory (remote)
 # LOCAL_PIHOLE_BINARY='' 			# default Pi-hole binary directory (local)
 # REMOTE_PIHOLE_BINARY='' 			# default Pi-hole binary directory (remote)
 # LOCAL_DOCKER_BINARY=''				# default Docker binary directory (local)

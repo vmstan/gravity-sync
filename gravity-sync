@@ -13,6 +13,7 @@ VERSION='4.0.0'
 # Run 'gravity-sync config' to get started, it will customize the script for your environment
 # You should not to change the values of any variables here here to customize your install
 # Add replacement variables to gravity-sync.conf, which will overwrite these defaults.
+# Gravity Sync 4.0 introduces a new configuration file format, there is no direct upgrade path
 
 # STANDARD VARIABLES #########################
 
@@ -23,8 +24,8 @@ RH_IN_TYPE='default'				# Pi-hole install type, `default`, `docker`, or `podman`
 # Pi-hole Folder/File Customization
 LOCAL_PIHOLE_DIRECTORY='/etc/pihole' 			# default Pi-hole data directory (local)
 REMOTE_PIHOLE_DIRECTORY='/etc/pihole'			# default Pi-hole data directory (remote)
-DNSMAQ_DIR='/etc/dnsmasq.d'         # default DNSMASQ data directory (local)
-RNSMAQ_DIR='/etc/dnsmasq.d'         # default DNSMASQ data directory (remote)
+LOCAL_DNSMASQ_DIRECTORY='/etc/dnsmasq.d'         # default DNSMASQ data directory (local)
+REMOTE_DNSMASQ_DIRECTORY='/etc/dnsmasq.d'         # default DNSMASQ data directory (remote)
 LOCAL_PIHOLE_BINARY='/usr/local/bin/pihole' 	# default Pi-hole binary directory (local)
 REMOTE_PIHOLE_BINARY='/usr/local/bin/pihole' 	# default Pi-hole binary directory (remote)
 LOCAL_DOCKER_BINARY='/usr/bin/docker'		# default Docker binary directory (local)
@@ -576,7 +577,7 @@ function pull_gs_cname {
             
             MESSAGE="${UI_REPLACE_SECONDARY} ${UI_CNAME_NAME}"
             echo_stat
-            sudo cp ${LOCAL_PIHOLE_DIRECTORY}/${CNAME_CONF}.gsbackup ${DNSMAQ_DIR}/${CNAME_CONF} >/dev/null 2>&1
+            sudo cp ${LOCAL_PIHOLE_DIRECTORY}/${CNAME_CONF}.gsbackup ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} >/dev/null 2>&1
             error_validate
             
             validate_cname_permissions
@@ -721,20 +722,20 @@ function push_gs_cname {
             echo_stat
             RSYNC_REPATH="sudo rsync"
             RSYNC_SOURCE="${LOCAL_PIHOLE_DIRECTORY}/${CNAME_CONF}.gsbackup"
-            RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${RNSMAQ_DIR}/${CNAME_CONF}"
+            RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}"
             create_rsynccmd
             
             MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_CNAME_NAME}"
             echo_stat
             CMD_TIMEOUT=$BACKUP_TIMEOUT
-            CMD_REQUESTED="sudo chown root:root ${RNSMAQ_DIR}/${CNAME_CONF}"
+            CMD_REQUESTED="sudo chown root:root ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}"
             create_sshcmd
             
                         
             MESSAGE="${UI_SET_FILE_PERMISSIONS} ${UI_CNAME_NAME}"
             echo_stat
             CMD_TIMEOUT=$BACKUP_TIMEOUT
-            CMD_REQUESTED="sudo chmod 644 ${RNSMAQ_DIR}/${CNAME_CONF}"
+            CMD_REQUESTED="sudo chmod 644 ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}"
             create_sshcmd
         fi
     fi
@@ -943,7 +944,7 @@ function smart_gs {
     
     if [ "$INCLUDE_CNAME" == "1" ]
     then
-        if [ -f "${DNSMAQ_DIR}/${CNAME_CONF}" ]
+        if [ -f "${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF}" ]
         then
             if [ "${PRICNCHANGE}" == "${SECCNCHANGE}" ]
             then
@@ -952,8 +953,8 @@ function smart_gs {
                     MESSAGE="Both ${CNAME_CONF} Have Changed"
                     echo_warn
                     
-                    PRICNDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${RNSMAQ_DIR}/${CNAME_CONF}")
-                    SECCNDATE=$(stat -c %Y ${DNSMAQ_DIR}/${CNAME_CONF})
+                    PRICNDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}")
+                    SECCNDATE=$(stat -c %Y ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF})
                     
                     if (( "$PRICNDATE" >= "$SECCNDATE" ))
                     then
@@ -1059,12 +1060,12 @@ function backup_local_custom() {
 function backup_local_cname() {
     if [ "${INCLUDE_CNAME}" == '1' ]
     then
-        if [ -f ${DNSMAQ_DIR}/${CNAME_CONF} ]
+        if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} ]
         then
             MESSAGE="${UI_BACKUP_SECONDARY} ${UI_CNAME_NAME}"
             echo_stat
             
-            cp ${DNSMAQ_DIR}/${CNAME_CONF} ${LOCAL_PIHOLE_DIRECTORY}/${CNAME_CONF}.gsbackup
+            cp ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} ${LOCAL_PIHOLE_DIRECTORY}/${CNAME_CONF}.gsbackup
             error_validate
         else
             MESSAGE="No local ${CNAME_CONF} detected"
@@ -1125,7 +1126,7 @@ function backup_remote_cname() {
         echo_stat
         
         CMD_TIMEOUT=$BACKUP_TIMEOUT
-        CMD_REQUESTED="sudo cp ${RNSMAQ_DIR}/${CNAME_CONF} ${REMOTE_PIHOLE_DIRECTORY}/${CNAME_CONF}.gsbackup"
+        CMD_REQUESTED="sudo cp ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF} ${REMOTE_PIHOLE_DIRECTORY}/${CNAME_CONF}.gsbackup"
         create_sshcmd
     fi
 }
@@ -1213,20 +1214,20 @@ function md5_compare {
     then
         if [ "${INCLUDE_CNAME}" == "1" ]
         then
-            if [ -f ${DNSMAQ_DIR}/${CNAME_CONF} ]
+            if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} ]
             then
-                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RNSMAQ_DIR}/${CNAME_CONF}
+                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}
                 then
                     REMOTE_CNAME_DNS="1"
                     MESSAGE="${UI_HASHING_HASHING} ${UI_CNAME_NAME}"
                     echo_stat
                     
-                    primaryCNMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//'")
+                    primaryCNMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF} | sed 's/\s.*$//'")
                     error_validate
                     
                     MESSAGE="${UI_HASHING_COMPARING} ${UI_CNAME_NAME}"
                     echo_stat
-                    secondCNMD5=$(md5sum ${DNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//')
+                    secondCNMD5=$(md5sum ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} | sed 's/\s.*$//')
                     error_validate
                     
                     if [ "$primaryCNMD5" == "$last_primaryCNMD5" ] && [ "$secondCNMD5" == "$last_secondCNMD5" ]
@@ -1242,7 +1243,7 @@ function md5_compare {
                     echo_info
                 fi
             else
-                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RNSMAQ_DIR}/${CNAME_CONF}
+                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}
                 then
                     REMOTE_CNAME_DNS="1"
                     MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_PRIMARY}"
@@ -1341,27 +1342,27 @@ function md5_recheck {
     then
         if [ "${INCLUDE_CNAME}" == "1" ]
         then
-            if [ -f ${DNSMAQ_DIR}/${CNAME_CONF} ]
+            if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} ]
             then
-                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RNSMAQ_DIR}/${CNAME_CONF}
+                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}
                 then
                     REMOTE_CNAME_DNS="1"
                     MESSAGE="${UI_HASHING_REHASHING} ${UI_CNAME_NAME}"
                     echo_stat
                     
-                    primaryCNMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//'")
+                    primaryCNMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF} | sed 's/\s.*$//'")
                     error_validate
                     
                     MESSAGE="${UI_HASHING_RECOMPARING} ${UI_CNAME_NAME}"
                     echo_stat
-                    secondCNMD5=$(md5sum ${DNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//')
+                    secondCNMD5=$(md5sum ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} | sed 's/\s.*$//')
                     error_validate
                 else
                     MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_PRIMARY}"
                     echo_info
                 fi
             else
-                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RNSMAQ_DIR}/${CNAME_CONF}
+                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}
                 then
                     REMOTE_CNAME_DNS="1"
                     MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_PRIMARY}"
@@ -1664,7 +1665,7 @@ function validate_dns_folders {
     MESSAGE="${UI_VALIDATING} ${UI_CORE_APP_DNS}"
     echo_stat
     
-    if [ ! -d ${DNSMAQ_DIR} ]
+    if [ ! -d ${LOCAL_DNSMASQ_DIRECTORY} ]
     then
         MESSAGE="${UI_VALIDATING_FAIL_FOLDER} ${UI_CORE_APP_DNS}"
         echo_fail
@@ -1824,7 +1825,7 @@ function validate_cname_permissions() {
     MESSAGE="${UI_VAL_FILE_OWNERSHIP} ${UI_CNAME_NAME}"
     echo_stat
     
-    CNAMELS_OWN=$(ls -ld ${DNSMAQ_DIR}/${CNAME_CONF} | awk '{print $3 $4}')
+    CNAMELS_OWN=$(ls -ld ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} | awk '{print $3 $4}')
     if [ "$CNAMELS_OWN" == "rootroot" ]
     then
         echo_good
@@ -1836,14 +1837,14 @@ function validate_cname_permissions() {
         
         MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_CNAME_NAME}"
         echo_stat
-        sudo chown root:root ${DNSMAQ_DIR}/${CNAME_CONF} >/dev/null 2>&1
+        sudo chown root:root ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} >/dev/null 2>&1
         error_validate
     fi
     
     MESSAGE="${UI_VAL_FILE_PERMISSION} ${UI_CNAME_NAME}"
     echo_stat
     
-    CNAMELS_RWE=$(namei -m ${DNSMAQ_DIR}/${CNAME_CONF} | grep -v f: | grep ${CNAME_CONF} | awk '{print $1}')
+    CNAMELS_RWE=$(namei -m ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} | grep -v f: | grep ${CNAME_CONF} | awk '{print $1}')
     if [ "$CNAMELS_RWE" == "-rw-r--r--" ]
     then
         echo_good
@@ -1855,7 +1856,7 @@ function validate_cname_permissions() {
         
         MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_CNAME_NAME}"
         echo_stat
-        sudo chmod 644 ${DNSMAQ_DIR}/${CNAME_CONF} >/dev/null 2>&1
+        sudo chmod 644 ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} >/dev/null 2>&1
         error_validate
     fi
 }
@@ -2174,13 +2175,13 @@ function advanced_config_generate {
         echo_inf1
         MESSAGE="${UI_CONFIG_ETC_VOLDNSQ_EXAMPLE}"
         echo_need
-        read INPUT_DNSMAQ_DIR
+        read INPUT_LOCAL_DNSMASQ_DIRECTORY
         
-        if [ "${INPUT_DNSMAQ_DIR}" != "" ]
+        if [ "${INPUT_LOCAL_DNSMASQ_DIRECTORY}" != "" ]
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# DNSMAQ_DIR=''/c\DNSMAQ_DIR='${INPUT_DNSMAQ_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+            sed -i "/# LOCAL_DNSMASQ_DIRECTORY=''/c\LOCAL_DNSMASQ_DIRECTORY='${INPUT_LOCAL_DNSMASQ_DIRECTORY}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
             SKIP_DNSMASQ_DIR="1"
         else
@@ -2253,13 +2254,13 @@ function advanced_config_generate {
         echo_inf1
         MESSAGE="${UI_CONFIG_ETC_VOLDNSQ_EXAMPLE}"
         echo_need
-        read INPUT_RNSMAQ_DIR
+        read INPUT_REMOTE_DNSMASQ_DIRECTORY
         
-        if [ "${INPUT_RNSMAQ_DIR}" != "" ]
+        if [ "${INPUT_REMOTE_DNSMASQ_DIRECTORY}" != "" ]
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# RNSMAQ_DIR=''/c\RNSMAQ_DIR='${INPUT_RNSMAQ_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+            sed -i "/# REMOTE_DNSMASQ_DIRECTORY=''/c\REMOTE_DNSMASQ_DIRECTORY='${INPUT_REMOTE_DNSMASQ_DIRECTORY}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
             SKIP_RNSMASQ_DIR="1"
         else
@@ -2569,7 +2570,7 @@ function show_info() {
     echo -e "Local Hostname: $HOSTNAME"
     echo -e "Local Pi-hole Type: ${PH_IN_TYPE}"
     echo -e "Local Pi-hole Config Directory: ${LOCAL_PIHOLE_DIRECTORY}"
-    echo -e "Local DNSMASQ Config Directory: ${DNSMAQ_DIR}"
+    echo -e "Local DNSMASQ Config Directory: ${LOCAL_DNSMASQ_DIRECTORY}"
     echo -e "Local Gravity Sync Directory: ${LOCAL_FOLDR}" 
     
     if [ "${PH_IN_TYPE}" == "default" ]
@@ -2633,7 +2634,7 @@ function show_info() {
     echo -e "Remote Username: ${REMOTE_USER}"
     echo -e "Remote Pi-hole Type: ${RH_IN_TYPE}"
     echo -e "Remote Pi-hole Config Directory: ${REMOTE_PIHOLE_DIRECTORY}"
-    echo -e "Remote DNSMASQ Config Directory: ${RNSMAQ_DIR}"
+    echo -e "Remote DNSMASQ Config Directory: ${REMOTE_DNSMASQ_DIRECTORY}"
 
     if [ "${RH_IN_TYPE}" == "default" ]
     then
