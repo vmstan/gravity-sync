@@ -2244,7 +2244,7 @@ function config_enablecname {
 
 ## Delete Existing Configuration
 function config_delete {
-    source ${GSETC_PATH}
+    source ${GSETC_PATH}/${CONFIG_FILE}
     MESSAGE="${CONFIG_FILE} ${UI_CONFIG_ALREADY}"
     echo_info  
   
