@@ -35,14 +35,14 @@ function push_gs_grav {
     MESSAGE="${UI_BACKUP_COPY} ${UI_GRAVITY_NAME}"
     echo_stat
     RSYNC_REPATH="rsync"
-    RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${GRAVITY_FI}.backup"
+    RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${GRAVITY_FI}.gsbackup"
     RSYNC_TARGET="${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.push"
     create_rsynccmd
     
     MESSAGE="${UI_PUSH_SECONDARY} ${UI_GRAVITY_NAME}"
     echo_stat
     RSYNC_REPATH="sudo rsync"
-    RSYNC_SOURCE="${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${GRAVITY_FI}.backup"
+    RSYNC_SOURCE="${LOCAL_FOLDR}/${BACKUP_FOLD}/${BACKUPTIMESTAMP}-${GRAVITY_FI}.gsbackup"
     RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${GRAVITY_FI}"
     create_rsynccmd
     

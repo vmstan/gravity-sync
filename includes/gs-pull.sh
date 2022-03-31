@@ -36,7 +36,7 @@ function pull_gs_grav {
     MESSAGE="${UI_PULL_PRIMARY} ${UI_GRAVITY_NAME}"
     echo_stat
     RSYNC_REPATH="rsync"
-    RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${GRAVITY_FI}.backup"
+    RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${GRAVITY_FI}.gsbackup"
     RSYNC_TARGET="${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull"
     create_rsynccmd
     
@@ -60,7 +60,7 @@ function pull_gs_cust {
             MESSAGE="${UI_PULL_PRIMARY} ${UI_CUSTOM_NAME}"
             echo_stat
             RSYNC_REPATH="rsync"
-            RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${CUSTOM_DNS}.backup"
+            RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${CUSTOM_DNS}.gsbackup"
             RSYNC_TARGET="${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull"
             create_rsynccmd
             
@@ -86,7 +86,7 @@ function pull_gs_cname {
             MESSAGE="${UI_PULL_PRIMARY} ${UI_CNAME_NAME}"
             echo_stat
             RSYNC_REPATH="rsync"
-            RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/dnsmasq.d-${CNAME_CONF}.backup"
+            RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/dnsmasq.d-${CNAME_CONF}.gsbackup"
             RSYNC_TARGET="${LOCAL_FOLDR}/${BACKUP_FOLD}/${CNAME_CONF}.pull"
             create_rsynccmd
             
