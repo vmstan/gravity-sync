@@ -18,8 +18,8 @@ VERSION='4.0.0'
 # STANDARD VARIABLES #########################
 
 # Installation Types
-PH_IN_TYPE='default'				# Pi-hole install type, `default`, `docker`, or `podman` (local)
-RH_IN_TYPE='default'				# Pi-hole install type, `default`, `docker`, or `podman` (remote)
+LOCAL_PIHOLE_TYPE='default'				# Pi-hole install type, `default`, `docker`, or `podman` (local)
+REMOTE_PIHOLE_TYPE='default'				# Pi-hole install type, `default`, `docker`, or `podman` (remote)
 
 # Pi-hole Folder/File Customization
 LOCAL_PIHOLE_DIRECTORY='/etc/pihole' 			# default Pi-hole data directory (local)
@@ -32,10 +32,10 @@ LOCAL_DOCKER_BINARY='/usr/bin/docker'		# default Docker binary directory (local)
 REMOTE_DOCKER_BINARY='/usr/bin/docker'		# default Docker binary directory (remote)
 LOCAL_PODMAN_BINARY='/usr/bin/podman'        # default Podman binary directory (local)
 REMOTE_PODMAN_BINARY='/usr/bin/podman'        # default Podman binary directory (remote)
-FILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (local)
-RILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (remote)
-DOCKER_CON='pihole'					# default Pi-hole container name (local)
-ROCKER_CON='pihole'					# default Pi-hole container name (remote)
+LOCAL_FILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (local)
+REMOTE_FILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (remote)
+LOCAL_DOCKER_CONTAINER='pihole'					# default Pi-hole container name (local)
+REMOTE_DOCKER_CONTAINER='pihole'					# default Pi-hole container name (remote)
 PIHOLE_CONTAINER_IMAGE='pihole/pihole'          # official Pi-hole container image
 
 GRAVITY_FI='gravity.db' 			        # default Pi-hole database file
@@ -46,7 +46,7 @@ GSLAN_CONF='08-gs-lan.conf'                 # default DNSMASQ GS managed file
 # Interaction Customization
 VERIFY_PASS='0'						# replace in gravity-sync.conf to overwrite
 SKIP_CUSTOM='0'						# replace in gravity-sync.conf to overwrite
-INCLUDE_CNAME='0'					# replace in gravity-sync.conf to overwrite
+INCLUDE_CNAME='1'					# replace in gravity-sync.conf to overwrite
 DATE_OUTPUT='0'						# replace in gravity-sync.conf to overwrite
 PING_AVOID='0'						# replace in gravity-sync.conf to overwrite
 ROOT_CHECK_AVOID='0'				# replace in gravity-sync.conf to overwrite
@@ -127,9 +127,9 @@ UI_VALIDATING_FAIL_CONTAINER='Unable to validate running container instance of'
 UI_VALIDATING_FAIL_FOLDER='Unable to validate configuration folder for'
 UI_VALIDATING_FAIL_BINARY='Unable to validate the availibility of'
 UI_COMPENSATE='Attempting to compensate'
-UI_SET_FILE_OWNERSHIP='Setting file ownership on'
+UI_SET_LOCAL_FILE_OWNERSHIP='Setting file ownership on'
 UI_SET_FILE_PERMISSION='Setting file permissions on'
-UI_VAL_FILE_OWNERSHIP='Validating file ownership on'
+UI_VAL_LOCAL_FILE_OWNERSHIP='Validating file ownership on'
 UI_VAL_FILE_PERMISSION='Validating file permissions on'
 UI_VAL_GS_FOLDERS="Validating ${PROGRAM} folders on $HOSTNAME"
 UI_VAL_GS_FOLDERS_FAIL="Unable to validate ${PROGRAM} folders on $HOSTNAME"
@@ -442,26 +442,26 @@ function silent_error_validate {
 }
 
 function ph_type {
-    if [ "$PH_IN_TYPE" == "default" ]
+    if [ "$LOCAL_PIHOLE_TYPE" == "default" ]
     then
         PH_EXEC="${LOCAL_PIHOLE_BINARY}"
-    elif [ "$PH_IN_TYPE" == "docker" ]
+    elif [ "$LOCAL_PIHOLE_TYPE" == "docker" ]
     then
-        PH_EXEC="sudo ${LOCAL_DOCKER_BINARY} exec $(sudo ${LOCAL_DOCKER_BINARY} ps -qf name=${DOCKER_CON}) pihole"
-    elif [ "$PH_IN_TYPE" == "podman" ]
+        PH_EXEC="sudo ${LOCAL_DOCKER_BINARY} exec $(sudo ${LOCAL_DOCKER_BINARY} ps -qf name=${LOCAL_DOCKER_CONTAINER}) pihole"
+    elif [ "$LOCAL_PIHOLE_TYPE" == "podman" ]
     then
-        PH_EXEC="sudo ${LOCAL_PODMAN_BINARY} exec ${DOCKER_CON} pihole"
+        PH_EXEC="sudo ${LOCAL_PODMAN_BINARY} exec ${LOCAL_DOCKER_CONTAINER} pihole"
     fi
     
-    if [ "$RH_IN_TYPE" == "default" ]
+    if [ "$REMOTE_PIHOLE_TYPE" == "default" ]
     then
         RH_EXEC="${REMOTE_PIHOLE_BINARY}"
-    elif [ "$RH_IN_TYPE" == "docker" ]
+    elif [ "$REMOTE_PIHOLE_TYPE" == "docker" ]
     then
-        RH_EXEC="sudo ${REMOTE_DOCKER_BINARY} exec \$(sudo ${REMOTE_DOCKER_BINARY} ps -qf name=${ROCKER_CON}) pihole"
-    elif [ "$RH_IN_TYPE" == "podman" ]
+        RH_EXEC="sudo ${REMOTE_DOCKER_BINARY} exec \$(sudo ${REMOTE_DOCKER_BINARY} ps -qf name=${REMOTE_DOCKER_CONTAINER}) pihole"
+    elif [ "$REMOTE_PIHOLE_TYPE" == "podman" ]
     then
-        RH_EXEC="sudo ${REMOTE_PODMAN_BINARY} exec ${ROCKER_CON} pihole"
+        RH_EXEC="sudo ${REMOTE_PODMAN_BINARY} exec ${REMOTE_DOCKER_CONTAINER} pihole"
     fi
 }
 
@@ -665,10 +665,10 @@ function push_gs_grav {
     RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}"
     create_rsynccmd
     
-    MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_GRAVITY_NAME}"
+    MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${UI_GRAVITY_NAME}"
     echo_stat
     CMD_TIMEOUT=$BACKUP_TIMEOUT
-    CMD_REQUESTED="sudo chown ${RILE_OWNER} ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}"
+    CMD_REQUESTED="sudo chown ${REMOTE_FILE_OWNER} ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}"
     create_sshcmd
     
     MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_GRAVITY_NAME}"
@@ -694,7 +694,7 @@ function push_gs_cust {
             RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}"
             create_rsynccmd
             
-            MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_CUSTOM_NAME}"
+            MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${UI_CUSTOM_NAME}"
             echo_stat
             CMD_TIMEOUT=$BACKUP_TIMEOUT
             CMD_REQUESTED="sudo chown root:root ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}"
@@ -725,7 +725,7 @@ function push_gs_cname {
             RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}"
             create_rsynccmd
             
-            MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_CNAME_NAME}"
+            MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${UI_CNAME_NAME}"
             echo_stat
             CMD_TIMEOUT=$BACKUP_TIMEOUT
             CMD_REQUESTED="sudo chown root:root ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}"
@@ -1622,7 +1622,7 @@ function validate_ph_folders {
     MESSAGE="${UI_VALIDATING} ${UI_CORE_APP}"
     echo_stat
     
-    if [ "$PH_IN_TYPE" == "default" ]
+    if [ "$LOCAL_PIHOLE_TYPE" == "default" ]
     then
         if [ ! -f ${LOCAL_PIHOLE_BINARY} ]
         then
@@ -1630,7 +1630,7 @@ function validate_ph_folders {
             echo_fail
             exit_nochange
         fi
-    elif [ "$PH_IN_TYPE" == "docker" ]
+    elif [ "$LOCAL_PIHOLE_TYPE" == "docker" ]
     then
         FTLCHECK=$(sudo docker container ls | grep "${PIHOLE_CONTAINER_IMAGE}")
         if [ "$FTLCHECK" == "" ]
@@ -1639,7 +1639,7 @@ function validate_ph_folders {
             echo_fail
             exit_nochange
         fi
-    elif [ "$PH_IN_TYPE" == "podman" ]
+    elif [ "$LOCAL_PIHOLE_TYPE" == "podman" ]
     then
         FTLCHECK=$(sudo podman container ls | grep "${PIHOLE_CONTAINER_IMAGE}")
         if [ "$FTLCHECK" == "" ]
@@ -1740,11 +1740,11 @@ function dbclient_warning {
 
 ## Validate Domain Database Permissions
 function validate_gravity_permissions() {
-    MESSAGE="${UI_VAL_FILE_OWNERSHIP} ${UI_GRAVITY_NAME}"
+    MESSAGE="${UI_VAL_LOCAL_FILE_OWNERSHIP} ${UI_GRAVITY_NAME}"
     echo_stat
     
     GRAVDB_OWN=$(ls -ld ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} | awk 'OFS=":" {print $3,$4}')
-    if [ "$GRAVDB_OWN" == "$FILE_OWNER" ]
+    if [ "$GRAVDB_OWN" == "$LOCAL_FILE_OWNER" ]
     then
         echo_good
     else
@@ -1753,9 +1753,9 @@ function validate_gravity_permissions() {
         MESSAGE="${UI_COMPENSATE}"
         echo_warn
         
-        MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_GRAVITY_NAME}"
+        MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${UI_GRAVITY_NAME}"
         echo_stat
-        sudo chown ${FILE_OWNER} ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} >/dev/null 2>&1
+        sudo chown ${LOCAL_FILE_OWNER} ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} >/dev/null 2>&1
         error_validate
     fi
     
@@ -1781,7 +1781,7 @@ function validate_gravity_permissions() {
 
 ## Validate Local DNS Records Permissions
 function validate_custom_permissions() {
-    MESSAGE="${UI_VAL_FILE_OWNERSHIP} ${UI_CUSTOM_NAME}"
+    MESSAGE="${UI_VAL_LOCAL_FILE_OWNERSHIP} ${UI_CUSTOM_NAME}"
     echo_stat
     
     CUSTOMLS_OWN=$(ls -ld ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} | awk '{print $3 $4}')
@@ -1794,7 +1794,7 @@ function validate_custom_permissions() {
         MESSAGE="${UI_COMPENSATE}"
         echo_warn
         
-        MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_CUSTOM_NAME}"
+        MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${UI_CUSTOM_NAME}"
         echo_stat
         sudo chown root:root ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} >/dev/null 2>&1
         error_validate
@@ -1822,7 +1822,7 @@ function validate_custom_permissions() {
 
 ## Validate Local DNS CNAME Permissions
 function validate_cname_permissions() {
-    MESSAGE="${UI_VAL_FILE_OWNERSHIP} ${UI_CNAME_NAME}"
+    MESSAGE="${UI_VAL_LOCAL_FILE_OWNERSHIP} ${UI_CNAME_NAME}"
     echo_stat
     
     CNAMELS_OWN=$(ls -ld ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} | awk '{print $3 $4}')
@@ -1835,7 +1835,7 @@ function validate_cname_permissions() {
         MESSAGE="${UI_COMPENSATE}"
         echo_warn
         
-        MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_CNAME_NAME}"
+        MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${UI_CNAME_NAME}"
         echo_stat
         sudo chown root:root ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} >/dev/null 2>&1
         error_validate
@@ -2108,12 +2108,12 @@ function advanced_config_generate {
     echo_inf1
     MESSAGE="${UI_CONFIG_INSTANCETYPE}"
     echo_need
-    read INPUT_PH_IN_TYPE
-    INPUT_PH_IN_TYPE="${INPUT_PH_IN_TYPE:-default}"
+    read INPUT_LOCAL_PIHOLE_TYPE
+    INPUT_LOCAL_PIHOLE_TYPE="${INPUT_LOCAL_PIHOLE_TYPE:-default}"
     
-    if [ "${INPUT_PH_IN_TYPE}" != "default" ]
+    if [ "${INPUT_LOCAL_PIHOLE_TYPE}" != "default" ]
     then
-        if [ "${INPUT_PH_IN_TYPE}" != "docker" ] && [ "${INPUT_PH_IN_TYPE}" != "podman" ]
+        if [ "${INPUT_LOCAL_PIHOLE_TYPE}" != "docker" ] && [ "${INPUT_LOCAL_PIHOLE_TYPE}" != "podman" ]
         then
             MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CONFIG_INSTANCE_ERROR}"
             echo_warn
@@ -2122,16 +2122,16 @@ function advanced_config_generate {
 
         MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_CONTAINER_TYPE} to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# PH_IN_TYPE=''/c\PH_IN_TYPE='${INPUT_PH_IN_TYPE}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+        sed -i "/# LOCAL_PIHOLE_TYPE=''/c\LOCAL_PIHOLE_TYPE='${INPUT_LOCAL_PIHOLE_TYPE}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
         
         MESSAGE="${UI_CONFIG_CONT_DETECT} ${UI_CONFIG_IMAGES}"
         echo_info
         echo_lines
-        if [ "${INPUT_PH_IN_TYPE}" == "docker" ] 
+        if [ "${INPUT_LOCAL_PIHOLE_TYPE}" == "docker" ] 
         then
             sudo docker container ls
-        elif [ "${INPUT_PH_IN_TYPE}" == "podman" ]
+        elif [ "${INPUT_LOCAL_PIHOLE_TYPE}" == "podman" ]
         then
             sudo podman container ls
         fi
@@ -2141,14 +2141,14 @@ function advanced_config_generate {
         echo_inf1
         MESSAGE="${UI_CONFIG_PIHOLE_DEFAULT}"
         echo_need
-        read INPUT_DOCKER_CON
-        INPUT_DOCKER_CON="${INPUT_DOCKER_CON:-pihole}"
+        read INPUT_LOCAL_DOCKER_CONTAINER
+        INPUT_LOCAL_DOCKER_CONTAINER="${INPUT_LOCAL_DOCKER_CONTAINER:-pihole}"
         
-        if [ "${INPUT_DOCKER_CON}" != "pihole" ]
+        if [ "${INPUT_LOCAL_DOCKER_CONTAINER}" != "pihole" ]
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_CONTAINER_NAME} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# DOCKER_CON=''/c\DOCKER_CON='${INPUT_DOCKER_CON}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+            sed -i "/# LOCAL_DOCKER_CONTAINER=''/c\LOCAL_DOCKER_CONTAINER='${INPUT_LOCAL_DOCKER_CONTAINER}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
         fi
         
@@ -2192,7 +2192,7 @@ function advanced_config_generate {
         
         MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_VOLUME_OWNER} to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# FILE_OWNER=''/c\FILE_OWNER='999:999'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+        sed -i "/# LOCAL_FILE_OWNER=''/c\LOCAL_FILE_OWNER='999:999'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
     fi
     
@@ -2200,12 +2200,12 @@ function advanced_config_generate {
     echo_inf1
     MESSAGE="${UI_CONFIG_INSTANCETYPE}"
     echo_need
-    read INPUT_RH_IN_TYPE
-    INPUT_RH_IN_TYPE="${INPUT_RH_IN_TYPE:-default}"
+    read INPUT_REMOTE_PIHOLE_TYPE
+    INPUT_REMOTE_PIHOLE_TYPE="${INPUT_REMOTE_PIHOLE_TYPE:-default}"
     
-    if [ "${INPUT_RH_IN_TYPE}" != "default" ]
+    if [ "${INPUT_REMOTE_PIHOLE_TYPE}" != "default" ]
     then
-        if [ "${INPUT_RH_IN_TYPE}" != "docker" ] && [ "${INPUT_RH_IN_TYPE}" != "podman" ]
+        if [ "${INPUT_REMOTE_PIHOLE_TYPE}" != "docker" ] && [ "${INPUT_REMOTE_PIHOLE_TYPE}" != "podman" ]
         then
             MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CONFIG_INSTANCE_ERROR}"
             echo_warn
@@ -2213,21 +2213,21 @@ function advanced_config_generate {
         fi
         MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CONFIG_CONTAINER_TYPE} to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# RH_IN_TYPE=''/c\RH_IN_TYPE='${INPUT_RH_IN_TYPE}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+        sed -i "/# REMOTE_PIHOLE_TYPE=''/c\REMOTE_PIHOLE_TYPE='${INPUT_REMOTE_PIHOLE_TYPE}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
         
         MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CONFIG_CONTAINER_NAME}"
         echo_inf1
         MESSAGE="${UI_CONFIG_DEFAULT_LEAVE} 'pihole'"
         echo_need
-        read INPUT_ROCKER_CON
-        INPUT_ROCKER_CON="${INPUT_ROCKER_CON:-pihole}"
+        read INPUT_REMOTE_DOCKER_CONTAINER
+        INPUT_REMOTE_DOCKER_CONTAINER="${INPUT_REMOTE_DOCKER_CONTAINER:-pihole}"
         
-        if [ "${INPUT_ROCKER_CON}" != "pihole" ]
+        if [ "${INPUT_REMOTE_DOCKER_CONTAINER}" != "pihole" ]
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CONFIG_CONTAINER_NAME} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# ROCKER_CON=''/c\ROCKER_CON='${INPUT_ROCKER_CON}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+            sed -i "/# REMOTE_DOCKER_CONTAINER=''/c\REMOTE_DOCKER_CONTAINER='${INPUT_REMOTE_DOCKER_CONTAINER}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
             error_validate
         fi
         
@@ -2271,7 +2271,7 @@ function advanced_config_generate {
         
         MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CONFIG_VOLUME_OWNER} to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# RILE_OWNER=''/c\RILE_OWNER='999:999'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+        sed -i "/# REMOTE_FILE_OWNER=''/c\REMOTE_FILE_OWNER='999:999'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
         error_validate
     fi
     
@@ -2534,13 +2534,13 @@ function show_info() {
     echo -e "${YELLOW}Local Software Versions${NC}"
     echo -e "${PURPLE}Gravity Sync${NC} ${VERSION}${DEVVERSION}"
     echo -e "${BLUE}Pi-hole${NC}"
-    if [ "${PH_IN_TYPE}" == "default" ]
+    if [ "${LOCAL_PIHOLE_TYPE}" == "default" ]
     then
         pihole version
-    elif [ "${PH_IN_TYPE}" == "docker" ]
+    elif [ "${LOCAL_PIHOLE_TYPE}" == "docker" ]
     then 
         sudo docker exec -it pihole pihole -v
-    elif [ "${PH_IN_TYPE}" == "podman" ]
+    elif [ "${LOCAL_PIHOLE_TYPE}" == "podman" ]
     then 
         sudo podman exec -it pihole pihole -v
     fi
@@ -2568,25 +2568,25 @@ function show_info() {
     
     echo -e "${YELLOW}Local/Secondary Instance Settings${NC}"
     echo -e "Local Hostname: $HOSTNAME"
-    echo -e "Local Pi-hole Type: ${PH_IN_TYPE}"
+    echo -e "Local Pi-hole Type: ${LOCAL_PIHOLE_TYPE}"
     echo -e "Local Pi-hole Config Directory: ${LOCAL_PIHOLE_DIRECTORY}"
     echo -e "Local DNSMASQ Config Directory: ${LOCAL_DNSMASQ_DIRECTORY}"
     echo -e "Local Gravity Sync Directory: ${LOCAL_FOLDR}" 
     
-    if [ "${PH_IN_TYPE}" == "default" ]
+    if [ "${LOCAL_PIHOLE_TYPE}" == "default" ]
     then
         echo -e "Local Pi-hole Binary Directory: ${LOCAL_PIHOLE_BINARY}"
-    elif [ "${PH_IN_TYPE}" == "docker" ]
+    elif [ "${LOCAL_PIHOLE_TYPE}" == "docker" ]
     then 
-        echo -e "Local Pi-hole Container Name: ${DOCKER_CON}"
+        echo -e "Local Pi-hole Container Name: ${LOCAL_DOCKER_CONTAINER}"
         echo -e "Local Docker Binary Directory: ${LOCAL_DOCKER_BINARY}"
-    elif [ "${PH_IN_TYPE}" == "podman" ]
+    elif [ "${LOCAL_PIHOLE_TYPE}" == "podman" ]
     then 
-        echo -e "Local Pi-hole Container Name: ${DOCKER_CON}"
+        echo -e "Local Pi-hole Container Name: ${LOCAL_DOCKER_CONTAINER}"
         echo -e "Local Podman Binary Directory: ${LOCAL_PODMAN_BINARY}"
     fi
     
-    echo -e "Local File Owner Settings: ${FILE_OWNER}"
+    echo -e "Local File Owner Settings: ${LOCAL_FILE_OWNER}"
     
     if [ ${SKIP_CUSTOM} == '0' ]
     then
@@ -2632,24 +2632,24 @@ function show_info() {
     echo -e "${YELLOW}Remote/Primary Instance Settings${NC}"
     echo -e "Remote Hostname/IP: ${REMOTE_HOST}"
     echo -e "Remote Username: ${REMOTE_USER}"
-    echo -e "Remote Pi-hole Type: ${RH_IN_TYPE}"
+    echo -e "Remote Pi-hole Type: ${REMOTE_PIHOLE_TYPE}"
     echo -e "Remote Pi-hole Config Directory: ${REMOTE_PIHOLE_DIRECTORY}"
     echo -e "Remote DNSMASQ Config Directory: ${REMOTE_DNSMASQ_DIRECTORY}"
 
-    if [ "${RH_IN_TYPE}" == "default" ]
+    if [ "${REMOTE_PIHOLE_TYPE}" == "default" ]
     then
         echo -e "Remote Pi-hole Binary Directory: ${REMOTE_PIHOLE_BINARY}"
-    elif [ "${RH_IN_TYPE}" == "docker" ]
+    elif [ "${REMOTE_PIHOLE_TYPE}" == "docker" ]
     then 
-        echo -e "Remote Pi-hole Container Name: ${ROCKER_CON}"
+        echo -e "Remote Pi-hole Container Name: ${REMOTE_DOCKER_CONTAINER}"
         echo -e "Remote Docker Binary Directory: ${REMOTE_DOCKER_BINARY}"
-    elif [ "${RH_IN_TYPE}" == "podman" ]
+    elif [ "${REMOTE_PIHOLE_TYPE}" == "podman" ]
     then 
-        echo -e "Remote Pi-hole Container Name: ${ROCKER_CON}"
+        echo -e "Remote Pi-hole Container Name: ${REMOTE_DOCKER_CONTAINER}"
         echo -e "Remote Podman Binary Directory: ${REMOTE_PODMAN_BINARY}"
     fi
 
-    echo -e "Remote File Owner Settings: ${RILE_OWNER}"
+    echo -e "Remote File Owner Settings: ${REMOTE_FILE_OWNER}"
     echo_lines
 }
 
