@@ -97,8 +97,8 @@ UI_CORE_OPENSSH='OpenSSH'
 UI_CORE_RSYNC='RSYNC'
 UI_CORE_DOCKER='Docker'
 UI_CORE_PODMAN='Podman'
-UI_CORE_UC_PRIMARY='Primary'
-UI_CORE_UC_SECONDARY='Secondary'
+UI_CORE_UC_REMOTE='Remote'
+UI_CORE_UC_LOCAL='Local'
 
 # Exit
 UI_EXIT_CALC_END='after'
@@ -1513,7 +1513,7 @@ function detect_remotersync {
 }
 
 function show_target {
-    MESSAGE="${UI_CORE_UC_PRIMARY} ${UI_CORE_APP}: ${REMOTE_USER}@${REMOTE_HOST}"
+    MESSAGE="${UI_CORE_UC_REMOTE} ${UI_CORE_APP}: ${REMOTE_USER}@${REMOTE_HOST}"
     echo_info
     
     detect_ssh
