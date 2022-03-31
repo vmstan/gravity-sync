@@ -1048,7 +1048,7 @@ function backup_remote_gravity() {
     echo_stat
     
     CMD_TIMEOUT=$BACKUP_TIMEOUT
-    CMD_REQUESTED="sudo ${FTL_EXEC} sql ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI} \".backup '${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup'\""
+    CMD_REQUESTED="sudo ${RFTL_EXEC} sql ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI} \".backup '${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup'\""
     create_sshcmd
 }
 
