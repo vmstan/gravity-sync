@@ -571,7 +571,7 @@ function pull_gs_cname {
             MESSAGE="${UI_PULL_PRIMARY} ${UI_CNAME_NAME}"
             echo_stat
             RSYNC_REPATH="rsync"
-            RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/dnsmasq.d-${CNAME_CONF}.gsbackup"
+            RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${CNAME_CONF}.gsbackup"
             RSYNC_TARGET="${LOCAL_PIHOLE_DIRECTORY}/${CNAME_CONF}.gsbackup"
             create_rsynccmd
             
