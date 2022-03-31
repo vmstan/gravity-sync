@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 SCRIPT_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
@@ -77,43 +77,2917 @@ DAEMON_PATH='/etc/systemd/system'   # systemd timer/service folder
 ### NEVER CHANGE ANYTHING BELOW THIS LINE! ###
 ##############################################
 
-# Import UI Fields
-source ${LOCAL_FOLDR}/includes/gs-ui.sh
+# Interface Settings
+UI_GRAVITY_NAME='Domain Database'
+UI_CUSTOM_NAME='Local DNS Records'
+UI_CNAME_NAME='Local DNS CNAMEs'
 
-# Import Color/Message Includes
-source ${LOCAL_FOLDR}/includes/gs-colors.sh
+# Core
+UI_INVALID_SELECTION='Invalid selection'
+UI_INVALID_DNS_CONFIG='Invalid DNS replication settings in'
+UI_CORE_MISSING='Missing'
+UI_CORE_LOADING='Loading'
+UI_CORE_EVALUATING='Evaluating arguments'
+UI_CORE_INIT="Initalizing ${PROGRAM} (${VERSION})"
+UI_CORE_RELOCATING='Relocating'
+UI_CORE_APP='Pi-hole'
+UI_CORE_APP_DNS='DNSMASQ'
+UI_CORE_APP_SQL='SQLITE3'
+UI_CORE_OPENSSH='OpenSSH'
+UI_CORE_RSYNC='RSYNC'
+UI_CORE_DOCKER='Docker'
+UI_CORE_PODMAN='Podman'
+UI_CORE_UC_PRIMARY='Primary'
+UI_CORE_UC_SECONDARY='Secondary'
 
-# FUNCTION DEFINITIONS #######################
+# Exit
+UI_EXIT_CALC_END='after'
+UI_EXIT_ABORT='exited'
+UI_EXIT_COMPLETE='completed'
+UI_EXIT_CALC_TIMER='seconds'
 
-# Core Functions
-source ${LOCAL_FOLDR}/includes/gs-core.sh
+# Hashing
+UI_HASHING_HASHING='Hashing the primary'
+UI_HASHING_COMPARING='Comparing to the secondary'
+UI_HASHING_DIFFERNCE='Differences detected in the'
+UI_HASHING_DETECTED='has been detected on the'
+UI_HASHING_NOTDETECTED='not detected on the'
+UI_HASHING_PRIMARY='primary host'
+UI_HASHING_SECONDARY='secondary host'
+UI_HASHING_REQUIRED='Replication of Pi-hole settings is required'
+UI_HASHING_NOREP='No replication is required at this time'
+UI_HASHING_DIAGNOSTICS='Performing replicator diagnostics'
+UI_HASHING_REHASHING='Rehashing the primary'
+UI_HASHING_RECOMPARING='Recomparing to the secondary'
 
-# Gravity Replication Functions
-source ${LOCAL_FOLDR}/includes/gs-pull.sh
-source ${LOCAL_FOLDR}/includes/gs-push.sh
-source ${LOCAL_FOLDR}/includes/gs-smart.sh
-source ${LOCAL_FOLDR}/includes/gs-backup.sh
+# Validation
+UI_VALIDATING='Validating configuration of'
+UI_VALIDATING_FAIL_CONTAINER='Unable to validate running container instance of'
+UI_VALIDATING_FAIL_FOLDER='Unable to validate configuration folder for'
+UI_VALIDATING_FAIL_BINARY='Unable to validate the availibility of'
+UI_COMPENSATE='Attempting to compensate'
+UI_SET_FILE_OWNERSHIP='Setting file ownership on'
+UI_SET_FILE_PERMISSION='Setting file permissions on'
+UI_VAL_FILE_OWNERSHIP='Validating file ownership on'
+UI_VAL_FILE_PERMISSION='Validating file permissions on'
+UI_VAL_GS_FOLDERS="Validating ${PROGRAM} folders on $HOSTNAME"
+UI_VAL_GS_FOLDERS_FAIL="Unable to validate ${PROGRAM} folders on $HOSTNAME"
 
-# Hashing & SSH Functions
-source ${LOCAL_FOLDR}/includes/gs-hashing.sh
-source ${LOCAL_FOLDR}/includes/gs-ssh.sh
+# Configuration
+UI_DROPBEAR_DEP='Dropbear support has been deprecated'
 
-# Logging Functions
-source ${LOCAL_FOLDR}/includes/gs-logging.sh
+# Pull/Push
+UI_PULL_PRIMARY='Pulling the primary'
+UI_PUSH_SECONDARY='Pushing the secondary'
+UI_REPLACE_SECONDARY='Replacing the secondary'
+UI_PULL_RELOAD_WAIT='Isolating regeneration pathways'
+UI_PUSH_RELOAD_WAIT='Inverting tachyon pulses'
+UI_FTLDNS_CONFIG_UPDATE='Updating secondary FTLDNS configuration'
+UI_FTLDNS_CONFIG_RELOAD='Reloading secondary FTLDNS services'
+UI_FTLDNS_CONFIG_PUSH_UPDATE='Updating primary FTLDNS configuration'
+UI_FTLDNS_CONFIG_PUSH_RELOAD='Reloading primary FTLDNS services'
 
-# Validation Functions
-source ${LOCAL_FOLDR}/includes/gs-validate.sh
-source ${LOCAL_FOLDR}/includes/gs-intent.sh
-source ${LOCAL_FOLDR}/includes/gs-root.sh
+# Logging
+UI_LOGGING_SUCCESS='Logging successful'
+UI_LOGGING_HASHES='Saving the updated hashes from this replication'
+UI_LOGGING_DISPLAY='Displaying output of previous jobs'
+UI_LOGGING_EMPTY='is empty'
+UI_LOGGING_MISSING='is missing'
+UI_LOGGING_RECENT_COMPLETE='Recent complete executions of'
 
-# Configuration Management
-source ${LOCAL_FOLDR}/includes/gs-config.sh
-source ${LOCAL_FOLDR}/includes/gs-update.sh
-source ${LOCAL_FOLDR}/includes/gs-automate.sh
-source ${LOCAL_FOLDR}/includes/gs-purge.sh
+# Backup
+UI_BACKUP_PRIMARY='Performing copy of primary'
+UI_BACKUP_COPY='Pulling copy of primary'
+UI_BACKUP_SECONDARY='Performing copy of secondary'
+UI_BACKUP_PURGE='Purging unused data files from this Pi-hole instance'
+UI_BACKUP_REMAIN='days of backups remain'
+UI_BACKUP_INTEGRITY="Checking ${UI_GRAVITY_NAME} copy integrity"
+UI_BACKUP_INTEGRITY_FAILED='Integrity check has failed for the primary'
+UI_BACKUP_INTEGRITY_DELETE='Removing failed copies'
+UI_BACKUP_DELETE_ALL='All unused data files purged'
 
-# Exit Codes
-source ${LOCAL_FOLDR}/includes/gs-exit.sh
+# Restore
+UI_RESTORE_WARNING="This will overwrite your current Pi-hole settings on $HOSTNAME with a previous version!"
+UI_RESTORE_INVALID='Invalid restoration request'
+UI_RESTORE_SELECT_DATE='Select backup date from which to restore the'
+UI_RESTORE_SKIPPING='Skipping restore of'
+UI_RESTORE_BACKUP_SELECTED='backup selected for restoration'
+UI_RESTORE_BACKUP_UNAVAILABLE='backups are unavailable'
+UI_RESTORE_FROM='restoring from'
+UI_RESTORE_TIME_TRAVEL='Preparing calculations for time travel'
+UI_RESTORE_SECONDARY='Restoring the secondary'
+UI_RESTORE_PUSH_PROMPT='Do you want to push the restored configuration to the primary Pi-hole? (Y/N)'
+UI_RESTORE_PUSH_NOPUSH="Configuration will not be pushed to the primaryp Pi-hole"
+
+# Purge
+UI_PURGE_MATRIX_ALIGNMENT='Realigning dilithium crystal matrix'
+UI_PURGE_DELETE_SSH_KEYS='Deleting SSH key-files'
+UI_PURGE_CLEANING_DIR="Purging ${PROGRAM} directory"
+
+# Automation
+UI_AUTO_CRON_EXISTS='Automation task exists in crontab'
+UI_AUTO_CRON_DISPLAY_FREQ='Select synchronization frequency (in minutes)'
+UI_AUTO_CRON_SELECT_FREQ='Valid options are 5, 10, 15, 30 or 0 to disable (default: 15)'
+UI_AUTO_CRON_SAVING='Saving new synchronization task to crontab'
+UI_AUTO_CRON_DISABLED='Automation with crontab has been disabled'
+
+# Configuration
+UI_CONFIG_YESNOY="'Yes' or 'No', blank is default 'Yes'"
+UI_CONFIG_YESNON="'Yes' or 'No', blank is default 'No'"
+UI_CONFIG_ALREADY='already exists'
+UI_ENABLE_REPLICATION_QUEST='Enable replication of'
+UI_CONFIG_PREF_SAVED='preference saved to'
+UI_CONFIG_AREYOUSURE='Proceeding will wipe out your existing configuration'
+UI_CONFIG_DOADVANCED='Do you want to enable advanced installation options'
+UI_CONFIG_ERASING='Erasing existing'
+UI_CONFIG_CREATING='Creating new'
+UI_CONFIG_BASH='Creating gravity-sync alias in Bash config'
+UI_CONFIG_ALIAS="You must reload your session for 'gravity-sync' alias to function"
+UI_CONFIG_ICMP_TEST='Testing network connection to'
+UI_CONFIG_REQUIRED='required settings'
+UI_CONFIG_ADVANCED='advanced settings'
+UI_CONFIG_REMOTE='remote host'
+UI_CONFIG_LOCAL='local host'
+UI_CONFIG_HOSTREQ='address required'
+UI_CONFIG_USERREQ='SSH user required'
+UI_CONFIG_CONT_LOOKUP='Looking for container engines'
+UI_CONFIG_CONT_DETECT='Docker or Podman container engine'
+UI_CONFIG_CONT_DETECTED='detected'
+UI_CONFIG_CONT_DETECTNA='not detected'
+UI_CONFIG_SSH_KEYPAIR='Key-pair registered to'
+UI_CONFIG_LOCALSEC='Local/secondary'
+UI_CONFIG_REMOTEPRI='Remote/primary'
+UI_CONFIG_INSTANCEREQ='instance type required'
+UI_CONFIG_INSTANCENAME='instance name required'
+UI_CONFIG_INSTANCETYPE="'docker' or 'podman' container, or blank for default install"
+UI_CONFIG_CONTAINER_TYPE='container type'
+UI_CONFIG_CONTAINER_NAME='container name'
+UI_CONFIG_INSTANCE_ERROR="${UI_CONFIG_CONTAINER_TYPE} must either be 'docker' or 'podman'"
+UI_CONFIG_IMAGES='running instances'
+UI_CONFIG_SAVING='Saving'
+UI_CONFIG_PIHOLE_DEFAULT="Container name or blank for default 'pihole'"
+UI_CONFIG_ETC_VOLPATH="'etc' volume path"
+UI_CONFIG_ETC_VOLPATH_EXAMPLE="Example, '/opt/pihole/etc-pihole'"
+UI_CONFIG_ETC_VOLDNSQ_EXAMPLE="Example, '/opt/pihole/etc-dnsmasq.d'"
+UI_CONFIG_SETTING_REQUIRED='This setting is required!'
+UI_CONFIG_SETTING_DIR_PATH='settings directory path'
+UI_CONFIG_VOLUME_OWNER='volume ownership'
+UI_CONFIG_DEFAULT_LEAVE="Leave blank for default"
+UI_CONFIG_DEFAULT_DNSMASQ_ETC="'/etc/dnsmasq.d'"
+UI_CONFIG_DEFAULT_PIHOLE_ETC="'/etc/pihole'"
+
+## Script Colors
+RED='\033[0;91m'
+GREEN='\033[0;92m'
+CYAN='\033[0;96m'
+YELLOW='\033[0;93m'
+PURPLE='\033[0;95m'
+BLUE='\033[0;94m'
+BOLD='\033[1m'
+NC='\033[0m'
+
+## Message Codes
+FAIL="${RED}✗${NC}"
+WARN="${PURPLE}!${NC}"
+GOOD="${GREEN}✓${NC}"
+STAT="${CYAN}∞${NC}"
+INFO="${YELLOW}»${NC}"
+INF1="${CYAN}›${NC}"
+NEED="${BLUE}?${NC}"
+LOGO="${PURPLE}∞${NC}"
+
+## Echo Stack
+### Informative
+function echo_info {
+    echo -e "${INFO} ${YELLOW}${MESSAGE}${NC}"
+}
+
+function echo_inf1 {
+    echo -e "${INF1} ${CYAN}${MESSAGE}${NC}"
+}
+
+### Warning
+function echo_warn {
+    echo -e "${WARN} ${PURPLE}${MESSAGE}${NC}"
+}
+
+### Executing
+function echo_stat {
+    echo -en "${STAT} ${MESSAGE}"
+}
+
+### Success
+function echo_good {
+    echo -e "\r${GOOD} ${MESSAGE}"
+}
+
+### Success
+function echo_good_clean {
+    echo -e "\r${GOOD} ${MESSAGE}"
+}
+
+### Success
+function echo_sameline {
+    echo -en "                                                                                        "
+    echo -en "\r"
+}
+
+### Failure
+function echo_fail {
+    echo -e "\r${FAIL} ${MESSAGE}"
+}
+
+### Request
+function echo_need {
+    echo -en "${NEED} ${BOLD}${MESSAGE}:${NC} "
+}
+
+### Gravity Sync Logo
+function echo_grav {
+    echo -e "${LOGO} ${BOLD}${MESSAGE}${NC}"
+}
+
+### Lines
+function echo_lines {
+    echo -e "========================================================"
+}
+
+### Lines
+function echo_blank {
+    echo -e ""
+}
+
+# Standard Output
+function start_gs {
+    MESSAGE="${UI_CORE_INIT}"
+    echo_grav
+    cd ${LOCAL_FOLDR}
+    
+    import_gs
+    ph_type
+    
+    MESSAGE="${UI_CORE_EVALUATING}"
+    echo_stat
+    
+    if [ "${ROOT_CHECK_AVOID}" != "1" ]
+    then
+        new_root_check
+    fi
+    
+    if [ "${INCLUDE_CNAME}" == "1" ] && [ "${SKIP_CUSTOM}" == "1" ]
+    then
+        MESSAGE="${UI_INVALID_DNS_CONFIG} ${CONFIG_FILE}"
+        echo_fail
+        
+        exit_nochange
+    fi
+}
+
+# Standard Output No Config
+function start_gs_noconfig {
+    MESSAGE="${UI_CORE_INIT}"
+    echo_grav
+    cd ${LOCAL_FOLDR}
+    
+    MESSAGE="${UI_CORE_EVALUATING}"
+    echo_stat
+}
+
+## Import Settings
+function import_gs {
+    relocate_config_gs
+    
+    MESSAGE="${UI_CORE_LOADING} ${CONFIG_FILE}"
+    echo -en "${STAT} $MESSAGE"
+    if [ -f ${LOCAL_FOLDR}/settings/${CONFIG_FILE} ]
+    then
+        source ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+        error_validate
+    else
+        echo_fail
+        
+        MESSAGE="${UI_CORE_MISSING} ${CONFIG_FILE}"
+        echo_info
+        
+        TASKTYPE='CONFIG'
+        config_generate
+    fi
+}
+
+function relocate_config_gs {
+    if [ -f ${LOCAL_FOLDR}/${CONFIG_FILE} ]
+    then
+        MESSAGE="${UI_CORE_RELOCATING} ${CONFIG_FILE}"
+        echo -en "${STAT} $MESSAGE"
+        
+        mv ${LOCAL_FOLDR}/${CONFIG_FILE} ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+        error_validate
+    fi
+    
+    if [ -f ${LOCAL_FOLDR}/${SYNCING_LOG} ]
+    then
+        MESSAGE="${UI_CORE_RELOCATING} ${SYNCING_LOG}"
+        echo -en "${STAT} $MESSAGE"
+        
+        mv ${LOCAL_FOLDR}/${SYNCING_LOG} ${LOG_PATH}/${SYNCING_LOG}
+        error_validate
+    fi
+    
+    if [ -f ${LOCAL_FOLDR}/${CRONJOB_LOG} ]
+    then
+        MESSAGE="${UI_CORE_RELOCATING} ${CRONJOB_LOG}"
+        echo -en "${STAT} $MESSAGE"
+        
+        mv ${LOCAL_FOLDR}/${CRONJOB_LOG} ${LOG_PATH}/${CRONJOB_LOG}
+        error_validate
+    fi
+    
+    if [ -f ${LOCAL_FOLDR}/${HISTORY_MD5} ]
+    then
+        MESSAGE="${UI_CORE_RELOCATING} ${HISTORY_MD5}"
+        echo -en "${STAT} $MESSAGE"
+        
+        mv ${LOCAL_FOLDR}/${HISTORY_MD5} ${LOG_PATH}/${HISTORY_MD5}
+        error_validate
+    fi
+}
+
+## Invalid Tasks
+function task_invalid {
+    echo_fail
+    list_gs_arguments
+}
+
+## Error Validation
+function error_validate {
+    if [ "$?" != "0" ]
+    then
+        echo_fail
+        exit 1
+    else
+        echo_good
+    fi
+}
+
+## Error Validation
+function silent_error_validate {
+    if [ "$?" != "0" ]
+    then
+        echo_fail
+        exit 1
+    else
+        echo_sameline
+    fi
+}
+
+function ph_type {
+    if [ "$PH_IN_TYPE" == "default" ]
+    then
+        PH_EXEC="${PIHOLE_BIN}"
+    elif [ "$PH_IN_TYPE" == "docker" ]
+    then
+        PH_EXEC="sudo ${DOCKER_BIN} exec $(sudo ${DOCKER_BIN} ps -qf name=${DOCKER_CON}) pihole"
+    elif [ "$PH_IN_TYPE" == "podman" ]
+    then
+        PH_EXEC="sudo ${PODMAN_BIN} exec ${DOCKER_CON} pihole"
+    fi
+    
+    if [ "$RH_IN_TYPE" == "default" ]
+    then
+        RH_EXEC="${RIHOLE_BIN}"
+    elif [ "$RH_IN_TYPE" == "docker" ]
+    then
+        RH_EXEC="sudo ${ROCKER_BIN} exec \$(sudo ${ROCKER_BIN} ps -qf name=${ROCKER_CON}) pihole"
+    elif [ "$RH_IN_TYPE" == "podman" ]
+    then
+        RH_EXEC="sudo ${RODMAN_BIN} exec ${ROCKER_CON} pihole"
+    fi
+}
+
+## Compare Task
+function task_compare {
+    TASKTYPE='COMPARE'
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    echo_good
+    
+    show_target
+    validate_gs_folders
+    validate_ph_folders
+    
+    if [ "${INCLUDE_CNAME}" == "1" ]
+    then
+        validate_dns_folders
+    fi
+    
+    validate_os_sshpass
+    
+    previous_md5
+    md5_compare
+    backup_cleanup
+    
+    exit_withchange
+}
+
+## Pull Task
+function task_pull {
+    TASKTYPE='PULL'
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    echo_good
+    
+    show_target
+    validate_gs_folders
+    validate_ph_folders
+    
+    if [ "${INCLUDE_CNAME}" == "1" ]
+    then
+        validate_dns_folders
+    fi
+    
+    validate_sqlite3
+    validate_os_sshpass
+    
+    pull_gs
+    exit
+}
+
+## Pull Gravity
+function pull_gs_grav {
+    
+    backup_local_gravity
+    backup_remote_gravity
+    backup_remote_gravity_integrity
+    
+    MESSAGE="${UI_PULL_PRIMARY} ${UI_GRAVITY_NAME}"
+    echo_stat
+    RSYNC_REPATH="rsync"
+    RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${GRAVITY_FI}.gsbackup"
+    RSYNC_TARGET="${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.gsbackup"
+    create_rsynccmd
+    
+    MESSAGE="${UI_REPLACE_SECONDARY} ${UI_GRAVITY_NAME}"
+    echo_stat
+    sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.gsbackup ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+    error_validate
+    
+    validate_gravity_permissions
+}
+
+## Pull Custom
+function pull_gs_cust {
+    if [ "$SKIP_CUSTOM" != '1' ]
+    then
+        if [ "$REMOTE_CUSTOM_DNS" == "1" ]
+        then
+            backup_local_custom
+            backup_remote_custom
+            
+            MESSAGE="${UI_PULL_PRIMARY} ${UI_CUSTOM_NAME}"
+            echo_stat
+            RSYNC_REPATH="rsync"
+            RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${CUSTOM_DNS}.gsbackup"
+            RSYNC_TARGET="${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.gsbackup"
+            create_rsynccmd
+            
+            MESSAGE="${UI_REPLACE_SECONDARY} ${UI_CUSTOM_NAME}"
+            echo_stat
+            sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.gsbackup ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+            error_validate
+            
+            validate_custom_permissions
+        fi
+    fi
+}
+
+## Pull CNAME
+function pull_gs_cname {
+    if [ "${INCLUDE_CNAME}" == '1' ]
+    then
+        if [ "$REMOTE_CNAME_DNS" == "1" ]
+        then
+            backup_local_cname
+            backup_remote_cname
+            
+            MESSAGE="${UI_PULL_PRIMARY} ${UI_CNAME_NAME}"
+            echo_stat
+            RSYNC_REPATH="rsync"
+            RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/dnsmasq.d-${CNAME_CONF}.gsbackup"
+            RSYNC_TARGET="${LOCAL_FOLDR}/${BACKUP_FOLD}/${CNAME_CONF}.gsbackup"
+            create_rsynccmd
+            
+            MESSAGE="${UI_REPLACE_SECONDARY} ${UI_CNAME_NAME}"
+            echo_stat
+            sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${CNAME_CONF}.gsbackup ${DNSMAQ_DIR}/${CNAME_CONF} >/dev/null 2>&1
+            error_validate
+            
+            validate_cname_permissions
+        fi
+    fi
+}
+
+## Pull Reload
+function pull_gs_reload {
+    MESSAGE="${UI_PULL_RELOAD_WAIT}"
+    echo_info
+    sleep 1
+    
+    MESSAGE="${UI_FTLDNS_CONFIG_UPDATE}"
+    echo_stat
+    ${PH_EXEC} restartdns reload-lists >/dev/null 2>&1
+    error_validate
+    
+    if [ "${TASKTYPE}" == SMART ]
+    then 
+        if [ "${PRICLCHANGE}" == "1" ] || [ "${SECCLCHANGE}" == "1" ] || [ "${PRICNCHANGE}" == "1" ] || [ "${SECCNCHANGE}" == "1" ]
+        then
+            MESSAGE="${UI_FTLDNS_CONFIG_RELOAD}"
+            echo_stat
+            ${PH_EXEC} restartdns >/dev/null 2>&1
+            error_validate
+        fi
+    else
+        MESSAGE="${UI_FTLDNS_CONFIG_RELOAD}"
+        echo_stat
+        ${PH_EXEC} restartdns >/dev/null 2>&1
+        error_validate
+    fi
+}
+
+## Pull Function
+function pull_gs {
+    previous_md5
+    md5_compare
+    
+    backup_settime
+    pull_gs_grav
+    pull_gs_cust
+    pull_gs_cname
+    pull_gs_reload
+    md5_recheck
+    backup_cleanup
+    
+    logs_export
+    exit_withchange
+}
+
+## Push Task
+function task_push {
+    TASKTYPE='PUSH'
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    echo_good
+    
+    show_target
+    validate_gs_folders
+    validate_ph_folders
+    
+    if [ "${INCLUDE_CNAME}" == "1" ]
+    then
+        validate_dns_folders
+    fi
+    
+    validate_sqlite3
+    validate_os_sshpass
+    
+    push_gs
+    exit
+}
+
+## Push Gravity
+function push_gs_grav {
+    backup_remote_gravity
+    backup_local_gravity
+    backup_local_gravity_integrity
+    
+    MESSAGE="${UI_PUSH_SECONDARY} ${UI_GRAVITY_NAME}"
+    echo_stat
+    RSYNC_REPATH="sudo rsync"
+    RSYNC_SOURCE="${PIHOLE_DIR}/${GRAVITY_FI}.gsbackup"
+    RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${GRAVITY_FI}"
+    create_rsynccmd
+    
+    MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_GRAVITY_NAME}"
+    echo_stat
+    CMD_TIMEOUT=$BACKUP_TIMEOUT
+    CMD_REQUESTED="sudo chown ${RILE_OWNER} ${RIHOLE_DIR}/${GRAVITY_FI}"
+    create_sshcmd
+    
+    MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_GRAVITY_NAME}"
+    echo_stat
+    CMD_TIMEOUT=$BACKUP_TIMEOUT
+    CMD_REQUESTED="sudo chmod 664 ${RIHOLE_DIR}/${GRAVITY_FI}"
+    create_sshcmd
+}
+
+## Push Custom
+function push_gs_cust {
+    if [ "$SKIP_CUSTOM" != '1' ]
+    then
+        if [ "$REMOTE_CUSTOM_DNS" == "1" ]
+        then
+            backup_remote_custom
+            backup_local_custom
+            
+            MESSAGE="${UI_PUSH_SECONDARY} ${UI_CUSTOM_NAME}"
+            echo_stat
+            RSYNC_REPATH="sudo rsync"
+            RSYNC_SOURCE="${PIHOLE_DIR}/${CUSTOM_DNS}.gsbackup"
+            RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${CUSTOM_DNS}"
+            create_rsynccmd
+            
+            MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_CUSTOM_NAME}"
+            echo_stat
+            CMD_TIMEOUT=$BACKUP_TIMEOUT
+            CMD_REQUESTED="sudo chown root:root ${RIHOLE_DIR}/${CUSTOM_DNS}"
+            create_sshcmd
+            
+            MESSAGE="${UI_SET_FILE_PERMISSIONS} ${UI_CUSTOM_NAME}"
+            echo_stat
+            CMD_TIMEOUT=$BACKUP_TIMEOUT
+            CMD_REQUESTED="sudo chmod 644 ${RIHOLE_DIR}/${CUSTOM_DNS}"
+            create_sshcmd
+        fi
+    fi
+}
+
+## Push Custom
+function push_gs_cname {
+    if [ "${INCLUDE_CNAME}" == '1' ]
+    then
+        if [ "$REMOTE_CNAME_DNS" == "1" ]
+        then
+            backup_remote_cname
+            backup_local_cname
+            
+            MESSAGE="${UI_PUSH_SECONDARY} ${UI_CNAME_NAME}"
+            echo_stat
+            RSYNC_REPATH="sudo rsync"
+            RSYNC_SOURCE="${PIHOLE_DIR}/${CNAME_CONF}.gsbackup"
+            RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${RNSMAQ_DIR}/${CNAME_CONF}"
+            create_rsynccmd
+            
+            MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_CNAME_NAME}"
+            echo_stat
+            CMD_TIMEOUT=$BACKUP_TIMEOUT
+            CMD_REQUESTED="sudo chown root:root ${RNSMAQ_DIR}/${CNAME_CONF}"
+            create_sshcmd
+            
+                        
+            MESSAGE="${UI_SET_FILE_PERMISSIONS} ${UI_CNAME_NAME}"
+            echo_stat
+            CMD_TIMEOUT=$BACKUP_TIMEOUT
+            CMD_REQUESTED="sudo chmod 644 ${RNSMAQ_DIR}/${CNAME_CONF}"
+            create_sshcmd
+        fi
+    fi
+}
+
+## Push Reload
+function push_gs_reload {
+    MESSAGE="${UI_PUSH_RELOAD_WAIT}"
+    echo_info
+    sleep 1
+    
+    MESSAGE="${UI_FTLDNS_CONFIG_PUSH_UPDATE}"
+    echo_stat
+    CMD_TIMEOUT=$BACKUP_TIMEOUT
+    CMD_REQUESTED="${RH_EXEC} restartdns reload-lists"
+    create_sshcmd
+    
+    if [ "${TASKTYPE}" == SMART ]
+    then 
+        if [ "${PRICLCHANGE}" == "1" ] || [ "${SECCLCHANGE}" == "1" ] || [ "${PRICNCHANGE}" == "1" ] || [ "${SECCNCHANGE}" == "1" ]
+        then
+            MESSAGE="${UI_FTLDNS_CONFIG_PUSH_RELOAD}"
+            echo_stat
+            CMD_TIMEOUT=$BACKUP_TIMEOUT
+            CMD_REQUESTED="${RH_EXEC} restartdns"
+            create_sshcmd
+        fi
+    else
+        MESSAGE="${UI_FTLDNS_CONFIG_PUSH_RELOAD}"
+        echo_stat
+        CMD_TIMEOUT=$BACKUP_TIMEOUT
+        CMD_REQUESTED="${RH_EXEC} restartdns"
+        create_sshcmd
+    fi
+}
+
+## Push Function
+function push_gs {
+    previous_md5
+    md5_compare
+    backup_settime
+    
+    intent_validate
+    
+    push_gs_grav
+    push_gs_cust
+    push_gs_cname
+    push_gs_reload
+    md5_recheck
+    backup_cleanup
+    
+    logs_export
+    exit_withchange
+}
+
+## Smart Task
+function task_smart {
+    TASKTYPE='SMART'
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    echo_good
+    
+    show_target
+    validate_gs_folders
+    validate_ph_folders
+    
+    if [ "${INCLUDE_CNAME}" == "1" ]
+    then
+        validate_dns_folders
+    fi
+    
+    validate_sqlite3
+    validate_os_sshpass
+    
+    smart_gs
+    exit
+}
+
+## Smart Sync Function
+function smart_gs {
+    MESSAGE="Starting ${TASKTYPE} Analysis"
+    echo_info
+    
+    previous_md5
+    md5_compare
+    backup_settime
+    
+    PRIDBCHANGE="0"
+    SECDBCHANGE="0"
+    PRICLCHANGE="0"
+    SECCLCHANGE="0"
+    PRICNCHANGE="0"
+    SECCNCHANGE="0"
+    
+    if [ "${primaryDBMD5}" != "${last_primaryDBMD5}" ]
+    then
+        PRIDBCHANGE="1"
+    fi
+    
+    if [ "${secondDBMD5}" != "${last_secondDBMD5}" ]
+    then
+        SECDBCHANGE="1"
+    fi
+    
+    if [ "${PRIDBCHANGE}" == "${SECDBCHANGE}" ]
+    then
+        if [ "${PRIDBCHANGE}" != "0" ]
+        then
+            MESSAGE="Both ${GRAVITY_FI} Have Changed"
+            echo_warn
+            
+            PRIDBDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${RIHOLE_DIR}/${GRAVITY_FI}")
+            SECDBDATE=$(stat -c %Y ${PIHOLE_DIR}/${GRAVITY_FI})
+            
+            if (( "$PRIDBDATE" >= "$SECDBDATE" ))
+            then
+                MESSAGE="Primary ${GRAVITY_FI} Last Changed"
+                echo_warn
+                
+                pull_gs_grav
+                PULLRESTART="1"
+            else
+                MESSAGE="Secondary ${GRAVITY_FI} Last Changed"
+                echo_warn
+                
+                push_gs_grav
+                PUSHRESTART="1"
+            fi
+        fi
+    else
+        if [ "${PRIDBCHANGE}" != "0" ]
+        then
+            pull_gs_grav
+            PULLRESTART="1"
+        elif [ "${SECDBCHANGE}" != "0" ]
+        then
+            push_gs_grav
+            PUSHRESTART="1"
+        fi
+    fi
+    
+    if [ "${primaryCLMD5}" != "${last_primaryCLMD5}" ]
+    then
+        PRICLCHANGE="1"
+    fi
+    
+    if [ "${secondCLMD5}" != "${last_secondCLMD5}" ]
+    then
+        SECCLCHANGE="1"
+    fi
+    
+    if [ "$SKIP_CUSTOM" != '1' ]
+    then
+        if [ -f "${PIHOLE_DIR}/${CUSTOM_DNS}" ]
+        then
+            if [ "${PRICLCHANGE}" == "${SECCLCHANGE}" ]
+            then
+                if [ "${PRICLCHANGE}" != "0" ]
+                then
+                    MESSAGE="Both ${CUSTOM_DNS} Have Changed"
+                    echo_warn
+                    
+                    PRICLDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${RIHOLE_DIR}/${CUSTOM_DNS}")
+                    SECCLDATE=$(stat -c %Y ${PIHOLE_DIR}/${CUSTOM_DNS})
+                    
+                    if (( "$PRICLDATE" >= "$SECCLDATE" ))
+                    then
+                        MESSAGE="Primary ${CUSTOM_DNS} Last Changed"
+                        echo_warn
+                        
+                        pull_gs_cust
+                        PULLRESTART="1"
+                    else
+                        MESSAGE="Secondary ${CUSTOM_DNS} Last Changed"
+                        echo_warn
+                        
+                        push_gs_cust
+                        PUSHRESTART="1"
+                    fi
+                fi
+            else
+                if [ "${PRICLCHANGE}" != "0" ]
+                then
+                    pull_gs_cust
+                    PULLRESTART="1"
+                elif [ "${SECCLCHANGE}" != "0" ]
+                then
+                    push_gs_cust
+                    PUSHRESTART="1"
+                fi
+            fi
+        else
+            pull_gs_cust
+            PULLRESTART="1"
+        fi
+    fi
+    
+    if [ "${primaryCNMD5}" != "${last_primaryCNMD5}" ]
+    then
+        PRICNCHANGE="1"
+    fi
+    
+    if [ "${secondCNMD5}" != "${last_secondCNMD5}" ]
+    then
+        SECCNCHANGE="1"
+    fi
+    
+    if [ "$INCLUDE_CNAME" == "1" ]
+    then
+        if [ -f "${DNSMAQ_DIR}/${CNAME_CONF}" ]
+        then
+            if [ "${PRICNCHANGE}" == "${SECCNCHANGE}" ]
+            then
+                if [ "${PRICNCHANGE}" != "0" ]
+                then
+                    MESSAGE="Both ${CNAME_CONF} Have Changed"
+                    echo_warn
+                    
+                    PRICNDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${RNSMAQ_DIR}/${CNAME_CONF}")
+                    SECCNDATE=$(stat -c %Y ${DNSMAQ_DIR}/${CNAME_CONF})
+                    
+                    if (( "$PRICNDATE" >= "$SECCNDATE" ))
+                    then
+                        MESSAGE="Primary ${CNAME_CONF} Last Changed"
+                        echo_warn
+                        
+                        pull_gs_cname
+                        PULLRESTART="1"
+                    else
+                        MESSAGE="Secondary ${CNAME_CONF} Last Changed"
+                        echo_warn
+                        
+                        push_gs_cname
+                        PUSHRESTART="1"
+                    fi
+                fi
+            else
+                if [ "${PRICNCHANGE}" != "0" ]
+                then
+                    pull_gs_cname
+                    PULLRESTART="1"
+                elif [ "${SECCNCHANGE}" != "0" ]
+                then
+                    push_gs_cname
+                    PUSHRESTART="1"
+                fi
+            fi
+        else
+            pull_gs_cname
+            PULLRESTART="1"
+        fi
+    fi
+    
+    if [ "$PULLRESTART" == "1" ]
+    then
+        pull_gs_reload
+    fi
+    
+    if [ "$PUSHRESTART" == "1" ]
+    then
+        push_gs_reload
+    fi
+    
+    md5_recheck
+    backup_cleanup
+    
+    logs_export
+    exit_withchange
+}
+
+function backup_settime() {
+    BACKUPTIMESTAMP=$(date +%F-%H%M%S)
+}
+
+function backup_local_gravity() {
+    MESSAGE="${UI_BACKUP_SECONDARY} ${UI_GRAVITY_NAME}"
+    echo_stat
+    
+    sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI} ".backup '${PIHOLE_DIR}/${GRAVITY_FI}.gsbackup'"
+    error_validate
+}
+
+function backup_local_gravity_integrity() {
+    MESSAGE="${UI_BACKUP_INTEGRITY}"
+    echo_stat
+    
+    sleep $BACKUP_INTEGRITY_WAIT
+    secondaryIntegrity=$(sqlite3 ${PIHOLE_DIR}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;' | sed 's/\s.*$//')
+    error_validate
+    
+    if [ "$secondaryIntegrity" != 'ok' ]
+    then
+        MESSAGE="${UI_BACKUP_INTEGRITY_FAILED} ${UI_GRAVITY_NAME}"
+        echo_fail
+        
+        MESSAGE="${UI_BACKUP_INTEGRITY_DELETE} ${UI_GRAVITY_NAME}"
+        echo_stat
+            
+        sudo rm ${PIHOLE_DIR}/${GRAVITY_FI}.gsbackup
+        error_validate
+        
+        exit_nochange
+    fi
+}
+
+function backup_local_custom() {
+    if [ "$SKIP_CUSTOM" != '1' ]
+    then
+        if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
+        then
+            MESSAGE="${UI_BACKUP_SECONDARY} ${UI_CUSTOM_NAME}"
+            echo_stat
+            
+            cp ${PIHOLE_DIR}/${CUSTOM_DNS} ${PIHOLE_DIR}/${CUSTOM_DNS}.gsbackup
+            error_validate
+        else
+            MESSAGE="No local ${CUSTOM_DNS} detected"
+            echo_info
+        fi
+    fi
+}
+
+function backup_local_cname() {
+    if [ "${INCLUDE_CNAME}" == '1' ]
+    then
+        if [ -f ${DNSMAQ_DIR}/${CNAME_CONF} ]
+        then
+            MESSAGE="${UI_BACKUP_SECONDARY} ${UI_CNAME_NAME}"
+            echo_stat
+            
+            cp ${DNSMAQ_DIR}/${CNAME_CONF} ${PIHOLE_DIR}/${CNAME_CONF}.gsbackup
+            error_validate
+        else
+            MESSAGE="No local ${CNAME_CONF} detected"
+            echo_info
+        fi
+    fi
+}
+
+function backup_remote_gravity() {
+    MESSAGE="${UI_BACKUP_PRIMARY} ${UI_GRAVITY_NAME}"
+    echo_stat
+    
+    CMD_TIMEOUT=$BACKUP_TIMEOUT
+    CMD_REQUESTED="sudo sqlite3 ${RIHOLE_DIR}/${GRAVITY_FI} \".backup '${RIHOLE_DIR}/${GRAVITY_FI}.gsbackup'\""
+    create_sshcmd
+}
+
+function backup_remote_gravity_integrity() {
+    MESSAGE="${UI_BACKUP_INTEGRITY}"
+    echo_stat
+    
+    sleep $BACKUP_INTEGRITY_WAIT
+    primaryIntegrity=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sqlite3 ${RIHOLE_DIR}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
+    error_validate
+    
+    if [ "$primaryIntegrity" != 'ok' ]
+    then
+        MESSAGE="${UI_BACKUP_INTEGRITY_FAILED} ${UI_GRAVITY_NAME}"
+        echo_fail
+        
+        MESSAGE="{UI_BACKUP_INTEGRITY_DELETE} ${UI_GRAVITY_NAME}"
+        echo_stat
+        
+        CMD_TIMEOUT=$BACKUP_TIMEOUT
+        CMD_REQUESTED="sudo rm ${RIHOLE_DIR}/${GRAVITY_FI}.gsbackup"
+        create_sshcmd
+        
+        exit_nochange
+    fi
+}
+
+function backup_remote_custom() {
+    if [ "$SKIP_CUSTOM" != '1' ]
+    then
+        MESSAGE="${UI_BACKUP_PRIMARY} ${UI_CUSTOM_NAME}"
+        echo_stat
+        
+        CMD_TIMEOUT=$BACKUP_TIMEOUT
+        CMD_REQUESTED="sudo cp ${RIHOLE_DIR}/${CUSTOM_DNS} ${RIHOLE_DIR}/${CUSTOM_DNS}.gsbackup"
+        create_sshcmd
+    fi
+}
+
+function backup_remote_cname() {
+    if [ "$INCLUDE_CNAME" == '1' ]
+    then
+        MESSAGE="${UI_BACKUP_PRIMARY} ${UI_CNAME_NAME}"
+        echo_stat
+        
+        CMD_TIMEOUT=$BACKUP_TIMEOUT
+        CMD_REQUESTED="sudo cp ${RNSMAQ_DIR}/${CNAME_CONF} ${RIHOLE_DIR}/${CNAME_CONF}.gsbackup"
+        create_sshcmd
+    fi
+}
+
+function backup_cleanup() {
+    MESSAGE="${UI_BACKUP_PURGE} on local"
+    echo_stat
+    # git clean -fq
+    rm -f ${PIHOLE_DIR}/*.gsbackup
+    error_validate
+
+    MESSAGE="${UI_BACKUP_PURGE} on remote"
+    echo_stat
+    CMD_TIMEOUT=$BACKUP_TIMEOUT
+    CMD_REQUESTED="rm -f ${RIHOLE_DIR}/*.gsbackup"
+    create_sshcmd
+}
+
+function md5_compare {
+    HASHMARK='0'
+    
+    MESSAGE="${UI_HASHING_HASHING} ${UI_GRAVITY_NAME}"
+    echo_stat
+    primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${GRAVITY_FI}" | sed 's/\s.*$//')
+    error_validate
+    
+    MESSAGE="${UI_HASHING_COMPARING} ${UI_GRAVITY_NAME}"
+    echo_stat
+    secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI} | sed 's/\s.*$//')
+    error_validate
+    
+    if [ "$primaryDBMD5" == "$last_primaryDBMD5" ] && [ "$secondDBMD5" == "$last_secondDBMD5" ]
+    then
+        HASHMARK=$((HASHMARK+0))
+    else
+        MESSAGE="${UI_HASHING_DIFFERNCE} ${UI_GRAVITY_NAME}"
+        echo_warn
+        HASHMARK=$((HASHMARK+1))
+    fi
+    
+    if [ "$SKIP_CUSTOM" != '1' ]
+    then
+        if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
+        then
+            if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RIHOLE_DIR}/${CUSTOM_DNS}
+            then
+                REMOTE_CUSTOM_DNS="1"
+                MESSAGE="${UI_HASHING_HASHING} ${UI_CUSTOM_NAME}"
+                echo_stat
+                
+                primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//'")
+                error_validate
+                
+                MESSAGE="${UI_HASHING_COMPARING} ${UI_CUSTOM_NAME}"
+                echo_stat
+                secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//')
+                error_validate
+                
+                if [ "$primaryCLMD5" == "$last_primaryCLMD5" ] && [ "$secondCLMD5" == "$last_secondCLMD5" ]
+                then
+                    HASHMARK=$((HASHMARK+0))
+                else
+                    MESSAGE="${UI_HASHING_DIFFERNCE} ${UI_CUSTOM_NAME}"
+                    echo_warn
+                    HASHMARK=$((HASHMARK+1))
+                fi
+            else
+                MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_PRIMARY}"
+                echo_info
+            fi
+        else
+            if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RIHOLE_DIR}/${CUSTOM_DNS}
+            then
+                REMOTE_CUSTOM_DNS="1"
+                MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_PRIMARY}"
+                HASHMARK=$((HASHMARK+1))
+                echo_info
+            fi
+            MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_SECONDARY}"
+            echo_info
+        fi
+    fi
+    
+    if [ "${SKIP_CUSTOM}" != '1' ]
+    then
+        if [ "${INCLUDE_CNAME}" == "1" ]
+        then
+            if [ -f ${DNSMAQ_DIR}/${CNAME_CONF} ]
+            then
+                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RNSMAQ_DIR}/${CNAME_CONF}
+                then
+                    REMOTE_CNAME_DNS="1"
+                    MESSAGE="${UI_HASHING_HASHING} ${UI_CNAME_NAME}"
+                    echo_stat
+                    
+                    primaryCNMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//'")
+                    error_validate
+                    
+                    MESSAGE="${UI_HASHING_COMPARING} ${UI_CNAME_NAME}"
+                    echo_stat
+                    secondCNMD5=$(md5sum ${DNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//')
+                    error_validate
+                    
+                    if [ "$primaryCNMD5" == "$last_primaryCNMD5" ] && [ "$secondCNMD5" == "$last_secondCNMD5" ]
+                    then
+                        HASHMARK=$((HASHMARK+0))
+                    else
+                        MESSAGE="${UI_HASHING_DIFFERNCE} ${UI_CNAME_NAME}"
+                        echo_warn
+                        HASHMARK=$((HASHMARK+1))
+                    fi
+                else
+                    MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_PRIMARY}"
+                    echo_info
+                fi
+            else
+                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RNSMAQ_DIR}/${CNAME_CONF}
+                then
+                    REMOTE_CNAME_DNS="1"
+                    MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_PRIMARY}"
+                    HASHMARK=$((HASHMARK+1))
+                    echo_info
+                fi
+                
+                MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_SECONDARY}"
+                echo_info
+            fi
+        fi
+    fi
+    
+    if [ "$HASHMARK" != "0" ]
+    then
+        MESSAGE="${UI_HASHING_REQUIRED}"
+        echo_warn
+        HASHMARK=$((HASHMARK+0))
+    else
+        MESSAGE="${UI_HASHING_NOREP}"
+        echo_info
+        backup_cleanup
+        exit_nochange
+    fi
+}
+
+function previous_md5 {
+    if [ -f "${LOG_PATH}/${HISTORY_MD5}" ]
+    then
+        last_primaryDBMD5=$(sed "1q;d" ${LOG_PATH}/${HISTORY_MD5})
+        last_secondDBMD5=$(sed "2q;d" ${LOG_PATH}/${HISTORY_MD5})
+        last_primaryCLMD5=$(sed "3q;d" ${LOG_PATH}/${HISTORY_MD5})
+        last_secondCLMD5=$(sed "4q;d" ${LOG_PATH}/${HISTORY_MD5})
+        last_primaryCNMD5=$(sed "5q;d" ${LOG_PATH}/${HISTORY_MD5})
+        last_secondCNMD5=$(sed "6q;d" ${LOG_PATH}/${HISTORY_MD5})
+    else
+        last_primaryDBMD5="0"
+        last_secondDBMD5="0"
+        last_primaryCLMD5="0"
+        last_secondCLMD5="0"
+        last_primaryCNMD5="0"
+        last_secondCNMD5="0"
+    fi
+}
+
+function md5_recheck {
+    MESSAGE="${UI_HASHING_DIAGNOSTICS}"
+    echo_info
+    
+    HASHMARK='0'
+    
+    MESSAGE="${UI_HASHING_REHASHING} ${UI_GRAVITY_NAME}"
+    echo_stat
+    primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${GRAVITY_FI}" | sed 's/\s.*$//')
+    error_validate
+    
+    MESSAGE="${UI_HASHING_RECOMPARING} ${UI_GRAVITY_NAME}"
+    echo_stat
+    secondDBMD5=$(md5sum ${PIHOLE_DIR}/${GRAVITY_FI} | sed 's/\s.*$//')
+    error_validate
+    
+    if [ "$SKIP_CUSTOM" != '1' ]
+    then
+        if [ -f ${PIHOLE_DIR}/${CUSTOM_DNS} ]
+        then
+            if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RIHOLE_DIR}/${CUSTOM_DNS}
+            then
+                REMOTE_CUSTOM_DNS="1"
+                MESSAGE="${UI_HASHING_REHASHING} ${UI_CUSTOM_NAME}"
+                echo_stat
+                
+                primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//'")
+                error_validate
+                
+                MESSAGE="${UI_HASHING_RECOMPARING} ${UI_CUSTOM_NAME}"
+                echo_stat
+                secondCLMD5=$(md5sum ${PIHOLE_DIR}/${CUSTOM_DNS} | sed 's/\s.*$//')
+                error_validate
+            else
+                MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_PRIMARY}"
+                echo_info
+            fi
+        else
+            if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RIHOLE_DIR}/${CUSTOM_DNS}
+            then
+                REMOTE_CUSTOM_DNS="1"
+                MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_PRIMARY}"
+                echo_info
+            fi
+            MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_SECONDARY}"
+            echo_info
+        fi
+    fi
+    
+    if [ "${SKIP_CUSTOM}" != '1' ]
+    then
+        if [ "${INCLUDE_CNAME}" == "1" ]
+        then
+            if [ -f ${DNSMAQ_DIR}/${CNAME_CONF} ]
+            then
+                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RNSMAQ_DIR}/${CNAME_CONF}
+                then
+                    REMOTE_CNAME_DNS="1"
+                    MESSAGE="${UI_HASHING_REHASHING} ${UI_CNAME_NAME}"
+                    echo_stat
+                    
+                    primaryCNMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${RNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//'")
+                    error_validate
+                    
+                    MESSAGE="${UI_HASHING_RECOMPARING} ${UI_CNAME_NAME}"
+                    echo_stat
+                    secondCNMD5=$(md5sum ${DNSMAQ_DIR}/${CNAME_CONF} | sed 's/\s.*$//')
+                    error_validate
+                else
+                    MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_PRIMARY}"
+                    echo_info
+                fi
+            else
+                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${RNSMAQ_DIR}/${CNAME_CONF}
+                then
+                    REMOTE_CNAME_DNS="1"
+                    MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_PRIMARY}"
+                    echo_info
+                fi
+                
+                MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_SECONDARY}"
+                echo_info
+            fi
+        fi
+    fi
+}
+
+## Determine SSH Pathways
+function create_sshcmd {
+    timeout --preserve-status ${CMD_TIMEOUT} ${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} "${CMD_REQUESTED}"
+    error_validate
+}
+
+## Determine SSH Pathways
+function create_rsynccmd {
+    rsync --rsync-path="${RSYNC_REPATH}" -e "${SSH_CMD} -p ${SSH_PORT} -i $HOME/${SSH_PKIF}" ${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
+    error_validate
+}
+
+## Detect SSH-KEYGEN
+function detect_sshkeygen {
+    MESSAGE="Validating SSH-KEYGEN install"
+    echo_stat
+    
+    if hash ssh-keygen >/dev/null 2>&1
+    then
+        echo_good
+    else
+        echo_fail
+        MESSAGE="SSH-KEYGEN is required on $HOSTNAME"
+        echo_info
+        
+        exit_nochange
+    fi
+}
+
+function generate_sshkey {
+    if [ -z $INPUT_REMOTE_PASS ]
+    then
+        if [ -f $HOME/${SSH_PKIF} ]
+        then
+            MESSAGE="Using existing ~/${SSH_PKIF} file"
+            echo_good_clean
+        else
+            if hash ssh-keygen >/dev/null 2>&1
+            then
+                MESSAGE="Generating ~/${SSH_PKIF} file"
+                echo_stat
+                
+                ssh-keygen -q -P "" -t rsa -f $HOME/${SSH_PKIF} >/dev/null 2>&1
+                error_validate
+            else
+                MESSAGE="No SSH-KEYGEN available"
+                echo_warn
+                exit_nochange
+            fi
+        fi
+    fi
+}
+
+function export_sshkey {
+    if [ -z $REMOTE_PASS ]
+    then
+        if [ -f $HOME/${SSH_PKIF} ]
+        then
+            MESSAGE="Registering key-pair to ${REMOTE_HOST}"
+            echo_info
+            
+            ssh-copy-id -f -p ${SSH_PORT} -i $HOME/${SSH_PKIF}.pub ${REMOTE_USER}@${REMOTE_HOST}
+        else
+            MESSAGE="Error registering key-pair to ${REMOTE_HOST}"
+            echo_warn
+        fi
+    fi
+}
+
+## Detect SSH & RSYNC
+function detect_ssh {
+    MESSAGE="${UI_VALIDATING} ${UI_CORE_OPENSSH}"
+    echo_stat
+    
+    if hash ssh 2>/dev/null
+    then
+        echo_good
+        SSH_CMD='ssh'
+    elif hash dbclient 2>/dev/null
+    then
+        echo_fail
+        
+        MESSAGE="${UI_DROPBEAR_DEP}"
+        echo_warn
+        exit_nochange
+    else
+        echo_fail
+        exit_nochange
+    fi
+    
+    MESSAGE="${UI_VALIDATING} ${UI_CORE_RSYNC}"
+    echo_stat
+    
+    if hash rsync 2>/dev/null
+    then
+        echo_good
+    else
+        echo_fail
+        
+        echo_warn
+        exit_nochange
+    fi
+}
+
+function detect_remotersync {
+    MESSAGE="Creating test file on ${REMOTE_HOST}"
+    echo_stat
+    
+    CMD_TIMEOUT='15'
+    CMD_REQUESTED="touch ~/gs.test"
+    create_sshcmd
+    
+    MESSAGE="If pull test fails ensure RSYNC is installed on ${REMOTE_HOST}"
+    echo_warn
+    
+    MESSAGE="Pulling test file to $HOSTNAME"
+    echo_stat
+    
+    RSYNC_REPATH="rsync"
+    RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:~/gs.test"
+    RSYNC_TARGET="${LOCAL_FOLDR}/gs.test"
+    create_rsynccmd
+    
+    MESSAGE="Cleaning up local test file"
+    echo_stat
+    
+    rm ${LOCAL_FOLDR}/gs.test
+    error_validate
+    
+    MESSAGE="Cleaning up remote test file"
+    echo_stat
+    
+    CMD_TIMEOUT='15'
+    CMD_REQUESTED="rm ~/gs.test"
+    create_sshcmd
+}
+
+function show_target {
+    MESSAGE="${UI_CORE_UC_PRIMARY} ${UI_CORE_APP}: ${REMOTE_USER}@${REMOTE_HOST}"
+    echo_info
+    
+    detect_ssh
+}
+
+## Logs Task
+function task_logs {
+    TASKTYPE='LOGS'
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    echo_good
+    logs_gs
+}
+
+## Core Logging
+### Write Logs Out
+function logs_export {
+    if [ "${TASKTYPE}" != "BACKUP" ]
+    then
+        MESSAGE="${UI_LOGGING_HASHES}"
+        echo_stat
+        rm -f ${LOG_PATH}/${HISTORY_MD5}
+        echo -e ${primaryDBMD5} >> ${LOG_PATH}/${HISTORY_MD5}
+        echo -e ${secondDBMD5} >> ${LOG_PATH}/${HISTORY_MD5}
+        echo -e ${primaryCLMD5} >> ${LOG_PATH}/${HISTORY_MD5}
+        echo -e ${secondCLMD5} >> ${LOG_PATH}/${HISTORY_MD5}
+        echo -e ${primaryCNMD5} >> ${LOG_PATH}/${HISTORY_MD5}
+        echo -e ${secondCNMD5} >> ${LOG_PATH}/${HISTORY_MD5}
+        error_validate
+    fi
+    
+    MESSAGE="${UI_LOGGING_SUCCESS} ${TASKTYPE}"
+    echo_stat
+    echo -e $(date) "[${TASKTYPE}]" >> ${LOG_PATH}/${SYNCING_LOG}
+    error_validate
+}
+
+### Output Sync Logs
+function logs_gs {
+    MESSAGE="${UI_LOGGING_DISPLAY}"
+    echo_info
+    
+    echo_lines
+    echo -e "${UI_LOGGING_RECENT_COMPLETE} ${YELLOW}SMART${NC}"
+    tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep SMART
+    echo -e "${UI_LOGGING_RECENT_COMPLETE} ${YELLOW}PULL${NC}"
+    tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PULL
+    echo -e "${UI_LOGGING_RECENT_COMPLETE} ${YELLOW}PUSH${NC}"
+    tail -n 7 "${LOG_PATH}/${SYNCING_LOG}" | grep PUSH
+    echo_lines
+    
+    exit_nochange
+}
+
+## Crontab Logs
+### Core Crontab Logs
+function show_crontab {
+    MESSAGE="${UI_LOGGING_DISPLAY}"
+    echo_stat
+    
+    if [ -f ${LOG_PATH}/${CRONJOB_LOG} ]
+    then
+        if [ -s ${LOG_PATH}/${CRONJOB_LOG} ]
+        echo_good
+        
+        echo_lines
+        date -r ${LOG_PATH}/${CRONJOB_LOG}
+        cat ${LOG_PATH}/${CRONJOB_LOG}
+        echo_lines
+        
+        exit_nochange
+        then
+            echo_fail
+            
+            MESSAGE="${LOG_PATH}/${CRONJOB_LOG} ${UI_LOGGING_EMPTY}"
+            echo_info
+            
+            exit_nochange
+        fi
+    else
+        echo_fail
+        
+        MESSAGE="${LOG_PATH}/${CRONJOB_LOG} ${UI_LOGGING_MISSING}"
+        echo_info
+        
+        exit_nochange
+    fi
+}
+
+function validate_gs_folders {
+    MESSAGE="${UI_VAL_GS_FOLDERS}"
+    echo_stat
+    
+    if [ ! -d ${LOCAL_FOLDR} ] || [ ! -d ${LOCAL_FOLDR}/${BACKUP_FOLD} ] || [ ! -d ${LOCAL_FOLDR}/settings ] || [ ! -d ${LOG_PATH} ]
+    then
+        MESSAGE="${UI_VAL_GS_FOLDERS_FAIL}"
+        echo_fail
+        exit_nochange
+    fi
+    
+    echo_good
+}
+
+## Validate Pi-hole Folders
+function validate_ph_folders {
+    MESSAGE="${UI_VALIDATING} ${UI_CORE_APP}"
+    echo_stat
+    
+    if [ "$PH_IN_TYPE" == "default" ]
+    then
+        if [ ! -f ${PIHOLE_BIN} ]
+        then
+            MESSAGE="${UI_VALIDATING_FAIL_BINARY} ${UI_CORE_APP}"
+            echo_fail
+            exit_nochange
+        fi
+    elif [ "$PH_IN_TYPE" == "docker" ]
+    then
+        FTLCHECK=$(sudo docker container ls | grep "${CONTAIMAGE}")
+        if [ "$FTLCHECK" == "" ]
+        then
+            MESSAGE="${UI_VALIDATING_FAIL_CONTAINER} ${UI_CORE_APP}"
+            echo_fail
+            exit_nochange
+        fi
+    elif [ "$PH_IN_TYPE" == "podman" ]
+    then
+        FTLCHECK=$(sudo podman container ls | grep "${CONTAIMAGE}")
+        if [ "$FTLCHECK" == "" ]
+        then
+            MESSAGE="${UI_VALIDATING_FAIL_CONTAINER} ${UI_CORE_APP}"
+            echo_fail
+            exit_nochange
+        fi
+    fi
+    
+    if [ ! -d ${PIHOLE_DIR} ]
+    then
+        MESSAGE="${UI_VALIDATING_FAIL_FOLDER} ${UI_CORE_APP}"
+        echo_fail
+        exit_nochange
+    fi
+    
+    echo_good
+}
+
+## Validate DNSMASQ Folders
+function validate_dns_folders {
+    MESSAGE="${UI_VALIDATING} ${UI_CORE_APP_DNS}"
+    echo_stat
+    
+    if [ ! -d ${DNSMAQ_DIR} ]
+    then
+        MESSAGE="${UI_VALIDATING_FAIL_FOLDER} ${UI_CORE_APP_DNS}"
+        echo_fail
+        exit_nochange
+    fi
+    echo_good
+}
+
+## Validate SQLite3
+function validate_sqlite3 {
+    MESSAGE="${UI_VALIDATING} ${UI_CORE_APP_SQL}"
+    echo_stat
+    if hash sqlite3 2>/dev/null
+    then
+        echo_good
+    else
+        MESSAGE="${UI_VALIDATING_FAIL_BINARY} ${UI_CORE_APP_SQL}"
+        echo_warn
+    fi
+}
+
+## Validate SSHPASS
+function validate_os_sshpass {
+    MESSAGE="Connecting to ${REMOTE_HOST}"
+    echo_stat
+    
+    CMD_TIMEOUT='5'
+    CMD_REQUESTED="exit"
+    create_sshcmd
+}
+
+## Detect Package Manager
+function distro_check {
+    if hash apt-get 2>/dev/null
+    then
+        PKG_MANAGER="apt-get"
+        PKG_INSTALL="sudo apt-get --yes --no-install-recommends --quiet install"
+    elif hash rpm 2>/dev/null
+    then
+        if hash dnf 2>/dev/null
+        then
+            PKG_MANAGER="dnf"
+        elif hash yum 2>/dev/null
+        then
+            PKG_MANAGER="yum"
+        else
+            MESSAGE="Unable to find OS Package Manager"
+            echo_info
+            exit_nochange
+        fi
+        PKG_INSTALL="sudo ${PKG_MANAGER} install -y"
+    else
+        MESSAGE="Unable to find OS Package Manager"
+        echo_info
+        exit_nochange
+    fi
+}
+
+## Dropbear Warning
+function dbclient_warning {
+    if hash dbclient 2>/dev/null
+    then
+        if hash ssh 2>/dev/null
+        then
+            NOEMPTYBASHIF="1"
+        else
+            MESSAGE="${UI_DROPBEAR_DEP}"
+            echo_warn
+        fi
+    fi
+}
+
+## Validate Domain Database Permissions
+function validate_gravity_permissions() {
+    MESSAGE="${UI_VAL_FILE_OWNERSHIP} ${UI_GRAVITY_NAME}"
+    echo_stat
+    
+    GRAVDB_OWN=$(ls -ld ${PIHOLE_DIR}/${GRAVITY_FI} | awk 'OFS=":" {print $3,$4}')
+    if [ "$GRAVDB_OWN" == "$FILE_OWNER" ]
+    then
+        echo_good
+    else
+        echo_fail
+        
+        MESSAGE="${UI_COMPENSATE}"
+        echo_warn
+        
+        MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_GRAVITY_NAME}"
+        echo_stat
+        sudo chown ${FILE_OWNER} ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+        error_validate
+    fi
+    
+    MESSAGE="${UI_VAL_FILE_PERMISSION} of ${UI_GRAVITY_NAME}"
+    echo_stat
+    
+    GRAVDB_RWE=$(namei -m ${PIHOLE_DIR}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | awk '{print $1}')
+    if [ "$GRAVDB_RWE" = "-rw-rw-r--" ]
+    then
+        echo_good
+    else
+        echo_fail
+        
+        MESSAGE="${UI_COMPENSATE}"
+        echo_warn
+        
+        MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_GRAVITY_NAME}"
+        echo_stat
+        sudo chmod 664 ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+        error_validate
+    fi
+}
+
+## Validate Local DNS Records Permissions
+function validate_custom_permissions() {
+    MESSAGE="${UI_VAL_FILE_OWNERSHIP} ${UI_CUSTOM_NAME}"
+    echo_stat
+    
+    CUSTOMLS_OWN=$(ls -ld ${PIHOLE_DIR}/${CUSTOM_DNS} | awk '{print $3 $4}')
+    if [ "$CUSTOMLS_OWN" == "rootroot" ]
+    then
+        echo_good
+    else
+        echo_fail
+        
+        MESSAGE="${UI_COMPENSATE}"
+        echo_warn
+        
+        MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_CUSTOM_NAME}"
+        echo_stat
+        sudo chown root:root ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+        error_validate
+    fi
+    
+    MESSAGE="${UI_VAL_FILE_PERMISSION} ${UI_CUSTOM_NAME}"
+    echo_stat
+    
+    CUSTOMLS_RWE=$(namei -m ${PIHOLE_DIR}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | awk '{print $1}')
+    if [ "$CUSTOMLS_RWE" == "-rw-r--r--" ]
+    then
+        echo_good
+    else
+        echo_fail
+        
+        MESSAGE="${UI_COMPENSATE}"
+        echo_warn
+        
+        MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_CUSTOM_NAME}"
+        echo_stat
+        sudo chmod 644 ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+        error_validate
+    fi
+}
+
+## Validate Local DNS CNAME Permissions
+function validate_cname_permissions() {
+    MESSAGE="${UI_VAL_FILE_OWNERSHIP} ${UI_CNAME_NAME}"
+    echo_stat
+    
+    CNAMELS_OWN=$(ls -ld ${DNSMAQ_DIR}/${CNAME_CONF} | awk '{print $3 $4}')
+    if [ "$CNAMELS_OWN" == "rootroot" ]
+    then
+        echo_good
+    else
+        echo_fail
+        
+        MESSAGE="${UI_COMPENSATE}"
+        echo_warn
+        
+        MESSAGE="${UI_SET_FILE_OWNERSHIP} ${UI_CNAME_NAME}"
+        echo_stat
+        sudo chown root:root ${DNSMAQ_DIR}/${CNAME_CONF} >/dev/null 2>&1
+        error_validate
+    fi
+    
+    MESSAGE="${UI_VAL_FILE_PERMISSION} ${UI_CNAME_NAME}"
+    echo_stat
+    
+    CNAMELS_RWE=$(namei -m ${DNSMAQ_DIR}/${CNAME_CONF} | grep -v f: | grep ${CNAME_CONF} | awk '{print $1}')
+    if [ "$CNAMELS_RWE" == "-rw-r--r--" ]
+    then
+        echo_good
+    else
+        echo_fail
+        
+        MESSAGE="${UI_COMPENSATE}"
+        echo_warn
+        
+        MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_CNAME_NAME}"
+        echo_stat
+        sudo chmod 644 ${DNSMAQ_DIR}/${CNAME_CONF} >/dev/null 2>&1
+        error_validate
+    fi
+}
+
+## Validate Intent
+function intent_validate {
+    if [ "$VERIFY_PASS" == "0" ]
+    then
+        PHASER=$((( RANDOM % 4 ) + 1 ))
+        if [ "$PHASER" = "1" ]
+        then
+            INTENT="FIRE PHOTON TORPEDOS"
+        elif [ "$PHASER" = "2" ]
+        then
+            INTENT="FIRE ALL PHASERS"
+        elif [ "$PHASER" = "3" ]
+        then
+            INTENT="EJECT THE WARPCORE"
+        elif [ "$PHASER" = "4" ]
+        then
+            INTENT="ENGAGE TRACTOR BEAM"
+        fi
+        
+        MESSAGE="Type ${INTENT} to confirm"
+        echo_need
+        
+        read INPUT_INTENT
+        
+        if [ "${INPUT_INTENT}" != "${INTENT}" ]
+        then
+            MESSAGE="${TASKTYPE} excited"
+            echo_info
+            exit_nochange
+        fi
+    else
+        MESSAGE="Verification bypassed"
+        echo_warn
+    fi
+}
+
+## Sudo Creation Task
+function task_sudo {
+    TASKTYPE='SUDO'
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    echo_good
+    
+    MESSAGE="Creating sudoers.d template file"
+    echo_stat
+    
+    NEW_SUDO_USER=$(whoami)
+    echo -e "${NEW_SUDO_USER} ALL=(ALL) NOPASSWD: ALL" > ${LOCAL_FOLDR}/templates/gs-nopasswd.sudo
+    error_validate
+    
+    MESSAGE="Installing sudoers.d file on $HOSTNAME"
+    echo_stat
+    
+    sudo install -m 0440 ${LOCAL_FOLDR}/templates/gs-nopasswd.sudo /etc/sudoers.d/gs-nopasswd
+    error_validate
+    
+    exit_withchange
+}
+
+## Root Check
+function root_check {
+    if [ ! "$EUID" -ne 0 ]
+    then
+        TASKTYPE='ROOT'
+        MESSAGE="${MESSAGE} ${TASKTYPE}"
+        echo_fail
+        
+        MESSAGE="${PROGRAM} should not run as 'root'"
+        echo_warn
+        
+        exit_nochange
+    fi
+}
+
+function new_root_check {
+    CURRENTUSER=$(whoami)
+    if [ ! "$EUID" -ne 0 ]
+    then
+        LOCALADMIN=""
+    else
+        # Check Sudo
+        SUDOCHECK=$(groups ${CURRENTUSER} | grep -e 'sudo' -e 'wheel')
+        if [ "$SUDOCHECK" == "" ]
+        then
+            LOCALADMIN="nosudo"
+        else
+            LOCALADMIN="sudo"
+        fi
+    fi
+    
+    if [ "$LOCALADMIN" == "nosudo" ]
+    then
+        TASKTYPE='ROOT'
+        MESSAGE="${MESSAGE} ${TASKTYPE}"
+        echo_fail
+        
+        MESSAGE="${CURRENTUSER} has insufficent user rights for ${PROGRAM}"
+        echo_warn
+        
+        exit_nochange
+    fi
+}
+
+## Configure Task
+function task_configure {				
+    TASKTYPE='CONFIGURE'
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    echo_good
+    
+    relocate_config_gs
+    
+    if [ -f ${LOCAL_FOLDR}/settings/${CONFIG_FILE} ]
+    then		
+        config_delete
+    else
+        config_generate
+    fi
+    
+    create_alias
+    exit_withchange
+}
+
+## Generate New Configuration
+function config_generate {  
+    MESSAGE="${UI_CONFIG_CREATING} ${CONFIG_FILE}"
+    echo_stat
+    cp ${LOCAL_FOLDR}/templates/${CONFIG_FILE}.example ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+    error_validate
+    
+    echo_lines
+    echo -e "Welcome to the ${PURPLE}Gravity Sync${NC} Configuration Wizard"
+    echo -e "Please read through ${BLUE}https://github.com/vmstan/gravity-sync/wiki${NC} before you continue!"
+    echo_blank
+    echo -e "If the installer detects that you have a supported container engine (Docker or Podman) installed"
+    echo -e "on your local Pi-hole, you will be directed to the advanced installation options. If you using " 
+    echo -e "containers on your remote Pi-hole, you'll need to select this option manually to adjust settings"
+    echo -e "such as custom Pi-hole binary or configuration directories, CNAME replication, etc."
+    echo_blank
+    echo -e "Gravity Sync uses a primary/secondary model for replication, and normally syncs changes from the "
+    echo -e "primary to the secondary. The LOCAL Pi-hole where you are running this configuration script is"
+    echo -e "considered the SECONDARY Pi-hole! The REMOTE Pi-hole where you normally make Gravity Database" 
+    echo -e "changes, and is considered the PRIMARY Pi-hole."
+    echo_blank
+    echo -e "Confused? Please refer back to the documentation."
+    echo_lines
+    
+    MESSAGE="${PROGRAM} ${UI_CONFIG_REQUIRED}"
+    echo_info
+
+    MESSAGE="${UI_CORE_APP} ${UI_CONFIG_REMOTE} ${UI_CONFIG_HOSTREQ}"
+    echo_inf1
+
+    MESSAGE="IP"
+    echo_need
+    read INPUT_REMOTE_HOST
+    
+    MESSAGE="${UI_CONFIG_ICMP_TEST} ${INPUT_REMOTE_HOST}"
+    echo_stat
+    ping -c 3 ${INPUT_REMOTE_HOST} >/dev/null 2>&1
+    error_validate
+
+    MESSAGE="${UI_CONFIG_SAVING} ${INPUT_REMOTE_HOST} host to ${CONFIG_FILE}"
+    echo_stat
+    sed -i "/REMOTE_HOST='192.168.1.10'/c\REMOTE_HOST='${INPUT_REMOTE_HOST}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+    error_validate
+    
+    MESSAGE="${UI_CORE_APP} ${UI_CONFIG_REMOTE} ${UI_CONFIG_USERREQ} for ${INPUT_REMOTE_HOST}"
+    echo_inf1
+
+    MESSAGE="User"
+    echo_need
+    read INPUT_REMOTE_USER
+    
+    MESSAGE="${UI_CONFIG_SAVING} ${INPUT_REMOTE_USER}@${INPUT_REMOTE_HOST} user to ${CONFIG_FILE}"
+    echo_stat
+    sed -i "/REMOTE_USER='pi'/c\REMOTE_USER='${INPUT_REMOTE_USER}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+    error_validate
+
+    generate_sshkey
+    
+    MESSAGE="${UI_CORE_LOADING} ${CONFIG_FILE}"
+    echo_stat
+    source ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+    error_validate
+
+    echo_lines
+    export_sshkey
+    echo_lines
+
+    MESSAGE="${UI_CONFIG_SSH_KEYPAIR} ${INPUT_REMOTE_HOST}"
+    echo_good_clean
+
+    MESSAGE="${UI_CONFIG_CONT_LOOKUP}"
+    echo_stat
+
+    docker_detect
+    podman_detect
+
+    if [ "${DOCKERREADY}" == "1" ] || [ "${PODMANREADY}" == "1" ]
+    then
+        MESSAGE="${UI_CONFIG_CONT_DETECT} ${UI_CONFIG_CONT_DETECTED}"
+        echo_good
+        MESSAGE="${UI_CORE_LOADING} ${UI_CONFIG_ADVANCED}"
+        echo_info
+        advanced_config_generate
+    else
+        MESSAGE="${UI_CONFIG_CONT_DETECT} ${UI_CONFIG_CONT_DETECTNA}"
+        echo_good
+        MESSAGE="${UI_CONFIG_DOADVANCED}"
+        echo_inf1
+        MESSAGE="${UI_CONFIG_YESNON}"
+        echo_need
+        read INPUT_ADVANCED_INSTALL
+        INPUT_ADVANCED_INSTALL="${INPUT_ADVANCED_INSTALL:-N}"
+    
+        if [ "${INPUT_ADVANCED_INSTALL}" == "Yes" ] || [ "${INPUT_ADVANCED_INSTALL}" == "yes" ] || [ "${INPUT_ADVANCED_INSTALL}" == "Y" ] || [ "${INPUT_ADVANCED_INSTALL}" == "y" ]
+        then
+            MESSAGE="${UI_CORE_LOADING} ${UI_CONFIG_ADVANCED}"
+            echo_info
+        
+            advanced_config_generate
+        else 
+            end_config
+        fi
+    fi
+}
+
+function end_config(){
+    echo_lines
+    echo -e "Configuration has been completed successfully, if you've still not read the instructions"
+    echo -e "please read through ${BLUE}https://github.com/vmstan/gravity-sync/wiki${NC} before you continue!"
+    echo_blank
+    echo -e "Your next step is to complete a sync of data from your remote Pi-hole to this local Pi-hole."
+    echo -e "ex: gravity-sync pull" 
+    echo_blank
+    echo -e "If this completes successfully you can automate future sync jobs to run at a regular interval."
+    echo -e "ex: gravity-sync automate"
+    echo_blank
+    echo -e "Still confused? Please refer back to the documentation."
+    echo_lines
+}
+
+## Advanced Configuration Options
+function advanced_config_generate {
+    MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP} ${UI_CONFIG_INSTANCEREQ}"
+    echo_inf1
+    MESSAGE="${UI_CONFIG_INSTANCETYPE}"
+    echo_need
+    read INPUT_PH_IN_TYPE
+    INPUT_PH_IN_TYPE="${INPUT_PH_IN_TYPE:-default}"
+    
+    if [ "${INPUT_PH_IN_TYPE}" != "default" ]
+    then
+        if [ "${INPUT_PH_IN_TYPE}" != "docker" ] && [ "${INPUT_PH_IN_TYPE}" != "podman" ]
+        then
+            MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CONFIG_INSTANCE_ERROR}"
+            echo_warn
+            exit_withchange
+        fi
+
+        MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_CONTAINER_TYPE} to ${CONFIG_FILE}"
+        echo_stat
+        sed -i "/# PH_IN_TYPE=''/c\PH_IN_TYPE='${INPUT_PH_IN_TYPE}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+        error_validate
+        
+        MESSAGE="${UI_CONFIG_CONT_DETECT} ${UI_CONFIG_IMAGES}"
+        echo_info
+        echo_lines
+        if [ "${INPUT_PH_IN_TYPE}" == "docker" ] 
+        then
+            sudo docker container ls
+        elif [ "${INPUT_PH_IN_TYPE}" == "podman" ]
+        then
+            sudo podman container ls
+        fi
+        echo_lines
+        
+        MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP} ${UI_CONFIG_INSTANCENAME}"
+        echo_inf1
+        MESSAGE="${UI_CONFIG_PIHOLE_DEFAULT}"
+        echo_need
+        read INPUT_DOCKER_CON
+        INPUT_DOCKER_CON="${INPUT_DOCKER_CON:-pihole}"
+        
+        if [ "${INPUT_DOCKER_CON}" != "pihole" ]
+        then
+            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_CONTAINER_NAME} to ${CONFIG_FILE}"
+            echo_stat
+            sed -i "/# DOCKER_CON=''/c\DOCKER_CON='${INPUT_DOCKER_CON}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+            error_validate
+        fi
+        
+        MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH}" 
+        echo_inf1
+        MESSAGE="${UI_CONFIG_ETC_VOLPATH_EXAMPLE}"
+        echo_need
+        read INPUT_PIHOLE_DIR
+        
+        if [ "${INPUT_PIHOLE_DIR}" != "" ]
+        then
+            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
+            echo_stat
+            sed -i "/# PIHOLE_DIR=''/c\PIHOLE_DIR='${INPUT_PIHOLE_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+            error_validate
+            SKIP_PIHOLE_DIR="1"
+        else
+            MESSAGE="${UI_CONFIG_SETTING_REQUIRED}"
+            echo_warn
+            exit_withchange
+        fi
+        
+        MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH}"
+        echo_inf1
+        MESSAGE="${UI_CONFIG_ETC_VOLDNSQ_EXAMPLE}"
+        echo_need
+        read INPUT_DNSMAQ_DIR
+        
+        if [ "${INPUT_DNSMAQ_DIR}" != "" ]
+        then
+            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
+            echo_stat
+            sed -i "/# DNSMAQ_DIR=''/c\DNSMAQ_DIR='${INPUT_DNSMAQ_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+            error_validate
+            SKIP_DNSMASQ_DIR="1"
+        else
+            MESSAGE="${UI_CONFIG_SETTING_REQUIRED}"
+            echo_warn
+            exit_withchange
+        fi
+        
+        MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_VOLUME_OWNER} to ${CONFIG_FILE}"
+        echo_stat
+        sed -i "/# FILE_OWNER=''/c\FILE_OWNER='999:999'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+        error_validate
+    fi
+    
+    MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP} ${UI_CONFIG_INSTANCEREQ}"
+    echo_inf1
+    MESSAGE="${UI_CONFIG_INSTANCETYPE}"
+    echo_need
+    read INPUT_RH_IN_TYPE
+    INPUT_RH_IN_TYPE="${INPUT_RH_IN_TYPE:-default}"
+    
+    if [ "${INPUT_RH_IN_TYPE}" != "default" ]
+    then
+        if [ "${INPUT_RH_IN_TYPE}" != "docker" ] && [ "${INPUT_RH_IN_TYPE}" != "podman" ]
+        then
+            MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CONFIG_INSTANCE_ERROR}"
+            echo_warn
+            exit_withchange
+        fi
+        MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CONFIG_CONTAINER_TYPE} to ${CONFIG_FILE}"
+        echo_stat
+        sed -i "/# RH_IN_TYPE=''/c\RH_IN_TYPE='${INPUT_RH_IN_TYPE}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+        error_validate
+        
+        MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CONFIG_CONTAINER_NAME}"
+        echo_inf1
+        MESSAGE="${UI_CONFIG_DEFAULT_LEAVE} 'pihole'"
+        echo_need
+        read INPUT_ROCKER_CON
+        INPUT_ROCKER_CON="${INPUT_ROCKER_CON:-pihole}"
+        
+        if [ "${INPUT_ROCKER_CON}" != "pihole" ]
+        then
+            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CONFIG_CONTAINER_NAME} to ${CONFIG_FILE}"
+            echo_stat
+            sed -i "/# ROCKER_CON=''/c\ROCKER_CON='${INPUT_ROCKER_CON}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+            error_validate
+        fi
+        
+        MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH}"
+        echo_inf1
+        MESSAGE="${UI_CONFIG_ETC_VOLPATH_EXAMPLE}"
+        echo_need
+        read INPUT_RIHOLE_DIR
+        
+        if [ "${INPUT_RIHOLE_DIR}" != "" ]
+        then
+            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
+            echo_stat
+            sed -i "/# RIHOLE_DIR=''/c\RIHOLE_DIR='${INPUT_RIHOLE_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+            error_validate
+            SKIP_RIHOLE_DIR="1"
+        else
+            MESSAGE="${UI_CONFIG_SETTING_REQUIRED}"
+            echo_warn
+            exit_withchange
+        fi
+        
+        MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH}"
+        echo_inf1
+        MESSAGE="${UI_CONFIG_ETC_VOLDNSQ_EXAMPLE}"
+        echo_need
+        read INPUT_RNSMAQ_DIR
+        
+        if [ "${INPUT_RNSMAQ_DIR}" != "" ]
+        then
+            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
+            echo_stat
+            sed -i "/# RNSMAQ_DIR=''/c\RNSMAQ_DIR='${INPUT_RNSMAQ_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+            error_validate
+            SKIP_RNSMASQ_DIR="1"
+        else
+            MESSAGE="${UI_CONFIG_SETTING_REQUIRED}"
+            echo_warn
+            exit_withchange
+        fi
+        
+        MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CONFIG_VOLUME_OWNER} to ${CONFIG_FILE}"
+        echo_stat
+        sed -i "/# RILE_OWNER=''/c\RILE_OWNER='999:999'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+        error_validate
+    fi
+    
+        
+    if [ "$SKIP_PIHOLE_DIR" != "1" ]
+    then
+        MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP} ${UI_CONFIG_SETTING_DIR_PATH}"
+        echo_inf1
+        MESSAGE="${UI_CONFIG_DEFAULT_LEAVE} ${UI_CONFIG_DEFAULT_PIHOLE_ETC}"
+        echo_need
+        read INPUT_PIHOLE_DIR
+        INPUT_PIHOLE_DIR="${INPUT_PIHOLE_DIR:-/etc/pihole}"
+        
+        if [ "${INPUT_PIHOLE_DIR}" != "/etc/pihole" ]
+        then
+            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP} ${UI_CONFIG_SETTING_DIR_PATH} to ${CONFIG_FILE}"
+            echo_stat
+            sed -i "/# PIHOLE_DIR=''/c\PIHOLE_DIR='${INPUT_PIHOLE_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+            error_validate
+        fi
+    fi
+    
+    if [ "$SKIP_RIHOLE_DIR" != "1" ]
+    then
+        MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP} ${UI_CONFIG_SETTING_DIR_PATH}"
+        echo_inf1
+        MESSAGE="${UI_CONFIG_DEFAULT_LEAVE} ${UI_CONFIG_DEFAULT_PIHOLE_ETC}"
+        echo_need
+        read INPUT_RIHOLE_DIR
+        INPUT_RIHOLE_DIR="${INPUT_RIHOLE_DIR:-/etc/pihole}"
+        
+        if [ "${INPUT_RIHOLE_DIR}" != "/etc/pihole" ]
+        then
+            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CORE_APP} ${UI_CONFIG_SETTING_DIR_PATH} to ${CONFIG_FILE}"
+            echo_stat
+            sed -i "/# RIHOLE_DIR=''/c\RIHOLE_DIR='${INPUT_RIHOLE_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+            error_validate
+        fi
+    fi
+    
+    if [ "$SKIP_DNSMASQ_DIR" != "1" ]
+    then
+        MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP_DNS} ${UI_CONFIG_SETTING_DIR_PATH}"
+        echo_inf1
+        MESSAGE="${UI_CONFIG_DEFAULT_LEAVE} '/etc/dnsmasq.d'"
+        echo_need
+        read INPUT_DNSMASQ_DIR
+        INPUT_DNSMASQ_DIR="${INPUT_DNSMASQ_DIR:-/etc/dnsmasq.d}"
+        
+        if [ "${INPUT_DNSMASQ_DIR}" != "/etc/dnsmasq.d" ]
+        then
+            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP_DNS} ${UI_CONFIG_SETTING_DIR_PATH} to ${CONFIG_FILE}"
+            echo_stat
+            sed -i "/# DNSMASQ_DIR=''/c\DNSMASQ_DIR='${INPUT_DNSMASQ_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+            error_validate
+        fi
+    fi
+    
+    if [ "$SKIP_RNSMASQ_DIR" != "1" ]
+    then
+        MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP_DNS} ${UI_CONFIG_SETTING_DIR_PATH}"
+        echo_inf1
+        MESSAGE="${UI_CONFIG_DEFAULT_LEAVE} ${UI_CONFIG_DEFAULT_DNSMASQ_ETC}"
+        echo_need
+        read INPUT_RNSMASQ_DIR
+        INPUT_RNSMASQ_DIR="${INPUT_RNSMASQ_DIR:-/etc/dnsmasq.d}"
+        
+        if [ "${INPUT_RNSMASQ_DIR}" != "/etc/dnsmasq.d" ]
+        then
+            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CORE_APP_DNS} ${UI_CONFIG_SETTING_DIR_PATH} to ${CONFIG_FILE}"
+            echo_stat
+            sed -i "/# RNSMASQ_DIR=''/c\RNSMASQ_DIR='${INPUT_RNSMASQ_DIR}'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+            error_validate
+        fi
+    fi
+    
+    MESSAGE="${UI_ENABLE_REPLICATION_QUEST} ${UI_CUSTOM_NAME}"
+    echo_inf1
+    MESSAGE="${UI_CONFIG_YESNOY}"
+    echo_need
+    read INPUT_SKIP_CUSTOM
+    INPUT_SKIP_CUSTOM="${INPUT_SKIP_CUSTOM:-Y}"
+    
+    if [ "${INPUT_SKIP_CUSTOM}" != "Y" ]
+    then
+        MESSAGE="${UI_DNS_NAME} ${UI_CONFIG_PREF_SAVED} ${CONFIG_FILE}"
+        echo_stat
+        sed -i "/# SKIP_CUSTOM=''/c\SKIP_CUSTOM='1'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+        error_validate
+    fi
+    
+    if [ "${INPUT_SKIP_CUSTOM}" == "Y" ]
+    then
+        MESSAGE="${UI_ENABLE_REPLICATION_QUEST} ${UI_CNAME_NAME}"
+        echo_inf1
+        MESSAGE="${UI_CONFIG_YESNON}"
+        echo_need
+        read INPUT_INCLUDE_CNAME
+        INPUT_INCLUDE_CNAME="${INPUT_INCLUDE_CNAME:-N}"
+        
+        if [ "${INPUT_INCLUDE_CNAME}" == "Y" ]
+        then
+            config_enablecname
+        fi
+    fi
+
+    end_config
+}
+
+function task_cname {
+    TASKTYPE='CNAME'
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    echo_good
+
+    config_enablecname
+    exit_withchange
+}
+
+function config_enablecname {
+    MESSAGE="${UI_CNAME_NAME} ${UI_CONFIG_PREF_SAVED} ${CONFIG_FILE}"
+    echo_stat
+    sed -i "/# INCLUDE_CNAME=''/c\INCLUDE_CNAME='1'" ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+    error_validate
+}
+
+## Delete Existing Configuration
+function config_delete {
+    source ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+    MESSAGE="${CONFIG_FILE} ${UI_CONFIG_ALREADY}"
+    echo_info  
+  
+    MESSAGE="${UI_CONFIG_AREYOUSURE}"
+    echo_inf1
+
+    intent_validate
+
+    MESSAGE="${UI_CONFIG_ERASING} ${CONFIG_FILE}"
+    echo_stat
+    rm -f ${LOCAL_FOLDR}/settings/${CONFIG_FILE}
+        error_validate
+
+    config_generate
+}
+
+## Detect Docker
+function docker_detect {
+    if hash docker 2>/dev/null
+    then
+        FTLCHECK=$(sudo docker container ls | grep 'pihole/pihole')
+        if [ "$FTLCHECK" != "" ]
+        then
+            DOCKERREADY="1"
+        fi
+    fi
+}
+
+## Detect Podman
+function podman_detect {
+    if hash podman 2>/dev/null
+    then
+        FTLCHECK=$(sudo podman container ls | grep 'pihole/pihole')
+        if [ "$FTLCHECK" != "" ]
+        then
+            PODMANREADY="1"
+        fi
+    fi
+}
+
+## Create Bash Alias
+function create_alias {
+    MESSAGE="${UI_CONFIG_BASH}"
+    echo_stat
+    
+    echo -e "alias gravity-sync='${GS_FILEPATH}'" | sudo tee -a /etc/bash.bashrc > /dev/null
+        error_validate
+
+    MESSAGE="${UI_CONFIG_ALIAS}"
+    echo_info
+}
+
+## Master Branch
+function update_gs {
+    if [ -f "${LOCAL_FOLDR}/dev" ]
+    then
+        source ${LOCAL_FOLDR}/dev
+    else
+        BRANCH='origin/master'
+    fi
+    
+    if [ "$BRANCH" != "origin/master" ]
+    then
+        MESSAGE="Pulling from ${BRANCH}"
+        echo_info
+    fi
+    
+    GIT_CHECK=$(git status | awk '{print $1}')
+    if [ "$GIT_CHECK" == "fatal:" ]
+    then
+        MESSAGE="Updater usage requires GitHub installation"
+        echo_warn
+        exit_nochange
+    else
+        MESSAGE="Downloading updates via GitHub"
+        echo_stat
+        git fetch --all >/dev/null 2>&1
+        error_validate
+        MESSAGE="Deploying the latest ${PROGRAM} code"
+        echo_stat
+        git reset --hard ${BRANCH} >/dev/null 2>&1
+        error_validate
+        MESSAGE="Cleaning things up"
+        echo_stat
+        git clean -fq
+        error_validate
+    fi
+}
+
+## Show Version
+function show_version {
+    if [ -f ${LOCAL_FOLDR}/dev ]
+    then
+        DEVVERSION="-dev"
+    elif [ -f ${LOCAL_FOLDR}/beta ]
+    then
+        DEVVERSION="-beta"
+    else
+        DEVVERSION=""
+    fi
+    
+    MESSAGE="Running version: ${GREEN}${VERSION}${NC}${DEVVERSION}"
+    echo_info
+    
+    GITVERSION=$(curl -sf https://raw.githubusercontent.com/vmstan/gravity-sync/master/VERSION)
+    if [ -z "$GITVERSION" ]
+    then
+        MESSAGE="Latest version: ${RED}Unknown${NC}"
+    else
+        if [ "$GITVERSION" != "$VERSION" ]
+        then
+            MESSAGE="Update available: ${RED}${GITVERSION}${NC}"
+        else
+            MESSAGE="Latest version: ${GREEN}${GITVERSION}${NC}"
+        fi
+    fi
+    echo_info
+}
+
+function show_info() {
+    if [ -f ${LOCAL_FOLDR}/dev ]
+    then
+        DEVVERSION="-dev"
+    elif [ -f ${LOCAL_FOLDR}/beta ]
+    then
+        DEVVERSION="-beta"
+    else
+        DEVVERSION=""
+    fi
+    
+    echo_lines
+    echo -e "${YELLOW}Local Software Versions${NC}"
+    echo -e "${PURPLE}Gravity Sync${NC} ${VERSION}${DEVVERSION}"
+    echo -e "${BLUE}Pi-hole${NC}"
+    if [ "${PH_IN_TYPE}" == "default" ]
+    then
+        pihole version
+    elif [ "${PH_IN_TYPE}" == "docker" ]
+    then 
+        sudo docker exec -it pihole pihole -v
+    elif [ "${PH_IN_TYPE}" == "podman" ]
+    then 
+        sudo podman exec -it pihole pihole -v
+    fi
+    
+    uname -srm
+    echo -e "bash $BASH_VERSION"
+    ssh -V
+    rsync --version | grep version
+    SQLITE3_VERSION=$(sqlite3 --version)
+    echo -e "sqlite3 ${SQLITE3_VERSION}"
+    sudo --version | grep "Sudo version"
+    git --version
+    
+    if hash docker 2>/dev/null
+    then
+        docker --version
+    fi
+
+    if hash podman 2>/dev/null
+    then
+        podman --version
+    fi
+
+    echo -e ""
+    
+    echo -e "${YELLOW}Local/Secondary Instance Settings${NC}"
+    echo -e "Local Hostname: $HOSTNAME"
+    echo -e "Local Pi-hole Type: ${PH_IN_TYPE}"
+    echo -e "Local Pi-hole Config Directory: ${PIHOLE_DIR}"
+    echo -e "Local DNSMASQ Config Directory: ${DNSMAQ_DIR}"
+    echo -e "Local Gravity Sync Directory: ${LOCAL_FOLDR}" 
+    
+    if [ "${PH_IN_TYPE}" == "default" ]
+    then
+        echo -e "Local Pi-hole Binary Directory: ${PIHOLE_BIN}"
+    elif [ "${PH_IN_TYPE}" == "docker" ]
+    then 
+        echo -e "Local Pi-hole Container Name: ${DOCKER_CON}"
+        echo -e "Local Docker Binary Directory: ${DOCKER_BIN}"
+    elif [ "${PH_IN_TYPE}" == "podman" ]
+    then 
+        echo -e "Local Pi-hole Container Name: ${DOCKER_CON}"
+        echo -e "Local Podman Binary Directory: ${PODMAN_BIN}"
+    fi
+    
+    echo -e "Local File Owner Settings: ${FILE_OWNER}"
+    
+    if [ ${SKIP_CUSTOM} == '0' ]
+    then
+        echo -e "DNS Replication: Enabled (default)"
+    elif [ ${SKIP_CUSTOM} == '1' ]
+    then
+        echo -e "DNS Replication: Disabled (custom)"
+    else
+        echo -e "DNS Replication: Invalid Configuration"
+    fi
+    
+    if [ ${INCLUDE_CNAME} == '1' ]
+    then
+        echo -e "CNAME Replication: Enabled (custom)"
+    elif [ ${INCLUDE_CNAME} == '0' ]
+    then
+        echo -e "CNAME Replication: Disabled (default)"
+    else
+        echo -e "CNAME Replication: Invalid Configuration"
+    fi
+    
+    if [ ${VERIFY_PASS} == '1' ]
+    then
+        echo -e "Verify Operations: Enabled (default)"
+    elif [ ${VERIFY_PASS} == '0' ]
+    then
+        echo -e "Verify Operations: Disabled (custom)"
+    else
+        echo -e "Verify Operations: Invalid Configuration"
+    fi
+    
+    if [ ${PING_AVOID} == '0' ]
+    then
+        echo -e "Ping Test: Enabled (default)"
+    elif [ ${PING_AVOID} == '1' ]
+    then
+        echo -e "Ping Test: Disabled (custom)"
+    else
+        echo -e "Ping Test: Invalid Configuration"
+    fi
+
+    BACKUP_FOLDER_SIZE=$(du -h ${LOCAL_FOLDR}/${BACKUP_FOLD}  | sed 's/\s.*$//')
+    echo -e "Backup Folder Size: ${BACKUP_FOLDER_SIZE}"
+        
+    echo -e ""
+    echo -e "${YELLOW}Remote/Primary Instance Settings${NC}"
+    echo -e "Remote Hostname/IP: ${REMOTE_HOST}"
+    echo -e "Remote Username: ${REMOTE_USER}"
+    echo -e "Remote Pi-hole Type: ${RH_IN_TYPE}"
+    echo -e "Remote Pi-hole Config Directory: ${RIHOLE_DIR}"
+    echo -e "Remote DNSMASQ Config Directory: ${RNSMAQ_DIR}"
+
+    if [ "${RH_IN_TYPE}" == "default" ]
+    then
+        echo -e "Remote Pi-hole Binary Directory: ${RIHOLE_BIN}"
+    elif [ "${RH_IN_TYPE}" == "docker" ]
+    then 
+        echo -e "Remote Pi-hole Container Name: ${ROCKER_CON}"
+        echo -e "Remote Docker Binary Directory: ${ROCKER_BIN}"
+    elif [ "${RH_IN_TYPE}" == "podman" ]
+    then 
+        echo -e "Remote Pi-hole Container Name: ${ROCKER_CON}"
+        echo -e "Remote Podman Binary Directory: ${RODMAN_BIN}"
+    fi
+
+    echo -e "Remote File Owner Settings: ${RILE_OWNER}"
+    echo_lines
+}
+
+## Devmode Task
+function task_devmode {
+    TASKTYPE='DEV'
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    echo_good
+    
+    if [ -f ${LOCAL_FOLDR}/dev ]
+    then
+        MESSAGE="Disabling ${TASKTYPE}"
+        echo_stat
+        rm -f ${LOCAL_FOLDR}/dev
+        error_validate
+    elif [ -f ${LOCAL_FOLDR}/beta ]
+    then
+        MESSAGE="Disabling BETA"
+        echo_stat
+        rm -f ${LOCAL_FOLDR}/beta
+        error_validate
+        
+        MESSAGE="Enabling ${TASKTYPE}"
+        echo_stat
+        touch ${LOCAL_FOLDR}/dev
+        error_validate
+    else
+        MESSAGE="Enabling ${TASKTYPE}"
+        echo_stat
+        touch ${LOCAL_FOLDR}/dev
+        error_validate
+        
+        MESSAGE="Checking available branches"
+        echo_stat
+        git fetch --all >/dev/null 2>&1
+        error_validate
+        
+        git branch -r
+        
+        MESSAGE="Select GitHub branch to update against"
+        echo_need
+        read INPUT_BRANCH
+        
+        echo -e "BRANCH='${INPUT_BRANCH}'" >> ${LOCAL_FOLDR}/dev
+    fi
+    
+    update_gs
+    exit_withchange
+}
+
+## Update Task
+function task_update {
+    TASKTYPE='UPDATE'
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    echo_good
+    update_gs
+    exit_withchange
+}
+
+## Version Task
+function task_version {
+    TASKTYPE='VERSION'
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    echo_good
+    show_version
+    exit_nochange
+}
+
+## Info Task
+
+function task_info() {
+    TASKTYPE='INFO'
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    echo_good
+    show_info
+    exit_nochange
+}
+
+## Automate Task
+function task_automate {
+    TASKTYPE='AUTOMATE'
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    echo_good
+    
+    CRON_EXIST='0'
+    CRON_CHECK=$(crontab -l | grep -q "${GS_FILENAME}"  && echo '1' || echo '0')
+    if [ ${CRON_CHECK} == 1 ]
+    then
+        MESSAGE="${UI_AUTO_CRON_EXISTS}"
+        echo_warn
+        clear_cron
+    fi
+
+    MESSAGE="Customizing service file username"
+    sed -i "/User=unknown/c\User=$USER" ${LOCAL_FOLDR}/templates/gravity-sync.service
+    error_validate
+
+    MESSAGE="Customizing service file executable"
+    sed -i "/ExecStart=/c\ExecStart=${LOCAL_FOLDR}/${GS_FILENAME}" ${LOCAL_FOLDR}/templates/gravity-sync.service
+    error_validate
+
+    if systemctl is-active --quiet gravity-sync
+    then
+        MESSAGE="Stopping existing systemd service"
+        sudo systemctl stop gravity-sync
+        error_validate
+    fi
+
+    MESSAGE="Moving systemd timer into place"
+    sudo cp ${LOCAL_FOLDR}/templates/gravity-sync.timer ${DAEMON_PATH}
+    error_validate
+
+    MESSAGE="Moving systemd service into place"
+    sudo cp ${LOCAL_FOLDR}/templates/gravity-sync.service ${DAEMON_PATH}
+    error_validate
+
+    MESSAGE="Reloading systemd daemon"
+    sudo systemctl daemon-reload --quiet
+    error_validate
+
+    MESSAGE="Enabling Gravity Sync timer"
+    sudo systemctl enable gravity-sync.timer --quiet
+    error_validate
+
+    MESSAGE="Starting Gravity Sync service"
+    sudo systemctl start gravity-sync --quiet
+    error_validate
+    
+    exit_withchange
+}
+
+function task_autocron {
+    TASKTYPE='AUTOCRON'
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    echo_good
+
+    MESSAGE="Crontab automation is deprecated and will be removed in a future release"
+    echo_warn
+    
+    CRON_EXIST='0'
+    CRON_CHECK=$(crontab -l | grep -q "${GS_FILENAME}"  && echo '1' || echo '0')
+    if [ ${CRON_CHECK} == 1 ]
+    then
+        MESSAGE="${UI_AUTO_CRON_EXISTS}"
+        echo_warn
+        CRON_EXIST='1'
+    fi
+    
+    MESSAGE="${UI_AUTO_CRON_DISPLAY_FREQ}"
+    echo_info
+    
+    if [[ $1 =~ ^[0-9][0-9]?$ ]]
+    then
+        INPUT_AUTO_FREQ=$1
+    else
+        MESSAGE="${UI_AUTO_CRON_SELECT_FREQ}"
+        echo_need
+        read INPUT_AUTO_FREQ
+        INPUT_AUTO_FREQ="${INPUT_AUTO_FREQ:-15}"
+    fi
+    
+    if [ $INPUT_AUTO_FREQ == 5 ] || [ $INPUT_AUTO_FREQ == 10 ] || [ $INPUT_AUTO_FREQ == 15 ] || [ $INPUT_AUTO_FREQ == 30 ]
+    then
+        if [ $CRON_EXIST == 1 ]
+        then
+            clear_cron
+        fi
+
+        path_fix
+        
+        MESSAGE="${UI_AUTO_CRON_SAVING}"
+        echo_stat
+        (crontab -l 2>/dev/null; echo "*/${INPUT_AUTO_FREQ} * * * * ${BASH_PATH} ${LOCAL_FOLDR}/${GS_FILENAME} smart > ${LOG_PATH}/${CRONJOB_LOG}") | crontab -
+        error_validate
+    elif [ $INPUT_AUTO_FREQ == 0 ]
+    then
+        if [ $CRON_EXIST == 1 ]
+        then
+            clear_cron
+        else
+            MESSAGE="${UI_AUTO_CRON_DISABLED}"
+            echo_warn
+        fi
+    else
+        MESSAGE="${UI_INVALID_SELECTION}"
+        echo_fail
+        exit_nochange
+    fi
+    
+    exit_withchange
+}
+
+## Clear Existing Automation Settings
+function clear_cron {
+    MESSAGE="${UI_AUTO_CRON_DISABLED}"
+    echo_stat
+    
+    crontab -l > cronjob-old.tmp
+    sed "/${GS_FILENAME}/d" cronjob-old.tmp > cronjob-new.tmp
+    crontab cronjob-new.tmp 2>/dev/null
+    error_validate
+    rm cronjob-old.tmp
+    rm cronjob-new.tmp
+}
+
+## Cron Task
+function task_cron {
+    TASKTYPE='CRON'
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    echo_good
+    
+    show_crontab
+}
+
+function path_fix {
+    MESSAGE="Adding user path to Crontab"
+    echo_stat
+    (crontab -l 2>/dev/null; echo "PATH=$PATH") | crontab -
+    error_validate
+}
+
+## Purge Task
+function task_purge {
+    TASKTYPE="THE-PURGE"
+    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    echo_good
+    
+    echo_lines
+    echo -e "THIS WILL RESET YOUR ENTIRE GRAVITY SYNC INSTALLATION"
+    echo -e "This will remove:"
+    echo -e "- Your ${CONFIG_FILE} file."
+        
+    if [ -f "${LOCAL_FOLDR}/dev" ]
+    then
+        echo -e "- Your development branch updater."
+    elif [ -f "${LOCAL_FOLDR}/beta" ]
+    then
+        echo -e "- Your beta branch updater."
+    fi
+        
+    echo -e "- All cronjob/automation tasks."
+    echo -e "- All job history/logs."
+    echo -e "- Associated SSH id_rsa keys."
+    echo -e ""
+    echo -e "This function cannot be undone!"
+    echo -e ""
+    echo -e "YOU WILL NEED TO REBUILD GRAVITY SYNC AFTER EXECUTION"
+    echo -e "Pi-hole binaries, configuration and services ARE NOT impacted!"
+    echo -e "Your device will continue to resolve and block DNS requests,"
+    echo -e "but your ${UI_GRAVITY_NAME} and ${UI_CUSTOM_NAME} WILL NOT sync anymore,"
+    echo -e "until you reconfigure Gravity Sync on this device."
+    echo_lines
+        
+    intent_validate
+    
+    MESSAGE="${UI_PURGE_CLEANING_DIR}"
+    echo_stat
+    
+    git clean -f -X -d >/dev/null 2>&1
+    error_validate
+    
+    clear_cron
+    
+    MESSAGE="${UI_PURGE_DELETE_SSH_KEYS}"
+    echo_stat
+    
+    rm -f $HOME/${SSH_PKIF} >/dev/null 2>&1
+    rm -f $HOME/${SSH_PKIF}.pub >/dev/null 2>&1
+    error_validate
+    
+    MESSAGE="${UI_PURGE_MATRIX_ALIGNMENT}"
+    echo_info
+    
+    sleep 1
+    
+    update_gs
+}
+
+## No Changes Made
+function exit_nochange {
+    SCRIPT_END=$SECONDS
+    let SCRIPT_RUN=SCRIPT_END-SCRIPT_START
+    
+    if [ "${TASKTYPE}" == "" ]
+    then
+        MESSAGE="${PROGRAM} ${UI_EXIT_ABORT} ${UI_EXIT_CALC_END} ${SCRIPT_RUN} ${UI_EXIT_CALC_TIMER}"
+    else
+        MESSAGE="${PROGRAM} ${TASKTYPE} ${UI_EXIT_ABORT} ${UI_EXIT_CALC_END} ${SCRIPT_RUN} ${UI_EXIT_CALC_TIMER}"
+    fi
+    
+    echo_grav
+    exit 0
+}
+
+## Changes Made
+function exit_withchange {
+    SCRIPT_END=$SECONDS
+    let SCRIPT_RUN=SCRIPT_END-SCRIPT_START
+    
+    if [ "${TASKTYPE}" == "" ]
+    then
+        MESSAGE="${PROGRAM} ${UI_EXIT_COMPLETE} ${UI_EXIT_CALC_END} ${SCRIPT_RUN} ${UI_EXIT_CALC_TIMER}"
+    else
+        MESSAGE="${PROGRAM} ${TASKTYPE} ${UI_EXIT_COMPLETE} ${UI_EXIT_CALC_END} ${SCRIPT_RUN} ${UI_EXIT_CALC_TIMER}"
+    fi
+    
+    echo_grav
+    exit 0
+}
+
+## List GS Arguments
+function list_gs_arguments {
+    echo -e "Usage: $0 [options]"
+    echo -e "Example: '$0 pull'"
+    echo_lines
+    echo -e "Setup Options:"
+    echo -e " ${YELLOW}config${NC}      Creates a new ${PROGRAM} configuration file"
+    echo -e " ${YELLOW}automate${NC}    Schedules the ${PROGRAM} replication task using systemd"
+    echo -e " ${YELLOW}cron${NC}        Schedules the ${PROGRAM} replication task using crontab (legacy)"
+    echo -e " ${YELLOW}version${NC}     Shows the installed version of ${PROGRAM} and check for updates"
+    echo -e " ${YELLOW}update${NC}      Upgrades ${PROGRAM} to the latest available version using Git"
+    echo -e " ${YELLOW}dev${NC}         Sets update command to use a development version of ${PROGRAM}"
+    echo -e " ${YELLOW}sudo${NC}        Configures passwordless sudo for current user"
+    echo_blank
+    echo -e "Replication Options:"
+    echo -e " ${YELLOW}smart${NC}       Detects Pi-hole changes on primary and secondary and then combines them"
+    echo -e " ${YELLOW}pull${NC}        Brings the remote Pi-hole configuration to this server"
+    echo -e " ${YELLOW}push${NC}        Sends the local Pi-hole configuration to the primary"
+    echo -e " ${YELLOW}compare${NC}     Just checks for Pi-hole differences at each side without making changes"
+    echo_blank
+    echo -e "Debug Options:"
+    echo -e " ${YELLOW}logs${NC}        Shows the recent successful replication jobs/times"
+    echo -e " ${YELLOW}info${NC}        Shows information about the current configuration"
+    echo_lines
+    exit_nochange
+}
 
 # SCRIPT EXECUTION ###########################
 
