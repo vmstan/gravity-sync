@@ -13,13 +13,7 @@ function update_gs {
         echo -e "Pulling from ${BRANCH}"
     fi
     
-    GIT_CHECK=$(git status | awk '{print $1}')
-    if [ "$GIT_CHECK" == "fatal:" ]; then
-        echo -e "Updater usage requires GitHub installation"
-        exit    
-    else
-        (cd ${GS_LOCAL_REPO}; git fetch --all; git reset --hard ${BRANCH}; sudo cp gravity-sync /usr/local/bin; git clean -fq)
-    fi
+    cd ${GS_LOCAL_REPO}; git fetch --all; git reset --hard ${BRANCH}; sudo cp gravity-sync /usr/local/bin; git clean -fq)
 }
 
 update_gs
