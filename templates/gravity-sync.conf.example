@@ -27,7 +27,7 @@ REMOTE_USER='pi'
 # RILE_OWNER=''				# default Pi-hole file owner and group (remote)
 # DOCKER_CON=''				# default Pi-hole container name (local)
 # ROCKER_CON=''				# default Pi-hole container name (remote)
-# CONTAIMAGE=''             # official Pi-hole container image
+# PIHOLE_CONTAINER_IMAGE=''             # official Pi-hole container image
 
 # GRAVITY_FI='' 			# default Pi-hole database file
 # CUSTOM_DNS=''				# default Pi-hole local DNS lookups

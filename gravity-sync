@@ -10,7 +10,7 @@ VERSION='4.0.0'
 
 # REQUIRED SETTINGS ##########################
 
-# Run './gravity-sync.sh config' to get started, it will customize the script for your environment
+# Run 'gravity-sync config' to get started, it will customize the script for your environment
 # You should not to change the values of any variables here here to customize your install
 # Add replacement variables to gravity-sync.conf, which will overwrite these defaults.
 
@@ -35,7 +35,7 @@ FILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (local)
 RILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (remote)
 DOCKER_CON='pihole'					# default Pi-hole container name (local)
 ROCKER_CON='pihole'					# default Pi-hole container name (remote)
-CONTAIMAGE='pihole/pihole'          # official Pi-hole container image
+PIHOLE_CONTAINER_IMAGE='pihole/pihole'          # official Pi-hole container image
 
 GRAVITY_FI='gravity.db' 			        # default Pi-hole database file
 CUSTOM_DNS='custom.list'			        # default Pi-hole local DNS lookups
@@ -1631,7 +1631,7 @@ function validate_ph_folders {
         fi
     elif [ "$PH_IN_TYPE" == "docker" ]
     then
-        FTLCHECK=$(sudo docker container ls | grep "${CONTAIMAGE}")
+        FTLCHECK=$(sudo docker container ls | grep "${PIHOLE_CONTAINER_IMAGE}")
         if [ "$FTLCHECK" == "" ]
         then
             MESSAGE="${UI_VALIDATING_FAIL_CONTAINER} ${UI_CORE_APP}"
@@ -1640,7 +1640,7 @@ function validate_ph_folders {
         fi
     elif [ "$PH_IN_TYPE" == "podman" ]
     then
-        FTLCHECK=$(sudo podman container ls | grep "${CONTAIMAGE}")
+        FTLCHECK=$(sudo podman container ls | grep "${PIHOLE_CONTAINER_IMAGE}")
         if [ "$FTLCHECK" == "" ]
         then
             MESSAGE="${UI_VALIDATING_FAIL_CONTAINER} ${UI_CORE_APP}"
