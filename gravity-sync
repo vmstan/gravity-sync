@@ -70,6 +70,9 @@ SYNCING_LOG='gravity-sync.log' 		# replace in gravity-sync.conf to overwrite
 CRONJOB_LOG='gravity-sync.cron' 	# replace in gravity-sync.conf to overwrite
 HISTORY_MD5='gravity-sync.md5'		# replace in gravity-sync.conf to overwrite
 
+GS_GITHUB_REPO='https://github.com/vmstan/gravity-sync.git'
+GS_LOCAL_REPO='${GSETC_PATH}/.gs'
+
 # OS Settings
 BASH_PATH='/bin/bash'				# default OS bash path
 DAEMON_PATH='/etc/systemd/system'   # systemd timer/service folder
@@ -1567,7 +1570,7 @@ function validate_gs_folders {
     MESSAGE="${UI_VAL_GS_FOLDERS}"
     echo_stat
     
-    if [ ! -d ${LOCAL_FOLDR} ] || [ ! -d ${LOCAL_FOLDR}/settings ] || [ ! -d ${GSETC_PATH} ]
+    if [ ! -d ${GSETC_PATH} ]
     then
         MESSAGE="${UI_VAL_GS_FOLDERS_FAIL}"
         echo_fail
