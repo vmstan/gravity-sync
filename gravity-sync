@@ -28,6 +28,8 @@ LOCAL_DNSMASQ_DIRECTORY='/etc/dnsmasq.d'         # default DNSMASQ data director
 REMOTE_DNSMASQ_DIRECTORY='/etc/dnsmasq.d'         # default DNSMASQ data directory (remote)
 LOCAL_PIHOLE_BINARY='/usr/local/bin/pihole' 	# default Pi-hole binary directory (local)
 REMOTE_PIHOLE_BINARY='/usr/local/bin/pihole' 	# default Pi-hole binary directory (remote)
+LOCAL_FTL_BINARY='/usr/bin/pihole-FTL'
+REMOTE_FTL_BINARY='/usr/bin/pihole-FTL'
 LOCAL_DOCKER_BINARY='/usr/bin/docker'		# default Docker binary directory (local)
 REMOTE_DOCKER_BINARY='/usr/bin/docker'		# default Docker binary directory (remote)
 LOCAL_PODMAN_BINARY='/usr/bin/podman'        # default Podman binary directory (local)
@@ -406,23 +408,29 @@ function ph_type {
     if [ "$LOCAL_PIHOLE_TYPE" == "default" ]
     then
         PH_EXEC="${LOCAL_PIHOLE_BINARY}"
+        FTL_EXEC="${LOCAL_PIHOLE_BINARY}"
     elif [ "$LOCAL_PIHOLE_TYPE" == "docker" ]
     then
         PH_EXEC="sudo ${LOCAL_DOCKER_BINARY} exec $(sudo ${LOCAL_DOCKER_BINARY} ps -qf name=${LOCAL_DOCKER_CONTAINER}) pihole"
+        FTL_EXEC="sudo ${LOCAL_DOCKER_BINARY} exec $(sudo ${LOCAL_DOCKER_BINARY} ps -qf name=${LOCAL_DOCKER_CONTAINER}) pihole-FTL"
     elif [ "$LOCAL_PIHOLE_TYPE" == "podman" ]
     then
         PH_EXEC="sudo ${LOCAL_PODMAN_BINARY} exec ${LOCAL_DOCKER_CONTAINER} pihole"
+        FTL_EXEC="sudo ${LOCAL_PODMAN_BINARY} exec ${LOCAL_DOCKER_CONTAINER} pihole-FTL"
     fi
     
     if [ "$REMOTE_PIHOLE_TYPE" == "default" ]
     then
         RH_EXEC="${REMOTE_PIHOLE_BINARY}"
+        RFTL_EXEC="${REMOTE_PIHOLE_BINARY}"
     elif [ "$REMOTE_PIHOLE_TYPE" == "docker" ]
     then
         RH_EXEC="sudo ${REMOTE_DOCKER_BINARY} exec \$(sudo ${REMOTE_DOCKER_BINARY} ps -qf name=${REMOTE_DOCKER_CONTAINER}) pihole"
+        RFTL_EXEC="sudo ${REMOTE_DOCKER_BINARY} exec \$(sudo ${REMOTE_DOCKER_BINARY} ps -qf name=${REMOTE_DOCKER_CONTAINER}) pihole-FTL"
     elif [ "$REMOTE_PIHOLE_TYPE" == "podman" ]
     then
         RH_EXEC="sudo ${REMOTE_PODMAN_BINARY} exec ${REMOTE_DOCKER_CONTAINER} pihole"
+        RFTL_EXEC="sudo ${REMOTE_PODMAN_BINARY} exec ${REMOTE_DOCKER_CONTAINER} pihole"
     fi
 }
 
@@ -974,7 +982,7 @@ function backup_local_gravity() {
     MESSAGE="${UI_BACKUP_SECONDARY} ${UI_GRAVITY_NAME}"
     echo_stat
     
-    sqlite3 ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} ".backup '${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup'"
+    ${FTL_EXEC} sql ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} ".backup '${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup'"
     error_validate
 }
 
@@ -983,7 +991,7 @@ function backup_local_gravity_integrity() {
     echo_stat
     
     sleep $BACKUP_INTEGRITY_WAIT
-    secondaryIntegrity=$(sqlite3 ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;' | sed 's/\s.*$//')
+    secondaryIntegrity=$(${FTL_EXEC} sql ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;' | sed 's/\s.*$//')
     error_validate
     
     if [ "$secondaryIntegrity" != 'ok' ]
@@ -1040,7 +1048,7 @@ function backup_remote_gravity() {
     echo_stat
     
     CMD_TIMEOUT=$BACKUP_TIMEOUT
-    CMD_REQUESTED="sudo sqlite3 ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI} \".backup '${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup'\""
+    CMD_REQUESTED="sudo ${FTL_EXEC} sql ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI} \".backup '${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup'\""
     create_sshcmd
 }
 
@@ -1049,7 +1057,7 @@ function backup_remote_gravity_integrity() {
     echo_stat
     
     sleep $BACKUP_INTEGRITY_WAIT
-    primaryIntegrity=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sqlite3 ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
+    primaryIntegrity=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
     error_validate
     
     if [ "$primaryIntegrity" != 'ok' ]
