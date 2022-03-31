@@ -1499,7 +1499,7 @@ function show_target {
     MESSAGE="${UI_CORE_UC_REMOTE} ${UI_CORE_APP}: ${REMOTE_USER}@${REMOTE_HOST}"
     echo_info
     
-    detect_ssh
+    # detect_ssh
 }
 
 ## Logs Task
@@ -1548,20 +1548,6 @@ function logs_gs {
     echo_lines
     
     exit_nochange
-}
-
-function validate_gs_folders {
-    MESSAGE="${UI_VAL_GS_FOLDERS}"
-    echo_stat
-    
-    if [ ! -d ${GSETC_PATH} ]
-    then
-        MESSAGE="${UI_VAL_GS_FOLDERS_FAIL}"
-        echo_fail
-        exit_nochange
-    fi
-    
-    echo_good
 }
 
 ## Validate Pi-hole Folders
@@ -2664,7 +2650,7 @@ function list_gs_arguments {
 case $# in
     0)
         start_gs
-    task_smart ;;
+        task_smart ;;
     1)
         case $1 in
             smart|sync)
