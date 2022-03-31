@@ -1064,10 +1064,20 @@ function backup_local_cname() {
 function backup_remote_gravity() {
     MESSAGE="${UI_BACKUP_PRIMARY} ${UI_GRAVITY_NAME}"
     echo_stat
-    
-    CMD_TIMEOUT=$BACKUP_TIMEOUT
-    CMD_REQUESTED="sudo ${RFTL_EXEC} sql ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI} \".backup '${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup'\""
-    create_sshcmd
+
+    if [ "$REMOTE_PIHOLE_TYPE" == "default" ]; then
+        CMD_TIMEOUT=$BACKUP_TIMEOUT
+        CMD_REQUESTED="sudo ${RFTL_EXEC} sql ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI} \".backup '${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup'\""
+        create_sshcmd
+    elif [ "$REMOTE_PIHOLE_TYPE" == "docker" ]; then
+        CMD_TIMEOUT=$BACKUP_TIMEOUT
+        CMD_REQUESTED="sudo ${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI} \".backup '${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup'\""
+        create_sshcmd
+    elif [ "$REMOTE_PIHOLE_TYPE" == "podman" ]; then
+        CMD_TIMEOUT=$BACKUP_TIMEOUT
+        CMD_REQUESTED="sudo ${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI} \".backup '${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup'\""
+        create_sshcmd
+    fi
 }
 
 function backup_remote_gravity_integrity() {
@@ -1075,8 +1085,17 @@ function backup_remote_gravity_integrity() {
     echo_stat
     
     sleep $BACKUP_INTEGRITY_WAIT
-    primaryIntegrity=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
-    error_validate
+
+    if [ "$REMOTE_PIHOLE_TYPE" == "default" ]; then
+        primaryIntegrity=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
+        error_validate
+    elif [ "$REMOTE_PIHOLE_TYPE" == "docker" ]; then
+        primaryIntegrity=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
+        error_validate
+    elif [ "$REMOTE_PIHOLE_TYPE" == "podman" ]; then
+        primaryIntegrity=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "$HOME/${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
+        error_validate
+    fi
     
     if [ "$primaryIntegrity" != 'ok' ]
     then
