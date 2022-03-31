@@ -24,6 +24,7 @@ REMOTE_PIHOLE_TYPE='default'				# Pi-hole install type, `default`, `docker`, or 
 # Pi-hole Folder/File Customization
 LOCAL_PIHOLE_DIRECTORY='/etc/pihole' 			# default Pi-hole data directory (local)
 REMOTE_PIHOLE_DIRECTORY='/etc/pihole'			# default Pi-hole data directory (remote)
+DEFAULT_PIHOLE_DIRECTORY='/etc/pihole'			# default Pi-hole data directory (remote)
 LOCAL_DNSMASQ_DIRECTORY='/etc/dnsmasq.d'         # default DNSMASQ data directory (local)
 REMOTE_DNSMASQ_DIRECTORY='/etc/dnsmasq.d'         # default DNSMASQ data directory (remote)
 LOCAL_PIHOLE_BINARY='/usr/local/bin/pihole' 	# default Pi-hole binary directory (local)
@@ -982,8 +983,16 @@ function backup_local_gravity() {
     MESSAGE="${UI_BACKUP_SECONDARY} ${UI_GRAVITY_NAME}"
     echo_stat
     
-    ${FTL_EXEC} sql ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} ".backup '${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup'"
-    error_validate
+    if [ "$LOCAL_PIHOLE_TYPE" == "default" ]; then
+        ${FTL_EXEC} sql ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} ".backup '${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup'"
+        error_validate
+    elif [ "$LOCAL_PIHOLE_TYPE" == "docker" ]; then
+        ${FTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI} ".backup '${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup'"
+        error_validate
+    elif [ "$LOCAL_PIHOLE_TYPE" == "podman" ]; then
+        ${FTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI} ".backup '${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup'"
+        error_validate
+    fi
 }
 
 function backup_local_gravity_integrity() {
@@ -991,8 +1000,17 @@ function backup_local_gravity_integrity() {
     echo_stat
     
     sleep $BACKUP_INTEGRITY_WAIT
-    secondaryIntegrity=$(${FTL_EXEC} sql ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;' | sed 's/\s.*$//')
-    error_validate
+
+    if [ "$LOCAL_PIHOLE_TYPE" == "default" ]; then
+        secondaryIntegrity=$(${FTL_EXEC} sql ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;' | sed 's/\s.*$//')
+        error_validate
+    elif [ "$LOCAL_PIHOLE_TYPE" == "docker" ]; then
+        secondaryIntegrity=$(${FTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;' | sed 's/\s.*$//')
+        error_validate
+    elif [ "$LOCAL_PIHOLE_TYPE" == "podman" ]; then
+        secondaryIntegrity=$(${FTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;' | sed 's/\s.*$//')
+        error_validate
+    fi
     
     if [ "$secondaryIntegrity" != 'ok' ]
     then
