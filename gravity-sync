@@ -70,7 +70,7 @@ CRONJOB_LOG='gravity-sync.cron' 	# replace in gravity-sync.conf to overwrite
 HISTORY_MD5='gravity-sync.md5'		# replace in gravity-sync.conf to overwrite
 
 GS_GITHUB_REPO='https://github.com/vmstan/gravity-sync.git'
-GS_LOCAL_REPO='${GSETC_PATH}/.gs'
+GS_LOCAL_REPO="${GSETC_PATH}/.gs"
 
 # OS Settings
 BASH_PATH='/bin/bash'				# default OS bash path
