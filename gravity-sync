@@ -78,9 +78,9 @@ DAEMON_PATH='/etc/systemd/system'   # systemd timer/service folder
 ##############################################
 
 # Interface Settings
-UI_GRAVITY_NAME='Domain Database'
-UI_CUSTOM_NAME='Local DNS Records'
-UI_CNAME_NAME='Local DNS CNAMEs'
+UI_GRAVITY_NAME='Gravity Database'
+UI_CUSTOM_NAME='DNS Records'
+UI_CNAME_NAME='DNS CNAMEs'
 
 # Core
 UI_INVALID_SELECTION='Invalid selection'
