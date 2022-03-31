@@ -126,7 +126,7 @@ function backup_remote_cname() {
         echo_stat
         
         CMD_TIMEOUT=$BACKUP_TIMEOUT
-        CMD_REQUESTED="sudo cp ${RNSMAQ_DIR}/${CNAME_CONF} ${RIHOLE_DIR}/dnsmasq.d-${CNAME_CONF}.gsbackup"
+        CMD_REQUESTED="sudo cp ${RNSMAQ_DIR}/${CNAME_CONF} ${RIHOLE_DIR}/${CNAME_CONF}.gsbackup"
         create_sshcmd
     fi
 }

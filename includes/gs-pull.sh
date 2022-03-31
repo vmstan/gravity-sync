@@ -37,12 +37,12 @@ function pull_gs_grav {
     echo_stat
     RSYNC_REPATH="rsync"
     RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${GRAVITY_FI}.gsbackup"
-    RSYNC_TARGET="${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull"
+    RSYNC_TARGET="${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.gsbackup"
     create_rsynccmd
     
     MESSAGE="${UI_REPLACE_SECONDARY} ${UI_GRAVITY_NAME}"
     echo_stat
-    sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.pull ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
+    sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${GRAVITY_FI}.gsbackup ${PIHOLE_DIR}/${GRAVITY_FI} >/dev/null 2>&1
     error_validate
     
     validate_gravity_permissions
@@ -61,12 +61,12 @@ function pull_gs_cust {
             echo_stat
             RSYNC_REPATH="rsync"
             RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/${CUSTOM_DNS}.gsbackup"
-            RSYNC_TARGET="${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull"
+            RSYNC_TARGET="${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.gsbackup"
             create_rsynccmd
             
             MESSAGE="${UI_REPLACE_SECONDARY} ${UI_CUSTOM_NAME}"
             echo_stat
-            sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.pull ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
+            sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${CUSTOM_DNS}.gsbackup ${PIHOLE_DIR}/${CUSTOM_DNS} >/dev/null 2>&1
             error_validate
             
             validate_custom_permissions
@@ -87,12 +87,12 @@ function pull_gs_cname {
             echo_stat
             RSYNC_REPATH="rsync"
             RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${RIHOLE_DIR}/dnsmasq.d-${CNAME_CONF}.gsbackup"
-            RSYNC_TARGET="${LOCAL_FOLDR}/${BACKUP_FOLD}/${CNAME_CONF}.pull"
+            RSYNC_TARGET="${LOCAL_FOLDR}/${BACKUP_FOLD}/${CNAME_CONF}.gsbackup"
             create_rsynccmd
             
             MESSAGE="${UI_REPLACE_SECONDARY} ${UI_CNAME_NAME}"
             echo_stat
-            sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${CNAME_CONF}.pull ${DNSMAQ_DIR}/${CNAME_CONF} >/dev/null 2>&1
+            sudo cp ${LOCAL_FOLDR}/${BACKUP_FOLD}/${CNAME_CONF}.gsbackup ${DNSMAQ_DIR}/${CNAME_CONF} >/dev/null 2>&1
             error_validate
             
             validate_cname_permissions
