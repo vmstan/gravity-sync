@@ -1499,7 +1499,7 @@ function show_target {
     MESSAGE="${UI_CORE_UC_REMOTE} ${UI_CORE_APP}: ${REMOTE_USER}@${REMOTE_HOST}"
     echo_info
     
-    # detect_ssh
+    SSH_CMD='ssh'
 }
 
 ## Logs Task
