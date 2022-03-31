@@ -15,52 +15,56 @@ VERSION='4.0.0'
 # Add replacement variables to gravity-sync.conf, which will overwrite these defaults.
 # Gravity Sync 4.0 introduces a new configuration file format, there is no direct upgrade path
 
-# STANDARD VARIABLES #########################
+# CUSTOM VARIABLES ###########################
 
-# Installation Types
-LOCAL_PIHOLE_TYPE='default'				# Pi-hole install type, `default`, `docker`, or `podman` (local)
-REMOTE_PIHOLE_TYPE='default'				# Pi-hole install type, `default`, `docker`, or `podman` (remote)
+# Installation Types - Standard install is 'default' - Containers must be 'docker' or 'podman'
+LOCAL_PIHOLE_TYPE='default'				        # replace in gravity-sync.conf to overwrite
+REMOTE_PIHOLE_TYPE='default'				    # replace in gravity-sync.conf to overwrite
 
-# Pi-hole Folder/File Customization
-LOCAL_PIHOLE_DIRECTORY='/etc/pihole' 			# default Pi-hole data directory (local)
-REMOTE_PIHOLE_DIRECTORY='/etc/pihole'			# default Pi-hole data directory (remote)
-DEFAULT_PIHOLE_DIRECTORY='/etc/pihole'			# default Pi-hole data directory (remote)
-LOCAL_DNSMASQ_DIRECTORY='/etc/dnsmasq.d'         # default DNSMASQ data directory (local)
-REMOTE_DNSMASQ_DIRECTORY='/etc/dnsmasq.d'         # default DNSMASQ data directory (remote)
-LOCAL_PIHOLE_BINARY='/usr/local/bin/pihole' 	# default Pi-hole binary directory (local)
-REMOTE_PIHOLE_BINARY='/usr/local/bin/pihole' 	# default Pi-hole binary directory (remote)
-LOCAL_FTL_BINARY='/usr/bin/pihole-FTL'
-REMOTE_FTL_BINARY='/usr/bin/pihole-FTL'
-LOCAL_DOCKER_BINARY='/usr/bin/docker'		# default Docker binary directory (local)
-REMOTE_DOCKER_BINARY='/usr/bin/docker'		# default Docker binary directory (remote)
-LOCAL_PODMAN_BINARY='/usr/bin/podman'        # default Podman binary directory (local)
-REMOTE_PODMAN_BINARY='/usr/bin/podman'        # default Podman binary directory (remote)
-LOCAL_FILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (local)
-REMOTE_FILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (remote)
-LOCAL_DOCKER_CONTAINER='pihole'					# default Pi-hole container name (local)
-REMOTE_DOCKER_CONTAINER='pihole'					# default Pi-hole container name (remote)
-PIHOLE_CONTAINER_IMAGE='pihole/pihole'          # official Pi-hole container image
+# Pi-hole Folder/File Customization - Only need to be customized when using containers
+LOCAL_PIHOLE_DIRECTORY='/etc/pihole' 			# replace in gravity-sync.conf to overwrite
+REMOTE_PIHOLE_DIRECTORY='/etc/pihole'			# replace in gravity-sync.conf to overwrite
+LOCAL_DNSMASQ_DIRECTORY='/etc/dnsmasq.d'        # replace in gravity-sync.conf to overwrite
+REMOTE_DNSMASQ_DIRECTORY='/etc/dnsmasq.d'       # replace in gravity-sync.conf to overwrite
 
-GRAVITY_FI='gravity.db' 			        # default Pi-hole database file
-CUSTOM_DNS='custom.list'			        # default Pi-hole local DNS lookups
-CNAME_CONF='05-pihole-custom-cname.conf'    # default DNSMASQ CNAME alias file
-GSLAN_CONF='08-gs-lan.conf'                 # default DNSMASQ GS managed file
+# Pi-hole Docker/Podman container name - Docker will pattern match anything set below
+LOCAL_DOCKER_CONTAINER='pihole'					# replace in gravity-sync.conf to overwrite
+REMOTE_DOCKER_CONTAINER='pihole'				# replace in gravity-sync.conf to overwrite
 
 # Interaction Customization
-VERIFY_PASS='0'						# replace in gravity-sync.conf to overwrite
-SKIP_CUSTOM='0'						# replace in gravity-sync.conf to overwrite
-INCLUDE_CNAME='1'					# replace in gravity-sync.conf to overwrite
-DATE_OUTPUT='0'						# replace in gravity-sync.conf to overwrite
-PING_AVOID='0'						# replace in gravity-sync.conf to overwrite
-ROOT_CHECK_AVOID='0'				# replace in gravity-sync.conf to overwrite
+VERIFY_PASS='0'						            # replace in gravity-sync.conf to overwrite
+SKIP_CUSTOM='0'						            # replace in gravity-sync.conf to overwrite
+INCLUDE_CNAME='1'					            # replace in gravity-sync.conf to overwrite
+DATE_OUTPUT='0'						            # replace in gravity-sync.conf to overwrite
+PING_AVOID='0'						            # replace in gravity-sync.conf to overwrite
+ROOT_CHECK_AVOID='0'				            # replace in gravity-sync.conf to overwrite
+
+# STANDARD VARIABLES #########################
+
+DEFAULT_PIHOLE_DIRECTORY='/etc/pihole'			# Default Pi-hole data directory
+LOCAL_PIHOLE_BINARY='/usr/local/bin/pihole' 	# Local Pi-hole binary directory (default)
+REMOTE_PIHOLE_BINARY='/usr/local/bin/pihole' 	# Remote Pi-hole binary directory (default)
+LOCAL_FTL_BINARY='/usr/bin/pihole-FTL'          # Local FTL binary directory (default)
+REMOTE_FTL_BINARY='/usr/bin/pihole-FTL'         # Remote FTL binary directory (default)
+LOCAL_DOCKER_BINARY='/usr/bin/docker'		    # Local Docker binary directory (default)
+REMOTE_DOCKER_BINARY='/usr/bin/docker'		    # Remote Docker binary directory (default)
+LOCAL_PODMAN_BINARY='/usr/bin/podman'           # Local Podman binary directory (default)
+REMOTE_PODMAN_BINARY='/usr/bin/podman'          # Remote Podman binary directory (default)
+LOCAL_FILE_OWNER='pihole:pihole'			    # Local Pi-hole file owner and group (default)
+REMOTE_FILE_OWNER='pihole:pihole'			    # Remote Pi-hole file owner and group (default)
+PIHOLE_CONTAINER_IMAGE='pihole/pihole'          # Official Pi-hole container image name
+
+GRAVITY_FI='gravity.db' 			            # Pi-hole database file name
+CUSTOM_DNS='custom.list'			            # Pi-hole DNS lookup filename
+CNAME_CONF='05-pihole-custom-cname.conf'        # DNSMASQ CNAME alias file
 
 # Backup Customization
-BACKUP_TIMEOUT='240'                # replace in gravity-sync.conf to overwrite
-BACKUP_INTEGRITY_WAIT='5'           # replace in gravity-sync.conf to overwrite
+BACKUP_TIMEOUT='240'                            # replace in gravity-sync.conf to overwrite
+BACKUP_INTEGRITY_WAIT='5'                       # replace in gravity-sync.conf to overwrite
 
 # SSH Customization
-SSH_PORT='22' 						# default SSH port
-SSH_PKIF='.ssh/id_rsa'				# default local SSH key
+SSH_PORT='22' 						            # replace in gravity-sync.conf to overwrite
+SSH_PKIF='.ssh/id_rsa'				            # replace in gravity-sync.conf to overwrite
 
 # GS Folder/File Locations
 GS_FILEPATH='/usr/local/bin/gravity-sync'			
@@ -1930,7 +1934,7 @@ function task_configure {
 function config_generate {  
     MESSAGE="${UI_CONFIG_CREATING} ${CONFIG_FILE}"
     echo_stat
-    cp ${GS_LOCAL_REPO}/templates/${CONFIG_FILE}.example ${GSETC_PATH}
+    cp ${GS_LOCAL_REPO}/templates/${CONFIG_FILE}.example ${GSETC_PATH}/${CONFIG_FILE}
     error_validate
     
     echo_lines
@@ -1967,7 +1971,7 @@ function config_generate {
 
     MESSAGE="${UI_CONFIG_SAVING} ${INPUT_REMOTE_HOST} host to ${CONFIG_FILE}"
     echo_stat
-    sed -i "/REMOTE_HOST='192.168.1.10'/c\REMOTE_HOST='${INPUT_REMOTE_HOST}'" ${GSETC_PATH}
+    sed -i "/REMOTE_HOST='192.168.1.10'/c\REMOTE_HOST='${INPUT_REMOTE_HOST}'" ${GSETC_PATH}/${CONFIG_FILE}
     error_validate
     
     MESSAGE="${UI_CORE_APP} ${UI_CONFIG_REMOTE} ${UI_CONFIG_USERREQ} for ${INPUT_REMOTE_HOST}"
@@ -1979,7 +1983,7 @@ function config_generate {
     
     MESSAGE="${UI_CONFIG_SAVING} ${INPUT_REMOTE_USER}@${INPUT_REMOTE_HOST} user to ${CONFIG_FILE}"
     echo_stat
-    sed -i "/REMOTE_USER='pi'/c\REMOTE_USER='${INPUT_REMOTE_USER}'" ${GSETC_PATH}
+    sed -i "/REMOTE_USER='pi'/c\REMOTE_USER='${INPUT_REMOTE_USER}'" ${GSETC_PATH}/${CONFIG_FILE}
     error_validate
 
     generate_sshkey
@@ -2066,7 +2070,7 @@ function advanced_config_generate {
 
         MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_CONTAINER_TYPE} to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# LOCAL_PIHOLE_TYPE=''/c\LOCAL_PIHOLE_TYPE='${INPUT_LOCAL_PIHOLE_TYPE}'" ${GSETC_PATH}
+        sed -i "/# LOCAL_PIHOLE_TYPE=''/c\LOCAL_PIHOLE_TYPE='${INPUT_LOCAL_PIHOLE_TYPE}'" ${GSETC_PATH}/${CONFIG_FILE}
         error_validate
         
         MESSAGE="${UI_CONFIG_CONT_DETECT} ${UI_CONFIG_IMAGES}"
@@ -2092,7 +2096,7 @@ function advanced_config_generate {
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_CONTAINER_NAME} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# LOCAL_DOCKER_CONTAINER=''/c\LOCAL_DOCKER_CONTAINER='${INPUT_LOCAL_DOCKER_CONTAINER}'" ${GSETC_PATH}
+            sed -i "/# LOCAL_DOCKER_CONTAINER=''/c\LOCAL_DOCKER_CONTAINER='${INPUT_LOCAL_DOCKER_CONTAINER}'" ${GSETC_PATH}/${CONFIG_FILE}
             error_validate
         fi
         
@@ -2106,7 +2110,7 @@ function advanced_config_generate {
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# LOCAL_PIHOLE_DIRECTORY=''/c\LOCAL_PIHOLE_DIRECTORY='${INPUT_LOCAL_PIHOLE_DIRECTORY}'" ${GSETC_PATH}
+            sed -i "/# LOCAL_PIHOLE_DIRECTORY=''/c\LOCAL_PIHOLE_DIRECTORY='${INPUT_LOCAL_PIHOLE_DIRECTORY}'" ${GSETC_PATH}/${CONFIG_FILE}
             error_validate
             SKIP_LOCAL_PIHOLE_DIRECTORY="1"
         else
@@ -2125,7 +2129,7 @@ function advanced_config_generate {
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# LOCAL_DNSMASQ_DIRECTORY=''/c\LOCAL_DNSMASQ_DIRECTORY='${INPUT_LOCAL_DNSMASQ_DIRECTORY}'" ${GSETC_PATH}
+            sed -i "/# LOCAL_DNSMASQ_DIRECTORY=''/c\LOCAL_DNSMASQ_DIRECTORY='${INPUT_LOCAL_DNSMASQ_DIRECTORY}'" ${GSETC_PATH}/${CONFIG_FILE}
             error_validate
             SKIP_DNSMASQ_DIR="1"
         else
@@ -2136,7 +2140,7 @@ function advanced_config_generate {
         
         MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_VOLUME_OWNER} to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# LOCAL_FILE_OWNER=''/c\LOCAL_FILE_OWNER='999:999'" ${GSETC_PATH}
+        sed -i "/# LOCAL_FILE_OWNER=''/c\LOCAL_FILE_OWNER='999:999'" ${GSETC_PATH}/${CONFIG_FILE}
         error_validate
     fi
     
@@ -2157,7 +2161,7 @@ function advanced_config_generate {
         fi
         MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CONFIG_CONTAINER_TYPE} to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# REMOTE_PIHOLE_TYPE=''/c\REMOTE_PIHOLE_TYPE='${INPUT_REMOTE_PIHOLE_TYPE}'" ${GSETC_PATH}
+        sed -i "/# REMOTE_PIHOLE_TYPE=''/c\REMOTE_PIHOLE_TYPE='${INPUT_REMOTE_PIHOLE_TYPE}'" ${GSETC_PATH}/${CONFIG_FILE}
         error_validate
         
         MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CONFIG_CONTAINER_NAME}"
@@ -2171,7 +2175,7 @@ function advanced_config_generate {
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CONFIG_CONTAINER_NAME} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# REMOTE_DOCKER_CONTAINER=''/c\REMOTE_DOCKER_CONTAINER='${INPUT_REMOTE_DOCKER_CONTAINER}'" ${GSETC_PATH}
+            sed -i "/# REMOTE_DOCKER_CONTAINER=''/c\REMOTE_DOCKER_CONTAINER='${INPUT_REMOTE_DOCKER_CONTAINER}'" ${GSETC_PATH}/${CONFIG_FILE}
             error_validate
         fi
         
@@ -2185,7 +2189,7 @@ function advanced_config_generate {
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# REMOTE_PIHOLE_DIRECTORY=''/c\REMOTE_PIHOLE_DIRECTORY='${INPUT_REMOTE_PIHOLE_DIRECTORY}'" ${GSETC_PATH}
+            sed -i "/# REMOTE_PIHOLE_DIRECTORY=''/c\REMOTE_PIHOLE_DIRECTORY='${INPUT_REMOTE_PIHOLE_DIRECTORY}'" ${GSETC_PATH}/${CONFIG_FILE}
             error_validate
             SKIP_REMOTE_PIHOLE_DIRECTORY="1"
         else
@@ -2204,7 +2208,7 @@ function advanced_config_generate {
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# REMOTE_DNSMASQ_DIRECTORY=''/c\REMOTE_DNSMASQ_DIRECTORY='${INPUT_REMOTE_DNSMASQ_DIRECTORY}'" ${GSETC_PATH}
+            sed -i "/# REMOTE_DNSMASQ_DIRECTORY=''/c\REMOTE_DNSMASQ_DIRECTORY='${INPUT_REMOTE_DNSMASQ_DIRECTORY}'" ${GSETC_PATH}/${CONFIG_FILE}
             error_validate
             SKIP_RNSMASQ_DIR="1"
         else
@@ -2215,111 +2219,8 @@ function advanced_config_generate {
         
         MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CONFIG_VOLUME_OWNER} to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# REMOTE_FILE_OWNER=''/c\REMOTE_FILE_OWNER='999:999'" ${GSETC_PATH}
+        sed -i "/# REMOTE_FILE_OWNER=''/c\REMOTE_FILE_OWNER='999:999'" ${GSETC_PATH}/${CONFIG_FILE}
         error_validate
-    fi
-    
-        
-    if [ "$SKIP_LOCAL_PIHOLE_DIRECTORY" != "1" ]
-    then
-        MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP} ${UI_CONFIG_SETTING_DIR_PATH}"
-        echo_inf1
-        MESSAGE="${UI_CONFIG_DEFAULT_LEAVE} ${UI_CONFIG_DEFAULT_PIHOLE_ETC}"
-        echo_need
-        read INPUT_LOCAL_PIHOLE_DIRECTORY
-        INPUT_LOCAL_PIHOLE_DIRECTORY="${INPUT_LOCAL_PIHOLE_DIRECTORY:-/etc/pihole}"
-        
-        if [ "${INPUT_LOCAL_PIHOLE_DIRECTORY}" != "/etc/pihole" ]
-        then
-            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP} ${UI_CONFIG_SETTING_DIR_PATH} to ${CONFIG_FILE}"
-            echo_stat
-            sed -i "/# LOCAL_PIHOLE_DIRECTORY=''/c\LOCAL_PIHOLE_DIRECTORY='${INPUT_LOCAL_PIHOLE_DIRECTORY}'" ${GSETC_PATH}
-            error_validate
-        fi
-    fi
-    
-    if [ "$SKIP_REMOTE_PIHOLE_DIRECTORY" != "1" ]
-    then
-        MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP} ${UI_CONFIG_SETTING_DIR_PATH}"
-        echo_inf1
-        MESSAGE="${UI_CONFIG_DEFAULT_LEAVE} ${UI_CONFIG_DEFAULT_PIHOLE_ETC}"
-        echo_need
-        read INPUT_REMOTE_PIHOLE_DIRECTORY
-        INPUT_REMOTE_PIHOLE_DIRECTORY="${INPUT_REMOTE_PIHOLE_DIRECTORY:-/etc/pihole}"
-        
-        if [ "${INPUT_REMOTE_PIHOLE_DIRECTORY}" != "/etc/pihole" ]
-        then
-            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CORE_APP} ${UI_CONFIG_SETTING_DIR_PATH} to ${CONFIG_FILE}"
-            echo_stat
-            sed -i "/# REMOTE_PIHOLE_DIRECTORY=''/c\REMOTE_PIHOLE_DIRECTORY='${INPUT_REMOTE_PIHOLE_DIRECTORY}'" ${GSETC_PATH}
-            error_validate
-        fi
-    fi
-    
-    if [ "$SKIP_DNSMASQ_DIR" != "1" ]
-    then
-        MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP_DNS} ${UI_CONFIG_SETTING_DIR_PATH}"
-        echo_inf1
-        MESSAGE="${UI_CONFIG_DEFAULT_LEAVE} '/etc/dnsmasq.d'"
-        echo_need
-        read INPUT_DNSMASQ_DIR
-        INPUT_DNSMASQ_DIR="${INPUT_DNSMASQ_DIR:-/etc/dnsmasq.d}"
-        
-        if [ "${INPUT_DNSMASQ_DIR}" != "/etc/dnsmasq.d" ]
-        then
-            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP_DNS} ${UI_CONFIG_SETTING_DIR_PATH} to ${CONFIG_FILE}"
-            echo_stat
-            sed -i "/# DNSMASQ_DIR=''/c\DNSMASQ_DIR='${INPUT_DNSMASQ_DIR}'" ${GSETC_PATH}
-            error_validate
-        fi
-    fi
-    
-    if [ "$SKIP_RNSMASQ_DIR" != "1" ]
-    then
-        MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP_DNS} ${UI_CONFIG_SETTING_DIR_PATH}"
-        echo_inf1
-        MESSAGE="${UI_CONFIG_DEFAULT_LEAVE} ${UI_CONFIG_DEFAULT_DNSMASQ_ETC}"
-        echo_need
-        read INPUT_RNSMASQ_DIR
-        INPUT_RNSMASQ_DIR="${INPUT_RNSMASQ_DIR:-/etc/dnsmasq.d}"
-        
-        if [ "${INPUT_RNSMASQ_DIR}" != "/etc/dnsmasq.d" ]
-        then
-            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CORE_APP_DNS} ${UI_CONFIG_SETTING_DIR_PATH} to ${CONFIG_FILE}"
-            echo_stat
-            sed -i "/# RNSMASQ_DIR=''/c\RNSMASQ_DIR='${INPUT_RNSMASQ_DIR}'" ${GSETC_PATH}
-            error_validate
-        fi
-    fi
-    
-    MESSAGE="${UI_ENABLE_REPLICATION_QUEST} ${UI_CUSTOM_NAME}"
-    echo_inf1
-    MESSAGE="${UI_CONFIG_YESNOY}"
-    echo_need
-    read INPUT_SKIP_CUSTOM
-    INPUT_SKIP_CUSTOM="${INPUT_SKIP_CUSTOM:-Y}"
-    
-    if [ "${INPUT_SKIP_CUSTOM}" != "Y" ]
-    then
-        MESSAGE="${UI_DNS_NAME} ${UI_CONFIG_PREF_SAVED} ${CONFIG_FILE}"
-        echo_stat
-        sed -i "/# SKIP_CUSTOM=''/c\SKIP_CUSTOM='1'" ${GSETC_PATH}
-        error_validate
-    fi
-    
-    if [ "${INPUT_SKIP_CUSTOM}" == "Y" ]
-    then
-        MESSAGE="${UI_ENABLE_REPLICATION_QUEST} ${UI_CNAME_NAME}"
-        echo_inf1
-        MESSAGE="${UI_CONFIG_YESNON}"
-        echo_need
-        read INPUT_INCLUDE_CNAME
-        INPUT_INCLUDE_CNAME="${INPUT_INCLUDE_CNAME:-N}"
-        
-        if [ "${INPUT_INCLUDE_CNAME}" == "Y" ]
-        then
-            config_enablecname
-        fi
     fi
 
     end_config

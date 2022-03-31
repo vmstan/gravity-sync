@@ -6,58 +6,21 @@ REMOTE_HOST='192.168.1.10'
 # User account on primary with SUDO rights
 REMOTE_USER='pi'
 
-# STANDARD VARIABLES #########################
+# CUSTOM VARIABLES ###########################
 
-### Installation Types
-# LOCAL_PIHOLE_TYPE=''				# Pi-hole install type, `default`, `docker`, or `podman` (local)
-# REMOTE_PIHOLE_TYPE=''				# Pi-hole install type, `default`, `docker`, or `podman` (remote)
+# Installation Types - Standard install is 'default' - Containers must be 'docker' or 'podman'
+# LOCAL_PIHOLE_TYPE=''				        # Local Pi-hole install type
+# REMOTE_PIHOLE_TYPE=''				        # Remote Pi-hole install type
 
-### Pi-hole Folder/File Customization
-# LOCAL_PIHOLE_DIRECTORY='' 			# default Pi-hole data directory (local)
-# REMOTE_PIHOLE_DIRECTORY=''				# default Pi-hole data directory (remote)
-# LOCAL_DNSMASQ_DIRECTORY=''             # default DNSMASQ data directory (local)
-# REMOTE_DNSMASQ_DIRECTORY=''             # default DNSMASQ data directory (remote)
-# LOCAL_PIHOLE_BINARY='' 			# default Pi-hole binary directory (local)
-# REMOTE_PIHOLE_BINARY='' 			# default Pi-hole binary directory (remote)
-# LOCAL_DOCKER_BINARY=''				# default Docker binary directory (local)
-# REMOTE_DOCKER_BINARY=''				# default Docker binary directory (remote)
-# LOCAL_PODMAN_BINARY=''             # default Podman binary directory (local)
-# REMOTE_PODMAN_BINARY=''             # default Podman binary directory (remote)
-# LOCAL_FILE_OWNER=''				# default Pi-hole file owner and group (local)
-# REMOTE_FILE_OWNER=''				# default Pi-hole file owner and group (remote)
-# LOCAL_DOCKER_CONTAINER=''				# default Pi-hole container name (local)
-# REMOTE_DOCKER_CONTAINER=''				# default Pi-hole container name (remote)
-# PIHOLE_CONTAINER_IMAGE=''             # official Pi-hole container image
+# Pi-hole Folder/File Customization - Only need to be customized when using containers
+# LOCAL_PIHOLE_DIRECTORY='' 			    # Local Pi-hole data directory
+# REMOTE_PIHOLE_DIRECTORY=''			    # Remote Pi-hole data directory
+# LOCAL_DNSMASQ_DIRECTORY=''                # Local DNSMASQ/FTL data directory
+# REMOTE_DNSMASQ_DIRECTORY=''               # Remote DNSMASQ/FTL data directory
 
-# GRAVITY_FI='' 			# default Pi-hole database file
-# CUSTOM_DNS=''				# default Pi-hole local DNS lookups
-# CNAME_CONF=''             # default DNSMASQ CNAME alias file
-# GSLAN_CONF=''             # default DNSMASQ GS managed file
+# Pi-hole Docker/Podman container name - Docker will pattern match anything set below
+# LOCAL_DOCKER_CONTAINER=''				    # Local Pi-hole container name
+# REMOTE_DOCKER_CONTAINER=''				# Remote Pi-hole container name
 
-### Interaction Customization
-# VERIFY_PASS=''			# replace in gravity-sync.conf to overwrite
-# SKIP_CUSTOM=''			# replace in gravity-sync.conf to overwrite
-# INCLUDE_CNAME=''			# replace in gravity-sync.conf to overwrite
-# DATE_OUTPUT=''			# replace in gravity-sync.conf to overwrite
-# PING_AVOID=''				# replace in gravity-sync.conf to overwrite
-# ROOT_CHECK_AVOID=''		# replace in gravity-sync.conf to overwrite
-
-### Backup Customization
-# BACKUP_TIMEOUT=''			# replace in gravity-sync.conf to overwrite
-# BACKUP_INTEGRITY_WAIT=''  # time to wait after backup for integrity check
-
-### SSH Customization
-# SSH_PORT='' 				# default SSH port
-# SSH_PKIF=''				# default local SSH key
-
-### GS Folder/File Locations
-# CONFIG_FILE='' 			# must exist with primary host/user configured
-# GS_FILENAME=''			# must exist because it's this script
-# GSETC_PATH=''				# replace in gravity-sync.conf to overwrite
-# SYNCING_LOG='' 			# replace in gravity-sync.conf to overwrite
-# CRONJOB_LOG='' 			# replace in gravity-sync.conf to overwrite
-# HISTORY_MD5=''			# replace in gravity-sync.conf to overwrite
-
-### OS Settings
-# BASH_PATH=''				# default OS bash path
-# DAEMON_PATH=''            # systemd timer/service folder
+# Interaction Customization
+# See https://github.com/vmstan/gravity-sync/wiki/Hidden-Figures
