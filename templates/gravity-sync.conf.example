@@ -53,7 +53,6 @@ REMOTE_USER='pi'
 ### GS Folder/File Locations
 # CONFIG_FILE='' 			# must exist with primary host/user configured
 # GS_FILENAME=''			# must exist because it's this script
-# BACKUP_FOLD='' 			# must exist as subdirectory in LOCAL_FOLDR
 # GSETC_PATH=''				# replace in gravity-sync.conf to overwrite
 # SYNCING_LOG='' 			# replace in gravity-sync.conf to overwrite
 # CRONJOB_LOG='' 			# replace in gravity-sync.conf to overwrite

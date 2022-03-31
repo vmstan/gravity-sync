@@ -60,11 +60,10 @@ SSH_PORT='22' 						# default SSH port
 SSH_PKIF='.ssh/id_rsa'				# default local SSH key
 
 # GS Folder/File Locations
-GS_FILEPATH=$(realpath $0)			# auto determined - do not change!
-LOCAL_FOLDR=$(dirname $GS_FILEPATH) # auto determined - do not change!
+GS_FILEPATH='/usr/local/bin/gravity-sync'			# auto determined - do not change!
+# LOCAL_FOLDR=$(dirname $GS_FILEPATH) # auto determined - do not change!
 CONFIG_FILE='gravity-sync.conf' 	# must exist with primary host/user configured
 GS_FILENAME='gravity-sync'		    # must exist because it's this script
-BACKUP_FOLD='backup' 				# must exist as subdirectory in LOCAL_FOLDR
 GSETC_PATH="/etc/gravity-sync"		# replace in gravity-sync.conf to overwrite
 SYNCING_LOG='gravity-sync.log' 		# replace in gravity-sync.conf to overwrite
 CRONJOB_LOG='gravity-sync.cron' 	# replace in gravity-sync.conf to overwrite
@@ -325,7 +324,7 @@ function echo_blank {
 function start_gs {
     MESSAGE="${UI_CORE_INIT}"
     echo_grav
-    cd ${LOCAL_FOLDR}
+    # cd ${LOCAL_FOLDR}
     
     import_gs
     ph_type
@@ -351,7 +350,7 @@ function start_gs {
 function start_gs_noconfig {
     MESSAGE="${UI_CORE_INIT}"
     echo_grav
-    cd ${LOCAL_FOLDR}
+    # cd ${LOCAL_FOLDR}
     
     MESSAGE="${UI_CORE_EVALUATING}"
     echo_stat
@@ -1459,13 +1458,13 @@ function detect_remotersync {
     
     RSYNC_REPATH="rsync"
     RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:~/gs.test"
-    RSYNC_TARGET="${LOCAL_FOLDR}/gs.test"
+    RSYNC_TARGET="${GSETC_PATH}/gs.test"
     create_rsynccmd
     
     MESSAGE="Cleaning up local test file"
     echo_stat
     
-    rm ${LOCAL_FOLDR}/gs.test
+    rm ${GSETC_PATH}/gs.test
     error_validate
     
     MESSAGE="Cleaning up remote test file"
@@ -1870,13 +1869,13 @@ function task_sudo {
     echo_stat
     
     NEW_SUDO_USER=$(whoami)
-    echo -e "${NEW_SUDO_USER} ALL=(ALL) NOPASSWD: ALL" > ${LOCAL_FOLDR}/templates/gs-nopasswd.sudo
+    echo -e "${NEW_SUDO_USER} ALL=(ALL) NOPASSWD: ALL" > ${GS_LOCAL_REPO}/templates/gs-nopasswd.sudo
     error_validate
     
     MESSAGE="Installing sudoers.d file on $HOSTNAME"
     echo_stat
     
-    sudo install -m 0440 ${LOCAL_FOLDR}/templates/gs-nopasswd.sudo /etc/sudoers.d/gs-nopasswd
+    sudo install -m 0440 ${GS_LOCAL_REPO}/templates/gs-nopasswd.sudo /etc/sudoers.d/gs-nopasswd
     error_validate
     
     exit_withchange
@@ -1939,7 +1938,6 @@ function task_configure {
         config_generate
     fi
     
-    create_alias
     exit_withchange
 }
 
@@ -1947,7 +1945,7 @@ function task_configure {
 function config_generate {  
     MESSAGE="${UI_CONFIG_CREATING} ${CONFIG_FILE}"
     echo_stat
-    cp ${LOCAL_FOLDR}/templates/${CONFIG_FILE}.example ${GSETC_PATH}
+    cp ${GS_LOCAL_REPO}/templates/${CONFIG_FILE}.example ${GSETC_PATH}
     error_validate
     
     echo_lines
@@ -2401,23 +2399,11 @@ function podman_detect {
     fi
 }
 
-## Create Bash Alias
-function create_alias {
-    MESSAGE="${UI_CONFIG_BASH}"
-    echo_stat
-    
-    echo -e "alias gravity-sync='${GS_FILEPATH}'" | sudo tee -a /etc/bash.bashrc > /dev/null
-        error_validate
-
-    MESSAGE="${UI_CONFIG_ALIAS}"
-    echo_info
-}
-
 ## Master Branch
 function update_gs {
-    if [ -f "${LOCAL_FOLDR}/dev" ]
+    if [ -f "${GS_LOCAL_REPO}/dev" ]
     then
-        source ${LOCAL_FOLDR}/dev
+        source ${GS_LOCAL_REPO}/dev
     else
         BRANCH='origin/master'
     fi
@@ -2452,10 +2438,10 @@ function update_gs {
 
 ## Show Version
 function show_version {
-    if [ -f ${LOCAL_FOLDR}/dev ]
+    if [ -f ${GS_LOCAL_REPO}/dev ]
     then
         DEVVERSION="-dev"
-    elif [ -f ${LOCAL_FOLDR}/beta ]
+    elif [ -f ${GS_LOCAL_REPO}/beta ]
     then
         DEVVERSION="-beta"
     else
@@ -2481,10 +2467,10 @@ function show_version {
 }
 
 function show_info() {
-    if [ -f ${LOCAL_FOLDR}/dev ]
+    if [ -f ${GS_LOCAL_REPO}/dev ]
     then
         DEVVERSION="-dev"
-    elif [ -f ${LOCAL_FOLDR}/beta ]
+    elif [ -f ${GS_LOCAL_REPO}/beta ]
     then
         DEVVERSION="-beta"
     else
@@ -2532,7 +2518,8 @@ function show_info() {
     echo -e "Local Pi-hole Type: ${LOCAL_PIHOLE_TYPE}"
     echo -e "Local Pi-hole Config Directory: ${LOCAL_PIHOLE_DIRECTORY}"
     echo -e "Local DNSMASQ Config Directory: ${LOCAL_DNSMASQ_DIRECTORY}"
-    echo -e "Local Gravity Sync Directory: ${LOCAL_FOLDR}" 
+    echo -e "Local Gravity Sync Binary: ${GS_FILEPATH}"
+    echo -e "Local Gravity Sync Config Directory: ${GSETC_PATH}"
     
     if [ "${LOCAL_PIHOLE_TYPE}" == "default" ]
     then
@@ -2620,27 +2607,27 @@ function task_devmode {
     MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
-    if [ -f ${LOCAL_FOLDR}/dev ]
+    if [ -f ${GS_LOCAL_REPO}/dev ]
     then
         MESSAGE="Disabling ${TASKTYPE}"
         echo_stat
-        rm -f ${LOCAL_FOLDR}/dev
+        rm -f ${GS_LOCAL_REPO}/dev
         error_validate
-    elif [ -f ${LOCAL_FOLDR}/beta ]
+    elif [ -f ${GS_LOCAL_REPO}/beta ]
     then
         MESSAGE="Disabling BETA"
         echo_stat
-        rm -f ${LOCAL_FOLDR}/beta
+        rm -f ${GS_LOCAL_REPO}/beta
         error_validate
         
         MESSAGE="Enabling ${TASKTYPE}"
         echo_stat
-        touch ${LOCAL_FOLDR}/dev
+        touch ${GS_LOCAL_REPO}/dev
         error_validate
     else
         MESSAGE="Enabling ${TASKTYPE}"
         echo_stat
-        touch ${LOCAL_FOLDR}/dev
+        touch ${GS_LOCAL_REPO}/dev
         error_validate
         
         MESSAGE="Checking available branches"
@@ -2654,7 +2641,7 @@ function task_devmode {
         echo_need
         read INPUT_BRANCH
         
-        echo -e "BRANCH='${INPUT_BRANCH}'" >> ${LOCAL_FOLDR}/dev
+        echo -e "BRANCH='${INPUT_BRANCH}'" >> ${GS_LOCAL_REPO}/dev
     fi
     
     update_gs
@@ -2705,11 +2692,11 @@ function task_automate {
     fi
 
     MESSAGE="Customizing service file username"
-    sed -i "/User=unknown/c\User=$USER" ${LOCAL_FOLDR}/templates/gravity-sync.service
+    sed -i "/User=unknown/c\User=$USER" ${GS_LOCAL_REPO}/templates/gravity-sync.service
     error_validate
 
     MESSAGE="Customizing service file executable"
-    sed -i "/ExecStart=/c\ExecStart=${LOCAL_FOLDR}/${GS_FILENAME}" ${LOCAL_FOLDR}/templates/gravity-sync.service
+    sed -i "/ExecStart=/c\ExecStart=${GS_FILENAME}" ${GS_LOCAL_REPO}/templates/gravity-sync.service
     error_validate
 
     if systemctl is-active --quiet gravity-sync
@@ -2720,11 +2707,11 @@ function task_automate {
     fi
 
     MESSAGE="Moving systemd timer into place"
-    sudo cp ${LOCAL_FOLDR}/templates/gravity-sync.timer ${DAEMON_PATH}
+    sudo cp ${GS_LOCAL_REPO}/templates/gravity-sync.timer ${DAEMON_PATH}
     error_validate
 
     MESSAGE="Moving systemd service into place"
-    sudo cp ${LOCAL_FOLDR}/templates/gravity-sync.service ${DAEMON_PATH}
+    sudo cp ${GS_LOCAL_REPO}/templates/gravity-sync.service ${DAEMON_PATH}
     error_validate
 
     MESSAGE="Reloading systemd daemon"
@@ -2740,96 +2727,6 @@ function task_automate {
     error_validate
     
     exit_withchange
-}
-
-function task_autocron {
-    TASKTYPE='AUTOCRON'
-    MESSAGE="${MESSAGE}: ${TASKTYPE}"
-    echo_good
-
-    MESSAGE="Crontab automation is deprecated and will be removed in a future release"
-    echo_warn
-    
-    CRON_EXIST='0'
-    CRON_CHECK=$(crontab -l | grep -q "${GS_FILENAME}"  && echo '1' || echo '0')
-    if [ ${CRON_CHECK} == 1 ]
-    then
-        MESSAGE="${UI_AUTO_CRON_EXISTS}"
-        echo_warn
-        CRON_EXIST='1'
-    fi
-    
-    MESSAGE="${UI_AUTO_CRON_DISPLAY_FREQ}"
-    echo_info
-    
-    if [[ $1 =~ ^[0-9][0-9]?$ ]]
-    then
-        INPUT_AUTO_FREQ=$1
-    else
-        MESSAGE="${UI_AUTO_CRON_SELECT_FREQ}"
-        echo_need
-        read INPUT_AUTO_FREQ
-        INPUT_AUTO_FREQ="${INPUT_AUTO_FREQ:-15}"
-    fi
-    
-    if [ $INPUT_AUTO_FREQ == 5 ] || [ $INPUT_AUTO_FREQ == 10 ] || [ $INPUT_AUTO_FREQ == 15 ] || [ $INPUT_AUTO_FREQ == 30 ]
-    then
-        if [ $CRON_EXIST == 1 ]
-        then
-            clear_cron
-        fi
-
-        path_fix
-        
-        MESSAGE="${UI_AUTO_CRON_SAVING}"
-        echo_stat
-        (crontab -l 2>/dev/null; echo "*/${INPUT_AUTO_FREQ} * * * * ${BASH_PATH} ${LOCAL_FOLDR}/${GS_FILENAME} smart > ${GSETC_PATH}/${CRONJOB_LOG}") | crontab -
-        error_validate
-    elif [ $INPUT_AUTO_FREQ == 0 ]
-    then
-        if [ $CRON_EXIST == 1 ]
-        then
-            clear_cron
-        else
-            MESSAGE="${UI_AUTO_CRON_DISABLED}"
-            echo_warn
-        fi
-    else
-        MESSAGE="${UI_INVALID_SELECTION}"
-        echo_fail
-        exit_nochange
-    fi
-    
-    exit_withchange
-}
-
-## Clear Existing Automation Settings
-function clear_cron {
-    MESSAGE="${UI_AUTO_CRON_DISABLED}"
-    echo_stat
-    
-    crontab -l > cronjob-old.tmp
-    sed "/${GS_FILENAME}/d" cronjob-old.tmp > cronjob-new.tmp
-    crontab cronjob-new.tmp 2>/dev/null
-    error_validate
-    rm cronjob-old.tmp
-    rm cronjob-new.tmp
-}
-
-## Cron Task
-function task_cron {
-    TASKTYPE='CRON'
-    MESSAGE="${MESSAGE}: ${TASKTYPE}"
-    echo_good
-    
-    show_crontab
-}
-
-function path_fix {
-    MESSAGE="Adding user path to Crontab"
-    echo_stat
-    (crontab -l 2>/dev/null; echo "PATH=$PATH") | crontab -
-    error_validate
 }
 
 ## Purge Task
