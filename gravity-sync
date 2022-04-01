@@ -1525,18 +1525,18 @@ function logs_export {
         MESSAGE="${UI_LOGGING_HASHES}"
         echo_stat
         sudo rm -f ${GSETC_PATH}/${HISTORY_MD5}
-        echo -e ${primaryDBMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5}
-        echo -e ${secondDBMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5}
-        echo -e ${primaryCLMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5}
-        echo -e ${secondCLMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5}
-        echo -e ${primaryCNMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5}
-        echo -e ${secondCNMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5}
+        echo -e ${primaryDBMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5} 1> /dev/null
+        echo -e ${secondDBMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5} 1> /dev/null
+        echo -e ${primaryCLMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5} 1> /dev/null
+        echo -e ${secondCLMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5} 1> /dev/null
+        echo -e ${primaryCNMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5} 1> /dev/null
+        echo -e ${secondCNMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5} 1> /dev/null
         error_validate
     fi
     
     MESSAGE="${UI_LOGGING_SUCCESS} ${TASKTYPE}"
     echo_stat
-    echo -e $(date) "[${TASKTYPE}]" | sudo tee -a ${GSETC_PATH}/${SYNCING_LOG}
+    echo -e $(date) "[${TASKTYPE}]" | sudo tee -a ${GSETC_PATH}/${SYNCING_LOG} 1> /dev/null
     error_validate
 }
 
@@ -1820,7 +1820,7 @@ function task_sudo {
     echo_stat
     
     NEW_SUDO_USER=$(whoami)
-    echo -e "${NEW_SUDO_USER} ALL=(ALL) NOPASSWD: ALL" | sudo tee ${GS_LOCAL_REPO}/templates/gs-nopasswd.sudo
+    echo -e "${NEW_SUDO_USER} ALL=(ALL) NOPASSWD: ALL" | sudo tee ${GS_LOCAL_REPO}/templates/gs-nopasswd.sudo 1> /dev/null
     error_validate
     
     MESSAGE="Installing sudoers.d file on $HOSTNAME"
@@ -2422,7 +2422,7 @@ function task_devmode {
         echo_need
         read INPUT_BRANCH
         
-        echo -e "BRANCH='${INPUT_BRANCH}'" | sudo tee ${GS_LOCAL_REPO}/dev
+        echo -e "BRANCH='${INPUT_BRANCH}'" | sudo tee ${GS_LOCAL_REPO}/dev 1> /dev/null
     fi
     
     update_gs
