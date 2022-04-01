@@ -2513,14 +2513,15 @@ function task_purge {
     echo -e "Pi-hole binaries, configuration and services ARE NOT impacted!"
     echo -e "Your devices will continue to resolve and block DNS requests,"
     echo -e "but your ${UI_GRAVITY_NAME} and ${UI_CUSTOM_NAME} WILL NOT sync anymore,"
-    echo -e "until you reconfigure Gravity Sync on this device."
+    echo -e "until you reconfigure Gravity Sync on this device. Backup files will not"
+    echo -e "be removed but you can manually remove '.gsbackup' files if desired."
     echo_lines
         
     intent_validate
     
-    MESSAGE="${UI_PURGE_CLEANING_DIR}"
-    echo_stat
-    backup_cleanup
+    # MESSAGE="${UI_PURGE_CLEANING_DIR}"
+    # echo_stat
+    # backup_cleanup
 
     systemctl stop gravity-sync.timer
     systemctl disable gravity-sync
