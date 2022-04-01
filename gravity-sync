@@ -1401,15 +1401,15 @@ function generate_sshkey {
     then
         if [ -f ${SSH_PKIF} ]
         then
-            MESSAGE="Using existing ~/${SSH_PKIF} file"
+            MESSAGE="Using existing ${SSH_PKIF} file"
             echo_good_clean
         else
             if hash ssh-keygen >/dev/null 2>&1
             then
-                MESSAGE="Generating ~/${SSH_PKIF} file"
+                MESSAGE="Generating ${SSH_PKIF} file"
                 echo_stat
                 
-                ssh-keygen -q -P "" -t rsa -f ${SSH_PKIF} >/dev/null 2>&1
+                sudo ssh-keygen -q -P "" -t rsa -f ${SSH_PKIF} >/dev/null 2>&1
                 error_validate
             else
                 MESSAGE="No SSH-KEYGEN available"
