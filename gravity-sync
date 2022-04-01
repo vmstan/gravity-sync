@@ -1533,6 +1533,14 @@ function logs_export {
         echo -e ${primaryCNMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5} 1> /dev/null
         echo -e ${secondCNMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5} 1> /dev/null
         error_validate
+
+        MESSAGE="Sending hashes to remote Gravity Sync instance"
+        echo_stat
+
+        RSYNC_REPATH="sudo rsync"
+        RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${GSETC_PATH}/${HISTORY_MD5}"
+        RSYNC_TARGET="${GSETC_PATH}/${HISTORY_MD5}"
+        create_rsynccmd
     fi
     
     MESSAGE="${UI_LOGGING_SUCCESS} ${TASKTYPE}"
