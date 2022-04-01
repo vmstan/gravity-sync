@@ -1517,19 +1517,19 @@ function logs_export {
     then
         MESSAGE="${UI_LOGGING_HASHES}"
         echo_stat
-        rm -f ${GSETC_PATH}/${HISTORY_MD5}
-        echo -e ${primaryDBMD5} >> ${GSETC_PATH}/${HISTORY_MD5}
-        echo -e ${secondDBMD5} >> ${GSETC_PATH}/${HISTORY_MD5}
-        echo -e ${primaryCLMD5} >> ${GSETC_PATH}/${HISTORY_MD5}
-        echo -e ${secondCLMD5} >> ${GSETC_PATH}/${HISTORY_MD5}
-        echo -e ${primaryCNMD5} >> ${GSETC_PATH}/${HISTORY_MD5}
-        echo -e ${secondCNMD5} >> ${GSETC_PATH}/${HISTORY_MD5}
+        sudo rm -f ${GSETC_PATH}/${HISTORY_MD5}
+        echo -e ${primaryDBMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5}
+        echo -e ${secondDBMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5}
+        echo -e ${primaryCLMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5}
+        echo -e ${secondCLMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5}
+        echo -e ${primaryCNMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5}
+        echo -e ${secondCNMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5}
         error_validate
     fi
     
     MESSAGE="${UI_LOGGING_SUCCESS} ${TASKTYPE}"
     echo_stat
-    echo -e $(date) "[${TASKTYPE}]" >> ${GSETC_PATH}/${SYNCING_LOG}
+    echo -e $(date) "[${TASKTYPE}]" | sudo tee -a ${GSETC_PATH}/${SYNCING_LOG}
     error_validate
 }
 
@@ -1813,7 +1813,7 @@ function task_sudo {
     echo_stat
     
     NEW_SUDO_USER=$(whoami)
-    echo -e "${NEW_SUDO_USER} ALL=(ALL) NOPASSWD: ALL" > ${GS_LOCAL_REPO}/templates/gs-nopasswd.sudo
+    echo -e "${NEW_SUDO_USER} ALL=(ALL) NOPASSWD: ALL" | sudo tee ${GS_LOCAL_REPO}/templates/gs-nopasswd.sudo
     error_validate
     
     MESSAGE="Installing sudoers.d file on $HOSTNAME"
@@ -1889,7 +1889,7 @@ function task_configure {
 function config_generate {  
     MESSAGE="${UI_CONFIG_CREATING} ${CONFIG_FILE}"
     echo_stat
-    cp ${GS_LOCAL_REPO}/templates/${CONFIG_FILE}.example ${GSETC_PATH}/${CONFIG_FILE}
+    sudo cp ${GS_LOCAL_REPO}/templates/${CONFIG_FILE}.example ${GSETC_PATH}/${CONFIG_FILE}
     error_validate
     
     echo_lines
@@ -2403,7 +2403,7 @@ function task_devmode {
     if [ -f ${GS_LOCAL_REPO}/dev ]; then
         MESSAGE="Disabling ${TASKTYPE}"
         echo_stat
-        rm -f ${GS_LOCAL_REPO}/dev
+        sudo rm -f ${GS_LOCAL_REPO}/dev
         error_validate
     else
         MESSAGE="Enabling ${TASKTYPE}"
