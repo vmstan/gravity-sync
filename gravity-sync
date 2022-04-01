@@ -1532,15 +1532,25 @@ function logs_export {
         echo -e ${secondCLMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5} 1> /dev/null
         echo -e ${primaryCNMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5} 1> /dev/null
         echo -e ${secondCNMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5} 1> /dev/null
+        
+        sudo rm -f ${GSETC_PATH}/${HISTORY_MD5}2
+        echo -e ${secondDBMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5}2 1> /dev/null
+        echo -e ${primaryDBMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5}2 1> /dev/null
+        echo -e ${secondCLMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5}2 1> /dev/null
+        echo -e ${primaryCLMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5}2 1> /dev/null
+        echo -e ${secondCNMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5}2 1> /dev/null
+        echo -e ${primaryCNMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5}2 1> /dev/null
         error_validate
 
         MESSAGE="Sending hashes to remote Gravity Sync instance"
         echo_stat
 
         RSYNC_REPATH="sudo rsync"
-        RSYNC_SOURCE="${GSETC_PATH}/${HISTORY_MD5}"
+        RSYNC_SOURCE="${GSETC_PATH}/${HISTORY_MD5}2"
         RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${GSETC_PATH}/${HISTORY_MD5}"
         create_rsynccmd
+
+        sudo rm -f ${GSETC_PATH}/${HISTORY_MD5}2
 
         # MESSAGE="Saving hashes on remote Gravity Sync instance"
         # echo_stat
