@@ -2498,6 +2498,13 @@ function task_automate {
     sudo sed -i "/ExecStart=/c\ExecStart=${GS_FILEPATH}" ${GS_LOCAL_REPO}/templates/gravity-sync.service
     error_validate
 
+    MESSAGE="Randomizing service timers"
+    ACTIVE_REP=$($RANDOM % 5 + 2)
+    RANDOM_REP=$($RANDOM % 10 + 4)
+    sudo sed -i "/OnUnitInactiveSec=5m/c\OnUnitInactiveSec=${ACTIVE_REP}m" ${GS_LOCAL_REPO}/templates/gravity-sync.timer
+    sudo sed -i "/RandomizedDelaySec=5m/c\RandomizedDelaySec=${RANDOM_REP}m" ${GS_LOCAL_REPO}/templates/gravity-sync.timer
+    error_validate
+
     if systemctl is-active --quiet gravity-sync
     then
         MESSAGE="Stopping existing systemd service"
