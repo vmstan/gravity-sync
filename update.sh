@@ -12,5 +12,5 @@ GS_LOCAL_REPO='/etc/gravity-sync/.gs'
         echo -e "Pulling from ${BRANCH}"
     fi
     
-    (cd ${GS_LOCAL_REPO}; git fetch --all; git reset --hard ${BRANCH}; sudo cp gravity-sync /usr/local/bin; git clean -fq)
+    (cd ${GS_LOCAL_REPO}; sudo git fetch --all; sudo git reset --hard ${BRANCH}; sudo cp gravity-sync /usr/local/bin; sudo git clean -fq)
 
