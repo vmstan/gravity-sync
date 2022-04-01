@@ -1401,22 +1401,23 @@ function generate_sshkey {
     then
         if [ -f ${SSH_PKIF} ]
         then
-            MESSAGE="Using existing ${SSH_PKIF} file"
+            MESSAGE="Using existing SSH keyfile"
             echo_good_clean
-            MESSAGE="Setting permissions on keyfile"
-            sudo chmod 644 ${SSH_PKIF}
-            error_validate
         else
             if hash ssh-keygen >/dev/null 2>&1
             then
-                MESSAGE="Generating ${SSH_PKIF} file"
+                MESSAGE="Generating new SSH keyfile"
                 echo_stat
                 
-                sudo ssh-keygen -q -P "" -t rsa -f ${SSH_PKIF} >/dev/null 2>&1
+                ssh-keygen -q -P "" -t rsa -f /tmp/gravity-sync.rsa >/dev/null 2>&1
                 error_validate
 
-                MESSAGE="Setting permissions on keyfile"
-                sudo chmod 644 ${SSH_PKIF}
+                MESSAGE="Moving private key to ${SSH_PKIF}"
+                sudo mv /tmp/gravity-sync.rsa ${SSH_PKIF}
+                error_validate
+
+                MESSAGE="Moving public key to ${SSH_PKIF}.pub"
+                sudo mv /tmp/gravity-sync.rsa.pub ${SSH_PKIF}.pub
                 error_validate
             else
                 MESSAGE="No SSH-KEYGEN available"
