@@ -2210,7 +2210,7 @@ function config_delete {
 
     MESSAGE="${UI_CONFIG_ERASING} ${CONFIG_FILE}"
     echo_stat
-    mv ${GSETC_PATH}/${CONFIG_FILE} ${GSETC_PATH}/${CONFIG_FILE}.gsbackup
+    sudo mv ${GSETC_PATH}/${CONFIG_FILE} ${GSETC_PATH}/${CONFIG_FILE}.gsbackup
         error_validate
 
     config_generate
