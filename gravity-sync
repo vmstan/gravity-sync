@@ -1403,6 +1403,9 @@ function generate_sshkey {
         then
             MESSAGE="Using existing ${SSH_PKIF} file"
             echo_good_clean
+            MESSAGE="Setting permissions on keyfile"
+            sudo chmod 644 ${SSH_PKIF}
+            error_validate
         else
             if hash ssh-keygen >/dev/null 2>&1
             then
@@ -1410,6 +1413,10 @@ function generate_sshkey {
                 echo_stat
                 
                 sudo ssh-keygen -q -P "" -t rsa -f ${SSH_PKIF} >/dev/null 2>&1
+                error_validate
+
+                MESSAGE="Setting permissions on keyfile"
+                sudo chmod 644 ${SSH_PKIF}
                 error_validate
             else
                 MESSAGE="No SSH-KEYGEN available"
