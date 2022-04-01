@@ -416,7 +416,7 @@ function ph_type {
     if [ "$REMOTE_PIHOLE_TYPE" == "default" ]
     then
         RH_EXEC="${REMOTE_PIHOLE_BINARY}"
-        RFTL_EXEC="${REMOTE_PIHOLE_BINARY}"
+        RFTL_EXEC="${REMOTE_FTL_BINARY}"
     elif [ "$REMOTE_PIHOLE_TYPE" == "docker" ]
     then
         RH_EXEC="sudo ${REMOTE_DOCKER_BINARY} exec \$(sudo ${REMOTE_DOCKER_BINARY} ps -qf name=${REMOTE_DOCKER_CONTAINER}) pihole"
