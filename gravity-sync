@@ -1021,7 +1021,7 @@ function backup_local_custom() {
             MESSAGE="${UI_BACKUP_SECONDARY} ${UI_CUSTOM_NAME}"
             echo_stat
             
-            cp ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS}.gsbackup
+            sudo cp ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS}.gsbackup
             error_validate
         else
             MESSAGE="No local ${CUSTOM_DNS} detected"
@@ -1038,7 +1038,7 @@ function backup_local_cname() {
             MESSAGE="${UI_BACKUP_SECONDARY} ${UI_CNAME_NAME}"
             echo_stat
             
-            cp ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} ${LOCAL_PIHOLE_DIRECTORY}/${CNAME_CONF}.gsbackup
+            sudo cp ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} ${LOCAL_PIHOLE_DIRECTORY}/${CNAME_CONF}.gsbackup
             error_validate
         else
             MESSAGE="No local ${CNAME_CONF} detected"
