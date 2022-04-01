@@ -1124,17 +1124,17 @@ function backup_remote_cname() {
 }
 
 function backup_cleanup() {
-    MESSAGE="${UI_BACKUP_PURGE} on local"
+    MESSAGE="Purging backups"
     echo_stat
     # git clean -fq
-    rm -f ${LOCAL_PIHOLE_DIRECTORY}/*.gsbackup
+    sudo rm -f ${LOCAL_PIHOLE_DIRECTORY}/*.gsbackup
     error_validate
 
-    MESSAGE="${UI_BACKUP_PURGE} on remote"
-    echo_stat
-    CMD_TIMEOUT=$BACKUP_TIMEOUT
-    CMD_REQUESTED="rm -f ${REMOTE_PIHOLE_DIRECTORY}/*.gsbackup"
-    create_sshcmd
+    # MESSAGE="${UI_BACKUP_PURGE} on remote"
+    # echo_stat
+    # CMD_TIMEOUT=$BACKUP_TIMEOUT
+    # CMD_REQUESTED="sudo rm -f ${REMOTE_PIHOLE_DIRECTORY}/*.gsbackup"
+    # create_sshcmd
 }
 
 function md5_compare {
