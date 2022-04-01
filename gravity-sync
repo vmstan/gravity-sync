@@ -2464,7 +2464,8 @@ function task_automate {
     echo_good
 
     MESSAGE="Customizing service file username"
-    sed -i "/User=unknown/c\User=$USER" ${GS_LOCAL_REPO}/templates/gravity-sync.service
+    CURRENTUSER=$(whoami)
+    sed -i "/User=unknown/c\User=${CURRENTUSER}" ${GS_LOCAL_REPO}/templates/gravity-sync.service
     error_validate
 
     MESSAGE="Customizing service file executable path"
