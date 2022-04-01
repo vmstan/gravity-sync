@@ -2509,7 +2509,7 @@ function task_purge {
     echo_good
     
     echo_lines
-    echo -e "THIS WILL REMOVE YOUR ENTIRE GRAVITY SYNC INSTALLATION"
+    echo -e "THIS WILL REMOVE YOUR GRAVITY SYNC INSTALLATION"
     echo -e "Pi-hole binaries, configuration and services ARE NOT impacted!"
     echo -e "Your devices will continue to resolve and block DNS requests,"
     echo -e "but your ${UI_GRAVITY_NAME} and ${UI_CUSTOM_NAME} WILL NOT sync anymore,"
@@ -2527,7 +2527,7 @@ function task_purge {
     systemctl disable gravity-sync
     
     sudo rm -fr ${GSETC_PATH}
-    sudo rm ${GS_FILENAME}
+    sudo rm ${GS_FILEPATH}
     exit_withchange
 }
 
