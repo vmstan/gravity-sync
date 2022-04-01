@@ -1539,8 +1539,15 @@ function logs_export {
 
         RSYNC_REPATH="sudo rsync"
         RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${GSETC_PATH}/${HISTORY_MD5}"
-        RSYNC_TARGET="${GSETC_PATH}/${HISTORY_MD5}"
+        RSYNC_TARGET="/tmp/${HISTORY_MD5}"
         create_rsynccmd
+
+        MESSAGE="Saving hashes on remote Gravity Sync instance"
+        echo_stat
+
+        CMD_TIMEOUT=$BACKUP_TIMEOUT
+        CMD_REQUESTED="sudo mv /tmp/${HISTORY_MD5} ${GSETC_PATH}/${HISTORY_MD5}"
+        create_sshcmd
     fi
     
     MESSAGE="${UI_LOGGING_SUCCESS} ${TASKTYPE}"
