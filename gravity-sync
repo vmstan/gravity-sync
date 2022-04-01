@@ -1897,7 +1897,7 @@ function config_generate {
     echo -e "Please read through ${BLUE}https://github.com/vmstan/gravity-sync/wiki${NC} before you continue!"
     echo_blank
     echo -e "If the installer detects that you have a supported container engine (Docker or Podman) installed"
-    echo -e "on your local Pi-hole, you will be directed to the advanced installation options. If you using " 
+    echo -e "on your local Pi-hole, you will be directed to the advanced installation options. If you're using" 
     echo -e "containers on your remote Pi-hole, you'll need to select this option manually to adjust settings"
     echo -e "such as custom Pi-hole binary or configuration directories, CNAME replication, etc."
     echo_blank

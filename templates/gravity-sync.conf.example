@@ -17,6 +17,8 @@ REMOTE_USER='pi'
 # REMOTE_PIHOLE_DIRECTORY=''			    # Remote Pi-hole data directory
 # LOCAL_DNSMASQ_DIRECTORY=''                # Local DNSMASQ/FTL data directory
 # REMOTE_DNSMASQ_DIRECTORY=''               # Remote DNSMASQ/FTL data directory
+# LOCAL_FILE_OWNER=''                       # Local file owner for Pi-hole
+# REMOTE_FILE_OWNER=''                      # Remote file owner for Pi-hole
 
 # Pi-hole Docker/Podman container name - Docker will pattern match anything set below
 # LOCAL_DOCKER_CONTAINER=''				    # Local Pi-hole container name
