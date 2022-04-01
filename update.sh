@@ -2,7 +2,6 @@
 
 GS_LOCAL_REPO='/etc/gravity-sync/.gs'
 
-function update_gs {
     if [ -f "${GS_LOCAL_REPO}/dev" ]; then
         source ${GS_LOCAL_REPO}/dev
     else
@@ -14,6 +13,4 @@ function update_gs {
     fi
     
     (cd ${GS_LOCAL_REPO}; git fetch --all; git reset --hard ${BRANCH}; sudo cp gravity-sync /usr/local/bin; git clean -fq)
-}
 
-update_gs
