@@ -2499,8 +2499,8 @@ function task_automate {
     error_validate
 
     MESSAGE="Randomizing service timers"
-    ACTIVE_REP=$($RANDOM % 5 + 2)
-    RANDOM_REP=$($RANDOM % 10 + 4)
+    ACTIVE_REP=$((( RANDOM % 4 ) + 1 ))
+    RANDOM_REP=$((( RANDOM % 8 ) + 2 ))
     sudo sed -i "/OnUnitInactiveSec=5m/c\OnUnitInactiveSec=${ACTIVE_REP}m" ${GS_LOCAL_REPO}/templates/gravity-sync.timer
     sudo sed -i "/RandomizedDelaySec=5m/c\RandomizedDelaySec=${RANDOM_REP}m" ${GS_LOCAL_REPO}/templates/gravity-sync.timer
     error_validate
