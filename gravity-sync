@@ -1926,7 +1926,7 @@ function config_generate {
 
     MESSAGE="${UI_CONFIG_SAVING} ${INPUT_REMOTE_HOST} host to ${CONFIG_FILE}"
     echo_stat
-    sed -i "/REMOTE_HOST='192.168.1.10'/c\REMOTE_HOST='${INPUT_REMOTE_HOST}'" ${GSETC_PATH}/${CONFIG_FILE}
+    sudo sed -i "/REMOTE_HOST='192.168.1.10'/c\REMOTE_HOST='${INPUT_REMOTE_HOST}'" ${GSETC_PATH}/${CONFIG_FILE}
     error_validate
     
     MESSAGE="${UI_CORE_APP} ${UI_CONFIG_REMOTE} ${UI_CONFIG_USERREQ} for ${INPUT_REMOTE_HOST}"
@@ -1938,7 +1938,7 @@ function config_generate {
     
     MESSAGE="${UI_CONFIG_SAVING} ${INPUT_REMOTE_USER}@${INPUT_REMOTE_HOST} user to ${CONFIG_FILE}"
     echo_stat
-    sed -i "/REMOTE_USER='pi'/c\REMOTE_USER='${INPUT_REMOTE_USER}'" ${GSETC_PATH}/${CONFIG_FILE}
+    sudo sed -i "/REMOTE_USER='pi'/c\REMOTE_USER='${INPUT_REMOTE_USER}'" ${GSETC_PATH}/${CONFIG_FILE}
     error_validate
 
     generate_sshkey
@@ -2025,7 +2025,7 @@ function advanced_config_generate {
 
         MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_CONTAINER_TYPE} to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# LOCAL_PIHOLE_TYPE=''/c\LOCAL_PIHOLE_TYPE='${INPUT_LOCAL_PIHOLE_TYPE}'" ${GSETC_PATH}/${CONFIG_FILE}
+        sudo sed -i "/# LOCAL_PIHOLE_TYPE=''/c\LOCAL_PIHOLE_TYPE='${INPUT_LOCAL_PIHOLE_TYPE}'" ${GSETC_PATH}/${CONFIG_FILE}
         error_validate
         
         MESSAGE="${UI_CONFIG_CONT_DETECT} ${UI_CONFIG_IMAGES}"
@@ -2051,7 +2051,7 @@ function advanced_config_generate {
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_CONTAINER_NAME} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# LOCAL_DOCKER_CONTAINER=''/c\LOCAL_DOCKER_CONTAINER='${INPUT_LOCAL_DOCKER_CONTAINER}'" ${GSETC_PATH}/${CONFIG_FILE}
+            sudo sed -i "/# LOCAL_DOCKER_CONTAINER=''/c\LOCAL_DOCKER_CONTAINER='${INPUT_LOCAL_DOCKER_CONTAINER}'" ${GSETC_PATH}/${CONFIG_FILE}
             error_validate
         fi
         
@@ -2065,7 +2065,7 @@ function advanced_config_generate {
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# LOCAL_PIHOLE_DIRECTORY=''/c\LOCAL_PIHOLE_DIRECTORY='${INPUT_LOCAL_PIHOLE_DIRECTORY}'" ${GSETC_PATH}/${CONFIG_FILE}
+            sudo sed -i "/# LOCAL_PIHOLE_DIRECTORY=''/c\LOCAL_PIHOLE_DIRECTORY='${INPUT_LOCAL_PIHOLE_DIRECTORY}'" ${GSETC_PATH}/${CONFIG_FILE}
             error_validate
             SKIP_LOCAL_PIHOLE_DIRECTORY="1"
         else
@@ -2084,7 +2084,7 @@ function advanced_config_generate {
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# LOCAL_DNSMASQ_DIRECTORY=''/c\LOCAL_DNSMASQ_DIRECTORY='${INPUT_LOCAL_DNSMASQ_DIRECTORY}'" ${GSETC_PATH}/${CONFIG_FILE}
+            sudo sed -i "/# LOCAL_DNSMASQ_DIRECTORY=''/c\LOCAL_DNSMASQ_DIRECTORY='${INPUT_LOCAL_DNSMASQ_DIRECTORY}'" ${GSETC_PATH}/${CONFIG_FILE}
             error_validate
             SKIP_DNSMASQ_DIR="1"
         else
@@ -2095,7 +2095,7 @@ function advanced_config_generate {
         
         MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_VOLUME_OWNER} to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# LOCAL_FILE_OWNER=''/c\LOCAL_FILE_OWNER='999:999'" ${GSETC_PATH}/${CONFIG_FILE}
+        sudo sed -i "/# LOCAL_FILE_OWNER=''/c\LOCAL_FILE_OWNER='999:999'" ${GSETC_PATH}/${CONFIG_FILE}
         error_validate
     fi
     
@@ -2116,7 +2116,7 @@ function advanced_config_generate {
         fi
         MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CONFIG_CONTAINER_TYPE} to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# REMOTE_PIHOLE_TYPE=''/c\REMOTE_PIHOLE_TYPE='${INPUT_REMOTE_PIHOLE_TYPE}'" ${GSETC_PATH}/${CONFIG_FILE}
+        sudo sed -i "/# REMOTE_PIHOLE_TYPE=''/c\REMOTE_PIHOLE_TYPE='${INPUT_REMOTE_PIHOLE_TYPE}'" ${GSETC_PATH}/${CONFIG_FILE}
         error_validate
         
         MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CONFIG_CONTAINER_NAME}"
@@ -2130,7 +2130,7 @@ function advanced_config_generate {
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CONFIG_CONTAINER_NAME} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# REMOTE_DOCKER_CONTAINER=''/c\REMOTE_DOCKER_CONTAINER='${INPUT_REMOTE_DOCKER_CONTAINER}'" ${GSETC_PATH}/${CONFIG_FILE}
+            sudo sed -i "/# REMOTE_DOCKER_CONTAINER=''/c\REMOTE_DOCKER_CONTAINER='${INPUT_REMOTE_DOCKER_CONTAINER}'" ${GSETC_PATH}/${CONFIG_FILE}
             error_validate
         fi
         
@@ -2144,7 +2144,7 @@ function advanced_config_generate {
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# REMOTE_PIHOLE_DIRECTORY=''/c\REMOTE_PIHOLE_DIRECTORY='${INPUT_REMOTE_PIHOLE_DIRECTORY}'" ${GSETC_PATH}/${CONFIG_FILE}
+            sudo sed -i "/# REMOTE_PIHOLE_DIRECTORY=''/c\REMOTE_PIHOLE_DIRECTORY='${INPUT_REMOTE_PIHOLE_DIRECTORY}'" ${GSETC_PATH}/${CONFIG_FILE}
             error_validate
             SKIP_REMOTE_PIHOLE_DIRECTORY="1"
         else
@@ -2163,7 +2163,7 @@ function advanced_config_generate {
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
             echo_stat
-            sed -i "/# REMOTE_DNSMASQ_DIRECTORY=''/c\REMOTE_DNSMASQ_DIRECTORY='${INPUT_REMOTE_DNSMASQ_DIRECTORY}'" ${GSETC_PATH}/${CONFIG_FILE}
+            sudo sed -i "/# REMOTE_DNSMASQ_DIRECTORY=''/c\REMOTE_DNSMASQ_DIRECTORY='${INPUT_REMOTE_DNSMASQ_DIRECTORY}'" ${GSETC_PATH}/${CONFIG_FILE}
             error_validate
             SKIP_RNSMASQ_DIR="1"
         else
@@ -2174,7 +2174,7 @@ function advanced_config_generate {
         
         MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CONFIG_VOLUME_OWNER} to ${CONFIG_FILE}"
         echo_stat
-        sed -i "/# REMOTE_FILE_OWNER=''/c\REMOTE_FILE_OWNER='999:999'" ${GSETC_PATH}/${CONFIG_FILE}
+        sudo sed -i "/# REMOTE_FILE_OWNER=''/c\REMOTE_FILE_OWNER='999:999'" ${GSETC_PATH}/${CONFIG_FILE}
         error_validate
     fi
 
@@ -2193,7 +2193,7 @@ function task_cname {
 function config_enablecname {
     MESSAGE="${UI_CNAME_NAME} ${UI_CONFIG_PREF_SAVED} ${CONFIG_FILE}"
     echo_stat
-    sed -i "/# INCLUDE_CNAME=''/c\INCLUDE_CNAME='1'" ${GSETC_PATH}
+    sudo sed -i "/# INCLUDE_CNAME=''/c\INCLUDE_CNAME='1'" ${GSETC_PATH}
     error_validate
 }
 
@@ -2465,11 +2465,11 @@ function task_automate {
 
     MESSAGE="Customizing service file username"
     CURRENTUSER=$(whoami)
-    sed -i "/User=unknown/c\User=${CURRENTUSER}" ${GS_LOCAL_REPO}/templates/gravity-sync.service
+    sudo sed -i "/User=unknown/c\User=${CURRENTUSER}" ${GS_LOCAL_REPO}/templates/gravity-sync.service
     error_validate
 
     MESSAGE="Customizing service file executable path"
-    sed -i "/ExecStart=/c\ExecStart=${GS_FILEPATH}" ${GS_LOCAL_REPO}/templates/gravity-sync.service
+    sudo sed -i "/ExecStart=/c\ExecStart=${GS_FILEPATH}" ${GS_LOCAL_REPO}/templates/gravity-sync.service
     error_validate
 
     if systemctl is-active --quiet gravity-sync
@@ -2523,8 +2523,8 @@ function task_purge {
     # echo_stat
     # backup_cleanup
 
-    systemctl stop gravity-sync.timer
-    systemctl disable gravity-sync
+    sudo systemctl stop gravity-sync.timer
+    sudo systemctl disable gravity-sync
     
     sudo rm -fr ${GSETC_PATH}
     sudo rm ${GS_FILEPATH}
