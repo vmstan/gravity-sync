@@ -2422,7 +2422,7 @@ function task_devmode {
         echo_need
         read INPUT_BRANCH
         
-        echo -e "BRANCH='${INPUT_BRANCH}'" >> ${GS_LOCAL_REPO}/dev
+        echo -e "BRANCH='${INPUT_BRANCH}'" | sudo tee ${GS_LOCAL_REPO}/dev
     fi
     
     update_gs
