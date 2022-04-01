@@ -2467,7 +2467,7 @@ function task_automate {
     sed -i "/User=unknown/c\User=$USER" ${GS_LOCAL_REPO}/templates/gravity-sync.service
     error_validate
 
-    MESSAGE="Customizing service file executable"
+    MESSAGE="Customizing service file executable path"
     sed -i "/ExecStart=/c\ExecStart=${GS_FILEPATH}" ${GS_LOCAL_REPO}/templates/gravity-sync.service
     error_validate
 
