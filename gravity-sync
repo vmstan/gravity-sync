@@ -273,8 +273,8 @@ function start_gs {
     echo_grav
     # cd ${LOCAL_FOLDR}
     
-    import_gs
-     set_pihole_exec
+    import_gs_config
+    set_pihole_exec
     
     MESSAGE="${UI_CORE_EVALUATING}"
     echo_stat
@@ -286,14 +286,13 @@ function start_gs {
 function start_gs_noconfig {
     MESSAGE="${UI_CORE_INIT}"
     echo_grav
-    # cd ${LOCAL_FOLDR}
     
     MESSAGE="${UI_CORE_EVALUATING}"
     echo_stat
 }
 
 ## Import Settings
-function import_gs {
+function import_gs_config {
     MESSAGE="${UI_CORE_LOADING} ${CONFIG_FILE}"
     echo -en "${STAT} $MESSAGE"
     if [ -f ${GS_ETC_PATH}/${CONFIG_FILE} ]
