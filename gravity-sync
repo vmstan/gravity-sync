@@ -616,7 +616,7 @@ function push_gs_cust {
             CMD_REQUESTED="sudo chown root:root ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}"
             create_sshcmd
             
-            MESSAGE="${UI_SET_FILE_PERMISSIONS} ${UI_CUSTOM_NAME}"
+            MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_CUSTOM_NAME}"
             echo_stat
             CMD_TIMEOUT=$BACKUP_TIMEOUT
             CMD_REQUESTED="sudo chmod 644 ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}"
@@ -648,7 +648,7 @@ function push_gs_cname {
             create_sshcmd
             
                         
-            MESSAGE="${UI_SET_FILE_PERMISSIONS} ${UI_CNAME_NAME}"
+            MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_CNAME_NAME}"
             echo_stat
             CMD_TIMEOUT=$BACKUP_TIMEOUT
             CMD_REQUESTED="sudo chmod 644 ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}"
