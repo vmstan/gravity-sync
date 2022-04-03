@@ -274,15 +274,12 @@ function start_gs {
     # cd ${LOCAL_FOLDR}
     
     import_gs
-    ph_type
+     set_pihole_exec
     
     MESSAGE="${UI_CORE_EVALUATING}"
     echo_stat
     
-    if [ "${ROOT_CHECK_AVOID}" != "1" ]
-    then
-        new_root_check
-    fi
+    validate_sudo_status
 }
 
 # Standard Output No Config
@@ -342,7 +339,7 @@ function silent_error_validate {
     fi
 }
 
-function ph_type {
+function  set_pihole_exec {
     if [ "$LOCAL_PIHOLE_TYPE" == "default" ]
     then
         PH_EXEC="${LOCAL_PIHOLE_BINARY}"
@@ -1692,7 +1689,7 @@ function root_check {
     fi
 }
 
-function new_root_check {
+function validate_sudo_status {
     CURRENTUSER=$(whoami)
     if [ ! "$EUID" -ne 0 ]
     then
