@@ -1746,7 +1746,7 @@ function intent_validate {
         MESSAGE="Type ${INTENT} to confirm"
         echo_need
         
-        read INPUT_INTENT
+        read -r INPUT_INTENT
         
         if [ "${INPUT_INTENT}" != "${INTENT}" ]
         then
@@ -1867,7 +1867,7 @@ function config_generate {
 
     MESSAGE="IP"
     echo_need
-    read INPUT_REMOTE_HOST
+    read -r INPUT_REMOTE_HOST
     
     # MESSAGE="${UI_CONFIG_ICMP_TEST} ${INPUT_REMOTE_HOST}"
     # echo_stat
@@ -1884,7 +1884,7 @@ function config_generate {
 
     MESSAGE="User"
     echo_need
-    read INPUT_REMOTE_USER
+    read -r INPUT_REMOTE_USER
     
     MESSAGE="${UI_CONFIG_SAVING} ${INPUT_REMOTE_USER}@${INPUT_REMOTE_HOST} user to ${CONFIG_FILE}"
     echo_stat
@@ -1925,7 +1925,7 @@ function config_generate {
         echo_inf1
         MESSAGE="${UI_CONFIG_YESNON}"
         echo_need
-        read INPUT_ADVANCED_INSTALL
+        read -r INPUT_ADVANCED_INSTALL
         INPUT_ADVANCED_INSTALL="${INPUT_ADVANCED_INSTALL:-N}"
     
         if [ "${INPUT_ADVANCED_INSTALL}" == "Yes" ] || [ "${INPUT_ADVANCED_INSTALL}" == "yes" ] || [ "${INPUT_ADVANCED_INSTALL}" == "Y" ] || [ "${INPUT_ADVANCED_INSTALL}" == "y" ]
@@ -1961,7 +1961,7 @@ function advanced_config_generate {
     echo_inf1
     MESSAGE="${UI_CONFIG_INSTANCETYPE}"
     echo_need
-    read INPUT_LOCAL_PIHOLE_TYPE
+    read -r INPUT_LOCAL_PIHOLE_TYPE
     INPUT_LOCAL_PIHOLE_TYPE="${INPUT_LOCAL_PIHOLE_TYPE:-default}"
     
     if [ "${INPUT_LOCAL_PIHOLE_TYPE}" != "default" ]
@@ -1994,7 +1994,7 @@ function advanced_config_generate {
         echo_inf1
         MESSAGE="${UI_CONFIG_PIHOLE_DEFAULT}"
         echo_need
-        read INPUT_LOCAL_DOCKER_CONTAINER
+        read -r INPUT_LOCAL_DOCKER_CONTAINER
         INPUT_LOCAL_DOCKER_CONTAINER="${INPUT_LOCAL_DOCKER_CONTAINER:-pihole}"
         
         if [ "${INPUT_LOCAL_DOCKER_CONTAINER}" != "pihole" ]
@@ -2009,7 +2009,7 @@ function advanced_config_generate {
         echo_inf1
         MESSAGE="${UI_CONFIG_ETC_VOLPATH_EXAMPLE}"
         echo_need
-        read INPUT_LOCAL_PIHOLE_DIRECTORY
+        read -r INPUT_LOCAL_PIHOLE_DIRECTORY
         
         if [ "${INPUT_LOCAL_PIHOLE_DIRECTORY}" != "" ]
         then
@@ -2028,7 +2028,7 @@ function advanced_config_generate {
         echo_inf1
         MESSAGE="${UI_CONFIG_ETC_VOLDNSQ_EXAMPLE}"
         echo_need
-        read INPUT_LOCAL_DNSMASQ_DIRECTORY
+        read -r INPUT_LOCAL_DNSMASQ_DIRECTORY
         
         if [ "${INPUT_LOCAL_DNSMASQ_DIRECTORY}" != "" ]
         then
@@ -2053,7 +2053,7 @@ function advanced_config_generate {
     echo_inf1
     MESSAGE="${UI_CONFIG_INSTANCETYPE}"
     echo_need
-    read INPUT_REMOTE_PIHOLE_TYPE
+    read -r INPUT_REMOTE_PIHOLE_TYPE
     INPUT_REMOTE_PIHOLE_TYPE="${INPUT_REMOTE_PIHOLE_TYPE:-default}"
     
     if [ "${INPUT_REMOTE_PIHOLE_TYPE}" != "default" ]
@@ -2073,7 +2073,7 @@ function advanced_config_generate {
         echo_inf1
         MESSAGE="${UI_CONFIG_DEFAULT_LEAVE} 'pihole'"
         echo_need
-        read INPUT_REMOTE_DOCKER_CONTAINER
+        read -r INPUT_REMOTE_DOCKER_CONTAINER
         INPUT_REMOTE_DOCKER_CONTAINER="${INPUT_REMOTE_DOCKER_CONTAINER:-pihole}"
         
         if [ "${INPUT_REMOTE_DOCKER_CONTAINER}" != "pihole" ]
@@ -2088,7 +2088,7 @@ function advanced_config_generate {
         echo_inf1
         MESSAGE="${UI_CONFIG_ETC_VOLPATH_EXAMPLE}"
         echo_need
-        read INPUT_REMOTE_PIHOLE_DIRECTORY
+        read -r INPUT_REMOTE_PIHOLE_DIRECTORY
         
         if [ "${INPUT_REMOTE_PIHOLE_DIRECTORY}" != "" ]
         then
@@ -2107,7 +2107,7 @@ function advanced_config_generate {
         echo_inf1
         MESSAGE="${UI_CONFIG_ETC_VOLDNSQ_EXAMPLE}"
         echo_need
-        read INPUT_REMOTE_DNSMASQ_DIRECTORY
+        read -r INPUT_REMOTE_DNSMASQ_DIRECTORY
         
         if [ "${INPUT_REMOTE_DNSMASQ_DIRECTORY}" != "" ]
         then
@@ -2370,7 +2370,7 @@ function task_devmode {
         
         MESSAGE="Select GitHub branch to update against"
         echo_need
-        read INPUT_BRANCH
+        read -r INPUT_BRANCH
         
         echo -e "BRANCH='${INPUT_BRANCH}'" | sudo tee ${GS_LOCAL_REPO}/dev 1> /dev/null
     fi
