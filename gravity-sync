@@ -693,7 +693,7 @@ function push_gs {
     previous_md5
     md5_compare
     
-    intent_validate
+    # intent_validate
     
     push_gs_grav
     push_gs_cust
