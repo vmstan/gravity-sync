@@ -393,19 +393,11 @@ function task_compare {
     echo_good
     
     show_target
-    #validate_gs_folders
     validate_ph_folders
-    
-    if [ "${INCLUDE_CNAME}" == "1" ]
-    then
-        validate_dns_folders
-    fi
-    
+    validate_dns_folders
     validate_os_sshpass
-    
     previous_md5
     md5_compare
-    
     exit_withchange
 }
 
@@ -414,18 +406,10 @@ function task_pull {
     TASKTYPE='PULL'
     MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
-    
     show_target
-    #validate_gs_folders
     validate_ph_folders
-    
-    if [ "${INCLUDE_CNAME}" == "1" ]
-    then
-        validate_dns_folders
-    fi
-    
+    validate_dns_folders
     validate_os_sshpass
-    
     pull_gs
     exit
 }
@@ -536,13 +520,11 @@ function pull_gs_reload {
 function pull_gs {
     previous_md5
     md5_compare
-    
     pull_gs_grav
     pull_gs_cust
     pull_gs_cname
     pull_gs_reload
     md5_recheck
-    
     logs_export
     exit_withchange
 }
@@ -554,16 +536,9 @@ function task_push {
     echo_good
     
     show_target
-    #validate_gs_folders
     validate_ph_folders
-    
-    if [ "${INCLUDE_CNAME}" == "1" ]
-    then
-        validate_dns_folders
-    fi
-    
+    validate_dns_folders
     validate_os_sshpass
-    
     push_gs
     exit
 }
@@ -692,15 +667,11 @@ function push_gs_reload {
 function push_gs {
     previous_md5
     md5_compare
-    
-    # intent_validate
-    
     push_gs_grav
     push_gs_cust
     push_gs_cname
     push_gs_reload
     md5_recheck
-    
     logs_export
     exit_withchange
 }
@@ -712,16 +683,9 @@ function task_smart {
     echo_good
     
     show_target
-    #validate_gs_folders
     validate_ph_folders
-    
-    if [ "${INCLUDE_CNAME}" == "1" ]
-    then
-        validate_dns_folders
-    fi
-    
+    validate_dns_folders
     validate_os_sshpass
-    
     smart_gs
     exit
 }
