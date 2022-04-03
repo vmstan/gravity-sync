@@ -35,7 +35,6 @@ REMOTE_DOCKER_CONTAINER='pihole'				# replace in gravity-sync.conf to overwrite
 VERIFY_PASS='0'						            # replace in gravity-sync.conf to overwrite
 SKIP_CUSTOM='0'						            # replace in gravity-sync.conf to overwrite
 INCLUDE_CNAME='1'					            # replace in gravity-sync.conf to overwrite
-DATE_OUTPUT='0'						            # replace in gravity-sync.conf to overwrite
 PING_AVOID='0'						            # replace in gravity-sync.conf to overwrite
 ROOT_CHECK_AVOID='0'				            # replace in gravity-sync.conf to overwrite
 
@@ -64,19 +63,18 @@ BACKUP_INTEGRITY_WAIT='5'                       # replace in gravity-sync.conf t
 
 # GS Folder/File Locations
 GS_FILEPATH='/usr/local/bin/gravity-sync'			
-GS_FILENAME='gravity-sync'		                # must exist because it's this script
-GSETC_PATH="/etc/gravity-sync"		            # replace in gravity-sync.conf to overwrite
+GS_ETC_PATH="/etc/gravity-sync"		            # replace in gravity-sync.conf to overwrite
 CONFIG_FILE='gravity-sync.conf' 	            # must exist with primary host/user configured
 SYNCING_LOG='gravity-sync.log' 		            # replace in gravity-sync.conf to overwrite
 HISTORY_MD5='gravity-sync.md5'		            # replace in gravity-sync.conf to overwrite
 
 # SSH Customization
 SSH_PORT='22' 						            # replace in gravity-sync.conf to overwrite
-SSH_PKIF="${GSETC_PATH}/gravity-sync.rsa"       # replace in gravity-sync.conf to overwrite
+SSH_PKIF="${GS_ETC_PATH}/gravity-sync.rsa"       # replace in gravity-sync.conf to overwrite
 
 # Github Customization
 GS_GITHUB_REPO='https://github.com/vmstan/gravity-sync.git'
-GS_LOCAL_REPO="${GSETC_PATH}/.gs"
+GS_LOCAL_REPO="${GS_ETC_PATH}/.gs"
 
 # OS Settings
 DAEMON_PATH='/etc/systemd/system'   # systemd timer/service folder
@@ -91,22 +89,16 @@ UI_CUSTOM_NAME='DNS Records'
 UI_CNAME_NAME='DNS CNAMEs'
 
 # Core
-UI_INVALID_SELECTION='Invalid selection'
 UI_INVALID_DNS_CONFIG='Invalid DNS replication settings in'
 UI_CORE_MISSING='Missing'
 UI_CORE_LOADING='Loading'
 UI_CORE_EVALUATING='Evaluating arguments'
 UI_CORE_INIT="Initalizing ${PROGRAM} (${VERSION})"
-UI_CORE_RELOCATING='Relocating'
 UI_CORE_APP='Pi-hole'
 UI_CORE_APP_DNS='DNSMASQ'
-UI_CORE_APP_SQL='SQLITE3'
 UI_CORE_OPENSSH='OpenSSH'
 UI_CORE_RSYNC='RSYNC'
-UI_CORE_DOCKER='Docker'
-UI_CORE_PODMAN='Podman'
 UI_CORE_UC_REMOTE='Remote'
-UI_CORE_UC_LOCAL='Local'
 
 # Exit
 UI_EXIT_CALC_END='after'
@@ -138,8 +130,6 @@ UI_SET_LOCAL_FILE_OWNERSHIP='Setting file ownership on'
 UI_SET_FILE_PERMISSION='Setting file permissions on'
 UI_VAL_LOCAL_FILE_OWNERSHIP='Validating file ownership on'
 UI_VAL_FILE_PERMISSION='Validating file permissions on'
-UI_VAL_GS_FOLDERS="Validating ${PROGRAM} folders on $HOSTNAME"
-UI_VAL_GS_FOLDERS_FAIL="Unable to validate ${PROGRAM} folders on $HOSTNAME"
 
 # Pull/Push
 UI_PULL_PRIMARY='Pulling the remote'
@@ -156,52 +146,23 @@ UI_FTLDNS_CONFIG_PUSH_RELOAD='Reloading remote FTLDNS services'
 UI_LOGGING_SUCCESS='Logging successful'
 UI_LOGGING_HASHES='Saving the updated hashes from this replication'
 UI_LOGGING_DISPLAY='Displaying output of previous jobs'
-UI_LOGGING_EMPTY='is empty'
-UI_LOGGING_MISSING='is missing'
 UI_LOGGING_RECENT_COMPLETE='Recent complete executions of'
 
 # Backup
 UI_BACKUP_PRIMARY='Performing backup of remote'
-UI_BACKUP_COPY='Pulling copy of remote'
 UI_BACKUP_SECONDARY='Performing backup of local'
-UI_BACKUP_PURGE='Purging unused data files from this Pi-hole instance'
-UI_BACKUP_REMAIN='days of backups remain'
 UI_BACKUP_INTEGRITY="Checking ${UI_GRAVITY_NAME} copy integrity"
 UI_BACKUP_INTEGRITY_FAILED='Integrity check has failed for the remoet'
 UI_BACKUP_INTEGRITY_DELETE='Removing failed copies'
-UI_BACKUP_DELETE_ALL='All unused data files purged'
-
-# Restore
-UI_RESTORE_WARNING="This will overwrite your current Pi-hole settings on $HOSTNAME with a previous version!"
-UI_RESTORE_INVALID='Invalid restoration request'
-UI_RESTORE_SELECT_DATE='Select backup date from which to restore the'
-UI_RESTORE_SKIPPING='Skipping restore of'
-UI_RESTORE_BACKUP_SELECTED='backup selected for restoration'
-UI_RESTORE_BACKUP_UNAVAILABLE='backups are unavailable'
-UI_RESTORE_FROM='restoring from'
-UI_RESTORE_TIME_TRAVEL='Preparing calculations for time travel'
-UI_RESTORE_SECONDARY='Restoring the secondary'
-UI_RESTORE_PUSH_PROMPT='Do you want to push the restored configuration to the remote Pi-hole? (Y/N)'
-UI_RESTORE_PUSH_NOPUSH="Configuration will not be pushed to the remote Pi-hole"
-
-# Purge
-UI_PURGE_MATRIX_ALIGNMENT='Realigning dilithium crystal matrix'
-UI_PURGE_DELETE_SSH_KEYS='Deleting SSH key-files'
-UI_PURGE_CLEANING_DIR="Purging ${PROGRAM} directory"
 
 # Configuration
-UI_CONFIG_YESNOY="'Yes' or 'No', blank is default 'Yes'"
 UI_CONFIG_YESNON="'Yes' or 'No', blank is default 'No'"
 UI_CONFIG_ALREADY='already exists'
-UI_ENABLE_REPLICATION_QUEST='Enable replication of'
 UI_CONFIG_PREF_SAVED='preference saved to'
 UI_CONFIG_AREYOUSURE='Proceeding will replace your existing configuration'
 UI_CONFIG_DOADVANCED='Do you want to enable advanced installation options'
 UI_CONFIG_ERASING='Erasing existing'
 UI_CONFIG_CREATING='Creating new'
-UI_CONFIG_BASH='Creating gravity-sync alias in Bash config'
-UI_CONFIG_ALIAS="You must reload your session for 'gravity-sync' alias to function"
-UI_CONFIG_ICMP_TEST='Testing network connection to'
 UI_CONFIG_REQUIRED='required settings'
 UI_CONFIG_ADVANCED='advanced settings'
 UI_CONFIG_REMOTE='remote host'
@@ -228,11 +189,8 @@ UI_CONFIG_ETC_VOLPATH="'etc' volume path"
 UI_CONFIG_ETC_VOLPATH_EXAMPLE="Example, '/opt/pihole/etc-pihole'"
 UI_CONFIG_ETC_VOLDNSQ_EXAMPLE="Example, '/opt/pihole/etc-dnsmasq.d'"
 UI_CONFIG_SETTING_REQUIRED='This setting is required!'
-UI_CONFIG_SETTING_DIR_PATH='settings directory path'
 UI_CONFIG_VOLUME_OWNER='volume ownership'
 UI_CONFIG_DEFAULT_LEAVE="Leave blank for default"
-UI_CONFIG_DEFAULT_DNSMASQ_ETC="'/etc/dnsmasq.d'"
-UI_CONFIG_DEFAULT_PIHOLE_ETC="'/etc/pihole'"
 
 ## Script Colors
 RED='\033[0;91m'
@@ -355,9 +313,9 @@ function start_gs_noconfig {
 function import_gs {
     MESSAGE="${UI_CORE_LOADING} ${CONFIG_FILE}"
     echo -en "${STAT} $MESSAGE"
-    if [ -f ${GSETC_PATH}/${CONFIG_FILE} ]
+    if [ -f ${GS_ETC_PATH}/${CONFIG_FILE} ]
     then
-        source ${GSETC_PATH}/${CONFIG_FILE}
+        source ${GS_ETC_PATH}/${CONFIG_FILE}
         error_validate
     else
         echo_fail
@@ -579,7 +537,6 @@ function pull_gs {
     previous_md5
     md5_compare
     
-    backup_settime
     pull_gs_grav
     pull_gs_cust
     pull_gs_cname
@@ -735,7 +692,6 @@ function push_gs_reload {
 function push_gs {
     previous_md5
     md5_compare
-    backup_settime
     
     intent_validate
     
@@ -777,7 +733,6 @@ function smart_gs {
     
     previous_md5
     md5_compare
-    backup_settime
     
     PRIDBCHANGE="0"
     SECDBCHANGE="0"
@@ -959,10 +914,6 @@ function smart_gs {
     
     logs_export
     exit_withchange
-}
-
-function backup_settime() {
-    BACKUPTIMESTAMP=$(date +%F-%H%M%S)
 }
 
 function backup_local_gravity() {
@@ -1262,14 +1213,14 @@ function md5_compare {
 }
 
 function previous_md5 {
-    if [ -f "${GSETC_PATH}/${HISTORY_MD5}" ]
+    if [ -f "${GS_ETC_PATH}/${HISTORY_MD5}" ]
     then
-        last_primaryDBMD5=$(sed "1q;d" ${GSETC_PATH}/${HISTORY_MD5})
-        last_secondDBMD5=$(sed "2q;d" ${GSETC_PATH}/${HISTORY_MD5})
-        last_primaryCLMD5=$(sed "3q;d" ${GSETC_PATH}/${HISTORY_MD5})
-        last_secondCLMD5=$(sed "4q;d" ${GSETC_PATH}/${HISTORY_MD5})
-        last_primaryCNMD5=$(sed "5q;d" ${GSETC_PATH}/${HISTORY_MD5})
-        last_secondCNMD5=$(sed "6q;d" ${GSETC_PATH}/${HISTORY_MD5})
+        last_primaryDBMD5=$(sed "1q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
+        last_secondDBMD5=$(sed "2q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
+        last_primaryCLMD5=$(sed "3q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
+        last_secondCLMD5=$(sed "4q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
+        last_primaryCNMD5=$(sed "5q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
+        last_secondCNMD5=$(sed "6q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
     else
         last_primaryDBMD5="0"
         last_secondDBMD5="0"
@@ -1486,13 +1437,13 @@ function detect_remotersync {
     
     RSYNC_REPATH="rsync"
     RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:~/gs.test"
-    RSYNC_TARGET="${GSETC_PATH}/gs.test"
+    RSYNC_TARGET="${GS_ETC_PATH}/gs.test"
     create_rsynccmd
     
     MESSAGE="Cleaning up local test file"
     echo_stat
     
-    rm ${GSETC_PATH}/gs.test
+    rm ${GS_ETC_PATH}/gs.test
     error_validate
     
     MESSAGE="Cleaning up remote test file"
@@ -1525,44 +1476,44 @@ function logs_export {
     then
         MESSAGE="${UI_LOGGING_HASHES}"
         echo_stat
-        sudo rm -f ${GSETC_PATH}/${HISTORY_MD5}
-        echo -e ${primaryDBMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5} 1> /dev/null
-        echo -e ${secondDBMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5} 1> /dev/null
-        echo -e ${primaryCLMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5} 1> /dev/null
-        echo -e ${secondCLMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5} 1> /dev/null
-        echo -e ${primaryCNMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5} 1> /dev/null
-        echo -e ${secondCNMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5} 1> /dev/null
+        sudo rm -f ${GS_ETC_PATH}/${HISTORY_MD5}
+        echo -e ${primaryDBMD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5} 1> /dev/null
+        echo -e ${secondDBMD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5} 1> /dev/null
+        echo -e ${primaryCLMD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5} 1> /dev/null
+        echo -e ${secondCLMD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5} 1> /dev/null
+        echo -e ${primaryCNMD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5} 1> /dev/null
+        echo -e ${secondCNMD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5} 1> /dev/null
         
-        sudo rm -f ${GSETC_PATH}/${HISTORY_MD5}2
-        echo -e ${secondDBMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5}2 1> /dev/null
-        echo -e ${primaryDBMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5}2 1> /dev/null
-        echo -e ${secondCLMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5}2 1> /dev/null
-        echo -e ${primaryCLMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5}2 1> /dev/null
-        echo -e ${secondCNMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5}2 1> /dev/null
-        echo -e ${primaryCNMD5} | sudo tee -a ${GSETC_PATH}/${HISTORY_MD5}2 1> /dev/null
+        sudo rm -f ${GS_ETC_PATH}/${HISTORY_MD5}2
+        echo -e ${secondDBMD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5}2 1> /dev/null
+        echo -e ${primaryDBMD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5}2 1> /dev/null
+        echo -e ${secondCLMD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5}2 1> /dev/null
+        echo -e ${primaryCLMD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5}2 1> /dev/null
+        echo -e ${secondCNMD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5}2 1> /dev/null
+        echo -e ${primaryCNMD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5}2 1> /dev/null
         error_validate
 
         MESSAGE="Sending hashes to remote Gravity Sync instance"
         echo_stat
 
         RSYNC_REPATH="sudo rsync"
-        RSYNC_SOURCE="${GSETC_PATH}/${HISTORY_MD5}2"
-        RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${GSETC_PATH}/${HISTORY_MD5}"
+        RSYNC_SOURCE="${GS_ETC_PATH}/${HISTORY_MD5}2"
+        RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${GS_ETC_PATH}/${HISTORY_MD5}"
         create_rsynccmd
 
-        sudo rm -f ${GSETC_PATH}/${HISTORY_MD5}2
+        sudo rm -f ${GS_ETC_PATH}/${HISTORY_MD5}2
 
         # MESSAGE="Saving hashes on remote Gravity Sync instance"
         # echo_stat
 
         # CMD_TIMEOUT=$BACKUP_TIMEOUT
-        # CMD_REQUESTED="sudo mv /tmp/${HISTORY_MD5} ${GSETC_PATH}/${HISTORY_MD5}"
+        # CMD_REQUESTED="sudo mv /tmp/${HISTORY_MD5} ${GS_ETC_PATH}/${HISTORY_MD5}"
         # create_sshcmd
     fi
     
     MESSAGE="${UI_LOGGING_SUCCESS} ${TASKTYPE}"
     echo_stat
-    echo -e $(date) "[${TASKTYPE}]" | sudo tee -a ${GSETC_PATH}/${SYNCING_LOG} 1> /dev/null
+    echo -e $(date) "[${TASKTYPE}]" | sudo tee -a ${GS_ETC_PATH}/${SYNCING_LOG} 1> /dev/null
     error_validate
 }
 
@@ -1573,11 +1524,11 @@ function logs_gs {
     
     echo_lines
     echo -e "${UI_LOGGING_RECENT_COMPLETE} ${YELLOW}SMART${NC}"
-    tail -n 7 "${GSETC_PATH}/${SYNCING_LOG}" | grep SMART
+    tail -n 7 "${GS_ETC_PATH}/${SYNCING_LOG}" | grep SMART
     echo -e "${UI_LOGGING_RECENT_COMPLETE} ${YELLOW}PULL${NC}"
-    tail -n 7 "${GSETC_PATH}/${SYNCING_LOG}" | grep PULL
+    tail -n 7 "${GS_ETC_PATH}/${SYNCING_LOG}" | grep PULL
     echo -e "${UI_LOGGING_RECENT_COMPLETE} ${YELLOW}PUSH${NC}"
-    tail -n 7 "${GSETC_PATH}/${SYNCING_LOG}" | grep PUSH
+    tail -n 7 "${GS_ETC_PATH}/${SYNCING_LOG}" | grep PUSH
     echo_lines
     
     exit_nochange
@@ -1908,7 +1859,7 @@ function task_configure {
     MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
-    if [ -f ${GSETC_PATH}/${CONFIG_FILE} ]
+    if [ -f ${GS_ETC_PATH}/${CONFIG_FILE} ]
     then		
         config_delete
     else
@@ -1922,7 +1873,7 @@ function task_configure {
 function config_generate {  
     MESSAGE="${UI_CONFIG_CREATING} ${CONFIG_FILE}"
     echo_stat
-    sudo cp ${GS_LOCAL_REPO}/templates/${CONFIG_FILE}.example ${GSETC_PATH}/${CONFIG_FILE}
+    sudo cp ${GS_LOCAL_REPO}/templates/${CONFIG_FILE}.example ${GS_ETC_PATH}/${CONFIG_FILE}
     error_validate
     
     echo_lines
@@ -1952,7 +1903,7 @@ function config_generate {
 
     MESSAGE="${UI_CONFIG_SAVING} ${INPUT_REMOTE_HOST} host to ${CONFIG_FILE}"
     echo_stat
-    sudo sed -i "/REMOTE_HOST='192.168.1.10'/c\REMOTE_HOST='${INPUT_REMOTE_HOST}'" ${GSETC_PATH}/${CONFIG_FILE}
+    sudo sed -i "/REMOTE_HOST='192.168.1.10'/c\REMOTE_HOST='${INPUT_REMOTE_HOST}'" ${GS_ETC_PATH}/${CONFIG_FILE}
     error_validate
     
     MESSAGE="${UI_CORE_APP} ${UI_CONFIG_REMOTE} ${UI_CONFIG_USERREQ} for ${INPUT_REMOTE_HOST}"
@@ -1964,14 +1915,14 @@ function config_generate {
     
     MESSAGE="${UI_CONFIG_SAVING} ${INPUT_REMOTE_USER}@${INPUT_REMOTE_HOST} user to ${CONFIG_FILE}"
     echo_stat
-    sudo sed -i "/REMOTE_USER='pi'/c\REMOTE_USER='${INPUT_REMOTE_USER}'" ${GSETC_PATH}/${CONFIG_FILE}
+    sudo sed -i "/REMOTE_USER='pi'/c\REMOTE_USER='${INPUT_REMOTE_USER}'" ${GS_ETC_PATH}/${CONFIG_FILE}
     error_validate
 
     generate_sshkey
     
     MESSAGE="${UI_CORE_LOADING} ${CONFIG_FILE}"
     echo_stat
-    source ${GSETC_PATH}/${CONFIG_FILE}
+    source ${GS_ETC_PATH}/${CONFIG_FILE}
     error_validate
 
     echo_lines
@@ -2051,7 +2002,7 @@ function advanced_config_generate {
 
         MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_CONTAINER_TYPE} to ${CONFIG_FILE}"
         echo_stat
-        sudo sed -i "/# LOCAL_PIHOLE_TYPE=''/c\LOCAL_PIHOLE_TYPE='${INPUT_LOCAL_PIHOLE_TYPE}'" ${GSETC_PATH}/${CONFIG_FILE}
+        sudo sed -i "/# LOCAL_PIHOLE_TYPE=''/c\LOCAL_PIHOLE_TYPE='${INPUT_LOCAL_PIHOLE_TYPE}'" ${GS_ETC_PATH}/${CONFIG_FILE}
         error_validate
         
         MESSAGE="${UI_CONFIG_CONT_DETECT} ${UI_CONFIG_IMAGES}"
@@ -2077,7 +2028,7 @@ function advanced_config_generate {
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_CONTAINER_NAME} to ${CONFIG_FILE}"
             echo_stat
-            sudo sed -i "/# LOCAL_DOCKER_CONTAINER=''/c\LOCAL_DOCKER_CONTAINER='${INPUT_LOCAL_DOCKER_CONTAINER}'" ${GSETC_PATH}/${CONFIG_FILE}
+            sudo sed -i "/# LOCAL_DOCKER_CONTAINER=''/c\LOCAL_DOCKER_CONTAINER='${INPUT_LOCAL_DOCKER_CONTAINER}'" ${GS_ETC_PATH}/${CONFIG_FILE}
             error_validate
         fi
         
@@ -2091,7 +2042,7 @@ function advanced_config_generate {
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
             echo_stat
-            sudo sed -i "/# LOCAL_PIHOLE_DIRECTORY=''/c\LOCAL_PIHOLE_DIRECTORY='${INPUT_LOCAL_PIHOLE_DIRECTORY}'" ${GSETC_PATH}/${CONFIG_FILE}
+            sudo sed -i "/# LOCAL_PIHOLE_DIRECTORY=''/c\LOCAL_PIHOLE_DIRECTORY='${INPUT_LOCAL_PIHOLE_DIRECTORY}'" ${GS_ETC_PATH}/${CONFIG_FILE}
             error_validate
             SKIP_LOCAL_PIHOLE_DIRECTORY="1"
         else
@@ -2110,7 +2061,7 @@ function advanced_config_generate {
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
             echo_stat
-            sudo sed -i "/# LOCAL_DNSMASQ_DIRECTORY=''/c\LOCAL_DNSMASQ_DIRECTORY='${INPUT_LOCAL_DNSMASQ_DIRECTORY}'" ${GSETC_PATH}/${CONFIG_FILE}
+            sudo sed -i "/# LOCAL_DNSMASQ_DIRECTORY=''/c\LOCAL_DNSMASQ_DIRECTORY='${INPUT_LOCAL_DNSMASQ_DIRECTORY}'" ${GS_ETC_PATH}/${CONFIG_FILE}
             error_validate
             SKIP_DNSMASQ_DIR="1"
         else
@@ -2121,7 +2072,7 @@ function advanced_config_generate {
         
         MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_VOLUME_OWNER} to ${CONFIG_FILE}"
         echo_stat
-        sudo sed -i "/# LOCAL_FILE_OWNER=''/c\LOCAL_FILE_OWNER='999:999'" ${GSETC_PATH}/${CONFIG_FILE}
+        sudo sed -i "/# LOCAL_FILE_OWNER=''/c\LOCAL_FILE_OWNER='999:999'" ${GS_ETC_PATH}/${CONFIG_FILE}
         error_validate
     fi
     
@@ -2142,7 +2093,7 @@ function advanced_config_generate {
         fi
         MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CONFIG_CONTAINER_TYPE} to ${CONFIG_FILE}"
         echo_stat
-        sudo sed -i "/# REMOTE_PIHOLE_TYPE=''/c\REMOTE_PIHOLE_TYPE='${INPUT_REMOTE_PIHOLE_TYPE}'" ${GSETC_PATH}/${CONFIG_FILE}
+        sudo sed -i "/# REMOTE_PIHOLE_TYPE=''/c\REMOTE_PIHOLE_TYPE='${INPUT_REMOTE_PIHOLE_TYPE}'" ${GS_ETC_PATH}/${CONFIG_FILE}
         error_validate
         
         MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CONFIG_CONTAINER_NAME}"
@@ -2156,7 +2107,7 @@ function advanced_config_generate {
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CONFIG_CONTAINER_NAME} to ${CONFIG_FILE}"
             echo_stat
-            sudo sed -i "/# REMOTE_DOCKER_CONTAINER=''/c\REMOTE_DOCKER_CONTAINER='${INPUT_REMOTE_DOCKER_CONTAINER}'" ${GSETC_PATH}/${CONFIG_FILE}
+            sudo sed -i "/# REMOTE_DOCKER_CONTAINER=''/c\REMOTE_DOCKER_CONTAINER='${INPUT_REMOTE_DOCKER_CONTAINER}'" ${GS_ETC_PATH}/${CONFIG_FILE}
             error_validate
         fi
         
@@ -2170,7 +2121,7 @@ function advanced_config_generate {
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
             echo_stat
-            sudo sed -i "/# REMOTE_PIHOLE_DIRECTORY=''/c\REMOTE_PIHOLE_DIRECTORY='${INPUT_REMOTE_PIHOLE_DIRECTORY}'" ${GSETC_PATH}/${CONFIG_FILE}
+            sudo sed -i "/# REMOTE_PIHOLE_DIRECTORY=''/c\REMOTE_PIHOLE_DIRECTORY='${INPUT_REMOTE_PIHOLE_DIRECTORY}'" ${GS_ETC_PATH}/${CONFIG_FILE}
             error_validate
             SKIP_REMOTE_PIHOLE_DIRECTORY="1"
         else
@@ -2189,7 +2140,7 @@ function advanced_config_generate {
         then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
             echo_stat
-            sudo sed -i "/# REMOTE_DNSMASQ_DIRECTORY=''/c\REMOTE_DNSMASQ_DIRECTORY='${INPUT_REMOTE_DNSMASQ_DIRECTORY}'" ${GSETC_PATH}/${CONFIG_FILE}
+            sudo sed -i "/# REMOTE_DNSMASQ_DIRECTORY=''/c\REMOTE_DNSMASQ_DIRECTORY='${INPUT_REMOTE_DNSMASQ_DIRECTORY}'" ${GS_ETC_PATH}/${CONFIG_FILE}
             error_validate
             SKIP_RNSMASQ_DIR="1"
         else
@@ -2200,7 +2151,7 @@ function advanced_config_generate {
         
         MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CONFIG_VOLUME_OWNER} to ${CONFIG_FILE}"
         echo_stat
-        sudo sed -i "/# REMOTE_FILE_OWNER=''/c\REMOTE_FILE_OWNER='999:999'" ${GSETC_PATH}/${CONFIG_FILE}
+        sudo sed -i "/# REMOTE_FILE_OWNER=''/c\REMOTE_FILE_OWNER='999:999'" ${GS_ETC_PATH}/${CONFIG_FILE}
         error_validate
     fi
 
@@ -2219,13 +2170,13 @@ function task_cname {
 function config_enablecname {
     MESSAGE="${UI_CNAME_NAME} ${UI_CONFIG_PREF_SAVED} ${CONFIG_FILE}"
     echo_stat
-    sudo sed -i "/# INCLUDE_CNAME=''/c\INCLUDE_CNAME='1'" ${GSETC_PATH}
+    sudo sed -i "/# INCLUDE_CNAME=''/c\INCLUDE_CNAME='1'" ${GS_ETC_PATH}
     error_validate
 }
 
 ## Delete Existing Configuration
 function config_delete {
-    source ${GSETC_PATH}/${CONFIG_FILE}
+    source ${GS_ETC_PATH}/${CONFIG_FILE}
     MESSAGE="${CONFIG_FILE} ${UI_CONFIG_ALREADY}"
     echo_info  
   
@@ -2236,7 +2187,7 @@ function config_delete {
 
     MESSAGE="${UI_CONFIG_ERASING} ${CONFIG_FILE}"
     echo_stat
-    sudo mv ${GSETC_PATH}/${CONFIG_FILE} ${GSETC_PATH}/${CONFIG_FILE}.gsbackup
+    sudo mv ${GS_ETC_PATH}/${CONFIG_FILE} ${GS_ETC_PATH}/${CONFIG_FILE}.gsbackup
         error_validate
 
     config_generate
@@ -2384,7 +2335,7 @@ function show_info() {
     echo -e "Local Pi-hole Config Directory: ${LOCAL_PIHOLE_DIRECTORY}"
     echo -e "Local DNSMASQ Config Directory: ${LOCAL_DNSMASQ_DIRECTORY}"
     echo -e "Local Gravity Sync Binary: ${GS_FILEPATH}"
-    echo -e "Local Gravity Sync Config Directory: ${GSETC_PATH}"
+    echo -e "Local Gravity Sync Config Directory: ${GS_ETC_PATH}"
     
     if [ "${LOCAL_PIHOLE_TYPE}" == "default" ]; then
         echo -e "Local Pi-hole Binary Directory: ${LOCAL_PIHOLE_BINARY}"
@@ -2559,7 +2510,7 @@ function task_purge {
     sudo systemctl stop gravity-sync.timer
     sudo systemctl disable gravity-sync
     
-    sudo rm -fr ${GSETC_PATH}
+    sudo rm -fr ${GS_ETC_PATH}
     sudo rm ${GS_FILEPATH}
     exit_withchange
 }
