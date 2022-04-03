@@ -32,8 +32,6 @@ LOCAL_DOCKER_CONTAINER='pihole'					# replace in gravity-sync.conf to overwrite
 REMOTE_DOCKER_CONTAINER='pihole'				# replace in gravity-sync.conf to overwrite
 
 # Interaction Customization
-GS_INTENT_VALIDATE='true'						# replace in gravity-sync.conf to overwrite
-SKIP_CUSTOM='0'						            # replace in gravity-sync.conf to overwrite
 ROOT_CHECK_AVOID='0'				            # replace in gravity-sync.conf to overwrite
 
 # STANDARD VARIABLES #########################
@@ -87,7 +85,6 @@ UI_CUSTOM_NAME='DNS Records'
 UI_CNAME_NAME='DNS CNAMEs'
 
 # Core
-UI_INVALID_DNS_CONFIG='Invalid DNS replication settings in'
 UI_CORE_MISSING='Missing'
 UI_CORE_LOADING='Loading'
 UI_CORE_EVALUATING='Evaluating arguments'
@@ -156,7 +153,6 @@ UI_BACKUP_INTEGRITY_DELETE='Removing failed copies'
 # Configuration
 UI_CONFIG_YESNON="'Yes' or 'No', blank is default 'No'"
 UI_CONFIG_ALREADY='already exists'
-UI_CONFIG_PREF_SAVED='preference saved to'
 UI_CONFIG_AREYOUSURE='Proceeding will replace your existing configuration'
 UI_CONFIG_DOADVANCED='Do you want to enable advanced installation options'
 UI_CONFIG_ERASING='Erasing existing'
@@ -428,8 +424,6 @@ function pull_gs_grav {
 
 ## Pull Custom
 function pull_gs_cust {
-    if [ "$SKIP_CUSTOM" != '1' ]
-    then
         if [ "$REMOTE_CUSTOM_DNS" == "1" ]
         then
             backup_local_custom
@@ -449,7 +443,6 @@ function pull_gs_cust {
             
             validate_custom_permissions
         fi
-    fi
 }
 
 ## Pull CNAME
@@ -558,8 +551,6 @@ function push_gs_grav {
 
 ## Push Custom
 function push_gs_cust {
-    if [ "$SKIP_CUSTOM" != '1' ]
-    then
         if [ "$REMOTE_CUSTOM_DNS" == "1" ]
         then
             backup_remote_custom
@@ -584,7 +575,6 @@ function push_gs_cust {
             CMD_REQUESTED="sudo chmod 644 ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}"
             create_sshcmd
         fi
-    fi
 }
 
 ## Push Custom
@@ -745,8 +735,6 @@ function smart_gs {
         SECCLCHANGE="1"
     fi
     
-    if [ "$SKIP_CUSTOM" != '1' ]
-    then
         if [ -f "${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS}" ]
         then
             if [ "${PRICLCHANGE}" == "${SECCLCHANGE}" ]
@@ -789,7 +777,6 @@ function smart_gs {
             pull_gs_cust
             PULLRESTART="1"
         fi
-    fi
     
     if [ "${primaryCNMD5}" != "${last_primaryCNMD5}" ]
     then
@@ -909,8 +896,6 @@ function backup_local_gravity_integrity() {
 }
 
 function backup_local_custom() {
-    if [ "$SKIP_CUSTOM" != '1' ]
-    then
         if [ -f ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ]
         then
             MESSAGE="${UI_BACKUP_SECONDARY} ${UI_CUSTOM_NAME}"
@@ -922,7 +907,6 @@ function backup_local_custom() {
             MESSAGE="No local ${CUSTOM_DNS} detected"
             echo_info
         fi
-    fi
 }
 
 function backup_local_cname() {
@@ -992,15 +976,12 @@ function backup_remote_gravity_integrity() {
 }
 
 function backup_remote_custom() {
-    if [ "$SKIP_CUSTOM" != '1' ]
-    then
         MESSAGE="${UI_BACKUP_PRIMARY} ${UI_CUSTOM_NAME}"
         echo_stat
         
         CMD_TIMEOUT=$BACKUP_TIMEOUT
         CMD_REQUESTED="sudo cp ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}.gsbackup"
         create_sshcmd
-    fi
 }
 
 function backup_remote_cname() {
@@ -1048,8 +1029,6 @@ function md5_compare {
         HASHMARK=$((HASHMARK+1))
     fi
     
-    if [ "$SKIP_CUSTOM" != '1' ]
-    then
         if [ -f ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ]
         then
             if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}
@@ -1089,7 +1068,6 @@ function md5_compare {
             MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_SECONDARY}"
             echo_info
         fi
-    fi
     
             if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} ]
             then
@@ -1179,8 +1157,6 @@ function md5_recheck {
     secondDBMD5=$(md5sum ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} | sed 's/\s.*$//')
     error_validate
     
-    if [ "$SKIP_CUSTOM" != '1' ]
-    then
         if [ -f ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ]
         then
             if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}
@@ -1210,7 +1186,6 @@ function md5_recheck {
             MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_SECONDARY}"
             echo_info
         fi
-    fi
     
             if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} ]
             then
@@ -1652,8 +1627,6 @@ function validate_cname_permissions() {
 
 ## Validate Intent
 function intent_validate {
-    if [ "$GS_INTENT_VALIDATE" == "true" ]
-    then
         PHASER=$((( RANDOM % 4 ) + 1 ))
         if [ "$PHASER" = "1" ]
         then
@@ -1680,10 +1653,6 @@ function intent_validate {
             echo_info
             exit_nochange
         fi
-    else
-        MESSAGE="Verification bypassed"
-        echo_warn
-    fi
 }
 
 ## Sudo Creation Task
@@ -2173,22 +2142,6 @@ function show_info() {
     echo -e ""
     
     echo -e "${YELLOW}Global Instance Settings${NC}"
-    if [ ${SKIP_CUSTOM} == '0' ]; then
-        echo -e "DNS Replication: Enabled (default)"
-    elif [ ${SKIP_CUSTOM} == '1' ]; then
-        echo -e "DNS Replication: Disabled (custom)"
-    else
-        echo -e "DNS Replication: Invalid Configuration"
-    fi
-    
-    if [ ${GS_INTENT_VALIDATE} == 'true' ]; then
-        echo -e "Verify Operations: Enabled (default)"
-    elif [ ${GS_INTENT_VALIDATE} == 'false' ]; then
-        echo -e "Verify Operations: Disabled (custom)"
-    else
-        echo -e "Verify Operations: Invalid Configuration"
-    fi
-
     if [ ${SSH_PORT} == '22' ]; then
         echo -e "SSH Port: 22 (default)"
     else
