@@ -34,8 +34,6 @@ REMOTE_DOCKER_CONTAINER='pihole'				# replace in gravity-sync.conf to overwrite
 # Interaction Customization
 GS_INTENT_VALIDATE='true'						# replace in gravity-sync.conf to overwrite
 SKIP_CUSTOM='0'						            # replace in gravity-sync.conf to overwrite
-INCLUDE_CNAME='1'					            # replace in gravity-sync.conf to overwrite
-PING_AVOID='0'						            # replace in gravity-sync.conf to overwrite
 ROOT_CHECK_AVOID='0'				            # replace in gravity-sync.conf to overwrite
 
 # STANDARD VARIABLES #########################
@@ -289,14 +287,6 @@ function start_gs {
     then
         new_root_check
     fi
-    
-    if [ "${INCLUDE_CNAME}" == "1" ] && [ "${SKIP_CUSTOM}" == "1" ]
-    then
-        MESSAGE="${UI_INVALID_DNS_CONFIG} ${CONFIG_FILE}"
-        echo_fail
-        
-        exit_nochange
-    fi
 }
 
 # Standard Output No Config
@@ -464,8 +454,6 @@ function pull_gs_cust {
 
 ## Pull CNAME
 function pull_gs_cname {
-    if [ "${INCLUDE_CNAME}" == '1' ]
-    then
         if [ "$REMOTE_CNAME_DNS" == "1" ]
         then
             backup_local_cname
@@ -485,7 +473,6 @@ function pull_gs_cname {
             
             validate_cname_permissions
         fi
-    fi
 }
 
 ## Pull Reload
@@ -602,10 +589,7 @@ function push_gs_cust {
 
 ## Push Custom
 function push_gs_cname {
-    if [ "${INCLUDE_CNAME}" == '1' ]
-    then
-        if [ "$REMOTE_CNAME_DNS" == "1" ]
-        then
+    if [ "$REMOTE_CNAME_DNS" == "1" ]; then
             backup_remote_cname
             backup_local_cname
             
@@ -629,7 +613,6 @@ function push_gs_cname {
             CMD_REQUESTED="sudo chmod 644 ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}"
             create_sshcmd
         fi
-    fi
 }
 
 ## Push Reload
@@ -818,8 +801,6 @@ function smart_gs {
         SECCNCHANGE="1"
     fi
     
-    if [ "$INCLUDE_CNAME" == "1" ]
-    then
         if [ -f "${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF}" ]
         then
             if [ "${PRICNCHANGE}" == "${SECCNCHANGE}" ]
@@ -862,7 +843,6 @@ function smart_gs {
             pull_gs_cname
             PULLRESTART="1"
         fi
-    fi
     
     if [ "$PULLRESTART" == "1" ]
     then
@@ -946,8 +926,6 @@ function backup_local_custom() {
 }
 
 function backup_local_cname() {
-    if [ "${INCLUDE_CNAME}" == '1' ]
-    then
         if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} ]
         then
             MESSAGE="${UI_BACKUP_SECONDARY} ${UI_CNAME_NAME}"
@@ -959,7 +937,6 @@ function backup_local_cname() {
             MESSAGE="No local ${CNAME_CONF} detected"
             echo_info
         fi
-    fi
 }
 
 function backup_remote_gravity() {
@@ -1027,15 +1004,12 @@ function backup_remote_custom() {
 }
 
 function backup_remote_cname() {
-    if [ "$INCLUDE_CNAME" == '1' ]
-    then
         MESSAGE="${UI_BACKUP_PRIMARY} ${UI_CNAME_NAME}"
         echo_stat
         
         CMD_TIMEOUT=$BACKUP_TIMEOUT
         CMD_REQUESTED="sudo cp ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF} ${REMOTE_PIHOLE_DIRECTORY}/${CNAME_CONF}.gsbackup"
         create_sshcmd
-    fi
 }
 
 function backup_cleanup() {
@@ -1117,10 +1091,6 @@ function md5_compare {
         fi
     fi
     
-    if [ "${SKIP_CUSTOM}" != '1' ]
-    then
-        if [ "${INCLUDE_CNAME}" == "1" ]
-        then
             if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} ]
             then
                 if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}
@@ -1161,8 +1131,6 @@ function md5_compare {
                 MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_SECONDARY}"
                 echo_info
             fi
-        fi
-    fi
     
     if [ "$HASHMARK" != "0" ]
     then
@@ -1244,10 +1212,6 @@ function md5_recheck {
         fi
     fi
     
-    if [ "${SKIP_CUSTOM}" != '1' ]
-    then
-        if [ "${INCLUDE_CNAME}" == "1" ]
-        then
             if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} ]
             then
                 if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}
@@ -1278,8 +1242,6 @@ function md5_recheck {
                 MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_SECONDARY}"
                 echo_info
             fi
-        fi
-    fi
 }
 
 ## Determine SSH Pathways
@@ -2104,13 +2066,6 @@ function task_cname {
     exit_withchange
 }
 
-function config_enablecname {
-    MESSAGE="${UI_CNAME_NAME} ${UI_CONFIG_PREF_SAVED} ${CONFIG_FILE}"
-    echo_stat
-    sudo sed -i "/# INCLUDE_CNAME=''/c\INCLUDE_CNAME='1'" ${GS_ETC_PATH}
-    error_validate
-}
-
 ## Delete Existing Configuration
 function config_delete {
     source ${GS_ETC_PATH}/${CONFIG_FILE}
@@ -2226,28 +2181,12 @@ function show_info() {
         echo -e "DNS Replication: Invalid Configuration"
     fi
     
-    if [ ${INCLUDE_CNAME} == '1' ]; then
-        echo -e "CNAME Replication: Enabled (default)"
-    elif [ ${INCLUDE_CNAME} == '0' ]; then
-        echo -e "CNAME Replication: Disabled (custom)"
-    else
-        echo -e "CNAME Replication: Invalid Configuration"
-    fi
-    
     if [ ${GS_INTENT_VALIDATE} == 'true' ]; then
         echo -e "Verify Operations: Enabled (default)"
     elif [ ${GS_INTENT_VALIDATE} == 'false' ]; then
         echo -e "Verify Operations: Disabled (custom)"
     else
         echo -e "Verify Operations: Invalid Configuration"
-    fi
-    
-    if [ ${PING_AVOID} == '0' ]; then
-        echo -e "Ping Test: Enabled (default)"
-    elif [ ${PING_AVOID} == '1' ]; then
-        echo -e "Ping Test: Disabled (custom)"
-    else
-        echo -e "Ping Test: Invalid Configuration"
     fi
 
     if [ ${SSH_PORT} == '22' ]; then
