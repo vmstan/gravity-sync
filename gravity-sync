@@ -32,7 +32,7 @@ LOCAL_DOCKER_CONTAINER='pihole'					# replace in gravity-sync.conf to overwrite
 REMOTE_DOCKER_CONTAINER='pihole'				# replace in gravity-sync.conf to overwrite
 
 # Interaction Customization
-VERIFY_PASS='0'						            # replace in gravity-sync.conf to overwrite
+GS_INTENT_VALIDATE='true'						# replace in gravity-sync.conf to overwrite
 SKIP_CUSTOM='0'						            # replace in gravity-sync.conf to overwrite
 INCLUDE_CNAME='1'					            # replace in gravity-sync.conf to overwrite
 PING_AVOID='0'						            # replace in gravity-sync.conf to overwrite
@@ -1726,7 +1726,7 @@ function validate_cname_permissions() {
 
 ## Validate Intent
 function intent_validate {
-    if [ "$VERIFY_PASS" == "0" ]
+    if [ "$GS_INTENT_VALIDATE" == "true" ]
     then
         PHASER=$((( RANDOM % 4 ) + 1 ))
         if [ "$PHASER" = "1" ]
@@ -2270,9 +2270,9 @@ function show_info() {
         echo -e "CNAME Replication: Invalid Configuration"
     fi
     
-    if [ ${VERIFY_PASS} == '0' ]; then
+    if [ ${GS_INTENT_VALIDATE} == 'true' ]; then
         echo -e "Verify Operations: Enabled (default)"
-    elif [ ${VERIFY_PASS} == '1' ]; then
+    elif [ ${GS_INTENT_VALIDATE} == 'false' ]; then
         echo -e "Verify Operations: Disabled (custom)"
     else
         echo -e "Verify Operations: Invalid Configuration"
