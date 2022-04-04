@@ -1385,6 +1385,12 @@ function logs_export {
         RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${GS_ETC_PATH}/"
         create_rsynccmd
 
+        MESSAGE="Setting permissions on remote hashing files"
+        echo_stat
+        CMD_TIMEOUT=$BACKUP_TIMEOUT
+        CMD_REQUESTED="sudo chmod 644 ${GS_ETC_PATH}/*.md5"
+        create_sshcmd
+
         sudo rm -f ${OS_TMP}/*.md5
     fi
     
