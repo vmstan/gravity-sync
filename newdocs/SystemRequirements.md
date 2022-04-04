@@ -7,11 +7,11 @@ Gravity Sync requires two Pi-hole 5.x instances running on two seperate hosts. T
 
 The Gravity Sync installer will perform checks to make sure the required components are available on your system during installation. If any of these components are missing, you will have an opportunity to use your system's package manager utility to install them. 
 
+- Git
 - OpenSSH
 - Rsync
-- Git
 
-You will need a user account with operating system level administrator privileges at each side. This can be a dedicated account with `sudo` ability, or the system's `root` account. During installation, if you're using any account other than `root`, it will be given [passwordless sudo](https://linuxize.com/post/how-to-run-sudo-command-without-password/) permissions on the system.
+You will need a user account with operating system level administrator privileges on each Pi-hole host. This can be a dedicated account with `sudo` ability, or the system's `root` account. During installation, if you're using any account other than `root`, it will be given [passwordless sudo](https://linuxize.com/post/how-to-run-sudo-command-without-password/) permissions on the system.
 
 ### Storage Performance
 
