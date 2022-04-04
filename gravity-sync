@@ -295,7 +295,7 @@ function import_gs_config {
         echo_fail
         
         MESSAGE="${UI_CORE_MISSING} ${CONFIG_FILE}"
-        echo_info
+        echo_inf1
         
         TASKTYPE='CONFIG'
         config_generate
@@ -447,8 +447,6 @@ function pull_gs_cname {
 
 ## Pull Reload
 function pull_gs_reload {
-    MESSAGE="${UI_PULL_RELOAD_WAIT}"
-    echo_info
     sleep 1
     
     MESSAGE="${UI_FTLDNS_CONFIG_UPDATE}"
@@ -584,8 +582,6 @@ function push_gs_cname {
 
 ## Push Reload
 function push_gs_reload {
-    MESSAGE="${UI_PUSH_RELOAD_WAIT}"
-    echo_info
     sleep 1
     
     MESSAGE="${UI_FTLDNS_CONFIG_PUSH_UPDATE}"
@@ -880,7 +876,7 @@ function backup_local_custom() {
         error_validate
     else
         MESSAGE="No local ${CUSTOM_DNS} detected"
-        echo_info
+        echo_inf1
     fi
 }
 
@@ -893,7 +889,7 @@ function backup_local_cname() {
         error_validate
     else
         MESSAGE="No local ${CNAME_CONF} detected"
-        echo_info
+        echo_inf1
     fi
 }
 
@@ -1028,7 +1024,7 @@ function md5_compare {
                 fi
             else
                 MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_REMOTE}"
-                echo_info
+                echo_inf1
             fi
         else
             if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}
@@ -1036,10 +1032,10 @@ function md5_compare {
                 REMOTE_CUSTOM_DNS="1"
                 MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_REMOTE}"
                 HASHMARK=$((HASHMARK+1))
-                echo_info
+                echo_inf1
             fi
             MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_LOCAL}"
-            echo_info
+            echo_inf1
         fi
     
             if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} ]
@@ -1068,7 +1064,7 @@ function md5_compare {
                     fi
                 else
                     MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_REMOTE}"
-                    echo_info
+                    echo_inf1
                 fi
             else
                 if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}
@@ -1076,11 +1072,11 @@ function md5_compare {
                     REMOTE_CNAME_DNS="1"
                     MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_REMOTE}"
                     HASHMARK=$((HASHMARK+1))
-                    echo_info
+                    echo_inf1
                 fi
                 
                 MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_LOCAL}"
-                echo_info
+                echo_inf1
             fi
     
     if [ "$HASHMARK" != "0" ]
@@ -1090,7 +1086,7 @@ function md5_compare {
         HASHMARK=$((HASHMARK+0))
     else
         MESSAGE="${UI_HASHING_NOREP}"
-        echo_info
+        echo_inf1
         exit_nochange
     fi
 }
@@ -1157,17 +1153,17 @@ function md5_recheck {
                 error_validate
             else
                 MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_REMOTE}"
-                echo_info
+                echo_inf1
             fi
         else
             if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}
             then
                 REMOTE_CUSTOM_DNS="1"
                 MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_REMOTE}"
-                echo_info
+                echo_inf1
             fi
             MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_LOCAL}"
-            echo_info
+            echo_inf1
         fi
     
             if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} ]
@@ -1187,18 +1183,18 @@ function md5_recheck {
                     error_validate
                 else
                     MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_REMOTE}"
-                    echo_info
+                    echo_inf1
                 fi
             else
                 if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}
                 then
                     REMOTE_CNAME_DNS="1"
                     MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_REMOTE}"
-                    echo_info
+                    echo_inf1
                 fi
                 
                 MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_LOCAL}"
-                echo_info
+                echo_inf1
             fi
 }
 
@@ -1225,7 +1221,7 @@ function detect_sshkeygen {
     else
         echo_fail
         MESSAGE="SSH-KEYGEN is required on $HOSTNAME"
-        echo_info
+        echo_warn
         
         exit_nochange
     fi
@@ -1269,7 +1265,7 @@ function export_sshkey {
         if [ -f ${SSH_PKIF} ]
         then
             MESSAGE="Registering key-pair to ${REMOTE_HOST}"
-            echo_info
+            echo_inf1
             
             ssh-copy-id -f -p ${SSH_PORT} -i ${SSH_PKIF}.pub ${REMOTE_USER}@${REMOTE_HOST}
         else
@@ -1339,8 +1335,8 @@ function detect_remotersync {
 }
 
 function show_target {
-    MESSAGE="${UI_CORE_UC_REMOTE} ${UI_CORE_APP}: ${REMOTE_USER}@${REMOTE_HOST}"
-    echo_info
+    MESSAGE="Remote ${UI_CORE_APP}: ${REMOTE_USER}@${REMOTE_HOST}"
+    echo_inf1
     
     SSH_CMD='ssh'
 }
