@@ -107,8 +107,8 @@ UI_HASHING_COMPARING='Comparing to the local'
 UI_HASHING_DIFFERNCE='Differences detected in the'
 UI_HASHING_DETECTED='has been detected on the'
 UI_HASHING_NOTDETECTED='not detected on the'
-UI_HASHING_PRIMARY='remote host'
-UI_HASHING_SECONDARY='local host'
+UI_HASHING_REMOTE='remote host'
+UI_HASHING_LOCAL='local host'
 UI_HASHING_REQUIRED='Replication of Pi-hole settings is required'
 UI_HASHING_NOREP='No replication is required at this time'
 UI_HASHING_DIAGNOSTICS='Performing replicator diagnostics'
@@ -127,9 +127,9 @@ UI_VAL_LOCAL_FILE_OWNERSHIP='Validating file ownership on'
 UI_VAL_FILE_PERMISSION='Validating file permissions on'
 
 # Pull/Push
-UI_PULL_PRIMARY='Pulling the remote'
-UI_PUSH_SECONDARY='Pushing the local'
-UI_REPLACE_SECONDARY='Replacing the local'
+UI_PULL_REMOTE='Pulling the remote'
+UI_PUSH_LOCAL='Pushing the local'
+UI_REPLACE_LOCAL='Replacing the local'
 UI_PULL_RELOAD_WAIT='Isolating regeneration pathways'
 UI_PUSH_RELOAD_WAIT='Inverting tachyon pulses'
 UI_FTLDNS_CONFIG_UPDATE='Updating local FTLDNS configuration'
@@ -144,8 +144,8 @@ UI_LOGGING_DISPLAY='Displaying output of previous jobs'
 UI_LOGGING_RECENT_COMPLETE='Recent complete executions of'
 
 # Backup
-UI_BACKUP_PRIMARY='Performing backup of remote'
-UI_BACKUP_SECONDARY='Performing backup of local'
+UI_BACKUP_REMOTE='Performing backup of remote'
+UI_BACKUP_LOCAL='Performing backup of local'
 UI_BACKUP_INTEGRITY="Checking ${UI_GRAVITY_NAME} copy integrity"
 UI_BACKUP_INTEGRITY_FAILED='Integrity check has failed for the remoet'
 UI_BACKUP_INTEGRITY_DELETE='Removing failed copies'
@@ -236,12 +236,6 @@ function echo_good_clean {
     echo -e "\r${GOOD} ${MESSAGE}"
 }
 
-### Success
-function echo_sameline {
-    echo -en "                                                                                        "
-    echo -en "\r"
-}
-
 ### Failure
 function echo_fail {
     echo -e "\r${FAIL} ${MESSAGE}"
@@ -327,17 +321,6 @@ function error_validate {
     fi
 }
 
-## Error Validation
-function silent_error_validate {
-    if [ "$?" != "0" ]
-    then
-        echo_fail
-        exit 1
-    else
-        echo_sameline
-    fi
-}
-
 function  set_pihole_exec {
     if [ "$LOCAL_PIHOLE_TYPE" == "default" ]
     then
@@ -403,14 +386,14 @@ function pull_gs_grav {
     backup_remote_gravity
     backup_remote_gravity_integrity
     
-    MESSAGE="${UI_PULL_PRIMARY} ${UI_GRAVITY_NAME}"
+    MESSAGE="${UI_PULL_REMOTE} ${UI_GRAVITY_NAME}"
     echo_stat
     RSYNC_REPATH="sudo rsync"
     RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup"
     RSYNC_TARGET="/tmp/${GRAVITY_FI}.gsbackup"
     create_rsynccmd
     
-    MESSAGE="${UI_REPLACE_SECONDARY} ${UI_GRAVITY_NAME}"
+    MESSAGE="${UI_REPLACE_LOCAL} ${UI_GRAVITY_NAME}"
     echo_stat
     sudo mv /tmp/${GRAVITY_FI}.gsbackup ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} >/dev/null 2>&1
     error_validate
@@ -425,14 +408,14 @@ function pull_gs_cust {
             backup_local_custom
             backup_remote_custom
             
-            MESSAGE="${UI_PULL_PRIMARY} ${UI_CUSTOM_NAME}"
+            MESSAGE="${UI_PULL_REMOTE} ${UI_CUSTOM_NAME}"
             echo_stat
             RSYNC_REPATH="sudo rsync"
             RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}.gsbackup"
             RSYNC_TARGET="/tmp/${CUSTOM_DNS}.gsbackup"
             create_rsynccmd
             
-            MESSAGE="${UI_REPLACE_SECONDARY} ${UI_CUSTOM_NAME}"
+            MESSAGE="${UI_REPLACE_LOCAL} ${UI_CUSTOM_NAME}"
             echo_stat
             sudo mv /tmp/${CUSTOM_DNS}.gsbackup ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} >/dev/null 2>&1
             error_validate
@@ -448,14 +431,14 @@ function pull_gs_cname {
             backup_local_cname
             backup_remote_cname
             
-            MESSAGE="${UI_PULL_PRIMARY} ${UI_CNAME_NAME}"
+            MESSAGE="${UI_PULL_REMOTE} ${UI_CNAME_NAME}"
             echo_stat
             RSYNC_REPATH="sudo rsync"
             RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${CNAME_CONF}.gsbackup"
             RSYNC_TARGET="/tmp/${CNAME_CONF}.gsbackup"
             create_rsynccmd
             
-            MESSAGE="${UI_REPLACE_SECONDARY} ${UI_CNAME_NAME}"
+            MESSAGE="${UI_REPLACE_LOCAL} ${UI_CNAME_NAME}"
             echo_stat
             sudo mv /tmp/${CNAME_CONF}.gsbackup ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} >/dev/null 2>&1
             error_validate
@@ -525,7 +508,7 @@ function push_gs_grav {
     backup_local_gravity
     backup_local_gravity_integrity
     
-    MESSAGE="${UI_PUSH_SECONDARY} ${UI_GRAVITY_NAME}"
+    MESSAGE="${UI_PUSH_LOCAL} ${UI_GRAVITY_NAME}"
     echo_stat
     RSYNC_REPATH="sudo rsync"
     RSYNC_SOURCE="${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup"
@@ -552,7 +535,7 @@ function push_gs_cust {
             backup_remote_custom
             backup_local_custom
             
-            MESSAGE="${UI_PUSH_SECONDARY} ${UI_CUSTOM_NAME}"
+            MESSAGE="${UI_PUSH_LOCAL} ${UI_CUSTOM_NAME}"
             echo_stat
             RSYNC_REPATH="sudo rsync"
             RSYNC_SOURCE="${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS}.gsbackup"
@@ -579,7 +562,7 @@ function push_gs_cname {
             backup_remote_cname
             backup_local_cname
             
-            MESSAGE="${UI_PUSH_SECONDARY} ${UI_CNAME_NAME}"
+            MESSAGE="${UI_PUSH_LOCAL} ${UI_CNAME_NAME}"
             echo_stat
             RSYNC_REPATH="sudo rsync"
             RSYNC_SOURCE="${LOCAL_PIHOLE_DIRECTORY}/${CNAME_CONF}.gsbackup"
@@ -844,7 +827,7 @@ function smart_gs {
 }
 
 function backup_local_gravity() {
-    MESSAGE="${UI_BACKUP_SECONDARY} ${UI_GRAVITY_NAME}"
+    MESSAGE="${UI_BACKUP_LOCAL} ${UI_GRAVITY_NAME}"
     echo_stat
     
     if [ "$LOCAL_PIHOLE_TYPE" == "default" ]; then
@@ -894,7 +877,7 @@ function backup_local_gravity_integrity() {
 function backup_local_custom() {
         if [ -f ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ]
         then
-            MESSAGE="${UI_BACKUP_SECONDARY} ${UI_CUSTOM_NAME}"
+            MESSAGE="${UI_BACKUP_LOCAL} ${UI_CUSTOM_NAME}"
             echo_stat
             
             sudo cp ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS}.gsbackup
@@ -908,7 +891,7 @@ function backup_local_custom() {
 function backup_local_cname() {
         if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} ]
         then
-            MESSAGE="${UI_BACKUP_SECONDARY} ${UI_CNAME_NAME}"
+            MESSAGE="${UI_BACKUP_LOCAL} ${UI_CNAME_NAME}"
             echo_stat
             
             sudo cp ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} ${LOCAL_PIHOLE_DIRECTORY}/${CNAME_CONF}.gsbackup
@@ -920,7 +903,7 @@ function backup_local_cname() {
 }
 
 function backup_remote_gravity() {
-    MESSAGE="${UI_BACKUP_PRIMARY} ${UI_GRAVITY_NAME}"
+    MESSAGE="${UI_BACKUP_REMOTE} ${UI_GRAVITY_NAME}"
     echo_stat
 
     if [ "$REMOTE_PIHOLE_TYPE" == "default" ]; then
@@ -972,7 +955,7 @@ function backup_remote_gravity_integrity() {
 }
 
 function backup_remote_custom() {
-        MESSAGE="${UI_BACKUP_PRIMARY} ${UI_CUSTOM_NAME}"
+        MESSAGE="${UI_BACKUP_REMOTE} ${UI_CUSTOM_NAME}"
         echo_stat
         
         CMD_TIMEOUT=$BACKUP_TIMEOUT
@@ -981,7 +964,7 @@ function backup_remote_custom() {
 }
 
 function backup_remote_cname() {
-        MESSAGE="${UI_BACKUP_PRIMARY} ${UI_CNAME_NAME}"
+        MESSAGE="${UI_BACKUP_REMOTE} ${UI_CNAME_NAME}"
         echo_stat
         
         CMD_TIMEOUT=$BACKUP_TIMEOUT
@@ -1050,18 +1033,18 @@ function md5_compare {
                     HASHMARK=$((HASHMARK+1))
                 fi
             else
-                MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_PRIMARY}"
+                MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_REMOTE}"
                 echo_info
             fi
         else
             if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}
             then
                 REMOTE_CUSTOM_DNS="1"
-                MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_PRIMARY}"
+                MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_REMOTE}"
                 HASHMARK=$((HASHMARK+1))
                 echo_info
             fi
-            MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_SECONDARY}"
+            MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_LOCAL}"
             echo_info
         fi
     
@@ -1090,19 +1073,19 @@ function md5_compare {
                         HASHMARK=$((HASHMARK+1))
                     fi
                 else
-                    MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_PRIMARY}"
+                    MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_REMOTE}"
                     echo_info
                 fi
             else
                 if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}
                 then
                     REMOTE_CNAME_DNS="1"
-                    MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_PRIMARY}"
+                    MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_REMOTE}"
                     HASHMARK=$((HASHMARK+1))
                     echo_info
                 fi
                 
-                MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_SECONDARY}"
+                MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_LOCAL}"
                 echo_info
             fi
     
@@ -1169,17 +1152,17 @@ function md5_recheck {
                 secondCLMD5=$(md5sum ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} | sed 's/\s.*$//')
                 error_validate
             else
-                MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_PRIMARY}"
+                MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_REMOTE}"
                 echo_info
             fi
         else
             if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}
             then
                 REMOTE_CUSTOM_DNS="1"
-                MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_PRIMARY}"
+                MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_REMOTE}"
                 echo_info
             fi
-            MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_SECONDARY}"
+            MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_LOCAL}"
             echo_info
         fi
     
@@ -1199,18 +1182,18 @@ function md5_recheck {
                     secondCNMD5=$(md5sum ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} | sed 's/\s.*$//')
                     error_validate
                 else
-                    MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_PRIMARY}"
+                    MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_REMOTE}"
                     echo_info
                 fi
             else
                 if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}
                 then
                     REMOTE_CNAME_DNS="1"
-                    MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_PRIMARY}"
+                    MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_REMOTE}"
                     echo_info
                 fi
                 
-                MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_SECONDARY}"
+                MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_LOCAL}"
                 echo_info
             fi
 }
