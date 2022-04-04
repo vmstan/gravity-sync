@@ -90,8 +90,6 @@ UI_CORE_EVALUATING='Evaluating arguments'
 UI_CORE_INIT="Initalizing ${PROGRAM} (${VERSION})"
 UI_CORE_APP='Pi-hole'
 UI_CORE_APP_DNS='DNSMASQ'
-UI_CORE_OPENSSH='OpenSSH'
-UI_CORE_RSYNC='RSYNC'
 
 # Exit
 UI_EXIT_CALC_END='after'
