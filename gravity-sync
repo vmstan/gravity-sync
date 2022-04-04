@@ -1480,25 +1480,11 @@ function validate_gravity_permissions() {
     echo_stat
     sudo chown ${LOCAL_FILE_OWNER} ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} >/dev/null 2>&1
     error_validate
-    
-    MESSAGE="${UI_VAL_FILE_PERMISSION} of ${UI_GRAVITY_NAME}"
+        
+    MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_GRAVITY_NAME}"
     echo_stat
-    
-    GRAVDB_RWE=$(namei -m ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} | grep -v f: | grep ${GRAVITY_FI} | awk '{print $1}')
-    if [ "$GRAVDB_RWE" = "-rw-rw-r--" ]
-    then
-        echo_good
-    else
-        echo_fail
-        
-        MESSAGE="${UI_COMPENSATE}"
-        echo_warn
-        
-        MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_GRAVITY_NAME}"
-        echo_stat
-        sudo chmod 664 ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} >/dev/null 2>&1
-        error_validate
-    fi
+    sudo chmod 664 ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} >/dev/null 2>&1
+    error_validate
 }
 
 ## Validate Local DNS Records Permissions
@@ -1511,24 +1497,10 @@ function validate_custom_permissions() {
     sudo chown root:root ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} >/dev/null 2>&1
     error_validate
     
-    MESSAGE="${UI_VAL_FILE_PERMISSION} ${UI_CUSTOM_NAME}"
+    MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_CUSTOM_NAME}"
     echo_stat
-    
-    CUSTOMLS_RWE=$(namei -m ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} | grep -v f: | grep ${CUSTOM_DNS} | awk '{print $1}')
-    if [ "$CUSTOMLS_RWE" == "-rw-r--r--" ]
-    then
-        echo_good
-    else
-        echo_fail
-        
-        MESSAGE="${UI_COMPENSATE}"
-        echo_warn
-        
-        MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_CUSTOM_NAME}"
-        echo_stat
-        sudo chmod 644 ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} >/dev/null 2>&1
-        error_validate
-    fi
+    sudo chmod 644 ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} >/dev/null 2>&1
+    error_validate
 }
 
 ## Validate Local DNS CNAME Permissions
@@ -1541,24 +1513,10 @@ function validate_cname_permissions() {
     sudo chown root:root ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} >/dev/null 2>&1
     error_validate
     
-    MESSAGE="${UI_VAL_FILE_PERMISSION} ${UI_CNAME_NAME}"
+    MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_CNAME_NAME}"
     echo_stat
-    
-    CNAMELS_RWE=$(namei -m ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} | grep -v f: | grep ${CNAME_CONF} | awk '{print $1}')
-    if [ "$CNAMELS_RWE" == "-rw-r--r--" ]
-    then
-        echo_good
-    else
-        echo_fail
-        
-        MESSAGE="${UI_COMPENSATE}"
-        echo_warn
-        
-        MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_CNAME_NAME}"
-        echo_stat
-        sudo chmod 644 ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} >/dev/null 2>&1
-        error_validate
-    fi
+    sudo chmod 644 ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} >/dev/null 2>&1
+    error_validate
 }
 
 ## Validate Intent
