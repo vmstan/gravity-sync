@@ -61,6 +61,9 @@ GS_ETC_PATH="/etc/gravity-sync"		            # replace in gravity-sync.conf to o
 CONFIG_FILE='gravity-sync.conf' 	            # replace in gravity-sync.conf to overwrite
 SYNCING_LOG='gravity-sync.log' 		            # replace in gravity-sync.conf to overwrite
 HISTORY_MD5='gravity-sync.md5'		            # replace in gravity-sync.conf to overwrite
+GRAVITY_MD5='gravity.md5'
+DNS_LIST_MD5='clist.md5'
+CNAME_LIST_MD5='cname.md5'
 
 # SSH Customization
 SSH_PORT='22' 						            # replace in gravity-sync.conf to overwrite
