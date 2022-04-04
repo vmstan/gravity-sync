@@ -60,7 +60,6 @@ GS_FILEPATH='/usr/local/bin/gravity-sync'
 GS_ETC_PATH="/etc/gravity-sync"		            # replace in gravity-sync.conf to overwrite
 CONFIG_FILE='gravity-sync.conf' 	            # replace in gravity-sync.conf to overwrite
 SYNCING_LOG='gravity-sync.log' 		            # replace in gravity-sync.conf to overwrite
-HISTORY_MD5='gravity-sync.md5'		            # replace in gravity-sync.conf to overwrite
 GRAVITY_MD5='gravity.md5'
 DNS_LIST_MD5='clist.md5'
 CNAME_LIST_MD5='cname.md5'
@@ -86,7 +85,6 @@ UI_CUSTOM_NAME='DNS Records'
 UI_CNAME_NAME='DNS CNAMEs'
 
 # Core
-UI_CORE_MISSING='Missing'
 UI_CORE_LOADING='Loading'
 UI_CORE_EVALUATING='Evaluating arguments'
 UI_CORE_INIT="Initalizing ${PROGRAM} (${VERSION})"
@@ -94,7 +92,6 @@ UI_CORE_APP='Pi-hole'
 UI_CORE_APP_DNS='DNSMASQ'
 UI_CORE_OPENSSH='OpenSSH'
 UI_CORE_RSYNC='RSYNC'
-UI_CORE_UC_REMOTE='Remote'
 
 # Exit
 UI_EXIT_CALC_END='after'
@@ -108,13 +105,12 @@ UI_HASHING_COMPARING='Comparing to the local'
 UI_HASHING_DIFFERNCE='Differences detected in the'
 UI_HASHING_DETECTED='has been detected on the'
 UI_HASHING_NOTDETECTED='not detected on the'
-UI_HASHING_REMOTE='remote host'
-UI_HASHING_LOCAL='local host'
-UI_HASHING_REQUIRED='Replication of Pi-hole settings is required'
+UI_HASHING_REMOTE="remote ${UI_CORE_APP}"
+UI_HASHING_LOCAL="local ${UI_CORE_APP}"
+UI_HASHING_REQUIRED="Replication of ${UI_CORE_APP} settings is required"
 UI_HASHING_NOREP='No replication is required at this time'
-UI_HASHING_DIAGNOSTICS='Performing replicator diagnostics'
 UI_HASHING_REHASHING='Rehashing the remote'
-UI_HASHING_RECOMPARING='Recomparing to the local'
+UI_HASHING_RECOMPARING='Recomparing to local'
 
 # Validation
 UI_VALIDATING='Validating pathways to'
@@ -128,8 +124,6 @@ UI_SET_FILE_PERMISSION='Setting file permissions on'
 UI_PULL_REMOTE='Pulling the remote'
 UI_PUSH_LOCAL='Pushing the local'
 UI_REPLACE_LOCAL='Replacing the local'
-UI_PULL_RELOAD_WAIT='Isolating regeneration pathways'
-UI_PUSH_RELOAD_WAIT='Inverting tachyon pulses'
 UI_FTLDNS_CONFIG_UPDATE='Updating local FTLDNS configuration'
 UI_FTLDNS_CONFIG_RELOAD='Reloading local FTLDNS services'
 UI_FTLDNS_CONFIG_PUSH_UPDATE='Updating remote FTLDNS configuration'
@@ -294,7 +288,7 @@ function import_gs_config {
     else
         echo_fail
         
-        MESSAGE="${UI_CORE_MISSING} ${CONFIG_FILE}"
+        MESSAGE="Missing ${CONFIG_FILE}"
         echo_inf1
         
         TASKTYPE='CONFIG'
@@ -1121,8 +1115,8 @@ function previous_md5 {
 }
 
 function md5_recheck {
-    MESSAGE="${UI_HASHING_DIAGNOSTICS}"
-    echo_info
+    MESSAGE="Performing replicator diagnostics"
+    echo_inf1
     
     HASHMARK='0'
     
@@ -1210,23 +1204,6 @@ function create_rsynccmd {
     error_validate
 }
 
-## Detect SSH-KEYGEN
-function detect_sshkeygen {
-    MESSAGE="Validating SSH-KEYGEN install"
-    echo_stat
-    
-    if hash ssh-keygen >/dev/null 2>&1
-    then
-        echo_good
-    else
-        echo_fail
-        MESSAGE="SSH-KEYGEN is required on $HOSTNAME"
-        echo_warn
-        
-        exit_nochange
-    fi
-}
-
 function generate_sshkey {
     if [ -z $INPUT_REMOTE_PASS ]
     then
@@ -1273,65 +1250,6 @@ function export_sshkey {
             echo_warn
         fi
     fi
-}
-
-## Detect SSH & RSYNC
-function detect_ssh {
-    MESSAGE="${UI_VALIDATING} ${UI_CORE_OPENSSH}"
-    echo_stat
-    
-    if hash ssh 2>/dev/null; then
-        echo_good
-        SSH_CMD='ssh'
-    else
-        echo_fail
-        exit_nochange
-    fi
-    
-    MESSAGE="${UI_VALIDATING} ${UI_CORE_RSYNC}"
-    echo_stat
-    
-    if hash rsync 2>/dev/null; then
-        echo_good
-    else
-        echo_fail
-        
-        echo_warn
-        exit_nochange
-    fi
-}
-
-function detect_remotersync {
-    MESSAGE="Creating test file on ${REMOTE_HOST}"
-    echo_stat
-    
-    CMD_TIMEOUT='15'
-    CMD_REQUESTED="touch ~/gs.test"
-    create_sshcmd
-    
-    MESSAGE="If pull test fails ensure RSYNC is installed on ${REMOTE_HOST}"
-    echo_warn
-    
-    MESSAGE="Pulling test file to $HOSTNAME"
-    echo_stat
-    
-    RSYNC_REPATH="rsync"
-    RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:~/gs.test"
-    RSYNC_TARGET="${GS_ETC_PATH}/gs.test"
-    create_rsynccmd
-    
-    MESSAGE="Cleaning up local test file"
-    echo_stat
-    
-    rm ${GS_ETC_PATH}/gs.test
-    error_validate
-    
-    MESSAGE="Cleaning up remote test file"
-    echo_stat
-    
-    CMD_TIMEOUT='15'
-    CMD_REQUESTED="rm ~/gs.test"
-    create_sshcmd
 }
 
 function show_target {
