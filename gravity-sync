@@ -26,13 +26,12 @@ LOCAL_PIHOLE_DIRECTORY='/etc/pihole' 			# replace in gravity-sync.conf to overwr
 REMOTE_PIHOLE_DIRECTORY='/etc/pihole'			# replace in gravity-sync.conf to overwrite
 LOCAL_DNSMASQ_DIRECTORY='/etc/dnsmasq.d'        # replace in gravity-sync.conf to overwrite
 REMOTE_DNSMASQ_DIRECTORY='/etc/dnsmasq.d'       # replace in gravity-sync.conf to overwrite
+LOCAL_FILE_OWNER='pihole:pihole'			    # replace in gravity-sync.conf to overwrite
+REMOTE_FILE_OWNER='pihole:pihole'			    # replace in gravity-sync.conf to overwrite
 
 # Pi-hole Docker/Podman container name - Docker will pattern match anything set below
 LOCAL_DOCKER_CONTAINER='pihole'					# replace in gravity-sync.conf to overwrite
 REMOTE_DOCKER_CONTAINER='pihole'				# replace in gravity-sync.conf to overwrite
-
-# Interaction Customization
-ROOT_CHECK_AVOID='0'				            # replace in gravity-sync.conf to overwrite
 
 # STANDARD VARIABLES #########################
 
@@ -45,8 +44,6 @@ LOCAL_DOCKER_BINARY='/usr/bin/docker'		    # Local Docker binary directory (defa
 REMOTE_DOCKER_BINARY='/usr/bin/docker'		    # Remote Docker binary directory (default)
 LOCAL_PODMAN_BINARY='/usr/bin/podman'           # Local Podman binary directory (default)
 REMOTE_PODMAN_BINARY='/usr/bin/podman'          # Remote Podman binary directory (default)
-LOCAL_FILE_OWNER='pihole:pihole'			    # Local Pi-hole file owner and group (default)
-REMOTE_FILE_OWNER='pihole:pihole'			    # Remote Pi-hole file owner and group (default)
 PIHOLE_CONTAINER_IMAGE='pihole/pihole'          # Official Pi-hole container image name
 
 GRAVITY_FI='gravity.db' 			            # Pi-hole database file name
