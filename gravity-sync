@@ -1391,10 +1391,10 @@ function logs_export {
         RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${GS_ETC_PATH}/"
         create_rsynccmd
 
-        sudo rm -f ${GS_ETC_PATH}/${HISTORY_MD5}2
-        sudo rm -f ${GS_ETC_PATH}/${GRAVITY_MD5}2
-        sudo rm -f ${GS_ETC_PATH}/${DNS_LIST_MD5}2
-        sudo rm -f ${GS_ETC_PATH}/${CNAME_LIST_MD5}2
+        sudo rm -f ${GS_ETC_PATH}/*.md52
+        CMD_TIMEOUT=$BACKUP_TIMEOUT
+        CMD_REQUESTED="sudo rm -f ${GS_ETC_PATH}/*.md52"
+        create_sshcmd
     fi
     
     MESSAGE="${UI_LOGGING_SUCCESS} ${TASKTYPE}"
