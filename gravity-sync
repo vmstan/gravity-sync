@@ -715,7 +715,7 @@ function smart_gs {
             then
                 if [ "${REMOTE_DNS_CHANGE}" != "0" ]
                 then
-                    MESSAGE="Both ${CUSTOM_DNS} have changed"
+                    MESSAGE="Both ${UI_GRAVITY_NAME} have changed"
                     echo_warn
                     
                     REMOTE_DNS_DATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}")
@@ -723,13 +723,13 @@ function smart_gs {
                     
                     if (( "$REMOTE_DNS_DATE" >= "$LOCAL_DNS_DATE" ))
                     then
-                        MESSAGE="Primary ${CUSTOM_DNS} Last Changed"
+                        MESSAGE="Remote ${UI_GRAVITY_NAME} was last changed"
                         echo_warn
                         
                         pull_gs_cust
                         PULLRESTART="1"
                     else
-                        MESSAGE="Secondary ${CUSTOM_DNS} Last Changed"
+                        MESSAGE="Local ${UI_GRAVITY_NAME} was last changed"
                         echo_warn
                         
                         push_gs_cust
@@ -768,7 +768,7 @@ function smart_gs {
             then
                 if [ "${REMOTE_CNAME_CHANGE}" != "0" ]
                 then
-                    MESSAGE="Both ${CNAME_CONF} Have Changed"
+                    MESSAGE="Both ${UI_CNAME_NAME} have Changed"
                     echo_warn
                     
                     REMOTE_CNAME_DATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}")
@@ -776,13 +776,13 @@ function smart_gs {
                     
                     if (( "$REMOTE_CNAME_DATE" >= "$LOCAL_CNAME_DATE" ))
                     then
-                        MESSAGE="Remote ${CNAME_CONF} Last Changed"
+                        MESSAGE="Remote ${UI_CNAME_NAME} was last changed"
                         echo_warn
                         
                         pull_gs_cname
                         PULLRESTART="1"
                     else
-                        MESSAGE="Local ${CNAME_CONF} Last Changed"
+                        MESSAGE="Local ${UI_CNAME_NAME} was last changed"
                         echo_warn
                         
                         push_gs_cname
