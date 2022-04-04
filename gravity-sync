@@ -847,18 +847,17 @@ function backup_local_gravity_integrity() {
     sleep $BACKUP_INTEGRITY_WAIT
 
     if [ "$LOCAL_PIHOLE_TYPE" == "default" ]; then
-        secondaryIntegrity=$(${FTL_EXEC} sql ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT} 'PRAGMA integrity_check;' | sed 's/\s.*$//')
+        LOCAL_INTEGRITY_CHECK=$(${FTL_EXEC} sql ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT} 'PRAGMA integrity_check;' | sed 's/\s.*$//')
         error_validate
     elif [ "$LOCAL_PIHOLE_TYPE" == "docker" ]; then
-        secondaryIntegrity=$(${FTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT} 'PRAGMA integrity_check;' | sed 's/\s.*$//')
+        LOCAL_INTEGRITY_CHECK=$(${FTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT} 'PRAGMA integrity_check;' | sed 's/\s.*$//')
         error_validate
     elif [ "$LOCAL_PIHOLE_TYPE" == "podman" ]; then
-        secondaryIntegrity=$(${FTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT} 'PRAGMA integrity_check;' | sed 's/\s.*$//')
+        LOCAL_INTEGRITY_CHECK=$(${FTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT} 'PRAGMA integrity_check;' | sed 's/\s.*$//')
         error_validate
     fi
     
-    if [ "$secondaryIntegrity" != 'ok' ]
-    then
+    if [ "$LOCAL_INTEGRITY_CHECK" != 'ok' ]; then
         MESSAGE="${UI_BACKUP_INTEGRITY_FAILED} ${UI_GRAVITY_NAME}"
         echo_fail
         
@@ -873,31 +872,29 @@ function backup_local_gravity_integrity() {
 }
 
 function backup_local_custom() {
-        if [ -f ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ]
-        then
-            MESSAGE="${UI_BACKUP_LOCAL} ${UI_CUSTOM_NAME}"
-            echo_stat
-            
-            sudo cp ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS}.${BACKUP_EXT}
-            error_validate
-        else
-            MESSAGE="No local ${CUSTOM_DNS} detected"
-            echo_info
-        fi
+    if [ -f ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ]; then
+        MESSAGE="${UI_BACKUP_LOCAL} ${UI_CUSTOM_NAME}"
+        echo_stat
+        
+        sudo cp ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS}.${BACKUP_EXT}
+        error_validate
+    else
+        MESSAGE="No local ${CUSTOM_DNS} detected"
+        echo_info
+    fi
 }
 
 function backup_local_cname() {
-        if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} ]
-        then
-            MESSAGE="${UI_BACKUP_LOCAL} ${UI_CNAME_NAME}"
-            echo_stat
-            
-            sudo cp ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} ${LOCAL_PIHOLE_DIRECTORY}/${CNAME_CONF}.${BACKUP_EXT}
-            error_validate
-        else
-            MESSAGE="No local ${CNAME_CONF} detected"
-            echo_info
-        fi
+    if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} ]; then
+        MESSAGE="${UI_BACKUP_LOCAL} ${UI_CNAME_NAME}"
+        echo_stat
+        
+        sudo cp ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} ${LOCAL_PIHOLE_DIRECTORY}/${CNAME_CONF}.${BACKUP_EXT}
+        error_validate
+    else
+        MESSAGE="No local ${CNAME_CONF} detected"
+        echo_info
+    fi
 }
 
 function backup_remote_gravity() {
@@ -926,22 +923,21 @@ function backup_remote_gravity_integrity() {
     sleep $BACKUP_INTEGRITY_WAIT
 
     if [ "$REMOTE_PIHOLE_TYPE" == "default" ]; then
-        primaryIntegrity=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT} 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
+        REMOTE_INTEGRITY_CHECK=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT} 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
         error_validate
     elif [ "$REMOTE_PIHOLE_TYPE" == "docker" ]; then
-        primaryIntegrity=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT} 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
+        REMOTE_INTEGRITY_CHECK=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT} 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
         error_validate
     elif [ "$REMOTE_PIHOLE_TYPE" == "podman" ]; then
-        primaryIntegrity=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT} 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
+        REMOTE_INTEGRITY_CHECK=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT} 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
         error_validate
     fi
     
-    if [ "$primaryIntegrity" != 'ok' ]
-    then
+    if [ "$REMOTE_INTEGRITY_CHECK" != 'ok' ]; then
         MESSAGE="${UI_BACKUP_INTEGRITY_FAILED} ${UI_GRAVITY_NAME}"
         echo_fail
         
-        MESSAGE="{UI_BACKUP_INTEGRITY_DELETE} ${UI_GRAVITY_NAME}"
+        MESSAGE="${UI_BACKUP_INTEGRITY_DELETE} ${UI_GRAVITY_NAME}"
         echo_stat
         
         CMD_TIMEOUT=$BACKUP_TIMEOUT
