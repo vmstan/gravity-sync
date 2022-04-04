@@ -457,7 +457,7 @@ function pull_gs_reload {
     
     if [ "${TASKTYPE}" == SMART ]
     then 
-        if [ "${PRICLCHANGE}" == "1" ] || [ "${SECCLCHANGE}" == "1" ] || [ "${PRICNCHANGE}" == "1" ] || [ "${SECCNCHANGE}" == "1" ]
+        if [ "${REMOTE_DNS_CHANGE}" == "1" ] || [ "${LOCAL_DNS_CHANGE}" == "1" ] || [ "${REMOTE_CNAME_CHANGE}" == "1" ] || [ "${LOCAL_CNAME_CHANGE}" == "1" ]
         then
             MESSAGE="${UI_FTLDNS_CONFIG_RELOAD}"
             echo_stat
@@ -595,7 +595,7 @@ function push_gs_reload {
     
     if [ "${TASKTYPE}" == SMART ]
     then 
-        if [ "${PRICLCHANGE}" == "1" ] || [ "${SECCLCHANGE}" == "1" ] || [ "${PRICNCHANGE}" == "1" ] || [ "${SECCNCHANGE}" == "1" ]
+        if [ "${REMOTE_DNS_CHANGE}" == "1" ] || [ "${LOCAL_DNS_CHANGE}" == "1" ] || [ "${REMOTE_CNAME_CHANGE}" == "1" ] || [ "${LOCAL_CNAME_CHANGE}" == "1" ]
         then
             MESSAGE="${UI_FTLDNS_CONFIG_PUSH_RELOAD}"
             echo_stat
@@ -647,42 +647,42 @@ function smart_gs {
     previous_md5
     md5_compare
     
-    PRIDBCHANGE="0"
-    SECDBCHANGE="0"
-    PRICLCHANGE="0"
-    SECCLCHANGE="0"
-    PRICNCHANGE="0"
-    SECCNCHANGE="0"
+    REMOTE_GRAVITY_CHANGE="0"
+    LOCAL_GRAVITY_CHANGE="0"
+    REMOTE_DNS_CHANGE="0"
+    LOCAL_DNS_CHANGE="0"
+    REMOTE_CNAME_CHANGE="0"
+    LOCAL_CNAME_CHANGE="0"
     
-    if [ "${REMOTE_DB_MD5}" != "${last_REMOTE_DB_MD5}" ]
+    if [ "${REMOTE_DB_MD5}" != "${LAST_REMOTE_DB_MD5}" ]
     then
-        PRIDBCHANGE="1"
+        REMOTE_GRAVITY_CHANGE="1"
     fi
     
-    if [ "${LOCAL_DB_MD5}" != "${last_LOCAL_DB_MD5}" ]
+    if [ "${LOCAL_DB_MD5}" != "${LAST_LOCAL_DB_MD5}" ]
     then
-        SECDBCHANGE="1"
+        LOCAL_GRAVITY_CHANGE="1"
     fi
     
-    if [ "${PRIDBCHANGE}" == "${SECDBCHANGE}" ]
+    if [ "${REMOTE_GRAVITY_CHANGE}" == "${LOCAL_GRAVITY_CHANGE}" ]
     then
-        if [ "${PRIDBCHANGE}" != "0" ]
+        if [ "${REMOTE_GRAVITY_CHANGE}" != "0" ]
         then
-            MESSAGE="Both ${GRAVITY_FI} Have Changed"
+            MESSAGE="Both ${UI_GRAVITY_NAME} have changed"
             echo_warn
             
-            PRIDBDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}")
-            SECDBDATE=$(stat -c %Y ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI})
+            REMOTE_GRAVITY_DATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}")
+            LOCAL_GRAVITY_DATE=$(stat -c %Y ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI})
             
-            if (( "$PRIDBDATE" >= "$SECDBDATE" ))
+            if (( "$REMOTE_GRAVITY_DATE" >= "$LOCAL_GRAVITY_DATE" ))
             then
-                MESSAGE="Primary ${GRAVITY_FI} Last Changed"
+                MESSAGE="Remote ${UI_GRAVITY_NAME} was last changed"
                 echo_warn
                 
                 pull_gs_grav
                 PULLRESTART="1"
             else
-                MESSAGE="Secondary ${GRAVITY_FI} Last Changed"
+                MESSAGE="Local ${UI_GRAVITY_NAME} was last changed"
                 echo_warn
                 
                 push_gs_grav
@@ -690,40 +690,40 @@ function smart_gs {
             fi
         fi
     else
-        if [ "${PRIDBCHANGE}" != "0" ]
+        if [ "${REMOTE_GRAVITY_CHANGE}" != "0" ]
         then
             pull_gs_grav
             PULLRESTART="1"
-        elif [ "${SECDBCHANGE}" != "0" ]
+        elif [ "${LOCAL_GRAVITY_CHANGE}" != "0" ]
         then
             push_gs_grav
             PUSHRESTART="1"
         fi
     fi
     
-    if [ "${REMOTE_CL_MD5}" != "${last_REMOTE_CL_MD5}" ]
+    if [ "${REMOTE_CL_MD5}" != "${LAST_REMOTE_CL_MD5}" ]
     then
-        PRICLCHANGE="1"
+        REMOTE_DNS_CHANGE="1"
     fi
     
-    if [ "${LOCAL_CL_MD5}" != "${last_LOCAL_CL_MD5}" ]
+    if [ "${LOCAL_CL_MD5}" != "${LAST_LOCAL_CL_MD5}" ]
     then
-        SECCLCHANGE="1"
+        LOCAL_DNS_CHANGE="1"
     fi
     
         if [ -f "${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS}" ]
         then
-            if [ "${PRICLCHANGE}" == "${SECCLCHANGE}" ]
+            if [ "${REMOTE_DNS_CHANGE}" == "${LOCAL_DNS_CHANGE}" ]
             then
-                if [ "${PRICLCHANGE}" != "0" ]
+                if [ "${REMOTE_DNS_CHANGE}" != "0" ]
                 then
-                    MESSAGE="Both ${CUSTOM_DNS} Have Changed"
+                    MESSAGE="Both ${CUSTOM_DNS} have changed"
                     echo_warn
                     
-                    PRICLDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}")
-                    SECCLDATE=$(stat -c %Y ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS})
+                    REMOTE_DNS_DATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}")
+                    LOCAL_DNS_DATE=$(stat -c %Y ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS})
                     
-                    if (( "$PRICLDATE" >= "$SECCLDATE" ))
+                    if (( "$REMOTE_DNS_DATE" >= "$LOCAL_DNS_DATE" ))
                     then
                         MESSAGE="Primary ${CUSTOM_DNS} Last Changed"
                         echo_warn
@@ -739,11 +739,11 @@ function smart_gs {
                     fi
                 fi
             else
-                if [ "${PRICLCHANGE}" != "0" ]
+                if [ "${REMOTE_DNS_CHANGE}" != "0" ]
                 then
                     pull_gs_cust
                     PULLRESTART="1"
-                elif [ "${SECCLCHANGE}" != "0" ]
+                elif [ "${LOCAL_DNS_CHANGE}" != "0" ]
                 then
                     push_gs_cust
                     PUSHRESTART="1"
@@ -754,29 +754,29 @@ function smart_gs {
             PULLRESTART="1"
         fi
     
-    if [ "${REMOTE_CN_MD5}" != "${last_REMOTE_CN_MD5}" ]
+    if [ "${REMOTE_CN_MD5}" != "${LAST_REMOTE_CN_MD5}" ]
     then
-        PRICNCHANGE="1"
+        REMOTE_CNAME_CHANGE="1"
     fi
     
-    if [ "${LOCAL_CN_MD5}" != "${last_LOCAL_CN_MD5}" ]
+    if [ "${LOCAL_CN_MD5}" != "${LAST_LOCAL_CN_MD5}" ]
     then
-        SECCNCHANGE="1"
+        LOCAL_CNAME_CHANGE="1"
     fi
     
         if [ -f "${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF}" ]
         then
-            if [ "${PRICNCHANGE}" == "${SECCNCHANGE}" ]
+            if [ "${REMOTE_CNAME_CHANGE}" == "${LOCAL_CNAME_CHANGE}" ]
             then
-                if [ "${PRICNCHANGE}" != "0" ]
+                if [ "${REMOTE_CNAME_CHANGE}" != "0" ]
                 then
                     MESSAGE="Both ${CNAME_CONF} Have Changed"
                     echo_warn
                     
-                    PRICNDATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}")
-                    SECCNDATE=$(stat -c %Y ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF})
+                    REMOTE_CNAME_DATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}")
+                    LOCAL_CNAME_DATE=$(stat -c %Y ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF})
                     
-                    if (( "$PRICNDATE" >= "$SECCNDATE" ))
+                    if (( "$REMOTE_CNAME_DATE" >= "$LOCAL_CNAME_DATE" ))
                     then
                         MESSAGE="Remote ${CNAME_CONF} Last Changed"
                         echo_warn
@@ -792,11 +792,11 @@ function smart_gs {
                     fi
                 fi
             else
-                if [ "${PRICNCHANGE}" != "0" ]
+                if [ "${REMOTE_CNAME_CHANGE}" != "0" ]
                 then
                     pull_gs_cname
                     PULLRESTART="1"
-                elif [ "${SECCNCHANGE}" != "0" ]
+                elif [ "${LOCAL_CNAME_CHANGE}" != "0" ]
                 then
                     push_gs_cname
                     PUSHRESTART="1"
@@ -996,7 +996,7 @@ function md5_compare {
     LOCAL_DB_MD5=$(md5sum ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} | sed 's/\s.*$//')
     error_validate
     
-    if [ "$REMOTE_DB_MD5" == "$last_REMOTE_DB_MD5" ] && [ "$LOCAL_DB_MD5" == "$last_LOCAL_DB_MD5" ]
+    if [ "$REMOTE_DB_MD5" == "$LAST_REMOTE_DB_MD5" ] && [ "$LOCAL_DB_MD5" == "$LAST_LOCAL_DB_MD5" ]
     then
         HASHMARK=$((HASHMARK+0))
     else
@@ -1021,7 +1021,7 @@ function md5_compare {
                 LOCAL_CL_MD5=$(md5sum ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} | sed 's/\s.*$//')
                 error_validate
                 
-                if [ "$REMOTE_CL_MD5" == "$last_REMOTE_CL_MD5" ] && [ "$LOCAL_CL_MD5" == "$last_LOCAL_CL_MD5" ]
+                if [ "$REMOTE_CL_MD5" == "$LAST_REMOTE_CL_MD5" ] && [ "$LOCAL_CL_MD5" == "$LAST_LOCAL_CL_MD5" ]
                 then
                     HASHMARK=$((HASHMARK+0))
                 else
@@ -1061,7 +1061,7 @@ function md5_compare {
                     LOCAL_CN_MD5=$(md5sum ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} | sed 's/\s.*$//')
                     error_validate
                     
-                    if [ "$REMOTE_CN_MD5" == "$last_REMOTE_CN_MD5" ] && [ "$LOCAL_CN_MD5" == "$last_LOCAL_CN_MD5" ]
+                    if [ "$REMOTE_CN_MD5" == "$LAST_REMOTE_CN_MD5" ] && [ "$LOCAL_CN_MD5" == "$LAST_LOCAL_CN_MD5" ]
                     then
                         HASHMARK=$((HASHMARK+0))
                     else
@@ -1101,19 +1101,19 @@ function md5_compare {
 function previous_md5 {
     if [ -f "${GS_ETC_PATH}/${HISTORY_MD5}" ]
     then
-        last_REMOTE_DB_MD5=$(sed "1q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
-        last_LOCAL_DB_MD5=$(sed "2q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
-        last_REMOTE_CL_MD5=$(sed "3q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
-        last_LOCAL_CL_MD5=$(sed "4q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
-        last_REMOTE_CN_MD5=$(sed "5q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
-        last_LOCAL_CN_MD5=$(sed "6q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
+        LAST_REMOTE_DB_MD5=$(sed "1q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
+        LAST_LOCAL_DB_MD5=$(sed "2q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
+        LAST_REMOTE_CL_MD5=$(sed "3q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
+        LAST_LOCAL_CL_MD5=$(sed "4q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
+        LAST_REMOTE_CN_MD5=$(sed "5q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
+        LAST_LOCAL_CN_MD5=$(sed "6q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
     else
-        last_REMOTE_DB_MD5="0"
-        last_LOCAL_DB_MD5="0"
-        last_REMOTE_CL_MD5="0"
-        last_LOCAL_CL_MD5="0"
-        last_REMOTE_CN_MD5="0"
-        last_LOCAL_CN_MD5="0"
+        LAST_REMOTE_DB_MD5="0"
+        LAST_LOCAL_DB_MD5="0"
+        LAST_REMOTE_CL_MD5="0"
+        LAST_LOCAL_CL_MD5="0"
+        LAST_REMOTE_CN_MD5="0"
+        LAST_LOCAL_CN_MD5="0"
     fi
 }
 
@@ -2271,9 +2271,9 @@ function list_gs_arguments {
     echo -e " ${YELLOW}sudo${NC}        Configures passwordless sudo for current user"
     echo_blank
     echo -e "Replication Options:"
-    echo -e " ${YELLOW}smart${NC}       Detects ${UI_CORE_APP} changes on primary and secondary and then combines them"
+    echo -e " ${YELLOW}smart${NC}       Detects ${UI_CORE_APP} changes on remote and local and then combines them"
     echo -e " ${YELLOW}pull${NC}        Brings the remote ${UI_CORE_APP} configuration to this server"
-    echo -e " ${YELLOW}push${NC}        Sends the local ${UI_CORE_APP} configuration to the primary"
+    echo -e " ${YELLOW}push${NC}        Sends the local ${UI_CORE_APP} configuration to the remote"
     echo -e " ${YELLOW}compare${NC}     Just checks for ${UI_CORE_APP} differences at each side without making changes"
     echo_blank
     echo -e "Debug Options:"
