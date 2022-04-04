@@ -57,20 +57,20 @@ BACKUP_INTEGRITY_WAIT='5'                       # replace in gravity-sync.conf t
 # GS Folder/File Locations
 GS_FILEPATH='/usr/local/bin/gravity-sync'			
 GS_ETC_PATH="/etc/gravity-sync"		            # replace in gravity-sync.conf to overwrite
-CONFIG_FILE='gravity-sync.conf' 	            # must exist with primary host/user configured
+CONFIG_FILE='gravity-sync.conf' 	            # replace in gravity-sync.conf to overwrite
 SYNCING_LOG='gravity-sync.log' 		            # replace in gravity-sync.conf to overwrite
 HISTORY_MD5='gravity-sync.md5'		            # replace in gravity-sync.conf to overwrite
 
 # SSH Customization
 SSH_PORT='22' 						            # replace in gravity-sync.conf to overwrite
-SSH_PKIF="${GS_ETC_PATH}/gravity-sync.rsa"       # replace in gravity-sync.conf to overwrite
+SSH_PKIF="${GS_ETC_PATH}/gravity-sync.rsa"      # replace in gravity-sync.conf to overwrite
 
 # Github Customization
-GS_GITHUB_REPO='https://github.com/vmstan/gravity-sync.git'
-GS_LOCAL_REPO="${GS_ETC_PATH}/.gs"
+GS_LOCAL_REPO="${GS_ETC_PATH}/.gs"              # Local copy of Github repo for sources/templates
 
 # OS Settings
-DAEMON_PATH='/etc/systemd/system'   # systemd timer/service folder
+DAEMON_PATH='/etc/systemd/system'               # systemd timer/service folder
+OS_TMP='/tmp'
 
 ##############################################
 ### NEVER CHANGE ANYTHING BELOW THIS LINE! ###
@@ -387,12 +387,12 @@ function pull_gs_grav {
     echo_stat
     RSYNC_REPATH="sudo rsync"
     RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup"
-    RSYNC_TARGET="/tmp/${GRAVITY_FI}.gsbackup"
+    RSYNC_TARGET="${OS_TMP}/${GRAVITY_FI}.gsbackup"
     create_rsynccmd
     
     MESSAGE="${UI_REPLACE_LOCAL} ${UI_GRAVITY_NAME}"
     echo_stat
-    sudo mv /tmp/${GRAVITY_FI}.gsbackup ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} >/dev/null 2>&1
+    sudo mv ${OS_TMP}/${GRAVITY_FI}.gsbackup ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} >/dev/null 2>&1
     error_validate
     
     validate_gravity_permissions
@@ -409,12 +409,12 @@ function pull_gs_cust {
             echo_stat
             RSYNC_REPATH="sudo rsync"
             RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}.gsbackup"
-            RSYNC_TARGET="/tmp/${CUSTOM_DNS}.gsbackup"
+            RSYNC_TARGET="${OS_TMP}/${CUSTOM_DNS}.gsbackup"
             create_rsynccmd
             
             MESSAGE="${UI_REPLACE_LOCAL} ${UI_CUSTOM_NAME}"
             echo_stat
-            sudo mv /tmp/${CUSTOM_DNS}.gsbackup ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} >/dev/null 2>&1
+            sudo mv ${OS_TMP}/${CUSTOM_DNS}.gsbackup ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} >/dev/null 2>&1
             error_validate
             
             validate_custom_permissions
@@ -432,12 +432,12 @@ function pull_gs_cname {
             echo_stat
             RSYNC_REPATH="sudo rsync"
             RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${CNAME_CONF}.gsbackup"
-            RSYNC_TARGET="/tmp/${CNAME_CONF}.gsbackup"
+            RSYNC_TARGET="${OS_TMP}/${CNAME_CONF}.gsbackup"
             create_rsynccmd
             
             MESSAGE="${UI_REPLACE_LOCAL} ${UI_CNAME_NAME}"
             echo_stat
-            sudo mv /tmp/${CNAME_CONF}.gsbackup ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} >/dev/null 2>&1
+            sudo mv ${OS_TMP}/${CNAME_CONF}.gsbackup ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} >/dev/null 2>&1
             error_validate
             
             validate_cname_permissions
@@ -1237,15 +1237,15 @@ function generate_sshkey {
                 MESSAGE="Generating new SSH keyfile"
                 echo_stat
                 
-                ssh-keygen -q -P "" -t rsa -f /tmp/gravity-sync.rsa >/dev/null 2>&1
+                ssh-keygen -q -P "" -t rsa -f ${OS_TMP}/gravity-sync.rsa >/dev/null 2>&1
                 error_validate
 
                 MESSAGE="Moving private key to ${SSH_PKIF}"
-                sudo mv /tmp/gravity-sync.rsa ${SSH_PKIF}
+                sudo mv ${OS_TMP}/gravity-sync.rsa ${SSH_PKIF}
                 error_validate
 
                 MESSAGE="Moving public key to ${SSH_PKIF}.pub"
-                sudo mv /tmp/gravity-sync.rsa.pub ${SSH_PKIF}.pub
+                sudo mv ${OS_TMP}/gravity-sync.rsa.pub ${SSH_PKIF}.pub
                 error_validate
             else
                 MESSAGE="No SSH-KEYGEN available"
@@ -1379,13 +1379,6 @@ function logs_export {
         create_rsynccmd
 
         sudo rm -f ${GS_ETC_PATH}/${HISTORY_MD5}2
-
-        # MESSAGE="Saving hashes on remote Gravity Sync instance"
-        # echo_stat
-
-        # CMD_TIMEOUT=$BACKUP_TIMEOUT
-        # CMD_REQUESTED="sudo mv /tmp/${HISTORY_MD5} ${GS_ETC_PATH}/${HISTORY_MD5}"
-        # create_sshcmd
     fi
     
     MESSAGE="${UI_LOGGING_SUCCESS} ${TASKTYPE}"
