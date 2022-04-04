@@ -117,11 +117,8 @@ UI_VALIDATING='Validating pathways to'
 UI_VALIDATING_FAIL_CONTAINER='Unable to validate running container instance of'
 UI_VALIDATING_FAIL_FOLDER='Unable to validate configuration folder for'
 UI_VALIDATING_FAIL_BINARY='Unable to validate the availibility of'
-UI_COMPENSATE='Attempting to compensate'
 UI_SET_LOCAL_FILE_OWNERSHIP='Setting file ownership on'
 UI_SET_FILE_PERMISSION='Setting file permissions on'
-UI_VAL_LOCAL_FILE_OWNERSHIP='Validating file ownership on'
-UI_VAL_FILE_PERMISSION='Validating file permissions on'
 
 # Pull/Push
 UI_PULL_REMOTE='Pulling the remote'
