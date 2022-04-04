@@ -53,6 +53,7 @@ CNAME_CONF='05-pihole-custom-cname.conf'        # DNSMASQ CNAME alias file
 # Backup Customization
 BACKUP_TIMEOUT='240'                            # replace in gravity-sync.conf to overwrite
 BACKUP_INTEGRITY_WAIT='5'                       # replace in gravity-sync.conf to overwrite
+BACKUP_EXT='gsb'
 
 # GS Folder/File Locations
 GS_FILEPATH='/usr/local/bin/gravity-sync'			
@@ -386,13 +387,13 @@ function pull_gs_grav {
     MESSAGE="${UI_PULL_REMOTE} ${UI_GRAVITY_NAME}"
     echo_stat
     RSYNC_REPATH="sudo rsync"
-    RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup"
-    RSYNC_TARGET="${OS_TMP}/${GRAVITY_FI}.gsbackup"
+    RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT}"
+    RSYNC_TARGET="${OS_TMP}/${GRAVITY_FI}.${BACKUP_EXT}"
     create_rsynccmd
     
     MESSAGE="${UI_REPLACE_LOCAL} ${UI_GRAVITY_NAME}"
     echo_stat
-    sudo mv ${OS_TMP}/${GRAVITY_FI}.gsbackup ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} >/dev/null 2>&1
+    sudo mv ${OS_TMP}/${GRAVITY_FI}.${BACKUP_EXT} ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} >/dev/null 2>&1
     error_validate
     
     validate_gravity_permissions
@@ -408,13 +409,13 @@ function pull_gs_cust {
             MESSAGE="${UI_PULL_REMOTE} ${UI_CUSTOM_NAME}"
             echo_stat
             RSYNC_REPATH="sudo rsync"
-            RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}.gsbackup"
-            RSYNC_TARGET="${OS_TMP}/${CUSTOM_DNS}.gsbackup"
+            RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}.${BACKUP_EXT}"
+            RSYNC_TARGET="${OS_TMP}/${CUSTOM_DNS}.${BACKUP_EXT}"
             create_rsynccmd
             
             MESSAGE="${UI_REPLACE_LOCAL} ${UI_CUSTOM_NAME}"
             echo_stat
-            sudo mv ${OS_TMP}/${CUSTOM_DNS}.gsbackup ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} >/dev/null 2>&1
+            sudo mv ${OS_TMP}/${CUSTOM_DNS}.${BACKUP_EXT} ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} >/dev/null 2>&1
             error_validate
             
             validate_custom_permissions
@@ -431,13 +432,13 @@ function pull_gs_cname {
             MESSAGE="${UI_PULL_REMOTE} ${UI_CNAME_NAME}"
             echo_stat
             RSYNC_REPATH="sudo rsync"
-            RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${CNAME_CONF}.gsbackup"
-            RSYNC_TARGET="${OS_TMP}/${CNAME_CONF}.gsbackup"
+            RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${CNAME_CONF}.${BACKUP_EXT}"
+            RSYNC_TARGET="${OS_TMP}/${CNAME_CONF}.${BACKUP_EXT}"
             create_rsynccmd
             
             MESSAGE="${UI_REPLACE_LOCAL} ${UI_CNAME_NAME}"
             echo_stat
-            sudo mv ${OS_TMP}/${CNAME_CONF}.gsbackup ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} >/dev/null 2>&1
+            sudo mv ${OS_TMP}/${CNAME_CONF}.${BACKUP_EXT} ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} >/dev/null 2>&1
             error_validate
             
             validate_cname_permissions
@@ -508,7 +509,7 @@ function push_gs_grav {
     MESSAGE="${UI_PUSH_LOCAL} ${UI_GRAVITY_NAME}"
     echo_stat
     RSYNC_REPATH="sudo rsync"
-    RSYNC_SOURCE="${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup"
+    RSYNC_SOURCE="${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT}"
     RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}"
     create_rsynccmd
     
@@ -535,7 +536,7 @@ function push_gs_cust {
             MESSAGE="${UI_PUSH_LOCAL} ${UI_CUSTOM_NAME}"
             echo_stat
             RSYNC_REPATH="sudo rsync"
-            RSYNC_SOURCE="${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS}.gsbackup"
+            RSYNC_SOURCE="${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS}.${BACKUP_EXT}"
             RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}"
             create_rsynccmd
             
@@ -562,7 +563,7 @@ function push_gs_cname {
             MESSAGE="${UI_PUSH_LOCAL} ${UI_CNAME_NAME}"
             echo_stat
             RSYNC_REPATH="sudo rsync"
-            RSYNC_SOURCE="${LOCAL_PIHOLE_DIRECTORY}/${CNAME_CONF}.gsbackup"
+            RSYNC_SOURCE="${LOCAL_PIHOLE_DIRECTORY}/${CNAME_CONF}.${BACKUP_EXT}"
             RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}"
             create_rsynccmd
             
@@ -828,13 +829,13 @@ function backup_local_gravity() {
     echo_stat
     
     if [ "$LOCAL_PIHOLE_TYPE" == "default" ]; then
-        sudo ${FTL_EXEC} sql ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} ".backup '${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup'"
+        sudo ${FTL_EXEC} sql ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} ".backup '${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT}'"
         error_validate
     elif [ "$LOCAL_PIHOLE_TYPE" == "docker" ]; then
-        sudo ${FTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI} ".backup '${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup'"
+        sudo ${FTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI} ".backup '${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT}'"
         error_validate
     elif [ "$LOCAL_PIHOLE_TYPE" == "podman" ]; then
-        sudo ${FTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI} ".backup '${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup'"
+        sudo ${FTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI} ".backup '${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT}'"
         error_validate
     fi
 }
@@ -846,13 +847,13 @@ function backup_local_gravity_integrity() {
     sleep $BACKUP_INTEGRITY_WAIT
 
     if [ "$LOCAL_PIHOLE_TYPE" == "default" ]; then
-        secondaryIntegrity=$(${FTL_EXEC} sql ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;' | sed 's/\s.*$//')
+        secondaryIntegrity=$(${FTL_EXEC} sql ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT} 'PRAGMA integrity_check;' | sed 's/\s.*$//')
         error_validate
     elif [ "$LOCAL_PIHOLE_TYPE" == "docker" ]; then
-        secondaryIntegrity=$(${FTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;' | sed 's/\s.*$//')
+        secondaryIntegrity=$(${FTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT} 'PRAGMA integrity_check;' | sed 's/\s.*$//')
         error_validate
     elif [ "$LOCAL_PIHOLE_TYPE" == "podman" ]; then
-        secondaryIntegrity=$(${FTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;' | sed 's/\s.*$//')
+        secondaryIntegrity=$(${FTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT} 'PRAGMA integrity_check;' | sed 's/\s.*$//')
         error_validate
     fi
     
@@ -864,7 +865,7 @@ function backup_local_gravity_integrity() {
         MESSAGE="${UI_BACKUP_INTEGRITY_DELETE} ${UI_GRAVITY_NAME}"
         echo_stat
             
-        sudo rm ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup
+        sudo rm ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT}
         error_validate
         
         exit_nochange
@@ -877,7 +878,7 @@ function backup_local_custom() {
             MESSAGE="${UI_BACKUP_LOCAL} ${UI_CUSTOM_NAME}"
             echo_stat
             
-            sudo cp ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS}.gsbackup
+            sudo cp ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS}.${BACKUP_EXT}
             error_validate
         else
             MESSAGE="No local ${CUSTOM_DNS} detected"
@@ -891,7 +892,7 @@ function backup_local_cname() {
             MESSAGE="${UI_BACKUP_LOCAL} ${UI_CNAME_NAME}"
             echo_stat
             
-            sudo cp ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} ${LOCAL_PIHOLE_DIRECTORY}/${CNAME_CONF}.gsbackup
+            sudo cp ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} ${LOCAL_PIHOLE_DIRECTORY}/${CNAME_CONF}.${BACKUP_EXT}
             error_validate
         else
             MESSAGE="No local ${CNAME_CONF} detected"
@@ -905,15 +906,15 @@ function backup_remote_gravity() {
 
     if [ "$REMOTE_PIHOLE_TYPE" == "default" ]; then
         CMD_TIMEOUT=$BACKUP_TIMEOUT
-        CMD_REQUESTED="sudo ${RFTL_EXEC} sql ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI} \".backup '${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup'\""
+        CMD_REQUESTED="sudo ${RFTL_EXEC} sql ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI} \".backup '${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT}'\""
         create_sshcmd
     elif [ "$REMOTE_PIHOLE_TYPE" == "docker" ]; then
         CMD_TIMEOUT=$BACKUP_TIMEOUT
-        CMD_REQUESTED="sudo ${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI} \".backup '${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup'\""
+        CMD_REQUESTED="sudo ${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI} \".backup '${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT}'\""
         create_sshcmd
     elif [ "$REMOTE_PIHOLE_TYPE" == "podman" ]; then
         CMD_TIMEOUT=$BACKUP_TIMEOUT
-        CMD_REQUESTED="sudo ${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI} \".backup '${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup'\""
+        CMD_REQUESTED="sudo ${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI} \".backup '${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT}'\""
         create_sshcmd
     fi
 }
@@ -925,13 +926,13 @@ function backup_remote_gravity_integrity() {
     sleep $BACKUP_INTEGRITY_WAIT
 
     if [ "$REMOTE_PIHOLE_TYPE" == "default" ]; then
-        primaryIntegrity=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
+        primaryIntegrity=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT} 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
         error_validate
     elif [ "$REMOTE_PIHOLE_TYPE" == "docker" ]; then
-        primaryIntegrity=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
+        primaryIntegrity=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT} 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
         error_validate
     elif [ "$REMOTE_PIHOLE_TYPE" == "podman" ]; then
-        primaryIntegrity=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
+        primaryIntegrity=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT} 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
         error_validate
     fi
     
@@ -944,7 +945,7 @@ function backup_remote_gravity_integrity() {
         echo_stat
         
         CMD_TIMEOUT=$BACKUP_TIMEOUT
-        CMD_REQUESTED="sudo rm ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.gsbackup"
+        CMD_REQUESTED="sudo rm ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT}"
         create_sshcmd
         
         exit_nochange
@@ -956,7 +957,7 @@ function backup_remote_custom() {
         echo_stat
         
         CMD_TIMEOUT=$BACKUP_TIMEOUT
-        CMD_REQUESTED="sudo cp ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}.gsbackup"
+        CMD_REQUESTED="sudo cp ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}.${BACKUP_EXT}"
         create_sshcmd
 }
 
@@ -965,7 +966,7 @@ function backup_remote_cname() {
         echo_stat
         
         CMD_TIMEOUT=$BACKUP_TIMEOUT
-        CMD_REQUESTED="sudo cp ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF} ${REMOTE_PIHOLE_DIRECTORY}/${CNAME_CONF}.gsbackup"
+        CMD_REQUESTED="sudo cp ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF} ${REMOTE_PIHOLE_DIRECTORY}/${CNAME_CONF}.${BACKUP_EXT}"
         create_sshcmd
 }
 
@@ -973,13 +974,13 @@ function backup_cleanup() {
     MESSAGE="Purging backups"
     echo_stat
     # git clean -fq
-    sudo rm -f ${LOCAL_PIHOLE_DIRECTORY}/*.gsbackup
+    sudo rm -f ${LOCAL_PIHOLE_DIRECTORY}/*.${BACKUP_EXT}
     error_validate
 
     # MESSAGE="${UI_BACKUP_PURGE} on remote"
     # echo_stat
     # CMD_TIMEOUT=$BACKUP_TIMEOUT
-    # CMD_REQUESTED="sudo rm -f ${REMOTE_PIHOLE_DIRECTORY}/*.gsbackup"
+    # CMD_REQUESTED="sudo rm -f ${REMOTE_PIHOLE_DIRECTORY}/*.${BACKUP_EXT}"
     # create_sshcmd
 }
 
@@ -1929,7 +1930,7 @@ function config_delete {
 
     MESSAGE="${UI_CONFIG_ERASING} ${CONFIG_FILE}"
     echo_stat
-    sudo mv ${GS_ETC_PATH}/${CONFIG_FILE} ${GS_ETC_PATH}/${CONFIG_FILE}.gsbackup
+    sudo mv ${GS_ETC_PATH}/${CONFIG_FILE} ${GS_ETC_PATH}/${CONFIG_FILE}.${BACKUP_EXT}
         error_validate
 
     config_generate
@@ -2208,7 +2209,7 @@ function task_purge {
     echo -e "Your devices will continue to resolve and block DNS requests,"
     echo -e "but your ${UI_GRAVITY_NAME} and ${UI_CUSTOM_NAME} WILL NOT sync anymore,"
     echo -e "until you reconfigure Gravity Sync on this device. Backup files will not"
-    echo -e "be removed but you can manually remove '.gsbackup' files if desired."
+    echo -e "be removed but you can manually remove '.${BACKUP_EXT}' files if desired."
     echo_lines
         
     intent_validate
