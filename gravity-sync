@@ -654,12 +654,12 @@ function smart_gs {
     PRICNCHANGE="0"
     SECCNCHANGE="0"
     
-    if [ "${primaryDBMD5}" != "${last_primaryDBMD5}" ]
+    if [ "${REMOTE_DB_MD5}" != "${last_REMOTE_DB_MD5}" ]
     then
         PRIDBCHANGE="1"
     fi
     
-    if [ "${secondDBMD5}" != "${last_secondDBMD5}" ]
+    if [ "${LOCAL_DB_MD5}" != "${last_LOCAL_DB_MD5}" ]
     then
         SECDBCHANGE="1"
     fi
@@ -701,12 +701,12 @@ function smart_gs {
         fi
     fi
     
-    if [ "${primaryCLMD5}" != "${last_primaryCLMD5}" ]
+    if [ "${REMOTE_CL_MD5}" != "${last_REMOTE_CL_MD5}" ]
     then
         PRICLCHANGE="1"
     fi
     
-    if [ "${secondCLMD5}" != "${last_secondCLMD5}" ]
+    if [ "${LOCAL_CL_MD5}" != "${last_LOCAL_CL_MD5}" ]
     then
         SECCLCHANGE="1"
     fi
@@ -754,12 +754,12 @@ function smart_gs {
             PULLRESTART="1"
         fi
     
-    if [ "${primaryCNMD5}" != "${last_primaryCNMD5}" ]
+    if [ "${REMOTE_CN_MD5}" != "${last_REMOTE_CN_MD5}" ]
     then
         PRICNCHANGE="1"
     fi
     
-    if [ "${secondCNMD5}" != "${last_secondCNMD5}" ]
+    if [ "${LOCAL_CN_MD5}" != "${last_LOCAL_CN_MD5}" ]
     then
         SECCNCHANGE="1"
     fi
@@ -988,15 +988,15 @@ function md5_compare {
     
     MESSAGE="${UI_HASHING_HASHING} ${UI_GRAVITY_NAME}"
     echo_stat
-    primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}" | sed 's/\s.*$//')
+    REMOTE_DB_MD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}" | sed 's/\s.*$//')
     error_validate
     
     MESSAGE="${UI_HASHING_COMPARING} ${UI_GRAVITY_NAME}"
     echo_stat
-    secondDBMD5=$(md5sum ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} | sed 's/\s.*$//')
+    LOCAL_DB_MD5=$(md5sum ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} | sed 's/\s.*$//')
     error_validate
     
-    if [ "$primaryDBMD5" == "$last_primaryDBMD5" ] && [ "$secondDBMD5" == "$last_secondDBMD5" ]
+    if [ "$REMOTE_DB_MD5" == "$last_REMOTE_DB_MD5" ] && [ "$LOCAL_DB_MD5" == "$last_LOCAL_DB_MD5" ]
     then
         HASHMARK=$((HASHMARK+0))
     else
@@ -1013,15 +1013,15 @@ function md5_compare {
                 MESSAGE="${UI_HASHING_HASHING} ${UI_CUSTOM_NAME}"
                 echo_stat
                 
-                primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS} | sed 's/\s.*$//'")
+                REMOTE_CL_MD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS} | sed 's/\s.*$//'")
                 error_validate
                 
                 MESSAGE="${UI_HASHING_COMPARING} ${UI_CUSTOM_NAME}"
                 echo_stat
-                secondCLMD5=$(md5sum ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} | sed 's/\s.*$//')
+                LOCAL_CL_MD5=$(md5sum ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} | sed 's/\s.*$//')
                 error_validate
                 
-                if [ "$primaryCLMD5" == "$last_primaryCLMD5" ] && [ "$secondCLMD5" == "$last_secondCLMD5" ]
+                if [ "$REMOTE_CL_MD5" == "$last_REMOTE_CL_MD5" ] && [ "$LOCAL_CL_MD5" == "$last_LOCAL_CL_MD5" ]
                 then
                     HASHMARK=$((HASHMARK+0))
                 else
@@ -1053,15 +1053,15 @@ function md5_compare {
                     MESSAGE="${UI_HASHING_HASHING} ${UI_CNAME_NAME}"
                     echo_stat
                     
-                    primaryCNMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF} | sed 's/\s.*$//'")
+                    REMOTE_CN_MD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF} | sed 's/\s.*$//'")
                     error_validate
                     
                     MESSAGE="${UI_HASHING_COMPARING} ${UI_CNAME_NAME}"
                     echo_stat
-                    secondCNMD5=$(md5sum ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} | sed 's/\s.*$//')
+                    LOCAL_CN_MD5=$(md5sum ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} | sed 's/\s.*$//')
                     error_validate
                     
-                    if [ "$primaryCNMD5" == "$last_primaryCNMD5" ] && [ "$secondCNMD5" == "$last_secondCNMD5" ]
+                    if [ "$REMOTE_CN_MD5" == "$last_REMOTE_CN_MD5" ] && [ "$LOCAL_CN_MD5" == "$last_LOCAL_CN_MD5" ]
                     then
                         HASHMARK=$((HASHMARK+0))
                     else
@@ -1101,19 +1101,19 @@ function md5_compare {
 function previous_md5 {
     if [ -f "${GS_ETC_PATH}/${HISTORY_MD5}" ]
     then
-        last_primaryDBMD5=$(sed "1q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
-        last_secondDBMD5=$(sed "2q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
-        last_primaryCLMD5=$(sed "3q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
-        last_secondCLMD5=$(sed "4q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
-        last_primaryCNMD5=$(sed "5q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
-        last_secondCNMD5=$(sed "6q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
+        last_REMOTE_DB_MD5=$(sed "1q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
+        last_LOCAL_DB_MD5=$(sed "2q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
+        last_REMOTE_CL_MD5=$(sed "3q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
+        last_LOCAL_CL_MD5=$(sed "4q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
+        last_REMOTE_CN_MD5=$(sed "5q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
+        last_LOCAL_CN_MD5=$(sed "6q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
     else
-        last_primaryDBMD5="0"
-        last_secondDBMD5="0"
-        last_primaryCLMD5="0"
-        last_secondCLMD5="0"
-        last_primaryCNMD5="0"
-        last_secondCNMD5="0"
+        last_REMOTE_DB_MD5="0"
+        last_LOCAL_DB_MD5="0"
+        last_REMOTE_CL_MD5="0"
+        last_LOCAL_CL_MD5="0"
+        last_REMOTE_CN_MD5="0"
+        last_LOCAL_CN_MD5="0"
     fi
 }
 
@@ -1125,12 +1125,12 @@ function md5_recheck {
     
     MESSAGE="${UI_HASHING_REHASHING} ${UI_GRAVITY_NAME}"
     echo_stat
-    primaryDBMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}" | sed 's/\s.*$//')
+    REMOTE_DB_MD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}" | sed 's/\s.*$//')
     error_validate
     
     MESSAGE="${UI_HASHING_RECOMPARING} ${UI_GRAVITY_NAME}"
     echo_stat
-    secondDBMD5=$(md5sum ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} | sed 's/\s.*$//')
+    LOCAL_DB_MD5=$(md5sum ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} | sed 's/\s.*$//')
     error_validate
     
         if [ -f ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ]
@@ -1141,12 +1141,12 @@ function md5_recheck {
                 MESSAGE="${UI_HASHING_REHASHING} ${UI_CUSTOM_NAME}"
                 echo_stat
                 
-                primaryCLMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS} | sed 's/\s.*$//'")
+                REMOTE_CL_MD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS} | sed 's/\s.*$//'")
                 error_validate
                 
                 MESSAGE="${UI_HASHING_RECOMPARING} ${UI_CUSTOM_NAME}"
                 echo_stat
-                secondCLMD5=$(md5sum ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} | sed 's/\s.*$//')
+                LOCAL_CL_MD5=$(md5sum ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} | sed 's/\s.*$//')
                 error_validate
             else
                 MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_REMOTE}"
@@ -1171,12 +1171,12 @@ function md5_recheck {
                     MESSAGE="${UI_HASHING_REHASHING} ${UI_CNAME_NAME}"
                     echo_stat
                     
-                    primaryCNMD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF} | sed 's/\s.*$//'")
+                    REMOTE_CN_MD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF} | sed 's/\s.*$//'")
                     error_validate
                     
                     MESSAGE="${UI_HASHING_RECOMPARING} ${UI_CNAME_NAME}"
                     echo_stat
-                    secondCNMD5=$(md5sum ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} | sed 's/\s.*$//')
+                    LOCAL_CN_MD5=$(md5sum ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} | sed 's/\s.*$//')
                     error_validate
                 else
                     MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_REMOTE}"
@@ -1354,20 +1354,20 @@ function logs_export {
         MESSAGE="${UI_LOGGING_HASHES}"
         echo_stat
         sudo rm -f ${GS_ETC_PATH}/${HISTORY_MD5}
-        echo -e ${primaryDBMD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5} 1> /dev/null
-        echo -e ${secondDBMD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5} 1> /dev/null
-        echo -e ${primaryCLMD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5} 1> /dev/null
-        echo -e ${secondCLMD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5} 1> /dev/null
-        echo -e ${primaryCNMD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5} 1> /dev/null
-        echo -e ${secondCNMD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5} 1> /dev/null
+        echo -e ${REMOTE_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5} 1> /dev/null
+        echo -e ${LOCAL_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5} 1> /dev/null
+        echo -e ${REMOTE_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5} 1> /dev/null
+        echo -e ${LOCAL_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5} 1> /dev/null
+        echo -e ${REMOTE_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5} 1> /dev/null
+        echo -e ${LOCAL_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5} 1> /dev/null
         
         sudo rm -f ${GS_ETC_PATH}/${HISTORY_MD5}2
-        echo -e ${secondDBMD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5}2 1> /dev/null
-        echo -e ${primaryDBMD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5}2 1> /dev/null
-        echo -e ${secondCLMD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5}2 1> /dev/null
-        echo -e ${primaryCLMD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5}2 1> /dev/null
-        echo -e ${secondCNMD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5}2 1> /dev/null
-        echo -e ${primaryCNMD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5}2 1> /dev/null
+        echo -e ${LOCAL_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5}2 1> /dev/null
+        echo -e ${REMOTE_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5}2 1> /dev/null
+        echo -e ${LOCAL_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5}2 1> /dev/null
+        echo -e ${REMOTE_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5}2 1> /dev/null
+        echo -e ${LOCAL_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5}2 1> /dev/null
+        echo -e ${REMOTE_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5}2 1> /dev/null
         error_validate
 
         MESSAGE="Sending hashes to remote Gravity Sync instance"
@@ -1634,9 +1634,9 @@ function config_generate {
     echo -e "Please read through ${BLUE}https://github.com/vmstan/gravity-sync/wiki${NC} before you continue!"
     echo_blank
     echo -e "If the installer detects that you have a supported container engine (Docker or Podman) installed"
-    echo -e "on your local Pi-hole, you will be directed to the advanced installation options. If you're using" 
-    echo -e "containers on your remote Pi-hole, you'll need to select this option manually to adjust settings"
-    echo -e "such as custom Pi-hole binary or configuration directories, CNAME replication, etc."
+    echo -e "on your local ${UI_CORE_APP}, you will be directed to the advanced installation options. If you're using" 
+    echo -e "containers on your remote ${UI_CORE_APP}, you'll need to select this option manually to adjust settings"
+    echo -e "such as custom ${UI_CORE_APP} binary or configuration directories, CNAME replication, etc."
     echo_lines
     
     MESSAGE="${PROGRAM} ${UI_CONFIG_REQUIRED}"
@@ -1725,7 +1725,7 @@ function end_config(){
     echo -e "Configuration has been completed successfully, if you've still not read the instructions"
     echo -e "please read through ${BLUE}https://github.com/vmstan/gravity-sync/wiki${NC} before you continue!"
     echo_blank
-    echo -e "Your next step is to complete a sync of data from your remote Pi-hole to this local Pi-hole."
+    echo -e "Your next step is to complete a sync of data from your remote ${UI_CORE_APP} to this local ${UI_CORE_APP}."
     echo -e "ex: gravity-sync pull" 
     echo_blank
     echo -e "If this completes successfully you can automate future sync jobs to run at a regular interval."
@@ -1995,7 +1995,7 @@ function show_version {
 function show_info() {
     echo_lines
     echo -e "${YELLOW}Local Software Versions${NC}"
-    echo -e "${BLUE}Pi-hole${NC}"
+    echo -e "${BLUE}${UI_CORE_APP}${NC}"
     if [ "${LOCAL_PIHOLE_TYPE}" == "default" ]; then
         pihole version
     elif [ "${LOCAL_PIHOLE_TYPE}" == "docker" ]; then 
@@ -2041,19 +2041,19 @@ function show_info() {
 
     echo -e "${YELLOW}Local Instance Settings${NC}"
     echo -e "Local Hostname: $HOSTNAME"
-    echo -e "Local Pi-hole Type: ${LOCAL_PIHOLE_TYPE}"
-    echo -e "Local Pi-hole Config Directory: ${LOCAL_PIHOLE_DIRECTORY}"
+    echo -e "Local ${UI_CORE_APP} Type: ${LOCAL_PIHOLE_TYPE}"
+    echo -e "Local ${UI_CORE_APP} Config Directory: ${LOCAL_PIHOLE_DIRECTORY}"
     echo -e "Local DNSMASQ Config Directory: ${LOCAL_DNSMASQ_DIRECTORY}"
     echo -e "Local Gravity Sync Binary: ${GS_FILEPATH}"
     echo -e "Local Gravity Sync Config Directory: ${GS_ETC_PATH}"
     
     if [ "${LOCAL_PIHOLE_TYPE}" == "default" ]; then
-        echo -e "Local Pi-hole Binary Directory: ${LOCAL_PIHOLE_BINARY}"
+        echo -e "Local ${UI_CORE_APP} Binary Directory: ${LOCAL_PIHOLE_BINARY}"
     elif [ "${LOCAL_PIHOLE_TYPE}" == "docker" ]; then 
-        echo -e "Local Pi-hole Container Name: ${LOCAL_DOCKER_CONTAINER}"
+        echo -e "Local ${UI_CORE_APP} Container Name: ${LOCAL_DOCKER_CONTAINER}"
         echo -e "Local Docker Binary Directory: ${LOCAL_DOCKER_BINARY}"
     elif [ "${LOCAL_PIHOLE_TYPE}" == "podman" ]; then 
-        echo -e "Local Pi-hole Container Name: ${LOCAL_DOCKER_CONTAINER}"
+        echo -e "Local ${UI_CORE_APP} Container Name: ${LOCAL_DOCKER_CONTAINER}"
         echo -e "Local Podman Binary Directory: ${LOCAL_PODMAN_BINARY}"
     fi
     
@@ -2063,17 +2063,17 @@ function show_info() {
     echo -e "${YELLOW}Remote Instance Settings${NC}"
     echo -e "Remote Hostname/IP: ${REMOTE_HOST}"
     echo -e "Remote Username: ${REMOTE_USER}"
-    echo -e "Remote Pi-hole Type: ${REMOTE_PIHOLE_TYPE}"
-    echo -e "Remote Pi-hole Config Directory: ${REMOTE_PIHOLE_DIRECTORY}"
+    echo -e "Remote ${UI_CORE_APP} Type: ${REMOTE_PIHOLE_TYPE}"
+    echo -e "Remote ${UI_CORE_APP} Config Directory: ${REMOTE_PIHOLE_DIRECTORY}"
     echo -e "Remote DNSMASQ Config Directory: ${REMOTE_DNSMASQ_DIRECTORY}"
 
     if [ "${REMOTE_PIHOLE_TYPE}" == "default" ]; then
-        echo -e "Remote Pi-hole Binary Directory: ${REMOTE_PIHOLE_BINARY}"
+        echo -e "Remote ${UI_CORE_APP} Binary Directory: ${REMOTE_PIHOLE_BINARY}"
     elif [ "${REMOTE_PIHOLE_TYPE}" == "docker" ]; then 
-        echo -e "Remote Pi-hole Container Name: ${REMOTE_DOCKER_CONTAINER}"
+        echo -e "Remote ${UI_CORE_APP} Container Name: ${REMOTE_DOCKER_CONTAINER}"
         echo -e "Remote Docker Binary Directory: ${REMOTE_DOCKER_BINARY}"
     elif [ "${REMOTE_PIHOLE_TYPE}" == "podman" ]; then 
-        echo -e "Remote Pi-hole Container Name: ${REMOTE_DOCKER_CONTAINER}"
+        echo -e "Remote ${UI_CORE_APP} Container Name: ${REMOTE_DOCKER_CONTAINER}"
         echo -e "Remote Podman Binary Directory: ${REMOTE_PODMAN_BINARY}"
     fi
 
@@ -2204,7 +2204,7 @@ function task_purge {
     
     echo_lines
     echo -e "THIS WILL REMOVE YOUR GRAVITY SYNC INSTALLATION"
-    echo -e "Pi-hole binaries, configuration and services ARE NOT impacted!"
+    echo -e "${UI_CORE_APP} binaries, configuration and services ARE NOT impacted!"
     echo -e "Your devices will continue to resolve and block DNS requests,"
     echo -e "but your ${UI_GRAVITY_NAME} and ${UI_CUSTOM_NAME} WILL NOT sync anymore,"
     echo -e "until you reconfigure Gravity Sync on this device. Backup files will not"
@@ -2271,10 +2271,10 @@ function list_gs_arguments {
     echo -e " ${YELLOW}sudo${NC}        Configures passwordless sudo for current user"
     echo_blank
     echo -e "Replication Options:"
-    echo -e " ${YELLOW}smart${NC}       Detects Pi-hole changes on primary and secondary and then combines them"
-    echo -e " ${YELLOW}pull${NC}        Brings the remote Pi-hole configuration to this server"
-    echo -e " ${YELLOW}push${NC}        Sends the local Pi-hole configuration to the primary"
-    echo -e " ${YELLOW}compare${NC}     Just checks for Pi-hole differences at each side without making changes"
+    echo -e " ${YELLOW}smart${NC}       Detects ${UI_CORE_APP} changes on primary and secondary and then combines them"
+    echo -e " ${YELLOW}pull${NC}        Brings the remote ${UI_CORE_APP} configuration to this server"
+    echo -e " ${YELLOW}push${NC}        Sends the local ${UI_CORE_APP} configuration to the primary"
+    echo -e " ${YELLOW}compare${NC}     Just checks for ${UI_CORE_APP} differences at each side without making changes"
     echo_blank
     echo -e "Debug Options:"
     echo -e " ${YELLOW}logs${NC}        Shows the recent successful replication jobs/times"
@@ -2336,22 +2336,6 @@ case $# in
             *)
                 start_gs
                 task_invalid ;;
-        esac
-    ;;
-    
-    2)
-        case $1 in
-            auto|automate)
-                start_gs
-                task_automate ;;
-        esac
-    ;;
-    
-    3)
-        case $1 in
-            auto|automate)
-                start_gs
-                task_automate $2 ;;
         esac
     ;;
     
