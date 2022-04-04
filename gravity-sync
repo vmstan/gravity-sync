@@ -1393,7 +1393,7 @@ function logs_export {
 
         sudo rm -f ${GS_ETC_PATH}/*.md52
         CMD_TIMEOUT=$BACKUP_TIMEOUT
-        CMD_REQUESTED="for file in ${GS_ETC_PATH}/*.md52; do sudo mv $file ${file//md52/md5}; done"
+        CMD_REQUESTED="for file in ${GS_ETC_PATH}/*.md52; do sudo mv -f $file ${file//md52/md5}; done"
         create_sshcmd
     fi
     
