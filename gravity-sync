@@ -1360,10 +1360,7 @@ function logs_export {
     then
         MESSAGE="${UI_LOGGING_HASHES}"
         echo_stat
-        sudo rm -f ${GS_ETC_PATH}/${HISTORY_MD5}
-        sudo rm -f ${GS_ETC_PATH}/${GRAVITY_MD5}
-        sudo rm -f ${GS_ETC_PATH}/${DNS_LIST_MD5}
-        sudo rm -f ${GS_ETC_PATH}/${CNAME_LIST_MD5}
+        sudo rm -f ${GS_ETC_PATH}/*.md5
         echo -e ${REMOTE_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${GRAVITY_MD5} 1> /dev/null
         echo -e ${LOCAL_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${GRAVITY_MD5} 1> /dev/null
         echo -e ${REMOTE_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${DNS_LIST_MD5} 1> /dev/null
@@ -1371,10 +1368,7 @@ function logs_export {
         echo -e ${REMOTE_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${CNAME_LIST_MD5} 1> /dev/null
         echo -e ${LOCAL_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${CNAME_LIST_MD5} 1> /dev/null
         
-        sudo rm -f ${GS_ETC_PATH}/${HISTORY_MD5}2
-        sudo rm -f ${GS_ETC_PATH}/${GRAVITY_MD5}2
-        sudo rm -f ${GS_ETC_PATH}/${DNS_LIST_MD5}2
-        sudo rm -f ${GS_ETC_PATH}/${CNAME_LIST_MD5}2
+        sudo rm -f ${OS_TMP}/*.md5
         echo -e ${LOCAL_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${GRAVITY_MD5}2 1> /dev/null
         echo -e ${REMOTE_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${GRAVITY_MD5}2 1> /dev/null
         echo -e ${LOCAL_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${DNS_LIST_MD5}2 1> /dev/null
@@ -1387,14 +1381,11 @@ function logs_export {
         echo_stat
 
         RSYNC_REPATH="sudo rsync"
-        RSYNC_SOURCE="${GS_ETC_PATH}/*.md52"
+        RSYNC_SOURCE="${OS_TMP}/*.md5"
         RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${GS_ETC_PATH}/"
         create_rsynccmd
 
-        sudo rm -f ${GS_ETC_PATH}/*.md52
-        CMD_TIMEOUT=$BACKUP_TIMEOUT
-        CMD_REQUESTED="for file in ${GS_ETC_PATH}/*.md52; do sudo mv -- "$file" "${file%.md52}.md5"; done"
-        create_sshcmd
+        sudo rm -f ${OS_TMP}/*.md5
     fi
     
     MESSAGE="${UI_LOGGING_SUCCESS} ${TASKTYPE}"
