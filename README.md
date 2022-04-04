@@ -30,8 +30,6 @@ Gravity Sync replicates the core of Pi-hole's resolver settings, which includes:
 
 Gravity Sync will **not**:
 
-- Overwrite device specific Pi-hole settings specific to the local network configuration.
-- Change the Pi-hole admin/API passwords, nor does not leverage these.
 - Modify the individual Pi-hole's upstream DNS resolvers.
 - Sync DHCP settings or monitor device leases.
 - Merge long term data, query logs, or statistics.
