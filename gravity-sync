@@ -1096,19 +1096,29 @@ function md5_compare {
 }
 
 function previous_md5 {
-    if [ -f "${GS_ETC_PATH}/${HISTORY_MD5}" ]
+    if [ -f "${GS_ETC_PATH}/${GRAVITY_MD5}" ]
     then
-        LAST_REMOTE_DB_MD5=$(sed "1q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
-        LAST_LOCAL_DB_MD5=$(sed "2q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
-        LAST_REMOTE_CL_MD5=$(sed "3q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
-        LAST_LOCAL_CL_MD5=$(sed "4q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
-        LAST_REMOTE_CN_MD5=$(sed "5q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
-        LAST_LOCAL_CN_MD5=$(sed "6q;d" ${GS_ETC_PATH}/${HISTORY_MD5})
+        LAST_REMOTE_DB_MD5=$(sed "1q;d" ${GS_ETC_PATH}/${GRAVITY_MD5})
+        LAST_LOCAL_DB_MD5=$(sed "2q;d" ${GS_ETC_PATH}/${GRAVITY_MD5})
     else
         LAST_REMOTE_DB_MD5="0"
         LAST_LOCAL_DB_MD5="0"
+    fi
+
+        if [ -f "${GS_ETC_PATH}/${DNS_LIST_MD5}" ]
+    then
+        LAST_REMOTE_CL_MD5=$(sed "3q;d" ${GS_ETC_PATH}/${DNS_LIST_MD5})
+        LAST_LOCAL_CL_MD5=$(sed "4q;d" ${GS_ETC_PATH}/${DNS_LIST_MD5})
+    else
         LAST_REMOTE_CL_MD5="0"
         LAST_LOCAL_CL_MD5="0"
+    fi
+
+    if [ -f "${GS_ETC_PATH}/${CNAME_LIST_MD5}" ]
+    then
+        LAST_REMOTE_CN_MD5=$(sed "5q;d" ${GS_ETC_PATH}/${CNAME_LIST_MD5})
+        LAST_LOCAL_CN_MD5=$(sed "6q;d" ${GS_ETC_PATH}/${CNAME_LIST_MD5})
+    else
         LAST_REMOTE_CN_MD5="0"
         LAST_LOCAL_CN_MD5="0"
     fi
@@ -1351,31 +1361,40 @@ function logs_export {
         MESSAGE="${UI_LOGGING_HASHES}"
         echo_stat
         sudo rm -f ${GS_ETC_PATH}/${HISTORY_MD5}
-        echo -e ${REMOTE_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5} 1> /dev/null
-        echo -e ${LOCAL_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5} 1> /dev/null
-        echo -e ${REMOTE_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5} 1> /dev/null
-        echo -e ${LOCAL_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5} 1> /dev/null
-        echo -e ${REMOTE_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5} 1> /dev/null
-        echo -e ${LOCAL_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5} 1> /dev/null
+        sudo rm -f ${GS_ETC_PATH}/${GRAVITY_MD5}
+        sudo rm -f ${GS_ETC_PATH}/${DNS_LIST_MD5}
+        sudo rm -f ${GS_ETC_PATH}/${CNAME_LIST_MD5}
+        echo -e ${REMOTE_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${GRAVITY_MD5} 1> /dev/null
+        echo -e ${LOCAL_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${GRAVITY_MD5} 1> /dev/null
+        echo -e ${REMOTE_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${DNS_LIST_MD5} 1> /dev/null
+        echo -e ${LOCAL_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${DNS_LIST_MD5} 1> /dev/null
+        echo -e ${REMOTE_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${CNAME_LIST_MD5} 1> /dev/null
+        echo -e ${LOCAL_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${CNAME_LIST_MD5} 1> /dev/null
         
         sudo rm -f ${GS_ETC_PATH}/${HISTORY_MD5}2
-        echo -e ${LOCAL_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5}2 1> /dev/null
-        echo -e ${REMOTE_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5}2 1> /dev/null
-        echo -e ${LOCAL_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5}2 1> /dev/null
-        echo -e ${REMOTE_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5}2 1> /dev/null
-        echo -e ${LOCAL_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5}2 1> /dev/null
-        echo -e ${REMOTE_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${HISTORY_MD5}2 1> /dev/null
+        sudo rm -f ${GS_ETC_PATH}/${GRAVITY_MD5}2
+        sudo rm -f ${GS_ETC_PATH}/${DNS_LIST_MD5}2
+        sudo rm -f ${GS_ETC_PATH}/${CNAME_LIST_MD5}2
+        echo -e ${LOCAL_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${GRAVITY_MD5}2 1> /dev/null
+        echo -e ${REMOTE_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${GRAVITY_MD5}2 1> /dev/null
+        echo -e ${LOCAL_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${DNS_LIST_MD5}2 1> /dev/null
+        echo -e ${REMOTE_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${DNS_LIST_MD5}2 1> /dev/null
+        echo -e ${LOCAL_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${CNAME_LIST_MD5}2 1> /dev/null
+        echo -e ${REMOTE_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${CNAME_LIST_MD5}2 1> /dev/null
         error_validate
 
         MESSAGE="Sending hashes to remote Gravity Sync instance"
         echo_stat
 
         RSYNC_REPATH="sudo rsync"
-        RSYNC_SOURCE="${GS_ETC_PATH}/${HISTORY_MD5}2"
-        RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${GS_ETC_PATH}/${HISTORY_MD5}"
+        RSYNC_SOURCE="${GS_ETC_PATH}/*.md52"
+        RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${GS_ETC_PATH}/"
         create_rsynccmd
 
         sudo rm -f ${GS_ETC_PATH}/${HISTORY_MD5}2
+        sudo rm -f ${GS_ETC_PATH}/${GRAVITY_MD5}2
+        sudo rm -f ${GS_ETC_PATH}/${DNS_LIST_MD5}2
+        sudo rm -f ${GS_ETC_PATH}/${CNAME_LIST_MD5}2
     fi
     
     MESSAGE="${UI_LOGGING_SUCCESS} ${TASKTYPE}"
