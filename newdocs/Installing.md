@@ -1,45 +1,28 @@
-Please make sure you've read over the [System Requirements](https://github.com/vmstan/gravity-sync/wiki/System-Requirements) prior to beginning your installation. The online install script referenced below is designed to make installing Gravity Sync as simple as possible. The script code is an open source bash script, just like Gravity Sync, and is [available for review](https://github.com/vmstan/gravity-sync/blob/master/prep/gs-install.sh) if you have concerns about piping to bash. You can also perform a [manual install](https://github.com/vmstan/gravity-sync/wiki/Under-The-Covers) if you'd like.
+Please make sure you've read over the [System Requirements](https://github.com/vmstan/gravity-sync/wiki/System-Requirements) prior to beginning your installation. 
 
-### Primary Pi-Hole
 
-Limited preparation is required on your primary Pi-hole, the installer will mostly check that all dependencies as laid out in the [System Requirements](https://github.com/vmstan/gravity-sync/wiki/System-Requirements) have been met. It will also add a passwordless sudo configuration file for the current user, if it is required. The installer will then exit, and direct you to proceed to the secondary Pi-hole.
+### Installation Script
 
-Login to your _primary_ Pi-hole via SSH, and run the following command:
-
-```bash
-export GS_INSTALL=primary && curl -sSL https://gravity.vmstan.com | bash
-```
-
-### Secondary Pi-Hole
-
-From this point forward, all operations will take place on your secondary Pi-hole. Just like on the primary, the installer will verify you have everything necessary to use Gravity Sync, but once the requirements have been met, the installer will then use Git to make a copy of the Gravity Sync executables on your system, and direct you to proceed to Configuration step below. Once this has completed, you will now have a folder called `gravity-sync` in your install directory. Everything Gravity Sync runs from there.
-
-Login to your _secondary_ Pi-hole via SSH, and run the following command:
+Open an SSH session to each Pi-hole, and execute the following script.
 
 ```bash
-export GS_INSTALL=secondary && curl -sSL https://gravity.vmstan.com | bash
+curl -sSL https://gravity.vmstan.com | bash
 ```
 
-#### Installer Errors
+The installer will validate that you have all the necessary components to use Gravity Sync, including an active Pi-hole deployment. It will also add a passwordless sudo configuration file for the current user, if it is required.
 
-The above installers are designed to work in 95% of use cases. If you have errors when running the installer script that you cannot resolve and feel that you're getting them in error, you can also install Gravity Sync to the secondary Pi-hole manually, by using Git Clone in the directory that you want to install Gravity Sync.
-
-```bash
-git clone https://github.com/vmstan/gravity-sync.git
-```
-
-This is **not** needed if the automated installer completes successfully.
+Make sure you have run the installation script on both Pi-hole before starting the configuration.
 
 # Configuration
 
-After you install Gravity Sync to your _secondary Pi-hole_, you will need to create a configuration file. This process will run automatically by the installer. (It can also be run by executing `./gravity-sync.sh config`)
+ If you do not have an existing configuration file, the installer will prompt to create one. It can also be run later by executing `gravity-sync config`. Each Gravity Sync install requires it's own unique configuration.
 
 The configuration utility will guide you through the process of:
 
-- Specifying the IP or DNS name of your primary Pi-hole.
-- Specifying the SSH username to connect to your primary Pi-hole.
-- Configuring your key-pair and applying it to your primary Pi-hole.
-- Additional settings, if you choose to perform an advanced installation, when prompted.
+- Specifying the IP address of the remote Pi-hole instance.
+- Specifying the SSH username to connect to your remote Pi-hole host.
+- Creating a unique keyfile and pairing it to your remote Pi-hole.
+- Providing details about how each of your two Pi-hole are configured.
 
 The configuration will be saved as `gravity-sync.conf` in the same folder as the script. If you need to make adjustments to your settings in the future, you can edit this file or run the configuration tool to generate a new one.
 
