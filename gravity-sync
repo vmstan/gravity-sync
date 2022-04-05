@@ -46,34 +46,34 @@ LOCAL_PODMAN_BINARY='/usr/bin/podman'           # Local Podman binary directory 
 REMOTE_PODMAN_BINARY='/usr/bin/podman'          # Remote Podman binary directory (default)
 PIHOLE_CONTAINER_IMAGE='pihole/pihole'          # Official Pi-hole container image name
 
-GRAVITY_FI='gravity.db' 			            # Pi-hole database file name
-CUSTOM_DNS='custom.list'			            # Pi-hole DNS lookup filename
-CNAME_CONF='05-pihole-custom-cname.conf'        # DNSMASQ CNAME alias file
+PH_GRAVITY_FI='gravity.db' 			            # Pi-hole database file name
+PH_CUSTOM_DNS='custom.list'			            # Pi-hole DNS lookup filename
+PH_CNAME_CONF='05-pihole-custom-cname.conf'     # DNSMASQ CNAME alias file
 
 # Backup Customization
-BACKUP_TIMEOUT='240'                            # replace in gravity-sync.conf to overwrite
-BACKUP_INTEGRITY_WAIT='5'                       # replace in gravity-sync.conf to overwrite
-BACKUP_EXT='gsb'
+GS_BACKUP_TIMEOUT='240'                         # replace in gravity-sync.conf to overwrite
+GS_BACKUP_INTEGRITY_WAIT='5'                    # replace in gravity-sync.conf to overwrite
+GS_BACKUP_EXT='gsb'                             # replace in gravity-sync.conf to overwrite
 
 # GS Folder/File Locations
 GS_FILEPATH='/usr/local/bin/gravity-sync'			
 GS_ETC_PATH="/etc/gravity-sync"		            # replace in gravity-sync.conf to overwrite
-CONFIG_FILE='gravity-sync.conf' 	            # replace in gravity-sync.conf to overwrite
-SYNCING_LOG='gravity-sync.log' 		            # replace in gravity-sync.conf to overwrite
-GRAVITY_MD5='gravity.md5'
-DNS_LIST_MD5='clist.md5'
-CNAME_LIST_MD5='cname.md5'
+GS_CONFIG_FILE='gravity-sync.conf' 	            # replace in gravity-sync.conf to overwrite
+GS_SYNCING_LOG='gravity-sync.log' 		        # replace in gravity-sync.conf to overwrite
+GS_GRAVITY_FI_MD5_LOG='gravity.md5'             # replace in gravity-sync.conf to overwrite
+GS_CUSTOM_DNS_MD5_LOG='clist.md5'               # replace in gravity-sync.conf to overwrite
+GS_CNAME_CONF_MD5_LOG='cname.md5'               # replace in gravity-sync.conf to overwrite
 
 # SSH Customization
-SSH_PORT='22' 						            # replace in gravity-sync.conf to overwrite
-SSH_PKIF="${GS_ETC_PATH}/gravity-sync.rsa"      # replace in gravity-sync.conf to overwrite
+GS_SSH_PORT='22' 						            # replace in gravity-sync.conf to overwrite
+GS_SSH_PKIF="${GS_ETC_PATH}/gravity-sync.rsa"      # replace in gravity-sync.conf to overwrite
 
 # Github Customization
-GS_LOCAL_REPO="${GS_ETC_PATH}/.gs"              # Local copy of Github repo for sources/templates
+GS_LOCAL_REPO="${GS_ETC_PATH}/.gs"              # replace in gravity-sync.conf to overwrite
 
 # OS Settings
-DAEMON_PATH='/etc/systemd/system'               # systemd timer/service folder
-OS_TMP='/tmp'
+OS_DAEMON_PATH='/etc/systemd/system'               # replace in gravity-sync.conf to overwrite
+OS_TMP='/tmp'                                   # replace in gravity-sync.conf to overwrite
 
 ##############################################
 ### NEVER CHANGE ANYTHING BELOW THIS LINE! ###
@@ -105,8 +105,6 @@ UI_HASHING_DETECTED='has been detected on the'
 UI_HASHING_NOTDETECTED='not detected on the'
 UI_HASHING_REMOTE="remote ${UI_CORE_APP}"
 UI_HASHING_LOCAL="local ${UI_CORE_APP}"
-UI_HASHING_REQUIRED="Replication of ${UI_CORE_APP} settings is required"
-UI_HASHING_NOREP='No replication is required at this time'
 UI_HASHING_REHASHING='Rehashing the remote'
 UI_HASHING_RECOMPARING='Recomparing to local'
 
@@ -122,22 +120,17 @@ UI_SET_FILE_PERMISSION='Setting file permissions on'
 UI_PULL_REMOTE='Pulling the remote'
 UI_PUSH_LOCAL='Pushing the local'
 UI_REPLACE_LOCAL='Replacing the local'
-UI_FTLDNS_CONFIG_UPDATE='Updating local FTLDNS configuration'
-UI_FTLDNS_CONFIG_RELOAD='Reloading local FTLDNS services'
-UI_FTLDNS_CONFIG_PUSH_UPDATE='Updating remote FTLDNS configuration'
+UI_FTLDNS_CONFIG_PULL_RELOAD='Reloading local FTLDNS services'
 UI_FTLDNS_CONFIG_PUSH_RELOAD='Reloading remote FTLDNS services'
 
 # Logging
-UI_LOGGING_SUCCESS='Logging successful'
-UI_LOGGING_HASHES='Saving the updated hashes from this replication'
-UI_LOGGING_DISPLAY='Displaying output of previous jobs'
 UI_LOGGING_RECENT_COMPLETE='Recent complete executions of'
 
 # Backup
 UI_BACKUP_REMOTE='Performing backup of remote'
 UI_BACKUP_LOCAL='Performing backup of local'
 UI_BACKUP_INTEGRITY="Checking ${UI_GRAVITY_NAME} copy integrity"
-UI_BACKUP_INTEGRITY_FAILED='Integrity check has failed for the remoet'
+UI_BACKUP_INTEGRITY_FAILED='Integrity check has failed for the remote'
 UI_BACKUP_INTEGRITY_DELETE='Removing failed copies'
 
 # Configuration
@@ -277,16 +270,16 @@ function start_gs_noconfig {
 
 ## Import Settings
 function import_gs_config {
-    MESSAGE="${UI_CORE_LOADING} ${CONFIG_FILE}"
+    MESSAGE="${UI_CORE_LOADING} ${GS_CONFIG_FILE}"
     echo -en "${STAT} $MESSAGE"
-    if [ -f ${GS_ETC_PATH}/${CONFIG_FILE} ]
+    if [ -f ${GS_ETC_PATH}/${GS_CONFIG_FILE} ]
     then
-        source ${GS_ETC_PATH}/${CONFIG_FILE}
+        source ${GS_ETC_PATH}/${GS_CONFIG_FILE}
         error_validate
     else
         echo_fail
         
-        MESSAGE="Missing ${CONFIG_FILE}"
+        MESSAGE="Missing ${GS_CONFIG_FILE}"
         echo_inf1
         
         TASKTYPE='CONFIG'
@@ -379,13 +372,13 @@ function pull_gs_grav {
     MESSAGE="${UI_PULL_REMOTE} ${UI_GRAVITY_NAME}"
     echo_stat
     RSYNC_REPATH="sudo rsync"
-    RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT}"
-    RSYNC_TARGET="${OS_TMP}/${GRAVITY_FI}.${BACKUP_EXT}"
+    RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT}"
+    RSYNC_TARGET="${OS_TMP}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT}"
     create_rsynccmd
     
     MESSAGE="${UI_REPLACE_LOCAL} ${UI_GRAVITY_NAME}"
     echo_stat
-    sudo mv ${OS_TMP}/${GRAVITY_FI}.${BACKUP_EXT} ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} >/dev/null 2>&1
+    sudo mv ${OS_TMP}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT} ${LOCAL_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI} >/dev/null 2>&1
     error_validate
     
     validate_gravity_permissions
@@ -393,7 +386,7 @@ function pull_gs_grav {
 
 ## Pull Custom
 function pull_gs_cust {
-        if [ "$REMOTE_CUSTOM_DNS" == "1" ]
+        if [ "$REMOTE_PH_CUSTOM_DNS" == "1" ]
         then
             backup_local_custom
             backup_remote_custom
@@ -401,13 +394,13 @@ function pull_gs_cust {
             MESSAGE="${UI_PULL_REMOTE} ${UI_CUSTOM_NAME}"
             echo_stat
             RSYNC_REPATH="sudo rsync"
-            RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}.${BACKUP_EXT}"
-            RSYNC_TARGET="${OS_TMP}/${CUSTOM_DNS}.${BACKUP_EXT}"
+            RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}.${GS_BACKUP_EXT}"
+            RSYNC_TARGET="${OS_TMP}/${PH_CUSTOM_DNS}.${GS_BACKUP_EXT}"
             create_rsynccmd
             
             MESSAGE="${UI_REPLACE_LOCAL} ${UI_CUSTOM_NAME}"
             echo_stat
-            sudo mv ${OS_TMP}/${CUSTOM_DNS}.${BACKUP_EXT} ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} >/dev/null 2>&1
+            sudo mv ${OS_TMP}/${PH_CUSTOM_DNS}.${GS_BACKUP_EXT} ${LOCAL_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} >/dev/null 2>&1
             error_validate
             
             validate_custom_permissions
@@ -424,13 +417,13 @@ function pull_gs_cname {
             MESSAGE="${UI_PULL_REMOTE} ${UI_CNAME_NAME}"
             echo_stat
             RSYNC_REPATH="sudo rsync"
-            RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${CNAME_CONF}.${BACKUP_EXT}"
-            RSYNC_TARGET="${OS_TMP}/${CNAME_CONF}.${BACKUP_EXT}"
+            RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${PH_CNAME_CONF}.${GS_BACKUP_EXT}"
+            RSYNC_TARGET="${OS_TMP}/${PH_CNAME_CONF}.${GS_BACKUP_EXT}"
             create_rsynccmd
             
             MESSAGE="${UI_REPLACE_LOCAL} ${UI_CNAME_NAME}"
             echo_stat
-            sudo mv ${OS_TMP}/${CNAME_CONF}.${BACKUP_EXT} ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} >/dev/null 2>&1
+            sudo mv ${OS_TMP}/${PH_CNAME_CONF}.${GS_BACKUP_EXT} ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} >/dev/null 2>&1
             error_validate
             
             validate_cname_permissions
@@ -441,7 +434,7 @@ function pull_gs_cname {
 function pull_gs_reload {
     sleep 1
     
-    MESSAGE="${UI_FTLDNS_CONFIG_UPDATE}"
+    MESSAGE="Updating local FTLDNS configuration"
     echo_stat
     ${PH_EXEC} restartdns reload-lists >/dev/null 2>&1
     error_validate
@@ -450,13 +443,13 @@ function pull_gs_reload {
     then 
         if [ "${REMOTE_DNS_CHANGE}" == "1" ] || [ "${LOCAL_DNS_CHANGE}" == "1" ] || [ "${REMOTE_CNAME_CHANGE}" == "1" ] || [ "${LOCAL_CNAME_CHANGE}" == "1" ]
         then
-            MESSAGE="${UI_FTLDNS_CONFIG_RELOAD}"
+            MESSAGE="${UI_FTLDNS_CONFIG_PULL_RELOAD}"
             echo_stat
             ${PH_EXEC} restartdns >/dev/null 2>&1
             error_validate
         fi
     else
-        MESSAGE="${UI_FTLDNS_CONFIG_RELOAD}"
+        MESSAGE="${UI_FTLDNS_CONFIG_PULL_RELOAD}"
         echo_stat
         ${PH_EXEC} restartdns >/dev/null 2>&1
         error_validate
@@ -499,26 +492,26 @@ function push_gs_grav {
     MESSAGE="${UI_PUSH_LOCAL} ${UI_GRAVITY_NAME}"
     echo_stat
     RSYNC_REPATH="sudo rsync"
-    RSYNC_SOURCE="${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT}"
-    RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}"
+    RSYNC_SOURCE="${LOCAL_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT}"
+    RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}"
     create_rsynccmd
     
     MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${UI_GRAVITY_NAME}"
     echo_stat
-    CMD_TIMEOUT=$BACKUP_TIMEOUT
-    CMD_REQUESTED="sudo chown ${REMOTE_FILE_OWNER} ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}"
+    CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
+    CMD_REQUESTED="sudo chown ${REMOTE_FILE_OWNER} ${REMOTE_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}"
     create_sshcmd
     
     MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_GRAVITY_NAME}"
     echo_stat
-    CMD_TIMEOUT=$BACKUP_TIMEOUT
-    CMD_REQUESTED="sudo chmod 664 ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}"
+    CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
+    CMD_REQUESTED="sudo chmod 664 ${REMOTE_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}"
     create_sshcmd
 }
 
 ## Push Custom
 function push_gs_cust {
-        if [ "$REMOTE_CUSTOM_DNS" == "1" ]
+        if [ "$REMOTE_PH_CUSTOM_DNS" == "1" ]
         then
             backup_remote_custom
             backup_local_custom
@@ -526,20 +519,20 @@ function push_gs_cust {
             MESSAGE="${UI_PUSH_LOCAL} ${UI_CUSTOM_NAME}"
             echo_stat
             RSYNC_REPATH="sudo rsync"
-            RSYNC_SOURCE="${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS}.${BACKUP_EXT}"
-            RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}"
+            RSYNC_SOURCE="${LOCAL_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}.${GS_BACKUP_EXT}"
+            RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}"
             create_rsynccmd
             
             MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${UI_CUSTOM_NAME}"
             echo_stat
-            CMD_TIMEOUT=$BACKUP_TIMEOUT
-            CMD_REQUESTED="sudo chown root:root ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}"
+            CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
+            CMD_REQUESTED="sudo chown root:root ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}"
             create_sshcmd
             
             MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_CUSTOM_NAME}"
             echo_stat
-            CMD_TIMEOUT=$BACKUP_TIMEOUT
-            CMD_REQUESTED="sudo chmod 644 ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}"
+            CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
+            CMD_REQUESTED="sudo chmod 644 ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}"
             create_sshcmd
         fi
 }
@@ -553,21 +546,21 @@ function push_gs_cname {
             MESSAGE="${UI_PUSH_LOCAL} ${UI_CNAME_NAME}"
             echo_stat
             RSYNC_REPATH="sudo rsync"
-            RSYNC_SOURCE="${LOCAL_PIHOLE_DIRECTORY}/${CNAME_CONF}.${BACKUP_EXT}"
-            RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}"
+            RSYNC_SOURCE="${LOCAL_PIHOLE_DIRECTORY}/${PH_CNAME_CONF}.${GS_BACKUP_EXT}"
+            RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}"
             create_rsynccmd
             
             MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${UI_CNAME_NAME}"
             echo_stat
-            CMD_TIMEOUT=$BACKUP_TIMEOUT
-            CMD_REQUESTED="sudo chown root:root ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}"
+            CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
+            CMD_REQUESTED="sudo chown root:root ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}"
             create_sshcmd
             
                         
             MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_CNAME_NAME}"
             echo_stat
-            CMD_TIMEOUT=$BACKUP_TIMEOUT
-            CMD_REQUESTED="sudo chmod 644 ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}"
+            CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
+            CMD_REQUESTED="sudo chmod 644 ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}"
             create_sshcmd
         fi
 }
@@ -576,9 +569,9 @@ function push_gs_cname {
 function push_gs_reload {
     sleep 1
     
-    MESSAGE="${UI_FTLDNS_CONFIG_PUSH_UPDATE}"
+    MESSAGE="Updating remote FTLDNS configuration"
     echo_stat
-    CMD_TIMEOUT=$BACKUP_TIMEOUT
+    CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
     CMD_REQUESTED="${RH_EXEC} restartdns reload-lists"
     create_sshcmd
     
@@ -588,14 +581,14 @@ function push_gs_reload {
         then
             MESSAGE="${UI_FTLDNS_CONFIG_PUSH_RELOAD}"
             echo_stat
-            CMD_TIMEOUT=$BACKUP_TIMEOUT
+            CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
             CMD_REQUESTED="${RH_EXEC} restartdns"
             create_sshcmd
         fi
     else
         MESSAGE="${UI_FTLDNS_CONFIG_PUSH_RELOAD}"
         echo_stat
-        CMD_TIMEOUT=$BACKUP_TIMEOUT
+        CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
         CMD_REQUESTED="${RH_EXEC} restartdns"
         create_sshcmd
     fi
@@ -660,8 +653,8 @@ function smart_gs {
             MESSAGE="Both ${UI_GRAVITY_NAME} have changed"
             echo_warn
             
-            REMOTE_GRAVITY_DATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}")
-            LOCAL_GRAVITY_DATE=$(stat -c %Y ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI})
+            REMOTE_GRAVITY_DATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}")
+            LOCAL_GRAVITY_DATE=$(stat -c %Y ${LOCAL_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI})
             
             if (( "$REMOTE_GRAVITY_DATE" >= "$LOCAL_GRAVITY_DATE" ))
             then
@@ -700,7 +693,7 @@ function smart_gs {
         LOCAL_DNS_CHANGE="1"
     fi
     
-        if [ -f "${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS}" ]
+        if [ -f "${LOCAL_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}" ]
         then
             if [ "${REMOTE_DNS_CHANGE}" == "${LOCAL_DNS_CHANGE}" ]
             then
@@ -709,8 +702,8 @@ function smart_gs {
                     MESSAGE="Both ${UI_CUSTOM_NAME} have changed"
                     echo_warn
                     
-                    REMOTE_DNS_DATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}")
-                    LOCAL_DNS_DATE=$(stat -c %Y ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS})
+                    REMOTE_DNS_DATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}")
+                    LOCAL_DNS_DATE=$(stat -c %Y ${LOCAL_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS})
                     
                     if (( "$REMOTE_DNS_DATE" >= "$LOCAL_DNS_DATE" ))
                     then
@@ -753,7 +746,7 @@ function smart_gs {
         LOCAL_CNAME_CHANGE="1"
     fi
     
-        if [ -f "${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF}" ]
+        if [ -f "${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}" ]
         then
             if [ "${REMOTE_CNAME_CHANGE}" == "${LOCAL_CNAME_CHANGE}" ]
             then
@@ -762,8 +755,8 @@ function smart_gs {
                     MESSAGE="Both ${UI_CNAME_NAME} have Changed"
                     echo_warn
                     
-                    REMOTE_CNAME_DATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}")
-                    LOCAL_CNAME_DATE=$(stat -c %Y ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF})
+                    REMOTE_CNAME_DATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}")
+                    LOCAL_CNAME_DATE=$(stat -c %Y ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF})
                     
                     if (( "$REMOTE_CNAME_DATE" >= "$LOCAL_CNAME_DATE" ))
                     then
@@ -817,13 +810,13 @@ function backup_local_gravity() {
     echo_stat
     
     if [ "$LOCAL_PIHOLE_TYPE" == "default" ]; then
-        sudo ${FTL_EXEC} sql ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} ".backup '${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT}'"
+        sudo ${FTL_EXEC} sql ${LOCAL_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI} ".backup '${LOCAL_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT}'"
         error_validate
     elif [ "$LOCAL_PIHOLE_TYPE" == "docker" ]; then
-        sudo ${FTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI} ".backup '${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT}'"
+        sudo ${FTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI} ".backup '${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT}'"
         error_validate
     elif [ "$LOCAL_PIHOLE_TYPE" == "podman" ]; then
-        sudo ${FTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI} ".backup '${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT}'"
+        sudo ${FTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI} ".backup '${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT}'"
         error_validate
     fi
 }
@@ -832,16 +825,16 @@ function backup_local_gravity_integrity() {
     MESSAGE="${UI_BACKUP_INTEGRITY}"
     echo_stat
     
-    sleep $BACKUP_INTEGRITY_WAIT
+    sleep $GS_BACKUP_INTEGRITY_WAIT
 
     if [ "$LOCAL_PIHOLE_TYPE" == "default" ]; then
-        LOCAL_INTEGRITY_CHECK=$(${FTL_EXEC} sql ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT} 'PRAGMA integrity_check;' | sed 's/\s.*$//')
+        LOCAL_INTEGRITY_CHECK=$(${FTL_EXEC} sql ${LOCAL_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT} 'PRAGMA integrity_check;' | sed 's/\s.*$//')
         error_validate
     elif [ "$LOCAL_PIHOLE_TYPE" == "docker" ]; then
-        LOCAL_INTEGRITY_CHECK=$(${FTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT} 'PRAGMA integrity_check;' | sed 's/\s.*$//')
+        LOCAL_INTEGRITY_CHECK=$(${FTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT} 'PRAGMA integrity_check;' | sed 's/\s.*$//')
         error_validate
     elif [ "$LOCAL_PIHOLE_TYPE" == "podman" ]; then
-        LOCAL_INTEGRITY_CHECK=$(${FTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT} 'PRAGMA integrity_check;' | sed 's/\s.*$//')
+        LOCAL_INTEGRITY_CHECK=$(${FTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT} 'PRAGMA integrity_check;' | sed 's/\s.*$//')
         error_validate
     fi
     
@@ -852,7 +845,7 @@ function backup_local_gravity_integrity() {
         MESSAGE="${UI_BACKUP_INTEGRITY_DELETE} ${UI_GRAVITY_NAME}"
         echo_stat
             
-        sudo rm ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT}
+        sudo rm ${LOCAL_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT}
         error_validate
         
         exit_nochange
@@ -860,27 +853,27 @@ function backup_local_gravity_integrity() {
 }
 
 function backup_local_custom() {
-    if [ -f ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ]; then
+    if [ -f ${LOCAL_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} ]; then
         MESSAGE="${UI_BACKUP_LOCAL} ${UI_CUSTOM_NAME}"
         echo_stat
         
-        sudo cp ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS}.${BACKUP_EXT}
+        sudo cp ${LOCAL_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} ${LOCAL_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}.${GS_BACKUP_EXT}
         error_validate
     else
-        MESSAGE="No local ${CUSTOM_DNS} detected"
+        MESSAGE="No local ${PH_CUSTOM_DNS} detected"
         echo_inf1
     fi
 }
 
 function backup_local_cname() {
-    if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} ]; then
+    if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} ]; then
         MESSAGE="${UI_BACKUP_LOCAL} ${UI_CNAME_NAME}"
         echo_stat
         
-        sudo cp ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} ${LOCAL_PIHOLE_DIRECTORY}/${CNAME_CONF}.${BACKUP_EXT}
+        sudo cp ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} ${LOCAL_PIHOLE_DIRECTORY}/${PH_CNAME_CONF}.${GS_BACKUP_EXT}
         error_validate
     else
-        MESSAGE="No local ${CNAME_CONF} detected"
+        MESSAGE="No local ${PH_CNAME_CONF} detected"
         echo_inf1
     fi
 }
@@ -890,16 +883,16 @@ function backup_remote_gravity() {
     echo_stat
 
     if [ "$REMOTE_PIHOLE_TYPE" == "default" ]; then
-        CMD_TIMEOUT=$BACKUP_TIMEOUT
-        CMD_REQUESTED="sudo ${RFTL_EXEC} sql ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI} \".backup '${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT}'\""
+        CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
+        CMD_REQUESTED="sudo ${RFTL_EXEC} sql ${REMOTE_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI} \".backup '${REMOTE_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT}'\""
         create_sshcmd
     elif [ "$REMOTE_PIHOLE_TYPE" == "docker" ]; then
-        CMD_TIMEOUT=$BACKUP_TIMEOUT
-        CMD_REQUESTED="sudo ${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI} \".backup '${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT}'\""
+        CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
+        CMD_REQUESTED="sudo ${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI} \".backup '${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT}'\""
         create_sshcmd
     elif [ "$REMOTE_PIHOLE_TYPE" == "podman" ]; then
-        CMD_TIMEOUT=$BACKUP_TIMEOUT
-        CMD_REQUESTED="sudo ${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI} \".backup '${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT}'\""
+        CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
+        CMD_REQUESTED="sudo ${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI} \".backup '${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT}'\""
         create_sshcmd
     fi
 }
@@ -908,16 +901,16 @@ function backup_remote_gravity_integrity() {
     MESSAGE="${UI_BACKUP_INTEGRITY}"
     echo_stat
     
-    sleep $BACKUP_INTEGRITY_WAIT
+    sleep $GS_BACKUP_INTEGRITY_WAIT
 
     if [ "$REMOTE_PIHOLE_TYPE" == "default" ]; then
-        REMOTE_INTEGRITY_CHECK=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT} 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
+        REMOTE_INTEGRITY_CHECK=$(${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${REMOTE_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT} 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
         error_validate
     elif [ "$REMOTE_PIHOLE_TYPE" == "docker" ]; then
-        REMOTE_INTEGRITY_CHECK=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT} 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
+        REMOTE_INTEGRITY_CHECK=$(${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT} 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
         error_validate
     elif [ "$REMOTE_PIHOLE_TYPE" == "podman" ]; then
-        REMOTE_INTEGRITY_CHECK=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT} 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
+        REMOTE_INTEGRITY_CHECK=$(${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT} 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
         error_validate
     fi
     
@@ -928,8 +921,8 @@ function backup_remote_gravity_integrity() {
         MESSAGE="${UI_BACKUP_INTEGRITY_DELETE} ${UI_GRAVITY_NAME}"
         echo_stat
         
-        CMD_TIMEOUT=$BACKUP_TIMEOUT
-        CMD_REQUESTED="sudo rm ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}.${BACKUP_EXT}"
+        CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
+        CMD_REQUESTED="sudo rm ${REMOTE_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT}"
         create_sshcmd
         
         exit_nochange
@@ -940,8 +933,8 @@ function backup_remote_custom() {
         MESSAGE="${UI_BACKUP_REMOTE} ${UI_CUSTOM_NAME}"
         echo_stat
         
-        CMD_TIMEOUT=$BACKUP_TIMEOUT
-        CMD_REQUESTED="sudo cp ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}.${BACKUP_EXT}"
+        CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
+        CMD_REQUESTED="sudo cp ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}.${GS_BACKUP_EXT}"
         create_sshcmd
 }
 
@@ -949,8 +942,8 @@ function backup_remote_cname() {
         MESSAGE="${UI_BACKUP_REMOTE} ${UI_CNAME_NAME}"
         echo_stat
         
-        CMD_TIMEOUT=$BACKUP_TIMEOUT
-        CMD_REQUESTED="sudo cp ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF} ${REMOTE_PIHOLE_DIRECTORY}/${CNAME_CONF}.${BACKUP_EXT}"
+        CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
+        CMD_REQUESTED="sudo cp ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} ${REMOTE_PIHOLE_DIRECTORY}/${PH_CNAME_CONF}.${GS_BACKUP_EXT}"
         create_sshcmd
 }
 
@@ -958,13 +951,13 @@ function backup_cleanup() {
     MESSAGE="Purging backups"
     echo_stat
     # git clean -fq
-    sudo rm -f ${LOCAL_PIHOLE_DIRECTORY}/*.${BACKUP_EXT}
+    sudo rm -f ${LOCAL_PIHOLE_DIRECTORY}/*.${GS_BACKUP_EXT}
     error_validate
 
     # MESSAGE="${UI_BACKUP_PURGE} on remote"
     # echo_stat
-    # CMD_TIMEOUT=$BACKUP_TIMEOUT
-    # CMD_REQUESTED="sudo rm -f ${REMOTE_PIHOLE_DIRECTORY}/*.${BACKUP_EXT}"
+    # CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
+    # CMD_REQUESTED="sudo rm -f ${REMOTE_PIHOLE_DIRECTORY}/*.${GS_BACKUP_EXT}"
     # create_sshcmd
 }
 
@@ -973,12 +966,12 @@ function md5_compare {
     
     MESSAGE="${UI_HASHING_HASHING} ${UI_GRAVITY_NAME}"
     echo_stat
-    REMOTE_DB_MD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}" | sed 's/\s.*$//')
+    REMOTE_DB_MD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}" | sed 's/\s.*$//')
     error_validate
     
     MESSAGE="${UI_HASHING_COMPARING} ${UI_GRAVITY_NAME}"
     echo_stat
-    LOCAL_DB_MD5=$(md5sum ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} | sed 's/\s.*$//')
+    LOCAL_DB_MD5=$(md5sum ${LOCAL_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI} | sed 's/\s.*$//')
     error_validate
     
     if [ "$REMOTE_DB_MD5" == "$LAST_REMOTE_DB_MD5" ] && [ "$LOCAL_DB_MD5" == "$LAST_LOCAL_DB_MD5" ]
@@ -990,20 +983,20 @@ function md5_compare {
         HASHMARK=$((HASHMARK+1))
     fi
     
-        if [ -f ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ]
+        if [ -f ${LOCAL_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} ]
         then
-            if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}
+            if ${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}
             then
-                REMOTE_CUSTOM_DNS="1"
+                REMOTE_PH_CUSTOM_DNS="1"
                 MESSAGE="${UI_HASHING_HASHING} ${UI_CUSTOM_NAME}"
                 echo_stat
                 
-                REMOTE_CL_MD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS} | sed 's/\s.*$//'")
+                REMOTE_CL_MD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} | sed 's/\s.*$//'")
                 error_validate
                 
                 MESSAGE="${UI_HASHING_COMPARING} ${UI_CUSTOM_NAME}"
                 echo_stat
-                LOCAL_CL_MD5=$(md5sum ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} | sed 's/\s.*$//')
+                LOCAL_CL_MD5=$(md5sum ${LOCAL_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} | sed 's/\s.*$//')
                 error_validate
                 
                 if [ "$REMOTE_CL_MD5" == "$LAST_REMOTE_CL_MD5" ] && [ "$LOCAL_CL_MD5" == "$LAST_LOCAL_CL_MD5" ]
@@ -1019,9 +1012,9 @@ function md5_compare {
                 echo_inf1
             fi
         else
-            if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}
+            if ${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}
             then
-                REMOTE_CUSTOM_DNS="1"
+                REMOTE_PH_CUSTOM_DNS="1"
                 MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_REMOTE}"
                 HASHMARK=$((HASHMARK+1))
                 echo_inf1
@@ -1030,20 +1023,20 @@ function md5_compare {
             echo_inf1
         fi
     
-            if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} ]
+            if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} ]
             then
-                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}
+                if ${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}
                 then
                     REMOTE_CNAME_DNS="1"
                     MESSAGE="${UI_HASHING_HASHING} ${UI_CNAME_NAME}"
                     echo_stat
                     
-                    REMOTE_CN_MD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF} | sed 's/\s.*$//'")
+                    REMOTE_CN_MD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} | sed 's/\s.*$//'")
                     error_validate
                     
                     MESSAGE="${UI_HASHING_COMPARING} ${UI_CNAME_NAME}"
                     echo_stat
-                    LOCAL_CN_MD5=$(md5sum ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} | sed 's/\s.*$//')
+                    LOCAL_CN_MD5=$(md5sum ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} | sed 's/\s.*$//')
                     error_validate
                     
                     if [ "$REMOTE_CN_MD5" == "$LAST_REMOTE_CN_MD5" ] && [ "$LOCAL_CN_MD5" == "$LAST_LOCAL_CN_MD5" ]
@@ -1059,7 +1052,7 @@ function md5_compare {
                     echo_inf1
                 fi
             else
-                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}
+                if ${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}
                 then
                     REMOTE_CNAME_DNS="1"
                     MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_REMOTE}"
@@ -1073,39 +1066,39 @@ function md5_compare {
     
     if [ "$HASHMARK" != "0" ]
     then
-        MESSAGE="${UI_HASHING_REQUIRED}"
+        MESSAGE="Replication of ${UI_CORE_APP} settings is required"
         echo_warn
         HASHMARK=$((HASHMARK+0))
     else
-        MESSAGE="${UI_HASHING_NOREP}"
+        MESSAGE="No replication is required at this time"
         echo_inf1
         exit_nochange
     fi
 }
 
 function previous_md5 {
-    if [ -f "${GS_ETC_PATH}/${GRAVITY_MD5}" ]
+    if [ -f "${GS_ETC_PATH}/${GS_GRAVITY_FI_MD5_LOG}" ]
     then
-        LAST_REMOTE_DB_MD5=$(sed "1q;d" ${GS_ETC_PATH}/${GRAVITY_MD5})
-        LAST_LOCAL_DB_MD5=$(sed "2q;d" ${GS_ETC_PATH}/${GRAVITY_MD5})
+        LAST_REMOTE_DB_MD5=$(sed "1q;d" ${GS_ETC_PATH}/${GS_GRAVITY_FI_MD5_LOG})
+        LAST_LOCAL_DB_MD5=$(sed "2q;d" ${GS_ETC_PATH}/${GS_GRAVITY_FI_MD5_LOG})
     else
         LAST_REMOTE_DB_MD5="0"
         LAST_LOCAL_DB_MD5="0"
     fi
 
-    if [ -f "${GS_ETC_PATH}/${DNS_LIST_MD5}" ]
+    if [ -f "${GS_ETC_PATH}/${GS_CUSTOM_DNS_MD5_LOG}" ]
     then
-        LAST_REMOTE_CL_MD5=$(sed "1q;d" ${GS_ETC_PATH}/${DNS_LIST_MD5})
-        LAST_LOCAL_CL_MD5=$(sed "2q;d" ${GS_ETC_PATH}/${DNS_LIST_MD5})
+        LAST_REMOTE_CL_MD5=$(sed "1q;d" ${GS_ETC_PATH}/${GS_CUSTOM_DNS_MD5_LOG})
+        LAST_LOCAL_CL_MD5=$(sed "2q;d" ${GS_ETC_PATH}/${GS_CUSTOM_DNS_MD5_LOG})
     else
         LAST_REMOTE_CL_MD5="0"
         LAST_LOCAL_CL_MD5="0"
     fi
 
-    if [ -f "${GS_ETC_PATH}/${CNAME_LIST_MD5}" ]
+    if [ -f "${GS_ETC_PATH}/${GS_CNAME_CONF_MD5_LOG}" ]
     then
-        LAST_REMOTE_CN_MD5=$(sed "1q;d" ${GS_ETC_PATH}/${CNAME_LIST_MD5})
-        LAST_LOCAL_CN_MD5=$(sed "2q;d" ${GS_ETC_PATH}/${CNAME_LIST_MD5})
+        LAST_REMOTE_CN_MD5=$(sed "1q;d" ${GS_ETC_PATH}/${GS_CNAME_CONF_MD5_LOG})
+        LAST_LOCAL_CN_MD5=$(sed "2q;d" ${GS_ETC_PATH}/${GS_CNAME_CONF_MD5_LOG})
     else
         LAST_REMOTE_CN_MD5="0"
         LAST_LOCAL_CN_MD5="0"
@@ -1120,37 +1113,37 @@ function md5_recheck {
     
     MESSAGE="${UI_HASHING_REHASHING} ${UI_GRAVITY_NAME}"
     echo_stat
-    REMOTE_DB_MD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${GRAVITY_FI}" | sed 's/\s.*$//')
+    REMOTE_DB_MD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}" | sed 's/\s.*$//')
     error_validate
     
     MESSAGE="${UI_HASHING_RECOMPARING} ${UI_GRAVITY_NAME}"
     echo_stat
-    LOCAL_DB_MD5=$(md5sum ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} | sed 's/\s.*$//')
+    LOCAL_DB_MD5=$(md5sum ${LOCAL_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI} | sed 's/\s.*$//')
     error_validate
     
-        if [ -f ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} ]
+        if [ -f ${LOCAL_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} ]
         then
-            if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}
+            if ${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}
             then
-                REMOTE_CUSTOM_DNS="1"
+                REMOTE_PH_CUSTOM_DNS="1"
                 MESSAGE="${UI_HASHING_REHASHING} ${UI_CUSTOM_NAME}"
                 echo_stat
                 
-                REMOTE_CL_MD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS} | sed 's/\s.*$//'")
+                REMOTE_CL_MD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} | sed 's/\s.*$//'")
                 error_validate
                 
                 MESSAGE="${UI_HASHING_RECOMPARING} ${UI_CUSTOM_NAME}"
                 echo_stat
-                LOCAL_CL_MD5=$(md5sum ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} | sed 's/\s.*$//')
+                LOCAL_CL_MD5=$(md5sum ${LOCAL_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} | sed 's/\s.*$//')
                 error_validate
             else
                 MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_REMOTE}"
                 echo_inf1
             fi
         else
-            if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${CUSTOM_DNS}
+            if ${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}
             then
-                REMOTE_CUSTOM_DNS="1"
+                REMOTE_PH_CUSTOM_DNS="1"
                 MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_REMOTE}"
                 echo_inf1
             fi
@@ -1158,27 +1151,27 @@ function md5_recheck {
             echo_inf1
         fi
     
-            if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} ]
+            if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} ]
             then
-                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}
+                if ${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}
                 then
                     REMOTE_CNAME_DNS="1"
                     MESSAGE="${UI_HASHING_REHASHING} ${UI_CNAME_NAME}"
                     echo_stat
                     
-                    REMOTE_CN_MD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF} | sed 's/\s.*$//'")
+                    REMOTE_CN_MD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} | sed 's/\s.*$//'")
                     error_validate
                     
                     MESSAGE="${UI_HASHING_RECOMPARING} ${UI_CNAME_NAME}"
                     echo_stat
-                    LOCAL_CN_MD5=$(md5sum ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} | sed 's/\s.*$//')
+                    LOCAL_CN_MD5=$(md5sum ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} | sed 's/\s.*$//')
                     error_validate
                 else
                     MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_REMOTE}"
                     echo_inf1
                 fi
             else
-                if ${SSHPASSWORD} ${SSH_CMD} -p ${SSH_PORT} -i "${SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${CNAME_CONF}
+                if ${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}
                 then
                     REMOTE_CNAME_DNS="1"
                     MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_REMOTE}"
@@ -1192,20 +1185,20 @@ function md5_recheck {
 
 ## Determine SSH Pathways
 function create_sshcmd {
-    timeout --preserve-status ${CMD_TIMEOUT} ${SSH_CMD} -p ${SSH_PORT} -i ${SSH_PKIF} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} "${CMD_REQUESTED}"
+    timeout --preserve-status ${CMD_TIMEOUT} ${SSH_CMD} -p ${GS_SSH_PORT} -i ${GS_SSH_PKIF} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} "${CMD_REQUESTED}"
     error_validate
 }
 
 ## Determine SSH Pathways
 function create_rsynccmd {
-    rsync --rsync-path="${RSYNC_REPATH}" -e "${SSH_CMD} -p ${SSH_PORT} -i ${SSH_PKIF}" ${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
+    rsync --rsync-path="${RSYNC_REPATH}" -e "${SSH_CMD} -p ${GS_SSH_PORT} -i ${GS_SSH_PKIF}" ${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
     error_validate
 }
 
 function generate_sshkey {
     if [ -z $INPUT_REMOTE_PASS ]
     then
-        if [ -f ${SSH_PKIF} ]
+        if [ -f ${GS_SSH_PKIF} ]
         then
             MESSAGE="Using existing SSH keyfile"
             echo_good_clean
@@ -1218,12 +1211,12 @@ function generate_sshkey {
                 ssh-keygen -q -P "" -t rsa -f ${OS_TMP}/gravity-sync.rsa >/dev/null 2>&1
                 error_validate
 
-                MESSAGE="Moving private key to ${SSH_PKIF}"
-                sudo mv ${OS_TMP}/gravity-sync.rsa ${SSH_PKIF}
+                MESSAGE="Moving private key to ${GS_SSH_PKIF}"
+                sudo mv ${OS_TMP}/gravity-sync.rsa ${GS_SSH_PKIF}
                 error_validate
 
-                MESSAGE="Moving public key to ${SSH_PKIF}.pub"
-                sudo mv ${OS_TMP}/gravity-sync.rsa.pub ${SSH_PKIF}.pub
+                MESSAGE="Moving public key to ${GS_SSH_PKIF}.pub"
+                sudo mv ${OS_TMP}/gravity-sync.rsa.pub ${GS_SSH_PKIF}.pub
                 error_validate
             else
                 MESSAGE="No SSH-KEYGEN available"
@@ -1237,12 +1230,12 @@ function generate_sshkey {
 function export_sshkey {
     if [ -z $REMOTE_PASS ]
     then
-        if [ -f ${SSH_PKIF} ]
+        if [ -f ${GS_SSH_PKIF} ]
         then
             MESSAGE="Registering key-pair to ${REMOTE_HOST}"
             echo_inf1
             
-            ssh-copy-id -f -p ${SSH_PORT} -i ${SSH_PKIF}.pub ${REMOTE_USER}@${REMOTE_HOST}
+            ssh-copy-id -f -p ${GS_SSH_PORT} -i ${GS_SSH_PKIF}.pub ${REMOTE_USER}@${REMOTE_HOST}
         else
             MESSAGE="Error registering key-pair to ${REMOTE_HOST}"
             echo_warn
@@ -1270,26 +1263,26 @@ function task_logs {
 function logs_export {
     if [ "${TASKTYPE}" != "BACKUP" ]
     then
-        MESSAGE="${UI_LOGGING_HASHES}"
+        MESSAGE="Saving updated data hashses"
         echo_stat
         sudo rm -f ${GS_ETC_PATH}/*.md5
-        echo -e ${REMOTE_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${GRAVITY_MD5} 1> /dev/null
-        echo -e ${LOCAL_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${GRAVITY_MD5} 1> /dev/null
-        echo -e ${REMOTE_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${DNS_LIST_MD5} 1> /dev/null
-        echo -e ${LOCAL_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${DNS_LIST_MD5} 1> /dev/null
-        echo -e ${REMOTE_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${CNAME_LIST_MD5} 1> /dev/null
-        echo -e ${LOCAL_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${CNAME_LIST_MD5} 1> /dev/null
+        echo -e ${REMOTE_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_GRAVITY_FI_MD5_LOG} 1> /dev/null
+        echo -e ${LOCAL_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_GRAVITY_FI_MD5_LOG} 1> /dev/null
+        echo -e ${REMOTE_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CUSTOM_DNS_MD5_LOG} 1> /dev/null
+        echo -e ${LOCAL_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CUSTOM_DNS_MD5_LOG} 1> /dev/null
+        echo -e ${REMOTE_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CNAME_CONF_MD5_LOG} 1> /dev/null
+        echo -e ${LOCAL_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CNAME_CONF_MD5_LOG} 1> /dev/null
         
         sudo rm -f ${OS_TMP}/*.md5
-        echo -e ${LOCAL_DB_MD5} | sudo tee -a ${OS_TMP}/${GRAVITY_MD5} 1> /dev/null
-        echo -e ${REMOTE_DB_MD5} | sudo tee -a ${OS_TMP}/${GRAVITY_MD5} 1> /dev/null
-        echo -e ${LOCAL_CL_MD5} | sudo tee -a ${OS_TMP}/${DNS_LIST_MD5} 1> /dev/null
-        echo -e ${REMOTE_CL_MD5} | sudo tee -a ${OS_TMP}/${DNS_LIST_MD5} 1> /dev/null
-        echo -e ${LOCAL_CN_MD5} | sudo tee -a ${OS_TMP}/${CNAME_LIST_MD5} 1> /dev/null
-        echo -e ${REMOTE_CN_MD5} | sudo tee -a ${OS_TMP}/${CNAME_LIST_MD5} 1> /dev/null
+        echo -e ${LOCAL_DB_MD5} | sudo tee -a ${OS_TMP}/${GS_GRAVITY_FI_MD5_LOG} 1> /dev/null
+        echo -e ${REMOTE_DB_MD5} | sudo tee -a ${OS_TMP}/${GS_GRAVITY_FI_MD5_LOG} 1> /dev/null
+        echo -e ${LOCAL_CL_MD5} | sudo tee -a ${OS_TMP}/${GS_CUSTOM_DNS_MD5_LOG} 1> /dev/null
+        echo -e ${REMOTE_CL_MD5} | sudo tee -a ${OS_TMP}/${GS_CUSTOM_DNS_MD5_LOG} 1> /dev/null
+        echo -e ${LOCAL_CN_MD5} | sudo tee -a ${OS_TMP}/${GS_CNAME_CONF_MD5_LOG} 1> /dev/null
+        echo -e ${REMOTE_CN_MD5} | sudo tee -a ${OS_TMP}/${GS_CNAME_CONF_MD5_LOG} 1> /dev/null
         error_validate
 
-        MESSAGE="Sending hashes to remote Gravity Sync instance"
+        MESSAGE="Sending hashes to Gravity Sync peer"
         echo_stat
 
         RSYNC_REPATH="sudo rsync"
@@ -1299,31 +1292,31 @@ function logs_export {
 
         MESSAGE="Setting permissions on remote hashing files"
         echo_stat
-        CMD_TIMEOUT=$BACKUP_TIMEOUT
+        CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
         CMD_REQUESTED="sudo chmod 644 ${GS_ETC_PATH}/*.md5"
         create_sshcmd
 
         sudo rm -f ${OS_TMP}/*.md5
     fi
     
-    MESSAGE="${UI_LOGGING_SUCCESS} ${TASKTYPE}"
+    MESSAGE="Logging successful ${TASKTYPE}"
     echo_stat
-    echo -e "$(date) [${TASKTYPE}]" | sudo tee -a ${GS_ETC_PATH}/${SYNCING_LOG} 1> /dev/null
+    echo -e "$(date) [${TASKTYPE}]" | sudo tee -a ${GS_ETC_PATH}/${GS_SYNCING_LOG} 1> /dev/null
     error_validate
 }
 
 ### Output Sync Logs
 function logs_gs {
-    MESSAGE="${UI_LOGGING_DISPLAY}"
+    MESSAGE="Displaying output of previous jobs"
     echo_info
     
     echo_lines
     echo -e "${UI_LOGGING_RECENT_COMPLETE} ${YELLOW}SMART${NC}"
-    tail -n 7 "${GS_ETC_PATH}/${SYNCING_LOG}" | grep SMART
+    tail -n 7 "${GS_ETC_PATH}/${GS_SYNCING_LOG}" | grep SMART
     echo -e "${UI_LOGGING_RECENT_COMPLETE} ${YELLOW}PULL${NC}"
-    tail -n 7 "${GS_ETC_PATH}/${SYNCING_LOG}" | grep PULL
+    tail -n 7 "${GS_ETC_PATH}/${GS_SYNCING_LOG}" | grep PULL
     echo -e "${UI_LOGGING_RECENT_COMPLETE} ${YELLOW}PUSH${NC}"
-    tail -n 7 "${GS_ETC_PATH}/${SYNCING_LOG}" | grep PUSH
+    tail -n 7 "${GS_ETC_PATH}/${GS_SYNCING_LOG}" | grep PUSH
     echo_lines
     
     exit_nochange
@@ -1400,12 +1393,12 @@ function validate_os_sshpass {
 function validate_gravity_permissions() {
     MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${UI_GRAVITY_NAME}"
     echo_stat
-    sudo chown ${LOCAL_FILE_OWNER} ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} >/dev/null 2>&1
+    sudo chown ${LOCAL_FILE_OWNER} ${LOCAL_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI} >/dev/null 2>&1
     error_validate
         
     MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_GRAVITY_NAME}"
     echo_stat
-    sudo chmod 664 ${LOCAL_PIHOLE_DIRECTORY}/${GRAVITY_FI} >/dev/null 2>&1
+    sudo chmod 664 ${LOCAL_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI} >/dev/null 2>&1
     error_validate
 }
 
@@ -1413,12 +1406,12 @@ function validate_gravity_permissions() {
 function validate_custom_permissions() {
     MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${UI_CUSTOM_NAME}"
     echo_stat
-    sudo chown root:root ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} >/dev/null 2>&1
+    sudo chown root:root ${LOCAL_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} >/dev/null 2>&1
     error_validate
     
     MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_CUSTOM_NAME}"
     echo_stat
-    sudo chmod 644 ${LOCAL_PIHOLE_DIRECTORY}/${CUSTOM_DNS} >/dev/null 2>&1
+    sudo chmod 644 ${LOCAL_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} >/dev/null 2>&1
     error_validate
 }
 
@@ -1426,12 +1419,12 @@ function validate_custom_permissions() {
 function validate_cname_permissions() {
     MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${UI_CNAME_NAME}"
     echo_stat
-    sudo chown root:root ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} >/dev/null 2>&1
+    sudo chown root:root ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} >/dev/null 2>&1
     error_validate
     
     MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_CNAME_NAME}"
     echo_stat
-    sudo chmod 644 ${LOCAL_DNSMASQ_DIRECTORY}/${CNAME_CONF} >/dev/null 2>&1
+    sudo chmod 644 ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} >/dev/null 2>&1
     error_validate
 }
 
@@ -1537,7 +1530,7 @@ function task_configure {
     MESSAGE="${MESSAGE}: ${TASKTYPE}"
     echo_good
     
-    if [ -f ${GS_ETC_PATH}/${CONFIG_FILE} ]
+    if [ -f ${GS_ETC_PATH}/${GS_CONFIG_FILE} ]
     then		
         config_delete
     else
@@ -1549,9 +1542,9 @@ function task_configure {
 
 ## Generate New Configuration
 function config_generate {  
-    MESSAGE="${UI_CONFIG_CREATING} ${CONFIG_FILE}"
+    MESSAGE="${UI_CONFIG_CREATING} ${GS_CONFIG_FILE}"
     echo_stat
-    sudo cp ${GS_LOCAL_REPO}/templates/${CONFIG_FILE}.example ${GS_ETC_PATH}/${CONFIG_FILE}
+    sudo cp ${GS_LOCAL_REPO}/templates/${GS_CONFIG_FILE}.example ${GS_ETC_PATH}/${GS_CONFIG_FILE}
     error_validate
     
     echo_lines
@@ -1579,9 +1572,9 @@ function config_generate {
     # ping -c 3 ${INPUT_REMOTE_HOST} >/dev/null 2>&1
     # error_validate
 
-    MESSAGE="${UI_CONFIG_SAVING} ${INPUT_REMOTE_HOST} host to ${CONFIG_FILE}"
+    MESSAGE="${UI_CONFIG_SAVING} ${INPUT_REMOTE_HOST} host to ${GS_CONFIG_FILE}"
     echo_stat
-    sudo sed -i "/REMOTE_HOST='192.168.1.10'/c\REMOTE_HOST='${INPUT_REMOTE_HOST}'" ${GS_ETC_PATH}/${CONFIG_FILE}
+    sudo sed -i "/REMOTE_HOST='192.168.1.10'/c\REMOTE_HOST='${INPUT_REMOTE_HOST}'" ${GS_ETC_PATH}/${GS_CONFIG_FILE}
     error_validate
     
     MESSAGE="${UI_CORE_APP} ${UI_CONFIG_REMOTE} ${UI_CONFIG_USERREQ} for ${INPUT_REMOTE_HOST}"
@@ -1591,16 +1584,16 @@ function config_generate {
     echo_need
     read -r INPUT_REMOTE_USER
     
-    MESSAGE="${UI_CONFIG_SAVING} ${INPUT_REMOTE_USER}@${INPUT_REMOTE_HOST} user to ${CONFIG_FILE}"
+    MESSAGE="${UI_CONFIG_SAVING} ${INPUT_REMOTE_USER}@${INPUT_REMOTE_HOST} user to ${GS_CONFIG_FILE}"
     echo_stat
-    sudo sed -i "/REMOTE_USER='pi'/c\REMOTE_USER='${INPUT_REMOTE_USER}'" ${GS_ETC_PATH}/${CONFIG_FILE}
+    sudo sed -i "/REMOTE_USER='pi'/c\REMOTE_USER='${INPUT_REMOTE_USER}'" ${GS_ETC_PATH}/${GS_CONFIG_FILE}
     error_validate
 
     generate_sshkey
     
-    MESSAGE="${UI_CORE_LOADING} ${CONFIG_FILE}"
+    MESSAGE="${UI_CORE_LOADING} ${GS_CONFIG_FILE}"
     echo_stat
-    source ${GS_ETC_PATH}/${CONFIG_FILE}
+    source ${GS_ETC_PATH}/${GS_CONFIG_FILE}
     error_validate
 
     echo_lines
@@ -1678,9 +1671,9 @@ function advanced_config_generate {
             exit_withchange
         fi
 
-        MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_CONTAINER_TYPE} to ${CONFIG_FILE}"
+        MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_CONTAINER_TYPE} to ${GS_CONFIG_FILE}"
         echo_stat
-        sudo sed -i "/# LOCAL_PIHOLE_TYPE=''/c\LOCAL_PIHOLE_TYPE='${INPUT_LOCAL_PIHOLE_TYPE}'" ${GS_ETC_PATH}/${CONFIG_FILE}
+        sudo sed -i "/# LOCAL_PIHOLE_TYPE=''/c\LOCAL_PIHOLE_TYPE='${INPUT_LOCAL_PIHOLE_TYPE}'" ${GS_ETC_PATH}/${GS_CONFIG_FILE}
         error_validate
         
         MESSAGE="${UI_CONFIG_CONT_DETECT} ${UI_CONFIG_IMAGES}"
@@ -1704,9 +1697,9 @@ function advanced_config_generate {
         
         if [ "${INPUT_LOCAL_DOCKER_CONTAINER}" != "pihole" ]
         then
-            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_CONTAINER_NAME} to ${CONFIG_FILE}"
+            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_CONTAINER_NAME} to ${GS_CONFIG_FILE}"
             echo_stat
-            sudo sed -i "/# LOCAL_DOCKER_CONTAINER=''/c\LOCAL_DOCKER_CONTAINER='${INPUT_LOCAL_DOCKER_CONTAINER}'" ${GS_ETC_PATH}/${CONFIG_FILE}
+            sudo sed -i "/# LOCAL_DOCKER_CONTAINER=''/c\LOCAL_DOCKER_CONTAINER='${INPUT_LOCAL_DOCKER_CONTAINER}'" ${GS_ETC_PATH}/${GS_CONFIG_FILE}
             error_validate
         fi
         
@@ -1718,9 +1711,9 @@ function advanced_config_generate {
         
         if [ "${INPUT_LOCAL_PIHOLE_DIRECTORY}" != "" ]
         then
-            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
+            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH} to ${GS_CONFIG_FILE}"
             echo_stat
-            sudo sed -i "/# LOCAL_PIHOLE_DIRECTORY=''/c\LOCAL_PIHOLE_DIRECTORY='${INPUT_LOCAL_PIHOLE_DIRECTORY}'" ${GS_ETC_PATH}/${CONFIG_FILE}
+            sudo sed -i "/# LOCAL_PIHOLE_DIRECTORY=''/c\LOCAL_PIHOLE_DIRECTORY='${INPUT_LOCAL_PIHOLE_DIRECTORY}'" ${GS_ETC_PATH}/${GS_CONFIG_FILE}
             error_validate
         else
             MESSAGE="${UI_CONFIG_SETTING_REQUIRED}"
@@ -1736,9 +1729,9 @@ function advanced_config_generate {
         
         if [ "${INPUT_LOCAL_DNSMASQ_DIRECTORY}" != "" ]
         then
-            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
+            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH} to ${GS_CONFIG_FILE}"
             echo_stat
-            sudo sed -i "/# LOCAL_DNSMASQ_DIRECTORY=''/c\LOCAL_DNSMASQ_DIRECTORY='${INPUT_LOCAL_DNSMASQ_DIRECTORY}'" ${GS_ETC_PATH}/${CONFIG_FILE}
+            sudo sed -i "/# LOCAL_DNSMASQ_DIRECTORY=''/c\LOCAL_DNSMASQ_DIRECTORY='${INPUT_LOCAL_DNSMASQ_DIRECTORY}'" ${GS_ETC_PATH}/${GS_CONFIG_FILE}
             error_validate
         else
             MESSAGE="${UI_CONFIG_SETTING_REQUIRED}"
@@ -1746,9 +1739,9 @@ function advanced_config_generate {
             exit_withchange
         fi
         
-        MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_VOLUME_OWNER} to ${CONFIG_FILE}"
+        MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_VOLUME_OWNER} to ${GS_CONFIG_FILE}"
         echo_stat
-        sudo sed -i "/# LOCAL_FILE_OWNER=''/c\LOCAL_FILE_OWNER='999:999'" ${GS_ETC_PATH}/${CONFIG_FILE}
+        sudo sed -i "/# LOCAL_FILE_OWNER=''/c\LOCAL_FILE_OWNER='999:999'" ${GS_ETC_PATH}/${GS_CONFIG_FILE}
         error_validate
     fi
     
@@ -1767,9 +1760,9 @@ function advanced_config_generate {
             echo_warn
             exit_withchange
         fi
-        MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CONFIG_CONTAINER_TYPE} to ${CONFIG_FILE}"
+        MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CONFIG_CONTAINER_TYPE} to ${GS_CONFIG_FILE}"
         echo_stat
-        sudo sed -i "/# REMOTE_PIHOLE_TYPE=''/c\REMOTE_PIHOLE_TYPE='${INPUT_REMOTE_PIHOLE_TYPE}'" ${GS_ETC_PATH}/${CONFIG_FILE}
+        sudo sed -i "/# REMOTE_PIHOLE_TYPE=''/c\REMOTE_PIHOLE_TYPE='${INPUT_REMOTE_PIHOLE_TYPE}'" ${GS_ETC_PATH}/${GS_CONFIG_FILE}
         error_validate
         
         MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CONFIG_CONTAINER_NAME}"
@@ -1781,9 +1774,9 @@ function advanced_config_generate {
         
         if [ "${INPUT_REMOTE_DOCKER_CONTAINER}" != "pihole" ]
         then
-            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CONFIG_CONTAINER_NAME} to ${CONFIG_FILE}"
+            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CONFIG_CONTAINER_NAME} to ${GS_CONFIG_FILE}"
             echo_stat
-            sudo sed -i "/# REMOTE_DOCKER_CONTAINER=''/c\REMOTE_DOCKER_CONTAINER='${INPUT_REMOTE_DOCKER_CONTAINER}'" ${GS_ETC_PATH}/${CONFIG_FILE}
+            sudo sed -i "/# REMOTE_DOCKER_CONTAINER=''/c\REMOTE_DOCKER_CONTAINER='${INPUT_REMOTE_DOCKER_CONTAINER}'" ${GS_ETC_PATH}/${GS_CONFIG_FILE}
             error_validate
         fi
         
@@ -1795,9 +1788,9 @@ function advanced_config_generate {
         
         if [ "${INPUT_REMOTE_PIHOLE_DIRECTORY}" != "" ]
         then
-            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
+            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH} to ${GS_CONFIG_FILE}"
             echo_stat
-            sudo sed -i "/# REMOTE_PIHOLE_DIRECTORY=''/c\REMOTE_PIHOLE_DIRECTORY='${INPUT_REMOTE_PIHOLE_DIRECTORY}'" ${GS_ETC_PATH}/${CONFIG_FILE}
+            sudo sed -i "/# REMOTE_PIHOLE_DIRECTORY=''/c\REMOTE_PIHOLE_DIRECTORY='${INPUT_REMOTE_PIHOLE_DIRECTORY}'" ${GS_ETC_PATH}/${GS_CONFIG_FILE}
             error_validate
         else
             MESSAGE="${UI_CONFIG_SETTING_REQUIRED}"
@@ -1813,9 +1806,9 @@ function advanced_config_generate {
         
         if [ "${INPUT_REMOTE_DNSMASQ_DIRECTORY}" != "" ]
         then
-            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH} to ${CONFIG_FILE}"
+            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH} to ${GS_CONFIG_FILE}"
             echo_stat
-            sudo sed -i "/# REMOTE_DNSMASQ_DIRECTORY=''/c\REMOTE_DNSMASQ_DIRECTORY='${INPUT_REMOTE_DNSMASQ_DIRECTORY}'" ${GS_ETC_PATH}/${CONFIG_FILE}
+            sudo sed -i "/# REMOTE_DNSMASQ_DIRECTORY=''/c\REMOTE_DNSMASQ_DIRECTORY='${INPUT_REMOTE_DNSMASQ_DIRECTORY}'" ${GS_ETC_PATH}/${GS_CONFIG_FILE}
             error_validate
         else
             MESSAGE="${UI_CONFIG_SETTING_REQUIRED}"
@@ -1823,9 +1816,9 @@ function advanced_config_generate {
             exit_withchange
         fi
         
-        MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CONFIG_VOLUME_OWNER} to ${CONFIG_FILE}"
+        MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_REMOTE} ${UI_CONFIG_VOLUME_OWNER} to ${GS_CONFIG_FILE}"
         echo_stat
-        sudo sed -i "/# REMOTE_FILE_OWNER=''/c\REMOTE_FILE_OWNER='999:999'" ${GS_ETC_PATH}/${CONFIG_FILE}
+        sudo sed -i "/# REMOTE_FILE_OWNER=''/c\REMOTE_FILE_OWNER='999:999'" ${GS_ETC_PATH}/${GS_CONFIG_FILE}
         error_validate
     fi
 
@@ -1843,8 +1836,8 @@ function task_cname {
 
 ## Delete Existing Configuration
 function config_delete {
-    source ${GS_ETC_PATH}/${CONFIG_FILE}
-    MESSAGE="${CONFIG_FILE} ${UI_CONFIG_ALREADY}"
+    source ${GS_ETC_PATH}/${GS_CONFIG_FILE}
+    MESSAGE="${GS_CONFIG_FILE} ${UI_CONFIG_ALREADY}"
     echo_info  
   
     MESSAGE="${UI_CONFIG_AREYOUSURE}"
@@ -1852,9 +1845,9 @@ function config_delete {
 
     intent_validate
 
-    MESSAGE="${UI_CONFIG_ERASING} ${CONFIG_FILE}"
+    MESSAGE="${UI_CONFIG_ERASING} ${GS_CONFIG_FILE}"
     echo_stat
-    sudo mv ${GS_ETC_PATH}/${CONFIG_FILE} ${GS_ETC_PATH}/${CONFIG_FILE}.${BACKUP_EXT}
+    sudo mv ${GS_ETC_PATH}/${GS_CONFIG_FILE} ${GS_ETC_PATH}/${GS_CONFIG_FILE}.${GS_BACKUP_EXT}
         error_validate
 
     config_generate
@@ -1948,13 +1941,13 @@ function show_info() {
     echo -e ""
     
     echo -e "${YELLOW}Global Instance Settings${NC}"
-    if [ ${SSH_PORT} == '22' ]; then
+    if [ ${GS_SSH_PORT} == '22' ]; then
         echo -e "SSH Port: 22 (default)"
     else
-        echo -e "SSH Port: ${SSH_PORT} (custom)"
+        echo -e "SSH Port: ${GS_SSH_PORT} (custom)"
     fi
 
-    echo -e "SSH Keyfile: ${SSH_PKIF}"
+    echo -e "SSH Keyfile: ${GS_SSH_PKIF}"
 
     if systemctl is-active --quiet gravity-sync.timer; then
         echo -e "Automated Replication: Enabled"
@@ -2099,11 +2092,11 @@ function task_automate {
     fi
 
     MESSAGE="Moving systemd timer into place"
-    sudo cp ${GS_LOCAL_REPO}/templates/gravity-sync.timer ${DAEMON_PATH}
+    sudo cp ${GS_LOCAL_REPO}/templates/gravity-sync.timer ${OS_DAEMON_PATH}
     error_validate
 
     MESSAGE="Moving systemd service into place"
-    sudo cp ${GS_LOCAL_REPO}/templates/gravity-sync.service ${DAEMON_PATH}
+    sudo cp ${GS_LOCAL_REPO}/templates/gravity-sync.service ${OS_DAEMON_PATH}
     error_validate
 
     MESSAGE="Reloading systemd daemon"
@@ -2133,7 +2126,7 @@ function task_purge {
     echo -e "Your devices will continue to resolve and block DNS requests,"
     echo -e "but your ${UI_GRAVITY_NAME} and ${UI_CUSTOM_NAME} WILL NOT sync anymore,"
     echo -e "until you reconfigure Gravity Sync on this device. Backup files will not"
-    echo -e "be removed but you can manually remove '.${BACKUP_EXT}' files if desired."
+    echo -e "be removed but you can manually remove '.${GS_BACKUP_EXT}' files if desired."
     echo_lines
         
     intent_validate

@@ -47,11 +47,11 @@ These variables allow you to change the location of the name of the Docker conta
 - Default setting in Gravity Sync is `pihole`.
 - These variables can be set via `./gravity-sync.sh config` function.
 
-### `GRAVITY_FI`
+### `PH_GRAVITY_FI`
 
 This variable is for the `gravity.db` file that is replicated by Gravity Sync. You should not this them unless Pi-hole changes the naming convention for the database, in which case the core Gravity Sync files will be changed to adapt.
 
-### `CUSTOM_DNS` and `CNAME_CONF`
+### `PH_CUSTOM_DNS` and `PH_CNAME_CONF`
 
 These variables are for the `custom.list` and `05-pihole-custom-cname.conf` files that contain the Local DNS functions in Pi-hole, which are replicated by Gravity Sync. You should not change them unless Pi-hole changes their naming convention for these files, in which case the core Gravity Sync files will be changed to adapt.
 
@@ -94,28 +94,28 @@ In versions of Gravity Sync prior to 3.1, at execution, Gravity Sync would check
 
 - This variable is no longer parsed by Gravity Sync.
 
-### `BACKUP_TIMEOUT`
+### `GS_BACKUP_TIMEOUT`
 
 Allow users to adjust the time the script will wait until marking the SQLITE3 backup operation as failed. This was previously hard coded to 15 and then raised to 60, but raising it even higher has been seen to mitigate against failed replication jobs on slower SD Cards or older Raspberry Pi's where the database backup does not complete, yet still replicates.
 
 - Default setting in Gravity Sync is `240`, adjust as desired.
 - Requires Gravity Sync 3.4.1 or higher.
 
-### `BACKUP_INTEGRITY_WAIT`
+### `GS_BACKUP_INTEGRITY_WAIT`
 
 Allow users to adjust the time the script will wait until performing the SQLITE3 integrity check operation. There was previously no wait, but raising it even higher has been seen to mitigate against jobs on slower SD Cards or older Raspberry Pi's where the database backup is not fully written to disk before integrity check is attempted.
 
 - Default setting in Gravity Sync is `5`, adjust as desired.
 - Requires Gravity Sync 3.4.6 or higher.
 
-### `SSH_PORT`
+### `GS_SSH_PORT`
 
 Gravity Sync is configured by default to use the standard SSH port (22) but if you need to change this, such as if you're traversing a NAT/firewall for a multi-site deployment, to use a non-standard port.
 
 - Default setting in Gravity Sync is 22.
 - This variable can be set via `./gravity-sync.sh config` function.
 
-### `SSH_PKIF`
+### `GS_SSH_PKIF`
 
 Gravity Sync is configured by default to use the `.ssh/id_rsa` key-file that is generated using the `ssh-keygen` command. If you have an existing key-file stored somewhere else that you'd like to use, you can configure that here. The key-file will still need to be in the users `$HOME` directory.
 
@@ -130,7 +130,7 @@ Gravity Sync will place logs in the same folder as the script (identified as .cr
 
 - Default setting in Gravity Sync is a variable called `${LOCAL_FOLDR}`.
 
-### `SYNCING_LOG`
+### `GS_SYNCING_LOG`
 
 Gravity Sync will write a timestamp for any completed sync, pull, push or restore job to this file. If you want to change the name of this file, you will also need to adjust the LOG_PATH variable above, otherwise your file will be remove during an `update` operations.
 
