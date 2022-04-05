@@ -1,3 +1,7 @@
+# Installing
+
+## Gravity Sync 4
+
 Please make sure you've read over the [System Requirements](https://github.com/vmstan/gravity-sync/wiki/System-Requirements) prior to beginning your installation. 
 
 
