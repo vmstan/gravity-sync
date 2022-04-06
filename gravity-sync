@@ -84,20 +84,17 @@ UI_GRAVITY_NAME='Gravity Database'
 UI_CUSTOM_NAME='DNS Records'
 UI_CNAME_NAME='DNS CNAMEs'
 
-# Core
 UI_CORE_LOADING='Loading'
 UI_CORE_EVALUATING='Evaluating arguments'
 UI_CORE_INIT="Initalizing ${PROGRAM} (${VERSION})"
 UI_CORE_APP='Pi-hole'
 UI_CORE_APP_DNS='DNSMASQ'
 
-# Exit
 UI_EXIT_CALC_END='after'
 UI_EXIT_ABORT='exited'
 UI_EXIT_COMPLETE='completed'
 UI_EXIT_CALC_TIMER='seconds'
 
-# Hashing
 UI_HASHING_HASHING='Hashing the remote'
 UI_HASHING_COMPARING='Comparing to the local'
 UI_HASHING_DIFFERNCE='Differences detected in the'
@@ -108,7 +105,6 @@ UI_HASHING_LOCAL="local ${UI_CORE_APP}"
 UI_HASHING_REHASHING='Rehashing the remote'
 UI_HASHING_RECOMPARING='Recomparing to local'
 
-# Validation
 UI_VALIDATING='Validating pathways to'
 UI_VALIDATING_FAIL_CONTAINER='Unable to validate running container instance of'
 UI_VALIDATING_FAIL_FOLDER='Unable to validate configuration folder for'
@@ -116,17 +112,14 @@ UI_VALIDATING_FAIL_BINARY='Unable to validate the availibility of'
 UI_SET_LOCAL_FILE_OWNERSHIP='Setting file ownership on'
 UI_SET_FILE_PERMISSION='Setting file permissions on'
 
-# Pull/Push
 UI_PULL_REMOTE='Pulling the remote'
 UI_PUSH_LOCAL='Pushing the local'
 UI_REPLACE_LOCAL='Replacing the local'
 UI_FTLDNS_CONFIG_PULL_RELOAD='Reloading local FTLDNS services'
 UI_FTLDNS_CONFIG_PUSH_RELOAD='Reloading remote FTLDNS services'
 
-# Logging
 UI_LOGGING_RECENT_COMPLETE='Recent complete executions of'
 
-# Backup
 UI_BACKUP_REMOTE='Performing backup of remote'
 UI_BACKUP_LOCAL='Performing backup of local'
 UI_BACKUP_INTEGRITY="Checking ${UI_GRAVITY_NAME} copy integrity"
@@ -635,7 +628,7 @@ function smart_gs {
             MESSAGE="Both ${UI_GRAVITY_NAME} have changed"
             echo_warn
             
-            REMOTE_GRAVITY_DATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}")
+            REMOTE_GRAVITY_DATE=$(${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}")
             LOCAL_GRAVITY_DATE=$(stat -c %Y ${LOCAL_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI})
             
             if (( "$REMOTE_GRAVITY_DATE" >= "$LOCAL_GRAVITY_DATE" )); then
@@ -676,7 +669,7 @@ function smart_gs {
                 MESSAGE="Both ${UI_CUSTOM_NAME} have changed"
                 echo_warn
                 
-                REMOTE_DNS_DATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}")
+                REMOTE_DNS_DATE=$(${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}")
                 LOCAL_DNS_DATE=$(stat -c %Y ${LOCAL_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS})
                 
                 if (( "$REMOTE_DNS_DATE" >= "$LOCAL_DNS_DATE" )); then
@@ -721,7 +714,7 @@ function smart_gs {
                 MESSAGE="Both ${UI_CNAME_NAME} have Changed"
                 echo_warn
                 
-                REMOTE_CNAME_DATE=$(${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}")
+                REMOTE_CNAME_DATE=$(${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}")
                 LOCAL_CNAME_DATE=$(stat -c %Y ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF})
                 
                 if (( "$REMOTE_CNAME_DATE" >= "$LOCAL_CNAME_DATE" )); then
@@ -865,13 +858,13 @@ function backup_remote_gravity_integrity() {
     sleep $GS_BACKUP_INTEGRITY_WAIT
 
     if [ "$REMOTE_PIHOLE_TYPE" == "default" ]; then
-        REMOTE_INTEGRITY_CHECK=$(${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${REMOTE_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT} 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
+        REMOTE_INTEGRITY_CHECK=$(${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${REMOTE_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT} 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
         error_validate
     elif [ "$REMOTE_PIHOLE_TYPE" == "docker" ]; then
-        REMOTE_INTEGRITY_CHECK=$(${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT} 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
+        REMOTE_INTEGRITY_CHECK=$(${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT} 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
         error_validate
     elif [ "$REMOTE_PIHOLE_TYPE" == "podman" ]; then
-        REMOTE_INTEGRITY_CHECK=$(${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT} 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
+        REMOTE_INTEGRITY_CHECK=$(${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT} 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
         error_validate
     fi
     
@@ -927,7 +920,7 @@ function md5_compare {
     
     MESSAGE="${UI_HASHING_HASHING} ${UI_GRAVITY_NAME}"
     echo_stat
-    REMOTE_DB_MD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}" | sed 's/\s.*$//')
+    REMOTE_DB_MD5=$(${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}" | sed 's/\s.*$//')
     error_validate
     
     MESSAGE="${UI_HASHING_COMPARING} ${UI_GRAVITY_NAME}"
@@ -944,12 +937,12 @@ function md5_compare {
     fi
     
     if [ -f ${LOCAL_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} ]; then
-        if ${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}; then
+        if ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}; then
             REMOTE_PH_CUSTOM_DNS="1"
             MESSAGE="${UI_HASHING_HASHING} ${UI_CUSTOM_NAME}"
             echo_stat
             
-            REMOTE_CL_MD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} | sed 's/\s.*$//'")
+            REMOTE_CL_MD5=$(${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} | sed 's/\s.*$//'")
             error_validate
             
             MESSAGE="${UI_HASHING_COMPARING} ${UI_CUSTOM_NAME}"
@@ -969,7 +962,7 @@ function md5_compare {
             echo_inf1
         fi
     else
-        if ${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}; then
+        if ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}; then
             REMOTE_PH_CUSTOM_DNS="1"
             MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_REMOTE}"
             HASHMARK=$((HASHMARK+1))
@@ -980,12 +973,12 @@ function md5_compare {
     fi
 
     if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} ]; then
-        if ${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}; then
+        if ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}; then
             REMOTE_CNAME_DNS="1"
             MESSAGE="${UI_HASHING_HASHING} ${UI_CNAME_NAME}"
             echo_stat
             
-            REMOTE_CN_MD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} | sed 's/\s.*$//'")
+            REMOTE_CN_MD5=$(${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} | sed 's/\s.*$//'")
             error_validate
             
             MESSAGE="${UI_HASHING_COMPARING} ${UI_CNAME_NAME}"
@@ -1005,7 +998,7 @@ function md5_compare {
             echo_inf1
         fi
     else
-        if ${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}; then
+        if ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}; then
             REMOTE_CNAME_DNS="1"
             MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_REMOTE}"
             HASHMARK=$((HASHMARK+1))
@@ -1061,7 +1054,7 @@ function md5_recheck {
     
     MESSAGE="${UI_HASHING_REHASHING} ${UI_GRAVITY_NAME}"
     echo_stat
-    REMOTE_DB_MD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}" | sed 's/\s.*$//')
+    REMOTE_DB_MD5=$(${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}" | sed 's/\s.*$//')
     error_validate
     
     MESSAGE="${UI_HASHING_RECOMPARING} ${UI_GRAVITY_NAME}"
@@ -1070,12 +1063,12 @@ function md5_recheck {
     error_validate
     
     if [ -f ${LOCAL_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} ]; then
-        if ${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}; then
+        if ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}; then
             REMOTE_PH_CUSTOM_DNS="1"
             MESSAGE="${UI_HASHING_REHASHING} ${UI_CUSTOM_NAME}"
             echo_stat
             
-            REMOTE_CL_MD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} | sed 's/\s.*$//'")
+            REMOTE_CL_MD5=$(${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} | sed 's/\s.*$//'")
             error_validate
             
             MESSAGE="${UI_HASHING_RECOMPARING} ${UI_CUSTOM_NAME}"
@@ -1087,7 +1080,7 @@ function md5_recheck {
             echo_inf1
         fi
     else
-        if ${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}; then
+        if ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}; then
             REMOTE_PH_CUSTOM_DNS="1"
             MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_REMOTE}"
             echo_inf1
@@ -1097,12 +1090,12 @@ function md5_recheck {
     fi
     
     if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} ]; then
-        if ${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}; then
+        if ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}; then
             REMOTE_CNAME_DNS="1"
             MESSAGE="${UI_HASHING_REHASHING} ${UI_CNAME_NAME}"
             echo_stat
             
-            REMOTE_CN_MD5=$(${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} | sed 's/\s.*$//'")
+            REMOTE_CN_MD5=$(${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} | sed 's/\s.*$//'")
             error_validate
             
             MESSAGE="${UI_HASHING_RECOMPARING} ${UI_CNAME_NAME}"
@@ -1114,7 +1107,7 @@ function md5_recheck {
             echo_inf1
         fi
     else
-        if ${SSHPASSWORD} ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}; then
+        if ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}; then
             REMOTE_CNAME_DNS="1"
             MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_REMOTE}"
             echo_inf1
