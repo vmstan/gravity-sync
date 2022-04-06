@@ -74,6 +74,7 @@ GS_LOCAL_REPO="${GS_ETC_PATH}/.gs"              # replace in gravity-sync.conf t
 # OS Settings
 OS_DAEMON_PATH='/etc/systemd/system'               # replace in gravity-sync.conf to overwrite
 OS_TMP='/tmp'                                   # replace in gravity-sync.conf to overwrite
+OS_SSH_CMD='ssh'
 
 ##############################################
 ### NEVER CHANGE ANYTHING BELOW THIS LINE! ###
@@ -628,7 +629,7 @@ function smart_gs {
             MESSAGE="Both ${UI_GRAVITY_NAME} have changed"
             echo_warn
             
-            REMOTE_GRAVITY_DATE=$(${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}")
+            REMOTE_GRAVITY_DATE=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}")
             LOCAL_GRAVITY_DATE=$(stat -c %Y ${LOCAL_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI})
             
             if (( "$REMOTE_GRAVITY_DATE" >= "$LOCAL_GRAVITY_DATE" )); then
@@ -669,7 +670,7 @@ function smart_gs {
                 MESSAGE="Both ${UI_CUSTOM_NAME} have changed"
                 echo_warn
                 
-                REMOTE_DNS_DATE=$(${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}")
+                REMOTE_DNS_DATE=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}")
                 LOCAL_DNS_DATE=$(stat -c %Y ${LOCAL_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS})
                 
                 if (( "$REMOTE_DNS_DATE" >= "$LOCAL_DNS_DATE" )); then
@@ -714,7 +715,7 @@ function smart_gs {
                 MESSAGE="Both ${UI_CNAME_NAME} have Changed"
                 echo_warn
                 
-                REMOTE_CNAME_DATE=$(${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}")
+                REMOTE_CNAME_DATE=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}")
                 LOCAL_CNAME_DATE=$(stat -c %Y ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF})
                 
                 if (( "$REMOTE_CNAME_DATE" >= "$LOCAL_CNAME_DATE" )); then
@@ -858,13 +859,13 @@ function backup_remote_gravity_integrity() {
     sleep $GS_BACKUP_INTEGRITY_WAIT
 
     if [ "$REMOTE_PIHOLE_TYPE" == "default" ]; then
-        REMOTE_INTEGRITY_CHECK=$(${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${REMOTE_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT} 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
+        REMOTE_INTEGRITY_CHECK=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${REMOTE_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT} 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
         error_validate
     elif [ "$REMOTE_PIHOLE_TYPE" == "docker" ]; then
-        REMOTE_INTEGRITY_CHECK=$(${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT} 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
+        REMOTE_INTEGRITY_CHECK=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT} 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
         error_validate
     elif [ "$REMOTE_PIHOLE_TYPE" == "podman" ]; then
-        REMOTE_INTEGRITY_CHECK=$(${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT} 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
+        REMOTE_INTEGRITY_CHECK=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT} 'PRAGMA integrity_check;'" | sed 's/\s.*$//')
         error_validate
     fi
     
@@ -920,7 +921,7 @@ function md5_compare {
     
     MESSAGE="${UI_HASHING_HASHING} ${UI_GRAVITY_NAME}"
     echo_stat
-    REMOTE_DB_MD5=$(${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}" | sed 's/\s.*$//')
+    REMOTE_DB_MD5=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}" | sed 's/\s.*$//')
     error_validate
     
     MESSAGE="${UI_HASHING_COMPARING} ${UI_GRAVITY_NAME}"
@@ -937,12 +938,12 @@ function md5_compare {
     fi
     
     if [ -f ${LOCAL_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} ]; then
-        if ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}; then
+        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}; then
             REMOTE_PH_CUSTOM_DNS="1"
             MESSAGE="${UI_HASHING_HASHING} ${UI_CUSTOM_NAME}"
             echo_stat
             
-            REMOTE_CL_MD5=$(${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} | sed 's/\s.*$//'")
+            REMOTE_CL_MD5=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} | sed 's/\s.*$//'")
             error_validate
             
             MESSAGE="${UI_HASHING_COMPARING} ${UI_CUSTOM_NAME}"
@@ -962,7 +963,7 @@ function md5_compare {
             echo_inf1
         fi
     else
-        if ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}; then
+        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}; then
             REMOTE_PH_CUSTOM_DNS="1"
             MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_REMOTE}"
             HASHMARK=$((HASHMARK+1))
@@ -973,12 +974,12 @@ function md5_compare {
     fi
 
     if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} ]; then
-        if ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}; then
+        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}; then
             REMOTE_CNAME_DNS="1"
             MESSAGE="${UI_HASHING_HASHING} ${UI_CNAME_NAME}"
             echo_stat
             
-            REMOTE_CN_MD5=$(${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} | sed 's/\s.*$//'")
+            REMOTE_CN_MD5=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} | sed 's/\s.*$//'")
             error_validate
             
             MESSAGE="${UI_HASHING_COMPARING} ${UI_CNAME_NAME}"
@@ -998,7 +999,7 @@ function md5_compare {
             echo_inf1
         fi
     else
-        if ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}; then
+        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}; then
             REMOTE_CNAME_DNS="1"
             MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_REMOTE}"
             HASHMARK=$((HASHMARK+1))
@@ -1054,7 +1055,7 @@ function md5_recheck {
     
     MESSAGE="${UI_HASHING_REHASHING} ${UI_GRAVITY_NAME}"
     echo_stat
-    REMOTE_DB_MD5=$(${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}" | sed 's/\s.*$//')
+    REMOTE_DB_MD5=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}" | sed 's/\s.*$//')
     error_validate
     
     MESSAGE="${UI_HASHING_RECOMPARING} ${UI_GRAVITY_NAME}"
@@ -1063,12 +1064,12 @@ function md5_recheck {
     error_validate
     
     if [ -f ${LOCAL_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} ]; then
-        if ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}; then
+        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}; then
             REMOTE_PH_CUSTOM_DNS="1"
             MESSAGE="${UI_HASHING_REHASHING} ${UI_CUSTOM_NAME}"
             echo_stat
             
-            REMOTE_CL_MD5=$(${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} | sed 's/\s.*$//'")
+            REMOTE_CL_MD5=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} | sed 's/\s.*$//'")
             error_validate
             
             MESSAGE="${UI_HASHING_RECOMPARING} ${UI_CUSTOM_NAME}"
@@ -1080,7 +1081,7 @@ function md5_recheck {
             echo_inf1
         fi
     else
-        if ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}; then
+        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}; then
             REMOTE_PH_CUSTOM_DNS="1"
             MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_REMOTE}"
             echo_inf1
@@ -1090,12 +1091,12 @@ function md5_recheck {
     fi
     
     if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} ]; then
-        if ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}; then
+        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}; then
             REMOTE_CNAME_DNS="1"
             MESSAGE="${UI_HASHING_REHASHING} ${UI_CNAME_NAME}"
             echo_stat
             
-            REMOTE_CN_MD5=$(${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} | sed 's/\s.*$//'")
+            REMOTE_CN_MD5=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} | sed 's/\s.*$//'")
             error_validate
             
             MESSAGE="${UI_HASHING_RECOMPARING} ${UI_CNAME_NAME}"
@@ -1107,7 +1108,7 @@ function md5_recheck {
             echo_inf1
         fi
     else
-        if ${SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}; then
+        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}; then
             REMOTE_CNAME_DNS="1"
             MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_REMOTE}"
             echo_inf1
@@ -1120,13 +1121,13 @@ function md5_recheck {
 
 ## Determine SSH Pathways
 function create_sshcmd {
-    timeout --preserve-status ${CMD_TIMEOUT} ${SSH_CMD} -p ${GS_SSH_PORT} -i ${GS_SSH_PKIF} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} "${CMD_REQUESTED}"
+    timeout --preserve-status ${CMD_TIMEOUT} ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i ${GS_SSH_PKIF} -o StrictHostKeyChecking=no ${REMOTE_USER}@${REMOTE_HOST} "${CMD_REQUESTED}"
     error_validate
 }
 
 ## Determine SSH Pathways
 function create_rsynccmd {
-    rsync --rsync-path="${RSYNC_REPATH}" -e "${SSH_CMD} -p ${GS_SSH_PORT} -i ${GS_SSH_PKIF}" ${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
+    rsync --rsync-path="${RSYNC_REPATH}" -e "${OS_SSH_CMD} -p ${GS_SSH_PORT} -i ${GS_SSH_PKIF}" ${RSYNC_SOURCE} ${RSYNC_TARGET} >/dev/null 2>&1
     error_validate
 }
 
@@ -1176,8 +1177,6 @@ function export_sshkey {
 function show_target {
     MESSAGE="Remote ${UI_CORE_APP}: ${REMOTE_USER}@${REMOTE_HOST}"
     echo_inf1
-    
-    SSH_CMD='ssh'
 }
 
 ## Logs Task
