@@ -273,6 +273,7 @@ function import_gs_config {
     MESSAGE="${UI_CORE_LOADING} ${GS_CONFIG_FILE}"
     echo -en "${STAT} $MESSAGE"
     if [ -f ${GS_ETC_PATH}/${GS_CONFIG_FILE} ]; then
+        # shellcheck source=/etc/gravity-sync/gravity-sync.conf
         source ${GS_ETC_PATH}/${GS_CONFIG_FILE}
         error_validate
     else
@@ -1510,6 +1511,7 @@ function config_generate {
     
     MESSAGE="${UI_CORE_LOADING} ${GS_CONFIG_FILE}"
     echo_stat
+    # shellcheck source=/etc/gravity-sync/gravity-sync.conf
     source ${GS_ETC_PATH}/${GS_CONFIG_FILE}
     error_validate
 
@@ -1740,6 +1742,7 @@ function task_cname {
 
 ## Delete Existing Configuration
 function config_delete {
+    # shellcheck source=/etc/gravity-sync/gravity-sync.conf
     source ${GS_ETC_PATH}/${GS_CONFIG_FILE}
     MESSAGE="${GS_CONFIG_FILE} ${UI_CONFIG_ALREADY}"
     echo_info  
@@ -2043,7 +2046,7 @@ function task_purge {
 ## No Changes Made
 function exit_nochange {
     SCRIPT_END=$SECONDS
-    let SCRIPT_RUN=SCRIPT_END-SCRIPT_START
+    ((SCRIPT_RUN=SCRIPT_END-SCRIPT_START))
     
     if [ "${TASKTYPE}" == "" ]; then
         MESSAGE="${PROGRAM} ${UI_EXIT_ABORT} ${UI_EXIT_CALC_END} ${SCRIPT_RUN} ${UI_EXIT_CALC_TIMER}"
@@ -2058,7 +2061,7 @@ function exit_nochange {
 ## Changes Made
 function exit_withchange {
     SCRIPT_END=$SECONDS
-    let SCRIPT_RUN=SCRIPT_END-SCRIPT_START
+    ((SCRIPT_RUN=SCRIPT_END-SCRIPT_START))
     
     if [ "${TASKTYPE}" == "" ]; then
         MESSAGE="${PROGRAM} ${UI_EXIT_COMPLETE} ${UI_EXIT_CALC_END} ${SCRIPT_RUN} ${UI_EXIT_CALC_TIMER}"
