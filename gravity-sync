@@ -1656,9 +1656,9 @@ function advanced_config_generate {
         echo_info
         echo_lines
         if [ "${LOCAL_PIHOLE_TYPE}" == "docker" ]; then
-            REMOTE_RUNNING_CONTAINERS=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo docker container ls")
+            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo docker container ls" > "${REMOTE_RUNNING_CONTAINERS}"
         elif [ "${LOCAL_PIHOLE_TYPE}" == "podman" ]; then
-            REMOTE_RUNNING_CONTAINERS=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo podman container ls")
+            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo podman container ls" > "${REMOTE_RUNNING_CONTAINERS}"
         fi
         echo -e "${REMOTE_RUNNING_CONTAINERS}"
         echo_lines
