@@ -1589,19 +1589,19 @@ function end_config_nopi {
 ## Advanced Configuration Options
 function advanced_config_generate {  
     if [ "${LOCAL_PIHOLE_TYPE}" == "docker" ] || [ "${LOCAL_PIHOLE_TYPE}" == "podman" ]; then
-        MESSAGE="${UI_CONFIG_CONT_DETECT} ${UI_CONFIG_IMAGES}"
+        MESSAGE="Locally running container images"
         echo_info
         echo_lines
         if [ "${LOCAL_PIHOLE_TYPE}" == "docker" ]; then
-            sudo docker container ls | grep 'pihole/pihole'
+            sudo docker container ls
         elif [ "${LOCAL_PIHOLE_TYPE}" == "podman" ]; then
-            sudo podman container ls | grep grep 'pihole/pihole'
+            sudo podman container ls
         fi
         echo_lines
         
         MESSAGE="Local ${UI_CORE_APP} container name"
         echo_inf1
-        MESSAGE=""
+        MESSAGE="Example, 'pihole'"
         echo_need
         read -r INPUT_LOCAL_DOCKER_CONTAINER
 
@@ -1651,9 +1651,20 @@ function advanced_config_generate {
     fi
     
     if [ "${REMOTE_PIHOLE_TYPE}" == "docker" ] || [ "${REMOTE_PIHOLE_TYPE}" == "podman" ]; then        
+        
+        MESSAGE="Remote running container images"
+        echo_info
+        echo_lines
+        if [ "${LOCAL_PIHOLE_TYPE}" == "docker" ]; then
+            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo docker container ls"
+        elif [ "${LOCAL_PIHOLE_TYPE}" == "podman" ]; then
+            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo podman container ls"
+        fi
+        echo_lines
+
         MESSAGE="Remote ${UI_CORE_APP} container name"
         echo_inf1
-        MESSAGE=""
+        MESSAGE="Example, 'pihole'"
         echo_need
         read -r INPUT_REMOTE_DOCKER_CONTAINER
         
