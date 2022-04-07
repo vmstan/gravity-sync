@@ -242,7 +242,7 @@ function start_gs {
     
     import_gs_config
     detect_local_pihole
-    detect_local_pihole
+    detect_remote_pihole
     set_pihole_exec
     
     MESSAGE="${UI_CORE_EVALUATING}"
@@ -1285,11 +1285,10 @@ function validate_ph_folders {
 }
 
 function detect_local_pihole {
-    MESSAGE="Detecting local ${UI_CORE_APP} installation"
-    echo_stat
     
     if hash pihole; then
         LOCAL_PIHOLE_TYPE="default"
+        echo_good
     elif hash docker; then
         PH_FTL_CHECK=$(sudo docker container ls | grep 'pihole/pihole')
         if [ "$PH_FTL_CHECK" != "" ]; then
@@ -1324,6 +1323,7 @@ function detect_remote_pihole {
 
     if [ "${REMOTE_DETECT_PIHOLE}" == "${REMOTE_PIHOLE_BINARY}" ]; then
         REMOTE_PIHOLE_TYPE="default"
+        echo_good
     elif [ "${REMOTE_DETECT_DOCKER}" == "${REMOTE_DOCKER_BINARY}" ]; then
         PH_FTL_CHECK=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo docker container ls | grep 'pihole/pihole'")
         if [ "$PH_FTL_CHECK" != "" ]; then
@@ -1557,7 +1557,7 @@ function config_generate {
     echo_good_clean
 
     detect_local_pihole
-    detect_local_pihole
+    detect_remote_pihole
 
     # docker_detect
     # podman_detect
@@ -1574,13 +1574,13 @@ function config_generate {
     fi
 
     if [ "${REMOTE_PIHOLE_TYPE}" == "default" ]; then
-        MESSAGE="Default install of Pihole install detected"
+        MESSAGE="Remote install of Pihole install detected"
         echo_inf1
     elif [ "${REMOTE_PIHOLE_TYPE}" == "docker" ]; then
-        MESSAGE="Docker container Pihole install detected"
+        MESSAGE="Remote Docker container Pihole detected"
         echo_inf1
     elif [ "${REMOTE_PIHOLE_TYPE}" == "podman" ]; then
-        MESSAGE="Podman container Pihole install detected"
+        MESSAGE="Remote Podman container Pihole detected"
         echo_inf1
     fi
 
