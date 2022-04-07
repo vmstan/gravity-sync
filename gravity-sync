@@ -1609,12 +1609,28 @@ function advanced_config_generate {
         echo_stat
         sudo sed -i "/# LOCAL_DOCKER_CONTAINER=''/c\LOCAL_DOCKER_CONTAINER='${INPUT_LOCAL_DOCKER_CONTAINER}'" ${GS_ETC_PATH}/${GS_CONFIG_FILE}
         error_validate
-        
-        MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH}" 
-        echo_inf1
-        MESSAGE="${UI_CONFIG_ETC_VOLPATH_EXAMPLE}"
-        echo_need
-        read -r INPUT_LOCAL_PIHOLE_DIRECTORY
+
+        MESSAGE="Examining container configuration"
+        echo_stat
+
+        if [ "${LOCAL_PIHOLE_TYPE}" == "docker" ]; then
+            sudo docker container inspect ${INPUT_LOCAL_DOCKER_CONTAINER} | grep -i -B 1 '"Destination": "/etc/pihole"' > ${OS_TMP}/local_container_pihole_etc.log; sed -i '$d' ${OS_TMP}/local_container_pihole_etc.log; sed -i 's/"Source": "//' ${OS_TMP}/local_container_pihole_etc.log; sed -i 's/",//' ${OS_TMP}/local_container_pihole_etc.log; sed -i 's/ //g' ${OS_TMP}/local_container_pihole_etc.log
+            sudo docker container inspect ${INPUT_LOCAL_DOCKER_CONTAINER} | grep -i -B 1 '"Destination": "/etc/dnsmasq.d"' > ${OS_TMP}/local_container_dnsmasq_etc.log; sed -i '$d' ${OS_TMP}/local_container_dnsmasq_etc.log; sed -i 's/"Source": "//' ${OS_TMP}/local_container_dnsmasq_etc.log; sed -i 's/",//' ${OS_TMP}/local_container_dnsmasq_etc.log; sed -i 's/ //g'${OS_TMP}/local_container_dnsmasq_etc.log
+        elif [ "${LOCAL_PIHOLE_TYPE}" == "podman" ]; then
+            sudo podman container inspect ${INPUT_LOCAL_DOCKER_CONTAINER} | grep -i -B 1 '"Destination": "/etc/pihole"' > ${OS_TMP}/local_container_pihole_etc.log; sed -i '$d' ${OS_TMP}/local_container_pihole_etc.log; sed -i 's/"Source": "//' ${OS_TMP}/local_container_pihole_etc.log; sed -i 's/",//' ${OS_TMP}/local_container_pihole_etc.log; sed -i 's/ //g' ${OS_TMP}/local_container_pihole_etc.log
+            sudo podman container inspect ${INPUT_LOCAL_DOCKER_CONTAINER} | grep -i -B 1 '"Destination": "/etc/dnsmasq.d"' > ${OS_TMP}/local_container_dnsmasq_etc.log; sed -i '$d' ${OS_TMP}/local_container_dnsmasq_etc.log; sed -i 's/"Source": "//' ${OS_TMP}/local_container_dnsmasq_etc.log; sed -i 's/",//' ${OS_TMP}/local_container_dnsmasq_etc.log; sed -i 's/ //g'${OS_TMP}/local_container_dnsmasq_etc.log
+        fi
+
+        INPUT_LOCAL_PIHOLE_DIRECTORY=$(cat ${OS_TMP}/local_container_pihole_etc.log)
+        INPUT_LOCAL_DNSMASQ_DIRECTORY=$(cat ${OS_TMP}/local_container_dnsmasq_etc.log)
+
+        echo_good
+
+        # MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH}" 
+        # echo_inf1
+        # MESSAGE="${UI_CONFIG_ETC_VOLPATH_EXAMPLE}"
+        # echo_need
+        # read -r INPUT_LOCAL_PIHOLE_DIRECTORY
         
         if [ "${INPUT_LOCAL_PIHOLE_DIRECTORY}" != "" ]; then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH} to ${GS_CONFIG_FILE}"
@@ -1627,11 +1643,11 @@ function advanced_config_generate {
             exit_withchange
         fi
         
-        MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH}"
-        echo_inf1
-        MESSAGE="${UI_CONFIG_ETC_VOLDNSQ_EXAMPLE}"
-        echo_need
-        read -r INPUT_LOCAL_DNSMASQ_DIRECTORY
+        # MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH}"
+        # echo_inf1
+        # MESSAGE="${UI_CONFIG_ETC_VOLDNSQ_EXAMPLE}"
+        # echo_need
+        # read -r INPUT_LOCAL_DNSMASQ_DIRECTORY
         
         if [ "${INPUT_LOCAL_DNSMASQ_DIRECTORY}" != "" ]; then
             MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH} to ${GS_CONFIG_FILE}"
