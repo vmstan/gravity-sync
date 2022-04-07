@@ -242,7 +242,6 @@ function echo_blank {
 function start_gs {
     MESSAGE="${UI_CORE_INIT}"
     echo_grav
-    # cd ${LOCAL_FOLDR}
     
     import_gs_config
     set_pihole_exec
@@ -276,7 +275,7 @@ function import_gs_config {
         MESSAGE="Missing ${GS_CONFIG_FILE}"
         echo_inf1
         
-        TASKTYPE='CONFIG'
+        GS_TASK_TYPE='CONFIG'
         config_generate
     fi
 }
@@ -323,8 +322,8 @@ function  set_pihole_exec {
 
 ## Compare Task
 function task_compare {
-    TASKTYPE='COMPARE'
-    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    GS_TASK_TYPE='COMPARE'
+    MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
     
     show_target
@@ -338,8 +337,8 @@ function task_compare {
 
 ## Pull Task
 function task_pull {
-    TASKTYPE='PULL'
-    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    GS_TASK_TYPE='PULL'
+    MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
     show_target
     validate_ph_folders
@@ -424,7 +423,7 @@ function pull_gs_reload {
     ${PH_EXEC} restartdns reload-lists >/dev/null 2>&1
     error_validate
     
-    if [ "${TASKTYPE}" == SMART ]; then 
+    if [ "${GS_TASK_TYPE}" == SMART ]; then 
         if [ "${REMOTE_DNS_CHANGE}" == "1" ] || [ "${LOCAL_DNS_CHANGE}" == "1" ] || [ "${REMOTE_CNAME_CHANGE}" == "1" ] || [ "${LOCAL_CNAME_CHANGE}" == "1" ]; then
             MESSAGE="${UI_FTLDNS_CONFIG_PULL_RELOAD}"
             echo_stat
@@ -454,8 +453,8 @@ function pull_gs {
 
 ## Push Task
 function task_push {
-    TASKTYPE='PUSH'
-    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    GS_TASK_TYPE='PUSH'
+    MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
     
     show_target
@@ -557,7 +556,7 @@ function push_gs_reload {
     CMD_REQUESTED="${RH_EXEC} restartdns reload-lists"
     create_sshcmd
     
-    if [ "${TASKTYPE}" == SMART ]; then 
+    if [ "${GS_TASK_TYPE}" == SMART ]; then 
         if [ "${REMOTE_DNS_CHANGE}" == "1" ] || [ "${LOCAL_DNS_CHANGE}" == "1" ] || [ "${REMOTE_CNAME_CHANGE}" == "1" ] || [ "${LOCAL_CNAME_CHANGE}" == "1" ]; then
             MESSAGE="${UI_FTLDNS_CONFIG_PUSH_RELOAD}"
             echo_stat
@@ -589,8 +588,8 @@ function push_gs {
 
 ## Smart Task
 function task_smart {
-    TASKTYPE='SMART'
-    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    GS_TASK_TYPE='SMART'
+    MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
     
     show_target
@@ -603,7 +602,7 @@ function task_smart {
 
 ## Smart Sync Function
 function smart_gs {
-    MESSAGE="Starting ${TASKTYPE} Analysis"
+    MESSAGE="Starting ${GS_TASK_TYPE} Analysis"
     echo_info
     
     previous_md5
@@ -760,7 +759,7 @@ function smart_gs {
     exit_withchange
 }
 
-function backup_local_gravity() {
+function backup_local_gravity {
     MESSAGE="${UI_BACKUP_LOCAL} ${UI_GRAVITY_NAME}"
     echo_stat
     
@@ -776,7 +775,7 @@ function backup_local_gravity() {
     fi
 }
 
-function backup_local_gravity_integrity() {
+function backup_local_gravity_integrity {
     MESSAGE="${UI_BACKUP_INTEGRITY}"
     echo_stat
     
@@ -807,7 +806,7 @@ function backup_local_gravity_integrity() {
     fi
 }
 
-function backup_local_custom() {
+function backup_local_custom {
     if [ -f ${LOCAL_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} ]; then
         MESSAGE="${UI_BACKUP_LOCAL} ${UI_CUSTOM_NAME}"
         echo_stat
@@ -820,7 +819,7 @@ function backup_local_custom() {
     fi
 }
 
-function backup_local_cname() {
+function backup_local_cname {
     if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} ]; then
         MESSAGE="${UI_BACKUP_LOCAL} ${UI_CNAME_NAME}"
         echo_stat
@@ -833,7 +832,7 @@ function backup_local_cname() {
     fi
 }
 
-function backup_remote_gravity() {
+function backup_remote_gravity {
     MESSAGE="${UI_BACKUP_REMOTE} ${UI_GRAVITY_NAME}"
     echo_stat
 
@@ -852,7 +851,7 @@ function backup_remote_gravity() {
     fi
 }
 
-function backup_remote_gravity_integrity() {
+function backup_remote_gravity_integrity {
     MESSAGE="${UI_BACKUP_INTEGRITY}"
     echo_stat
     
@@ -884,7 +883,7 @@ function backup_remote_gravity_integrity() {
     fi
 }
 
-function backup_remote_custom() {
+function backup_remote_custom {
         MESSAGE="${UI_BACKUP_REMOTE} ${UI_CUSTOM_NAME}"
         echo_stat
         
@@ -893,7 +892,7 @@ function backup_remote_custom() {
         create_sshcmd
 }
 
-function backup_remote_cname() {
+function backup_remote_cname {
         MESSAGE="${UI_BACKUP_REMOTE} ${UI_CNAME_NAME}"
         echo_stat
         
@@ -902,7 +901,7 @@ function backup_remote_cname() {
         create_sshcmd
 }
 
-function backup_cleanup() {
+function backup_cleanup {
     MESSAGE="Purging backups"
     echo_stat
     # git clean -fq
@@ -1181,8 +1180,8 @@ function show_target {
 
 ## Logs Task
 function task_logs {
-    TASKTYPE='LOGS'
-    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    GS_TASK_TYPE='LOGS'
+    MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
     logs_gs
 }
@@ -1190,7 +1189,7 @@ function task_logs {
 ## Core Logging
 ### Write Logs Out
 function logs_export {
-    if [ "${TASKTYPE}" != "BACKUP" ]; then
+    if [ "${GS_TASK_TYPE}" != "BACKUP" ]; then
         MESSAGE="Saving updated data hashses"
         echo_stat
         sudo rm -f ${GS_ETC_PATH}/*.md5
@@ -1227,9 +1226,9 @@ function logs_export {
         sudo rm -f ${OS_TMP}/*.md5
     fi
     
-    MESSAGE="Logging successful ${TASKTYPE}"
+    MESSAGE="Logging successful ${GS_TASK_TYPE}"
     echo_stat
-    echo -e "$(date) [${TASKTYPE}]" | sudo tee -a ${GS_ETC_PATH}/${GS_SYNCING_LOG} 1> /dev/null
+    echo -e "$(date) [${GS_TASK_TYPE}]" | sudo tee -a ${GS_ETC_PATH}/${GS_SYNCING_LOG} 1> /dev/null
     error_validate
 }
 
@@ -1310,7 +1309,7 @@ function validate_os_sshpass {
 }
 
 ## Validate Domain Database Permissions
-function validate_gravity_permissions() {
+function validate_gravity_permissions {
     MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${UI_GRAVITY_NAME}"
     echo_stat
     sudo chown ${LOCAL_FILE_OWNER} ${LOCAL_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI} >/dev/null 2>&1
@@ -1323,7 +1322,7 @@ function validate_gravity_permissions() {
 }
 
 ## Validate Local DNS Records Permissions
-function validate_custom_permissions() {
+function validate_custom_permissions {
     MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${UI_CUSTOM_NAME}"
     echo_stat
     sudo chown root:root ${LOCAL_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} >/dev/null 2>&1
@@ -1336,7 +1335,7 @@ function validate_custom_permissions() {
 }
 
 ## Validate Local DNS CNAME Permissions
-function validate_cname_permissions() {
+function validate_cname_permissions {
     MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${UI_CNAME_NAME}"
     echo_stat
     sudo chown root:root ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} >/dev/null 2>&1
@@ -1367,7 +1366,7 @@ function intent_validate {
     read -r INPUT_INTENT
     
     if [ "${INPUT_INTENT}" != "${INTENT}" ]; then
-        MESSAGE="${TASKTYPE} excited"
+        MESSAGE="${GS_TASK_TYPE} excited"
         echo_info
         exit_nochange
     fi
@@ -1375,8 +1374,8 @@ function intent_validate {
 
 ## Sudo Creation Task
 function task_sudo {
-    TASKTYPE='SUDO'
-    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    GS_TASK_TYPE='SUDO'
+    MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
     
     MESSAGE="Creating sudoers.d template file"
@@ -1398,8 +1397,8 @@ function task_sudo {
 ## Root Check
 function root_check {
     if [ ! "$EUID" -ne 0 ]; then
-        TASKTYPE='ROOT'
-        MESSAGE="${MESSAGE} ${TASKTYPE}"
+        GS_TASK_TYPE='ROOT'
+        MESSAGE="${MESSAGE} ${GS_TASK_TYPE}"
         echo_fail
         
         MESSAGE="${PROGRAM} should not run as 'root'"
@@ -1424,8 +1423,8 @@ function validate_sudo_status {
     fi
     
     if [ "$LOCALADMIN" == "nosudo" ]; then
-        TASKTYPE='ROOT'
-        MESSAGE="${MESSAGE} ${TASKTYPE}"
+        GS_TASK_TYPE='ROOT'
+        MESSAGE="${MESSAGE} ${GS_TASK_TYPE}"
         echo_fail
         
         MESSAGE="${CURRENTUSER} has insufficent user rights for ${PROGRAM}"
@@ -1437,8 +1436,8 @@ function validate_sudo_status {
 
 ## Configure Task
 function task_configure {				
-    TASKTYPE='CONFIGURE'
-    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    GS_TASK_TYPE='CONFIGURE'
+    MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
     
     if [ -f ${GS_ETC_PATH}/${GS_CONFIG_FILE} ]; then		
@@ -1547,7 +1546,7 @@ function config_generate {
     fi
 }
 
-function end_config(){
+function end_config {
     echo_lines
     echo -e "Configuration has been completed successfully, if you've still not read the instructions"
     echo -e "please read through ${BLUE}https://github.com/vmstan/gravity-sync/wiki${NC} before you continue!"
@@ -1724,8 +1723,8 @@ function advanced_config_generate {
 }
 
 function task_cname {
-    TASKTYPE='CNAME'
-    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    GS_TASK_TYPE='CNAME'
+    MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
 
     config_enablecname
@@ -1803,7 +1802,7 @@ function show_version {
     echo_info
 }
 
-function show_info() {
+function show_info {
     echo_lines
     echo -e "${YELLOW}Local Software Versions${NC}"
     echo -e "${BLUE}${UI_CORE_APP}${NC}"
@@ -1894,17 +1893,17 @@ function show_info() {
 
 ## Devmode Task
 function task_devmode {
-    TASKTYPE='DEV'
-    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    GS_TASK_TYPE='DEV'
+    MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
     
     if [ -f ${GS_LOCAL_REPO}/dev ]; then
-        MESSAGE="Disabling ${TASKTYPE}"
+        MESSAGE="Disabling ${GS_TASK_TYPE}"
         echo_stat
         sudo rm -f ${GS_LOCAL_REPO}/dev
         error_validate
     else
-        MESSAGE="Enabling ${TASKTYPE}"
+        MESSAGE="Enabling ${GS_TASK_TYPE}"
         echo_stat
         touch ${GS_LOCAL_REPO}/dev
         error_validate
@@ -1929,8 +1928,8 @@ function task_devmode {
 
 ## Update Task
 function task_update {
-    TASKTYPE='UPDATE'
-    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    GS_TASK_TYPE='UPDATE'
+    MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
     update_gs
     exit_withchange
@@ -1938,8 +1937,8 @@ function task_update {
 
 ## Version Task
 function task_version {
-    TASKTYPE='VERSION'
-    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    GS_TASK_TYPE='VERSION'
+    MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
     show_version
     exit_nochange
@@ -1947,9 +1946,9 @@ function task_version {
 
 ## Info Task
 
-function task_info() {
-    TASKTYPE='INFO'
-    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+function task_info {
+    GS_TASK_TYPE='INFO'
+    MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
     show_info
     exit_nochange
@@ -1957,8 +1956,8 @@ function task_info() {
 
 ## Automate Task
 function task_automate {
-    TASKTYPE='AUTOMATE'
-    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    GS_TASK_TYPE='AUTOMATE'
+    MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
 
     MESSAGE="Customizing service file username"
@@ -2008,8 +2007,8 @@ function task_automate {
 
 ## Purge Task
 function task_purge {
-    TASKTYPE="PURGE"
-    MESSAGE="${MESSAGE}: ${TASKTYPE}"
+    GS_TASK_TYPE="PURGE"
+    MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
     
     echo_lines
@@ -2040,10 +2039,10 @@ function exit_nochange {
     SCRIPT_END=$SECONDS
     ((SCRIPT_RUN=SCRIPT_END-SCRIPT_START))
     
-    if [ "${TASKTYPE}" == "" ]; then
+    if [ "${GS_TASK_TYPE}" == "" ]; then
         MESSAGE="${PROGRAM} ${UI_EXIT_ABORT} ${UI_EXIT_CALC_END} ${SCRIPT_RUN} ${UI_EXIT_CALC_TIMER}"
     else
-        MESSAGE="${PROGRAM} ${TASKTYPE} ${UI_EXIT_ABORT} ${UI_EXIT_CALC_END} ${SCRIPT_RUN} ${UI_EXIT_CALC_TIMER}"
+        MESSAGE="${PROGRAM} ${GS_TASK_TYPE} ${UI_EXIT_ABORT} ${UI_EXIT_CALC_END} ${SCRIPT_RUN} ${UI_EXIT_CALC_TIMER}"
     fi
     
     echo_grav
@@ -2055,10 +2054,10 @@ function exit_withchange {
     SCRIPT_END=$SECONDS
     ((SCRIPT_RUN=SCRIPT_END-SCRIPT_START))
     
-    if [ "${TASKTYPE}" == "" ]; then
+    if [ "${GS_TASK_TYPE}" == "" ]; then
         MESSAGE="${PROGRAM} ${UI_EXIT_COMPLETE} ${UI_EXIT_CALC_END} ${SCRIPT_RUN} ${UI_EXIT_CALC_TIMER}"
     else
-        MESSAGE="${PROGRAM} ${TASKTYPE} ${UI_EXIT_COMPLETE} ${UI_EXIT_CALC_END} ${SCRIPT_RUN} ${UI_EXIT_CALC_TIMER}"
+        MESSAGE="${PROGRAM} ${GS_TASK_TYPE} ${UI_EXIT_COMPLETE} ${UI_EXIT_CALC_END} ${SCRIPT_RUN} ${UI_EXIT_CALC_TIMER}"
     fi
     
     echo_grav
