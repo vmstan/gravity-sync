@@ -1481,11 +1481,6 @@ function config_generate {
     echo_lines
     echo -e "Welcome to the ${PURPLE}${PROGRAM}${NC} Configuration Wizard"
     echo -e "Please read through ${BLUE}https://github.com/vmstan/gravity-sync/wiki${NC} before you continue!"
-    echo_blank
-    echo -e "If the installer detects that you have a supported container engine (Docker or Podman) installed"
-    echo -e "on your local ${UI_CORE_APP}, you will be directed to the advanced installation options. If you're using" 
-    echo -e "containers on your remote ${UI_CORE_APP}, you'll need to select this option manually to adjust settings"
-    echo -e "such as custom ${UI_CORE_APP} binary or configuration directories, CNAME replication, etc."
     echo_lines
     
     MESSAGE="${PROGRAM} ${UI_CONFIG_REQUIRED}"
@@ -1531,11 +1526,6 @@ function config_generate {
     echo_good_clean
 
     detect_local_pihole
-    detect_remote_pihole
-
-    # docker_detect
-    # podman_detect
-
     if [ "${LOCAL_PIHOLE_TYPE}" == "default" ]; then
         MESSAGE="Default install of ${UI_CORE_APP} detected"
         echo_inf1
@@ -1548,8 +1538,10 @@ function config_generate {
     elif [ "${LOCAL_PIHOLE_TYPE}" == "none" ]; then
         MESSAGE="No local ${UI_CORE_APP} installed detected"
         echo_warn
+        end_config_nopi
     fi
 
+    detect_remote_pihole
     if [ "${REMOTE_PIHOLE_TYPE}" == "default" ]; then
         MESSAGE="Remote install of ${UI_CORE_APP} detected"
         echo_inf1
@@ -1560,7 +1552,7 @@ function config_generate {
         MESSAGE="Remote Podman container of ${UI_CORE_APP} detected"
         echo_inf1
     elif [ "${LOCAL_PIHOLE_TYPE}" == "none" ]; then
-        MESSAGE="No local ${UI_CORE_APP} installed detected"
+        MESSAGE="No remote ${UI_CORE_APP} installed detected"
         echo_warn
         end_config_nopi
     fi
@@ -1607,9 +1599,9 @@ function advanced_config_generate {
         fi
         echo_lines
         
-        MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP} ${UI_CONFIG_INSTANCENAME}"
+        MESSAGE="Local ${UI_CORE_APP} container name"
         echo_inf1
-        MESSAGE="${UI_CORE_APP} container name"
+        MESSAGE=""
         echo_need
         read -r INPUT_LOCAL_DOCKER_CONTAINER
 
@@ -1659,9 +1651,9 @@ function advanced_config_generate {
     fi
     
     if [ "${REMOTE_PIHOLE_TYPE}" == "docker" ] || [ "${REMOTE_PIHOLE_TYPE}" == "podman" ]; then        
-        MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CONFIG_CONTAINER_NAME}"
+        MESSAGE="Remote ${UI_CORE_APP} container name"
         echo_inf1
-        MESSAGE="${UI_CONFIG_DEFAULT_LEAVE} 'pihole'"
+        MESSAGE=""
         echo_need
         read -r INPUT_REMOTE_DOCKER_CONTAINER
         
