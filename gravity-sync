@@ -1394,20 +1394,6 @@ function task_sudo {
     exit_withchange
 }
 
-## Root Check
-function root_check {
-    if [ ! "$EUID" -ne 0 ]; then
-        GS_TASK_TYPE='ROOT'
-        MESSAGE="${MESSAGE} ${GS_TASK_TYPE}"
-        echo_fail
-        
-        MESSAGE="${PROGRAM} should not run as 'root'"
-        echo_warn
-        
-        exit_nochange
-    fi
-}
-
 function validate_sudo_status {
     CURRENTUSER=$(whoami)
     if [ ! "$EUID" -ne 0 ]; then
