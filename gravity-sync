@@ -1285,6 +1285,8 @@ function validate_ph_folders {
 }
 
 function detect_local_pihole {
+    MESSAGE="Detecting local ${UI_CORE_APP} installation"
+    echo_stat
     
     if hash pihole; then
         LOCAL_PIHOLE_TYPE="default"
