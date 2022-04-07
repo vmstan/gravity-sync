@@ -8,10 +8,6 @@ REMOTE_USER='pi'
 
 # CUSTOM VARIABLES ###########################
 
-# Installation Types - Standard install is 'default' - Containers must be 'docker' or 'podman'
-# LOCAL_PIHOLE_TYPE=''				        # Local Pi-hole install type
-# REMOTE_PIHOLE_TYPE=''				        # Remote Pi-hole install type
-
 # Pi-hole Folder/File Customization - Only need to be customized when using containers
 # LOCAL_PIHOLE_DIRECTORY='' 			    # Local Pi-hole data directory
 # REMOTE_PIHOLE_DIRECTORY=''			    # Remote Pi-hole data directory
