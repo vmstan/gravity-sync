@@ -1656,11 +1656,12 @@ function advanced_config_generate {
         echo_info
         echo_lines
         if [ "${LOCAL_PIHOLE_TYPE}" == "docker" ]; then
-            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo docker container ls" > "${REMOTE_RUNNING_CONTAINERS}"
+            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo docker container ls" > ${OS_TMP}/container.log
         elif [ "${LOCAL_PIHOLE_TYPE}" == "podman" ]; then
-            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo podman container ls" > "${REMOTE_RUNNING_CONTAINERS}"
+            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo podman container ls" > ${OS_TMP}/container.log
         fi
-        echo -e "${REMOTE_RUNNING_CONTAINERS}"
+        cat ${OS_TMP}/container.log
+        rm -f ${OS_TMP}/container.log
         echo_lines
 
         MESSAGE="Remote ${UI_CORE_APP} container name"
