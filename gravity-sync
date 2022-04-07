@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-SCRIPT_START=$SECONDS
+GS_RUN_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-VERSION='4.0.0'
+GS_VERSION='4.0.0'
 
 # For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
 # Requires Pi-Hole 5.x or higher already be installed, for help visit https://pi-hole.net
@@ -87,7 +87,7 @@ UI_CNAME_NAME='DNS CNAMEs'
 
 UI_CORE_LOADING='Loading'
 UI_CORE_EVALUATING='Evaluating arguments'
-UI_CORE_INIT="Initalizing ${PROGRAM} (${VERSION})"
+UI_CORE_INIT="Initalizing ${PROGRAM} (${GS_VERSION})"
 UI_CORE_APP='Pi-hole'
 UI_CORE_APP_DNS='DNSMASQ'
 
@@ -916,7 +916,7 @@ function backup_cleanup {
 }
 
 function md5_compare {
-    HASHMARK='0'
+    GS_HASH_MARK='0'
     
     MESSAGE="${UI_HASHING_HASHING} ${UI_GRAVITY_NAME}"
     echo_stat
@@ -929,11 +929,11 @@ function md5_compare {
     error_validate
     
     if [ "$REMOTE_DB_MD5" == "$LAST_REMOTE_DB_MD5" ] && [ "$LOCAL_DB_MD5" == "$LAST_LOCAL_DB_MD5" ]; then
-        HASHMARK=$((HASHMARK+0))
+        GS_HASH_MARK=$((GS_HASH_MARK+0))
     else
         MESSAGE="${UI_HASHING_DIFFERNCE} ${UI_GRAVITY_NAME}"
         echo_warn
-        HASHMARK=$((HASHMARK+1))
+        GS_HASH_MARK=$((GS_HASH_MARK+1))
     fi
     
     if [ -f ${LOCAL_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} ]; then
@@ -951,11 +951,11 @@ function md5_compare {
             error_validate
             
             if [ "$REMOTE_CL_MD5" == "$LAST_REMOTE_CL_MD5" ] && [ "$LOCAL_CL_MD5" == "$LAST_LOCAL_CL_MD5" ]; then
-                HASHMARK=$((HASHMARK+0))
+                GS_HASH_MARK=$((GS_HASH_MARK+0))
             else
                 MESSAGE="${UI_HASHING_DIFFERNCE} ${UI_CUSTOM_NAME}"
                 echo_warn
-                HASHMARK=$((HASHMARK+1))
+                GS_HASH_MARK=$((GS_HASH_MARK+1))
             fi
         else
             MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_REMOTE}"
@@ -965,7 +965,7 @@ function md5_compare {
         if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}; then
             REMOTE_PH_CUSTOM_DNS="1"
             MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_REMOTE}"
-            HASHMARK=$((HASHMARK+1))
+            GS_HASH_MARK=$((GS_HASH_MARK+1))
             echo_inf1
         fi
         MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_LOCAL}"
@@ -987,11 +987,11 @@ function md5_compare {
             error_validate
             
             if [ "$REMOTE_CN_MD5" == "$LAST_REMOTE_CN_MD5" ] && [ "$LOCAL_CN_MD5" == "$LAST_LOCAL_CN_MD5" ]; then
-                HASHMARK=$((HASHMARK+0))
+                GS_HASH_MARK=$((GS_HASH_MARK+0))
             else
                 MESSAGE="${UI_HASHING_DIFFERNCE} ${UI_CNAME_NAME}"
                 echo_warn
-                HASHMARK=$((HASHMARK+1))
+                GS_HASH_MARK=$((GS_HASH_MARK+1))
             fi
         else
             MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOTDETECTED} ${UI_HASHING_REMOTE}"
@@ -1001,7 +1001,7 @@ function md5_compare {
         if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}; then
             REMOTE_CNAME_DNS="1"
             MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_REMOTE}"
-            HASHMARK=$((HASHMARK+1))
+            GS_HASH_MARK=$((GS_HASH_MARK+1))
             echo_inf1
         fi
         
@@ -1009,10 +1009,10 @@ function md5_compare {
         echo_inf1
     fi
     
-    if [ "$HASHMARK" != "0" ]; then
+    if [ "$GS_HASH_MARK" != "0" ]; then
         MESSAGE="Replication of ${UI_CORE_APP} settings is required"
         echo_warn
-        HASHMARK=$((HASHMARK+0))
+        GS_HASH_MARK=$((GS_HASH_MARK+0))
     else
         MESSAGE="No replication is required at this time"
         echo_inf1
@@ -1050,7 +1050,7 @@ function md5_recheck {
     MESSAGE="Performing replicator diagnostics"
     echo_inf1
     
-    HASHMARK='0'
+    GS_HASH_MARK='0'
     
     MESSAGE="${UI_HASHING_REHASHING} ${UI_GRAVITY_NAME}"
     echo_stat
@@ -1209,7 +1209,7 @@ function logs_export {
         echo -e ${REMOTE_CN_MD5} | sudo tee -a ${OS_TMP}/${GS_CNAME_CONF_MD5_LOG} 1> /dev/null
         error_validate
 
-        MESSAGE="Sending hashes to Gravity Sync peer"
+        MESSAGE="Sending hashes to ${PROGRAM} peer"
         echo_stat
 
         RSYNC_REPATH="sudo rsync"
@@ -1261,15 +1261,15 @@ function validate_ph_folders {
             exit_nochange
         fi
     elif [ "$LOCAL_PIHOLE_TYPE" == "docker" ]; then
-        FTLCHECK=$(sudo docker container ls | grep "${PIHOLE_CONTAINER_IMAGE}")
-        if [ "$FTLCHECK" == "" ]; then
+        PH_FTL_CHECK=$(sudo docker container ls | grep "${PIHOLE_CONTAINER_IMAGE}")
+        if [ "$PH_FTL_CHECK" == "" ]; then
             MESSAGE="${UI_VALIDATING_FAIL_CONTAINER} ${UI_CORE_APP}"
             echo_fail
             exit_nochange
         fi
     elif [ "$LOCAL_PIHOLE_TYPE" == "podman" ]; then
-        FTLCHECK=$(sudo podman container ls | grep "${PIHOLE_CONTAINER_IMAGE}")
-        if [ "$FTLCHECK" == "" ]; then
+        PH_FTL_CHECK=$(sudo podman container ls | grep "${PIHOLE_CONTAINER_IMAGE}")
+        if [ "$PH_FTL_CHECK" == "" ]; then
             MESSAGE="${UI_VALIDATING_FAIL_CONTAINER} ${UI_CORE_APP}"
             echo_fail
             exit_nochange
@@ -1395,25 +1395,24 @@ function task_sudo {
 }
 
 function validate_sudo_status {
-    CURRENTUSER=$(whoami)
+    OS_CURRENT_USER=$(whoami)
     if [ ! "$EUID" -ne 0 ]; then
-        LOCALADMIN=""
+        OS_LOCAL_ADMIN=""
     else
-        # Check Sudo
-        SUDOCHECK=$(groups ${CURRENTUSER} | grep -e 'sudo' -e 'wheel')
-        if [ "$SUDOCHECK" == "" ]; then
-            LOCALADMIN="nosudo"
+        OS_SUDO_CHECK=$(groups ${OS_CURRENT_USER} | grep -e 'sudo' -e 'wheel')
+        if [ "$OS_SUDO_CHECK" == "" ]; then
+            OS_LOCAL_ADMIN="nosudo"
         else
-            LOCALADMIN="sudo"
+            OS_LOCAL_ADMIN="sudo"
         fi
     fi
     
-    if [ "$LOCALADMIN" == "nosudo" ]; then
+    if [ "$OS_LOCAL_ADMIN" == "nosudo" ]; then
         GS_TASK_TYPE='ROOT'
         MESSAGE="${MESSAGE} ${GS_TASK_TYPE}"
         echo_fail
         
-        MESSAGE="${CURRENTUSER} has insufficent user rights for ${PROGRAM}"
+        MESSAGE="${OS_CURRENT_USER} has insufficent user rights for ${PROGRAM}"
         echo_warn
         
         exit_nochange
@@ -1443,7 +1442,7 @@ function config_generate {
     error_validate
     
     echo_lines
-    echo -e "Welcome to the ${PURPLE}Gravity Sync${NC} Configuration Wizard"
+    echo -e "Welcome to the ${PURPLE}${PROGRAM}${NC} Configuration Wizard"
     echo -e "Please read through ${BLUE}https://github.com/vmstan/gravity-sync/wiki${NC} before you continue!"
     echo_blank
     echo -e "If the installer detects that you have a supported container engine (Docker or Podman) installed"
@@ -1505,7 +1504,7 @@ function config_generate {
     docker_detect
     podman_detect
 
-    if [ "${DOCKERREADY}" == "1" ] || [ "${PODMANREADY}" == "1" ]; then
+    if [ "${OS_DOCKER_READY}" == "1" ] || [ "${OS_PODMAN_READY}" == "1" ]; then
         MESSAGE="${UI_CONFIG_CONT_DETECT} ${UI_CONFIG_CONT_DETECTED}"
         echo_good
         MESSAGE="${UI_CORE_LOADING} ${UI_CONFIG_ADVANCED}"
@@ -1740,9 +1739,9 @@ function config_delete {
 ## Detect Docker
 function docker_detect {
     if hash docker 2>/dev/null; then
-        FTLCHECK=$(sudo docker container ls | grep 'pihole/pihole')
-        if [ "$FTLCHECK" != "" ]; then
-            DOCKERREADY="1"
+        PH_FTL_CHECK=$(sudo docker container ls | grep 'pihole/pihole')
+        if [ "$PH_FTL_CHECK" != "" ]; then
+            OS_DOCKER_READY="1"
         fi
     fi
 }
@@ -1750,9 +1749,9 @@ function docker_detect {
 ## Detect Podman
 function podman_detect {
     if hash podman 2>/dev/null; then
-        FTLCHECK=$(sudo podman container ls | grep 'pihole/pihole')
-        if [ "$FTLCHECK" != "" ]; then
-            PODMANREADY="1"
+        PH_FTL_CHECK=$(sudo podman container ls | grep 'pihole/pihole')
+        if [ "$PH_FTL_CHECK" != "" ]; then
+            OS_PODMAN_READY="1"
         fi
     fi
 }
@@ -1767,22 +1766,22 @@ function update_gs {
 ## Show Version
 function show_version {
     if [ -f ${GS_LOCAL_REPO}/dev ]; then
-        DEVVERSION="-dev"
+        GS_DEV_VERSION="-dev"
     else
-        DEVVERSION=""
+        GS_DEV_VERSION=""
     fi
     
-    MESSAGE="Running version: ${GREEN}${VERSION}${NC}${DEVVERSION}"
+    MESSAGE="Running version: ${GREEN}${GS_VERSION}${NC}${GS_DEV_VERSION}"
     echo_info
     
-    GITVERSION=$(curl -sf https://raw.githubusercontent.com/vmstan/gravity-sync/master/VERSION)
-    if [ -z "$GITVERSION" ]; then
+    GS_GIT_VERSION=$(curl -sf https://raw.githubusercontent.com/vmstan/gravity-sync/master/VERSION)
+    if [ -z "$GS_GIT_VERSION" ]; then
         MESSAGE="Latest version: ${RED}Unknown${NC}"
     else
-        if [ "$GITVERSION" != "$VERSION" ]; then
-            MESSAGE="Update available: ${RED}${GITVERSION}${NC}"
+        if [ "$GS_GIT_VERSION" != "GS_VERSION" ]; then
+            MESSAGE="Update available: ${RED}${GS_GIT_VERSION}${NC}"
         else
-            MESSAGE="Latest version: ${GREEN}${GITVERSION}${NC}"
+            MESSAGE="Latest version: ${GREEN}${GS_GIT_VERSION}${NC}"
         fi
     fi
     echo_info
@@ -1840,8 +1839,8 @@ function show_info {
     echo -e "Local ${UI_CORE_APP} Type: ${LOCAL_PIHOLE_TYPE}"
     echo -e "Local ${UI_CORE_APP} Config Directory: ${LOCAL_PIHOLE_DIRECTORY}"
     echo -e "Local DNSMASQ Config Directory: ${LOCAL_DNSMASQ_DIRECTORY}"
-    echo -e "Local Gravity Sync Binary: ${GS_FILEPATH}"
-    echo -e "Local Gravity Sync Config Directory: ${GS_ETC_PATH}"
+    echo -e "Local ${PROGRAM} Binary: ${GS_FILEPATH}"
+    echo -e "Local ${PROGRAM} Config Directory: ${GS_ETC_PATH}"
     
     if [ "${LOCAL_PIHOLE_TYPE}" == "default" ]; then
         echo -e "Local ${UI_CORE_APP} Binary Directory: ${LOCAL_PIHOLE_BINARY}"
@@ -1947,8 +1946,8 @@ function task_automate {
     echo_good
 
     MESSAGE="Customizing service file username"
-    CURRENTUSER=$(whoami)
-    sudo sed -i "/User=unknown/c\User=${CURRENTUSER}" ${GS_LOCAL_REPO}/templates/gravity-sync.service
+    OS_CURRENT_USER=$(whoami)
+    sudo sed -i "/User=unknown/c\User=${OS_CURRENT_USER}" ${GS_LOCAL_REPO}/templates/gravity-sync.service
     error_validate
 
     MESSAGE="Customizing service file executable path"
@@ -1980,11 +1979,11 @@ function task_automate {
     sudo systemctl daemon-reload --quiet
     error_validate
 
-    MESSAGE="Enabling Gravity Sync timer"
+    MESSAGE="Enabling ${PROGRAM} timer"
     sudo systemctl enable gravity-sync.timer --quiet
     error_validate
 
-    MESSAGE="Starting Gravity Sync service"
+    MESSAGE="Starting ${PROGRAM} service"
     sudo systemctl start gravity-sync --quiet
     error_validate
     
@@ -2002,15 +2001,11 @@ function task_purge {
     echo -e "${UI_CORE_APP} binaries, configuration and services ARE NOT impacted!"
     echo -e "Your devices will continue to resolve and block DNS requests,"
     echo -e "but your ${UI_GRAVITY_NAME} and ${UI_CUSTOM_NAME} WILL NOT sync anymore,"
-    echo -e "until you reconfigure Gravity Sync on this device. Backup files will not"
+    echo -e "until you reconfigure ${PROGRAM} on this device. Backup files will not"
     echo -e "be removed but you can manually remove '.${GS_BACKUP_EXT}' files if desired."
     echo_lines
         
     intent_validate
-    
-    # MESSAGE="${UI_PURGE_CLEANING_DIR}"
-    # echo_stat
-    # backup_cleanup
 
     sudo systemctl stop gravity-sync.timer
     sudo systemctl disable gravity-sync
@@ -2022,13 +2017,13 @@ function task_purge {
 
 ## No Changes Made
 function exit_nochange {
-    SCRIPT_END=$SECONDS
-    ((SCRIPT_RUN=SCRIPT_END-SCRIPT_START))
+    GS_RUN_END=$SECONDS
+    ((GS_RUNTIME=GS_RUN_END-GS_RUN_START))
     
     if [ "${GS_TASK_TYPE}" == "" ]; then
-        MESSAGE="${PROGRAM} ${UI_EXIT_ABORT} ${UI_EXIT_CALC_END} ${SCRIPT_RUN} ${UI_EXIT_CALC_TIMER}"
+        MESSAGE="${PROGRAM} ${UI_EXIT_ABORT} ${UI_EXIT_CALC_END} ${GS_RUNTIME} ${UI_EXIT_CALC_TIMER}"
     else
-        MESSAGE="${PROGRAM} ${GS_TASK_TYPE} ${UI_EXIT_ABORT} ${UI_EXIT_CALC_END} ${SCRIPT_RUN} ${UI_EXIT_CALC_TIMER}"
+        MESSAGE="${PROGRAM} ${GS_TASK_TYPE} ${UI_EXIT_ABORT} ${UI_EXIT_CALC_END} ${GS_RUNTIME} ${UI_EXIT_CALC_TIMER}"
     fi
     
     echo_grav
@@ -2037,13 +2032,13 @@ function exit_nochange {
 
 ## Changes Made
 function exit_withchange {
-    SCRIPT_END=$SECONDS
-    ((SCRIPT_RUN=SCRIPT_END-SCRIPT_START))
+    GS_RUN_END=$SECONDS
+    ((GS_RUNTIME=GS_RUN_END-GS_RUN_START))
     
     if [ "${GS_TASK_TYPE}" == "" ]; then
-        MESSAGE="${PROGRAM} ${UI_EXIT_COMPLETE} ${UI_EXIT_CALC_END} ${SCRIPT_RUN} ${UI_EXIT_CALC_TIMER}"
+        MESSAGE="${PROGRAM} ${UI_EXIT_COMPLETE} ${UI_EXIT_CALC_END} ${GS_RUNTIME} ${UI_EXIT_CALC_TIMER}"
     else
-        MESSAGE="${PROGRAM} ${GS_TASK_TYPE} ${UI_EXIT_COMPLETE} ${UI_EXIT_CALC_END} ${SCRIPT_RUN} ${UI_EXIT_CALC_TIMER}"
+        MESSAGE="${PROGRAM} ${GS_TASK_TYPE} ${UI_EXIT_COMPLETE} ${UI_EXIT_CALC_END} ${GS_RUNTIME} ${UI_EXIT_CALC_TIMER}"
     fi
     
     echo_grav
@@ -2057,7 +2052,7 @@ function list_gs_arguments {
     echo_lines
     echo -e "Setup Options:"
     echo -e " ${YELLOW}config${NC}      Creates a new ${PROGRAM} configuration file"
-    echo -e " ${YELLOW}automate${NC}    Schedules the ${PROGRAM} replication task using systemd"
+    echo -e " ${YELLOW}auto${NC}        Schedules the ${PROGRAM} replication task using systemd"
     echo -e " ${YELLOW}version${NC}     Shows the installed version of ${PROGRAM} and check for updates"
     echo -e " ${YELLOW}update${NC}      Upgrades ${PROGRAM} to the latest available version using Git"
     echo -e " ${YELLOW}dev${NC}         Sets update command to use a development version of ${PROGRAM}"
