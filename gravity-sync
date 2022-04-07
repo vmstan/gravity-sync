@@ -1317,9 +1317,9 @@ function detect_remote_pihole {
     MESSAGE="Detecting remote ${UI_CORE_APP} installation"
     echo_stat
     
-    REMOTE_DETECT_PIHOLE=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "which pihole")
-    REMOTE_DETECT_DOCKER=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "which docker")
-    REMOTE_DETECT_PODMAN=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "which podman")
+    REMOTE_DETECT_PIHOLE=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "which pihole") >/dev/null 2>&1
+    REMOTE_DETECT_DOCKER=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "which docker") >/dev/null 2>&1
+    REMOTE_DETECT_PODMAN=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "which podman") >/dev/null 2>&1
 
     if [ "${REMOTE_DETECT_PIHOLE}" == "${REMOTE_PIHOLE_BINARY}" ]; then
         REMOTE_PIHOLE_TYPE="default"
