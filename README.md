@@ -19,6 +19,7 @@ But if you have redundant Pi-hole in your network you'll want a simple way to ke
 ## Features
 
 Gravity Sync replicates the core of Pi-hole's resolver settings, which includes:
+
 - Adlist settings with status and comments.
 - Domain whitelist and blacklist along with status with comments.
 - Custom RegEx whitelist and blacklists.
