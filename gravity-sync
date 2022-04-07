@@ -1320,8 +1320,8 @@ function detect_remote_pihole {
     echo_stat
     
     REMOTE_DETECT_PIHOLE=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "which pihole | sed 's/\s.*$//'")
-    REMOTE_DETECT_DOCKER=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "which docker | sed 's/\s.*$//"')
-    REMOTE_DETECT_PODMAN=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "which podman | sed 's/\s.*$//"')
+    REMOTE_DETECT_DOCKER=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "which docker | sed 's/\s.*$//'")
+    REMOTE_DETECT_PODMAN=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "which podman | sed 's/\s.*$//'")
 
     if [ "${REMOTE_DETECT_PIHOLE}" == "${REMOTE_PIHOLE_BINARY}" ]; then
         REMOTE_PIHOLE_TYPE="default"
