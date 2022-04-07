@@ -1838,7 +1838,7 @@ function show_info {
     echo -e "Local Hostname: $HOSTNAME"
     echo -e "Local ${UI_CORE_APP} Type: ${LOCAL_PIHOLE_TYPE}"
     echo -e "Local ${UI_CORE_APP} Config Directory: ${LOCAL_PIHOLE_DIRECTORY}"
-    echo -e "Local DNSMASQ Config Directory: ${LOCAL_DNSMASQ_DIRECTORY}"
+    echo -e "Local ${UI_CORE_APP_DNS Config Directory: ${LOCAL_DNSMASQ_DIRECTORY}"
     echo -e "Local ${PROGRAM} Binary: ${GS_FILEPATH}"
     echo -e "Local ${PROGRAM} Config Directory: ${GS_ETC_PATH}"
     
@@ -1860,7 +1860,7 @@ function show_info {
     echo -e "Remote Username: ${REMOTE_USER}"
     echo -e "Remote ${UI_CORE_APP} Type: ${REMOTE_PIHOLE_TYPE}"
     echo -e "Remote ${UI_CORE_APP} Config Directory: ${REMOTE_PIHOLE_DIRECTORY}"
-    echo -e "Remote DNSMASQ Config Directory: ${REMOTE_DNSMASQ_DIRECTORY}"
+    echo -e "Remote ${UI_CORE_APP_DNS Config Directory: ${REMOTE_DNSMASQ_DIRECTORY}"
 
     if [ "${REMOTE_PIHOLE_TYPE}" == "default" ]; then
         echo -e "Remote ${UI_CORE_APP} Binary Directory: ${REMOTE_PIHOLE_BINARY}"
