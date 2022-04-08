@@ -1954,29 +1954,76 @@ function task_automate {
     exit_with_changes
 }
 
+function task_disable_automate {
+    GS_TASK_TYPE='DISABLE'
+    MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
+    echo_good
+    
+    kill_automation_service
+    exit_with_changes
+}
+
+function kill_automation_service {
+    if systemctl is-active --quiet gravity-sync; then
+        MESSAGE="Stopping ${PROGRAM} timer"
+        sudo systemctl stop gravity-sync
+        error_validate
+    fi
+
+    MESSAGE="Disabling ${PROGRAM} automation service"
+    sudo systemctl disable gravity-sync --quiet
+    error_validate
+
+    MESSAGE="Removing systemd timer"
+    sudo rm -f ${GS_LOCAL_REPO}/templates/gravity-sync.timer
+    error_validate
+
+    MESSAGE="Removing systemd service"
+    sudo rm -f ${GS_LOCAL_REPO}/templates/gravity-sync.service ${OS_DAEMON_PATH}
+    error_validate
+
+    MESSAGE="Reloading systemd daemon"
+    sudo systemctl daemon-reload --quiet
+    error_validate
+}
+
 ## Purge Task
 function task_purge {
     GS_TASK_TYPE="PURGE"
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
     
-    echo -e "  THIS WILL REMOVE YOUR ENTIRE GRAVITY SYNC INSTALLATION
-              ${UI_CORE_APP} binaries, configuration and services ARE NOT impacted!
-              Your devices will continue to resolve and block DNS requests,
-              but your ${UI_GRAVITY_NAME} and ${UI_CUSTOM_NAME} WILL NOT sync anymore, 
-              until you reconfigure ${PROGRAM} on this device. Backup files will not 
-              be removed but you can manually remove '.${GS_BACKUP_EXT}' files if desired.
-
-              In order to fully remove ${PROGRAM} from your infrastructure, you will also
-              need to run this same command from the peer instance as well."
+    echo_blank
+    echo -e "  THIS WILL REMOVE YOUR ENTIRE GRAVITY SYNC INSTALLATION"
+    echo -e "  ${UI_CORE_APP} binaries, configuration and services ARE NOT impacted!"
+    echo -e "  Your devices will continue to resolve and block DNS requests,"
+    echo -e "  but your ${UI_GRAVITY_NAME} and ${UI_CUSTOM_NAME} WILL NOT sync anymore,"
+    echo -e "  until you reconfigure ${PROGRAM} on this device. Backup files will not "
+    echo -e "  be removed but you can manually remove '.${GS_BACKUP_EXT}' files if desired."
+    echo_blank
+    echo -e "  In order to fully remove ${PROGRAM} from your infrastructure, you will also"
+    echo -e "  need to run this same command from the peer instance as well."
+    echo_blank
         
     intent_validate
 
-    sudo systemctl stop gravity-sync.timer
-    sudo systemctl disable gravity-sync
+    kill_automation_service
     
+    MESSAGE="Removing ${PROGRAM} backup files"
+    echo_stat
+    sudo rm -f ${OS_TMP}/*.${GS_BACKUP_EXT}
+    error_validate
+
+    MESSAGE="Removing ${PROGRAM} configuration and logs"
+    echo_stat
     sudo rm -fr ${GS_ETC_PATH}
+    error_validate
+
+    MESSAGE="Removing ${PROGRAM} binary"
+    echo_stat
     sudo rm ${GS_FILEPATH}
+    error_validate
+
     exit_with_changes
 }
 
@@ -2018,10 +2065,12 @@ function list_gs_arguments {
     echo -e "Setup Options:"
     echo -e " ${YELLOW}config${NC}      Creates a new ${PROGRAM} configuration file"
     echo -e " ${YELLOW}auto${NC}        Schedules the ${PROGRAM} replication task using systemd"
+    echo -e " ${YELLOW}disable${NC}     Disables the ${PROGRAM} automated replication task"
     echo -e " ${YELLOW}version${NC}     Shows the installed version of ${PROGRAM} and check for updates"
     echo -e " ${YELLOW}update${NC}      Upgrades ${PROGRAM} to the latest available version using Git"
     echo -e " ${YELLOW}dev${NC}         Sets update command to use a development version of ${PROGRAM}"
     echo -e " ${YELLOW}sudo${NC}        Configures password-less sudo for current user"
+    echo -e " ${YELLOW}purge${NC}       Uninstall ${PROGRAM}"
     echo_blank
     echo -e "Replication Options:"
     echo -e " ${YELLOW}smart${NC}       Detects ${UI_CORE_APP} changes on remote and local and then combines them"
@@ -2074,6 +2123,9 @@ case $# in
             auto|automate)
                 start_gs
                 task_automate ;;
+            disable)
+                start_gs
+                task_disable_automate ;;
             purge|uninstall|remove)
                 start_gs
                 task_purge ;;
