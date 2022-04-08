@@ -1,10 +1,7 @@
 # REQUIRED SETTINGS ##########################
 
-# Primary Pi-hole host (in IP or DNS name)
-REMOTE_HOST='192.168.1.10'
-
-# User account on primary with SUDO rights
-REMOTE_USER='pi'
+REMOTE_HOST=''
+REMOTE_USER=''
 
 # CUSTOM VARIABLES ###########################
 
