@@ -200,11 +200,6 @@ function echo_grav {
 }
 
 ### Lines
-function echo_lines {
-    echo -e "∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞∞"
-}
-
-### Lines
 function echo_blank {
     echo -e ""
 }
@@ -1210,14 +1205,12 @@ function logs_gs {
     MESSAGE="Displaying output of previous jobs"
     echo_info
     
-    echo_lines
     echo -e "${UI_LOGGING_RECENT_COMPLETE} ${YELLOW}SMART${NC}"
     tail -n 7 "${GS_ETC_PATH}/${GS_SYNCING_LOG}" | grep SMART
     echo -e "${UI_LOGGING_RECENT_COMPLETE} ${YELLOW}PULL${NC}"
     tail -n 7 "${GS_ETC_PATH}/${GS_SYNCING_LOG}" | grep PULL
     echo -e "${UI_LOGGING_RECENT_COMPLETE} ${YELLOW}PUSH${NC}"
     tail -n 7 "${GS_ETC_PATH}/${GS_SYNCING_LOG}" | grep PUSH
-    echo_lines
     
     exit_nochange
 }
@@ -1469,10 +1462,10 @@ function config_generate {
     sudo cp ${GS_LOCAL_REPO}/templates/${GS_CONFIG_FILE}.example ${GS_ETC_PATH}/${GS_CONFIG_FILE}
     error_validate
     
-    echo_lines
-    echo -e "Welcome to the ${PURPLE}${PROGRAM}${NC} Configuration Wizard"
-    echo -e "Please read through ${BLUE}https://github.com/vmstan/gravity-sync/wiki${NC} before you continue!"
-    echo_lines
+    echo_blank
+    echo -e "  Welcome to the ${PURPLE}${PROGRAM}${NC} Configuration Wizard"
+    echo -e "  Please read through ${BLUE}https://github.com/vmstan/gravity-sync/wiki${NC} before you continue!"
+    echo_blank
     
     MESSAGE="${PROGRAM} ${UI_CONFIG_REQUIRED}"
     echo_info
@@ -1509,9 +1502,7 @@ function config_generate {
     source ${GS_ETC_PATH}/${GS_CONFIG_FILE}
     error_validate
 
-    echo_lines
     export_sshkey
-    echo_lines
 
     MESSAGE="SSH keypair registered to ${INPUT_REMOTE_HOST}"
     echo_good_clean
@@ -1556,25 +1547,22 @@ function config_generate {
 }
 
 function end_config {
-    echo_lines
-    echo -e "Configuration has been completed successfully, if you've still not read the instructions"
-    echo -e "please read through ${BLUE}https://github.com/vmstan/gravity-sync/wiki${NC} before you continue!"
     echo_blank
-    echo -e "Your next step is to complete a sync of data from your remote ${UI_CORE_APP} to this local ${UI_CORE_APP}."
-    echo -e "ex: gravity-sync pull" 
+    echo -e "  Configuration has been completed successfully, your next step is to push all of the of data from" \
+            "  the currently authoritative ${UI_CORE_APP} instance." \
+            "  ex: ${YELLOW}gravity-sync push${NC}" 
     echo_blank
-    echo -e "If this completes successfully you can automate future sync jobs to run at a regular interval."
-    echo -e "ex: gravity-sync automate"
+    echo -e "  If this completes successfully you can automate future sync jobs to run at a regular interval on" \
+            "  both of your ${PROGRAM} peers." \
+            "  ex: ${YELLOW}gravity-sync auto${NC}"
     echo_blank
-    echo -e "Still confused? Please refer back to the documentation."
-    echo_lines
 }
 
 function end_config_nopi {
-    echo_lines
-    echo -e "Configuration could not be completed successfully, as no instances of ${UI_CORE_APP} could be detected"
-    echo -e "on one or more of your systems. Please make sure they are running on both systems and try again."
-    echo_lines
+    echo_blank
+    echo -e "  Configuration could not be completed successfully, as no instances of ${UI_CORE_APP} could be detected" \
+            "  on one or more of your systems. Please make sure they are running on both peers and try again."
+    echo_blank
 }
 
 ## Advanced Configuration Options
@@ -1582,13 +1570,12 @@ function advanced_config_generate {
     if [ "${LOCAL_PIHOLE_TYPE}" == "docker" ] || [ "${LOCAL_PIHOLE_TYPE}" == "podman" ]; then
         MESSAGE="Locally running container images"
         echo_info
-        echo_lines
+
         if [ "${LOCAL_PIHOLE_TYPE}" == "docker" ]; then
             sudo docker container ls
         elif [ "${LOCAL_PIHOLE_TYPE}" == "podman" ]; then
             sudo podman container ls
         fi
-        echo_lines
         
         MESSAGE="Local ${UI_CORE_APP} container name"
         echo_inf1
@@ -1649,9 +1636,9 @@ function advanced_config_generate {
 
         MESSAGE="Remote running container images"
         echo_info
-        echo_lines
+        
         cat ${OS_TMP}/gs_remote_container.log
-        echo_lines
+
 
         MESSAGE="Remote ${UI_CORE_APP} container name"
         echo_inf1
@@ -1681,7 +1668,7 @@ function advanced_config_generate {
         RSYNC_TARGET="${OS_TMP}/remote_container_pihole_etc.log"
         create_rsynccmd
 
-        MESSAGE="Obtaining remote configuration file 1"
+        MESSAGE="Obtaining remote configuration file 2"
         RSYNC_REPATH="sudo rsync"
         RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${OS_TMP}/local_container_dnsmasq_etc.log"
         RSYNC_TARGET="${OS_TMP}/remote_container_dnsmasq_etc.log"
@@ -1745,9 +1732,7 @@ function config_delete {
 
 ## Master Branch
 function update_gs {
-    echo_lines
         bash ${GS_LOCAL_REPO}/update.sh
-    echo_lines
 }
 
 ## Show Version
@@ -1775,7 +1760,6 @@ function show_version {
 }
 
 function show_info {
-    echo_lines
     echo -e "${YELLOW}Local Software Versions${NC}"
     echo -e "${BLUE}${UI_CORE_APP}${NC}"
     if [ "${LOCAL_PIHOLE_TYPE}" == "default" ]; then
@@ -1860,7 +1844,6 @@ function show_info {
     fi
 
     echo -e "Remote File Owner Settings: ${REMOTE_FILE_OWNER}"
-    echo_lines
 }
 
 ## Devmode Task
@@ -1983,14 +1966,12 @@ function task_purge {
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
     
-    echo_lines
-    echo -e "THIS WILL REMOVE YOUR GRAVITY SYNC INSTALLATION"
-    echo -e "${UI_CORE_APP} binaries, configuration and services ARE NOT impacted!"
-    echo -e "Your devices will continue to resolve and block DNS requests,"
-    echo -e "but your ${UI_GRAVITY_NAME} and ${UI_CUSTOM_NAME} WILL NOT sync anymore,"
-    echo -e "until you reconfigure ${PROGRAM} on this device. Backup files will not"
-    echo -e "be removed but you can manually remove '.${GS_BACKUP_EXT}' files if desired."
-    echo_lines
+    echo -e "  THIS WILL REMOVE YOUR GRAVITY SYNC INSTALLATION" \
+            "  ${UI_CORE_APP} binaries, configuration and services ARE NOT impacted!" \
+            "  Your devices will continue to resolve and block DNS requests," \
+            "  but your ${UI_GRAVITY_NAME} and ${UI_CUSTOM_NAME} WILL NOT sync anymore," \
+            "  until you reconfigure ${PROGRAM} on this device. Backup files will not" \
+            "  be removed but you can manually remove '.${GS_BACKUP_EXT}' files if desired." \
         
     intent_validate
 
@@ -2036,7 +2017,7 @@ function exit_withchange {
 function list_gs_arguments {
     echo -e "Usage: $0 [options]"
     echo -e "Example: '$0 pull'"
-    echo_lines
+    echo_blank
     echo -e "Setup Options:"
     echo -e " ${YELLOW}config${NC}      Creates a new ${PROGRAM} configuration file"
     echo -e " ${YELLOW}auto${NC}        Schedules the ${PROGRAM} replication task using systemd"
@@ -2054,7 +2035,7 @@ function list_gs_arguments {
     echo -e "Debug Options:"
     echo -e " ${YELLOW}logs${NC}        Shows the recent successful replication jobs/times"
     echo -e " ${YELLOW}info${NC}        Shows information about the current configuration"
-    echo_lines
+    echo_blank
     exit_nochange
 }
 
