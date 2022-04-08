@@ -1535,20 +1535,20 @@ function config_generate {
 
 function end_config {
     echo_blank
-    echo -e "  Configuration has been completed successfully, your next step is to push all of the of data from/n"\
-            "  the currently authoritative ${UI_CORE_APP} instance./n"\
-            "  ex: ${YELLOW}gravity-sync push${NC}" 
+    echo -e "  Configuration has been completed successfully, your next step is to push all of the of data from"
+    echo -e "  the currently authoritative ${UI_CORE_APP} instance."
+    echo -e "  ex: ${YELLOW}gravity-sync push${NC}" 
     echo_blank
-    echo -e "  If this completes successfully you can automate future sync jobs to run at a regular interval on/n"\
-            "  both of your ${PROGRAM} peers./n"\
-            "  ex: ${YELLOW}gravity-sync auto${NC}"
+    echo -e "  If this completes successfully you can automate future sync jobs to run at a regular interval on"
+    echo -e "  both of your ${PROGRAM} peers."
+    echo -e "  ex: ${YELLOW}gravity-sync auto${NC}"
     echo_blank
 }
 
 function end_config_no_pi {
     echo_blank
-    echo -e "  Configuration could not be completed successfully, as no instances of ${UI_CORE_APP} could be detected/n"\
-            "  on one or more of your systems. Please make sure they are running on both peers and try again."
+    echo -e "  Configuration could not be completed successfully, as no instances of ${UI_CORE_APP} could be detected"
+    echo -e "  on one or more of your systems. Please make sure they are running on both peers and try again."
     echo_blank
 }
 
