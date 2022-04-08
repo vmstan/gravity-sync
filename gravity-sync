@@ -1644,7 +1644,6 @@ function advanced_config_generate {
             ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo podman container ls" > ${OS_TMP}/container.log
         fi
         cat ${OS_TMP}/container.log
-        rm -f ${OS_TMP}/container.log
         echo_lines
 
         MESSAGE="Remote ${UI_CORE_APP} container name"
