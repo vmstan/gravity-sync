@@ -1636,9 +1636,9 @@ function advanced_config_generate {
     if [ "${REMOTE_PIHOLE_TYPE}" == "docker" ] || [ "${REMOTE_PIHOLE_TYPE}" == "podman" ]; then        
         
         if [ "${LOCAL_PIHOLE_TYPE}" == "docker" ]; then
-            (${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo docker container ls") > ${OS_TMP}/gs_local_container.log
+            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo docker container ls" > /tmp/gs_local_container.log
         elif [ "${LOCAL_PIHOLE_TYPE}" == "podman" ]; then
-            (${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo podman container ls") > ${OS_TMP}/gs_local_container.log
+            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo podman container ls" > /tmp/gs_local_container.log
         fi
         
         MESSAGE="Polling remote instance"
