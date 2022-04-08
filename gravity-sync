@@ -160,7 +160,7 @@ function echo_info {
     echo -e "${INFO} ${YELLOW}${MESSAGE}${NC}"
 }
 
-function echo_inf1 {
+function echo_prompt {
     echo -e "${INF1} ${CYAN}${MESSAGE}${NC}"
 }
 
@@ -212,6 +212,7 @@ function start_gs {
     import_gs_config
     detect_local_pihole
     detect_remote_pihole
+    detect_gs_peer
     set_pihole_exec
     
     MESSAGE="${UI_CORE_EVALUATING}"
@@ -241,7 +242,7 @@ function import_gs_config {
         echo_fail
         
         MESSAGE="Missing ${GS_CONFIG_FILE}"
-        echo_inf1
+        echo_prompt
         
         GS_TASK_TYPE='CONFIG'
         config_generate
@@ -779,7 +780,7 @@ function backup_local_custom {
         error_validate
     else
         MESSAGE="No local ${PH_CUSTOM_DNS} detected"
-        echo_inf1
+        echo_prompt
     fi
 }
 
@@ -792,7 +793,7 @@ function backup_local_cname {
         error_validate
     else
         MESSAGE="No local ${PH_CNAME_CONF} detected"
-        echo_inf1
+        echo_prompt
     fi
 }
 
@@ -923,17 +924,17 @@ function md5_compare {
             fi
         else
             MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_REMOTE}"
-            echo_inf1
+            echo_prompt
         fi
     else
         if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}; then
             REMOTE_PH_CUSTOM_DNS="1"
             MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_REMOTE}"
             GS_HASH_MARK=$((GS_HASH_MARK+1))
-            echo_inf1
+            echo_prompt
         fi
         MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_LOCAL}"
-        echo_inf1
+        echo_prompt
     fi
 
     if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} ]; then
@@ -959,18 +960,18 @@ function md5_compare {
             fi
         else
             MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_REMOTE}"
-            echo_inf1
+            echo_prompt
         fi
     else
         if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}; then
             REMOTE_CNAME_DNS="1"
             MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_REMOTE}"
             GS_HASH_MARK=$((GS_HASH_MARK+1))
-            echo_inf1
+            echo_prompt
         fi
         
         MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_LOCAL}"
-        echo_inf1
+        echo_prompt
     fi
     
     if [ "$GS_HASH_MARK" != "0" ]; then
@@ -979,7 +980,7 @@ function md5_compare {
         GS_HASH_MARK=$((GS_HASH_MARK+0))
     else
         MESSAGE="No replication is required at this time"
-        echo_inf1
+        echo_prompt
         exit_no_change
     fi
 }
@@ -1012,7 +1013,7 @@ function previous_md5 {
 
 function md5_recheck {
     MESSAGE="Performing replicator diagnostics"
-    echo_inf1
+    echo_prompt
     
     GS_HASH_MARK='0'
     
@@ -1041,16 +1042,16 @@ function md5_recheck {
             error_validate
         else
             MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_REMOTE}"
-            echo_inf1
+            echo_prompt
         fi
     else
         if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}; then
             REMOTE_PH_CUSTOM_DNS="1"
             MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_REMOTE}"
-            echo_inf1
+            echo_prompt
         fi
         MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_LOCAL}"
-        echo_inf1
+        echo_prompt
     fi
     
     if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} ]; then
@@ -1068,17 +1069,17 @@ function md5_recheck {
             error_validate
         else
             MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_REMOTE}"
-            echo_inf1
+            echo_prompt
         fi
     else
         if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}; then
             REMOTE_CNAME_DNS="1"
             MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_REMOTE}"
-            echo_inf1
+            echo_prompt
         fi
         
         MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_LOCAL}"
-        echo_inf1
+        echo_prompt
     fi
 }
 
@@ -1127,7 +1128,7 @@ function export_ssh_key {
     if [ -z $REMOTE_PASS ]; then
         if [ -f ${GS_SSH_PKIF} ]; then
             MESSAGE="Registering SSH key to ${REMOTE_HOST}"
-            echo_inf1
+            echo_prompt
             
             ssh-copy-id -f -p ${GS_SSH_PORT} -i ${GS_SSH_PKIF}.pub ${REMOTE_USER}@${REMOTE_HOST}
         else
@@ -1139,7 +1140,7 @@ function export_ssh_key {
 
 function show_target {
     MESSAGE="Remote ${UI_CORE_APP}: ${REMOTE_USER}@${REMOTE_HOST}"
-    echo_inf1
+    echo_prompt
 }
 
 ## Logs Task
@@ -1153,17 +1154,17 @@ function task_logs {
 ## Core Logging
 ### Write Logs Out
 function logs_export {
-    if [ "${GS_TASK_TYPE}" != "BACKUP" ]; then
-        MESSAGE="Saving updated data hashes"
-        echo_stat
-        sudo rm -f ${GS_ETC_PATH}/*.md5
-        echo -e ${REMOTE_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_GRAVITY_FI_MD5_LOG} 1> /dev/null
-        echo -e ${LOCAL_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_GRAVITY_FI_MD5_LOG} 1> /dev/null
-        echo -e ${REMOTE_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CUSTOM_DNS_MD5_LOG} 1> /dev/null
-        echo -e ${LOCAL_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CUSTOM_DNS_MD5_LOG} 1> /dev/null
-        echo -e ${REMOTE_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CNAME_CONF_MD5_LOG} 1> /dev/null
-        echo -e ${LOCAL_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CNAME_CONF_MD5_LOG} 1> /dev/null
-        
+    MESSAGE="Saving updated data hashes"
+    echo_stat
+    sudo rm -f ${GS_ETC_PATH}/*.md5
+    echo -e ${REMOTE_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_GRAVITY_FI_MD5_LOG} 1> /dev/null
+    echo -e ${LOCAL_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_GRAVITY_FI_MD5_LOG} 1> /dev/null
+    echo -e ${REMOTE_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CUSTOM_DNS_MD5_LOG} 1> /dev/null
+    echo -e ${LOCAL_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CUSTOM_DNS_MD5_LOG} 1> /dev/null
+    echo -e ${REMOTE_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CNAME_CONF_MD5_LOG} 1> /dev/null
+    echo -e ${LOCAL_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CNAME_CONF_MD5_LOG} 1> /dev/null
+    
+    if [ ${GS_PEERLESS_MODE} != "1" ]; then
         sudo rm -f ${OS_TMP}/*.md5
         echo -e ${LOCAL_DB_MD5} | sudo tee -a ${OS_TMP}/${GS_GRAVITY_FI_MD5_LOG} 1> /dev/null
         echo -e ${REMOTE_DB_MD5} | sudo tee -a ${OS_TMP}/${GS_GRAVITY_FI_MD5_LOG} 1> /dev/null
@@ -1299,6 +1300,23 @@ function detect_remote_pihole {
             REMOTE_PIHOLE_TYPE="none"
             echo_fail
         fi
+    fi
+}
+
+function detect_gs_peer {
+    MESSAGE="Checking on peer"
+    echo_stat
+
+    if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${GS_ETC_PATH}/${GS_CONFIG_FILE}; then
+        MESSAGE="${PROGRAM} remote peer is configured"
+        echo_good
+    else
+        GS_PEERLESS_MODE="1"
+        MESSAGE="${PROGRAM} remote peerless mode enabled"
+        echo_good
+
+        MESSAGE="Install and configure ${PROGRAM} for full functionality"
+        echo_warn
     fi
 }
 
@@ -1458,7 +1476,7 @@ function config_generate {
     echo_info
 
     MESSAGE="Remote ${UI_CORE_APP} host address"
-    echo_inf1
+    echo_prompt
 
     MESSAGE="IP"
     echo_need
@@ -1470,7 +1488,7 @@ function config_generate {
     error_validate
     
     MESSAGE="Remote ${UI_CORE_APP} host username"
-    echo_inf1
+    echo_prompt
 
     MESSAGE="User"
     echo_need
@@ -1574,7 +1592,7 @@ function advanced_config_generate {
         fi
         
         MESSAGE="Enter local ${UI_CORE_APP} container name"
-        echo_inf1
+        echo_prompt
         MESSAGE="ex, 'pihole'"
         echo_need
         read -r INPUT_LOCAL_DOCKER_CONTAINER
@@ -1642,7 +1660,7 @@ function advanced_config_generate {
         cat ${OS_TMP}/gs_remote_container.log
 
         MESSAGE="Enter remote ${UI_CORE_APP} container name"
-        echo_inf1
+        echo_prompt
         MESSAGE="ex, 'pihole'"
         echo_need
         read -r INPUT_REMOTE_DOCKER_CONTAINER
@@ -1712,7 +1730,7 @@ function config_delete {
     echo_warn
   
     MESSAGE="${UI_CONFIG_CONFIRM}"
-    echo_inf1
+    echo_prompt
 
     intent_validate
 
