@@ -1663,13 +1663,13 @@ function advanced_config_generate {
             ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo podman container inspect ${INPUT_REMOTE_DOCKER_CONTAINER} | grep -i -B 1 '\"Destination\": \"/etc/dnsmasq.d\"' > ${OS_TMP}/local_container_dnsmasq_etc.log"
         fi
 
-        MESSAGE="Obtaining remote configuration file 1"
+        MESSAGE="Retrieving remote ${UI_CORE_APP} configuration settings"
         RSYNC_REPATH="sudo rsync"
         RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${OS_TMP}/local_container_pihole_etc.log"
         RSYNC_TARGET="${OS_TMP}/remote_container_pihole_etc.log"
         create_rsync_cmd
 
-        MESSAGE="Obtaining remote configuration file 2"
+        MESSAGE="Retrieving remote ${UI_CORE_APP_DNS} configuration settings"
         RSYNC_REPATH="sudo rsync"
         RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${OS_TMP}/local_container_dnsmasq_etc.log"
         RSYNC_TARGET="${OS_TMP}/remote_container_dnsmasq_etc.log"
