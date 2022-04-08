@@ -1690,8 +1690,8 @@ function advanced_config_generate {
         sed -i '$d' ${OS_TMP}/remote_container_pihole_etc.log; sed -i 's/"Source": "//' ${OS_TMP}/remote_container_pihole_etc.log; sed -i 's/",//' ${OS_TMP}/remote_container_pihole_etc.log; sed -i 's/ //g' ${OS_TMP}/remote_container_pihole_etc.log
         sed -i '$d' ${OS_TMP}/remote_container_dnsmasq_etc.log; sed -i 's/"Source": "//' ${OS_TMP}/remote_container_dnsmasq_etc.log; sed -i 's/",//' ${OS_TMP}/remote_container_dnsmasq_etc.log; sed -i 's/ //g' ${OS_TMP}/remote_container_dnsmasq_etc.log
 
-        INPUT_LOCAL_PIHOLE_DIRECTORY=$(cat ${OS_TMP}/remote_container_pihole_etc.log)
-        INPUT_LOCAL_DNSMASQ_DIRECTORY=$(cat ${OS_TMP}/remote_container_dnsmasq_etc.log)
+        INPUT_REMOTE_PIHOLE_DIRECTORY=$(cat ${OS_TMP}/remote_container_pihole_etc.log)
+        INPUT_REMOTE_DNSMASQ_DIRECTORY=$(cat ${OS_TMP}/remote_container_dnsmasq_etc.log)
 
         echo_good
         
