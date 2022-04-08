@@ -1975,11 +1975,11 @@ function kill_automation_service {
     error_validate
 
     MESSAGE="Removing systemd timer"
-    sudo rm -f ${GS_LOCAL_REPO}/templates/gravity-sync.timer
+    sudo rm -f ${OS_DAEMON_PATH}/gravity-sync.timer
     error_validate
 
     MESSAGE="Removing systemd service"
-    sudo rm -f ${GS_LOCAL_REPO}/templates/gravity-sync.service ${OS_DAEMON_PATH}
+    sudo rm -f ${OS_DAEMON_PATH}/gravity-sync.service
     error_validate
 
     MESSAGE="Reloading systemd daemon"
