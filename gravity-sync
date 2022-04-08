@@ -1639,11 +1639,18 @@ function advanced_config_generate {
         echo_info
         echo_lines
         if [ "${LOCAL_PIHOLE_TYPE}" == "docker" ]; then
-            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo docker container ls" > ${OS_TMP}/container.log
+            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo docker container ls" > ${OS_TMP}/gs_local_container.log
         elif [ "${LOCAL_PIHOLE_TYPE}" == "podman" ]; then
-            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo podman container ls" > ${OS_TMP}/container.log
+            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo podman container ls" > ${OS_TMP}/gs_local_container.log
         fi
-        cat ${OS_TMP}/container.log
+        
+        MESSAGE="Polling remote instance"
+        RSYNC_REPATH="sudo rsync"
+        RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${OS_TMP}/gs_local_container.log"
+        RSYNC_TARGET="${OS_TMP}/gs_remote_container.log"
+        create_rsynccmd
+
+        cat ${OS_TMP}/gs_remote_container.log
         echo_lines
 
         MESSAGE="Remote ${UI_CORE_APP} container name"
@@ -1661,18 +1668,27 @@ function advanced_config_generate {
         echo_stat
 
         if [ "${REMOTE_PIHOLE_TYPE}" == "docker" ]; then
-            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} sudo docker container inspect ${INPUT_REMOTE_DOCKER_CONTAINER} | grep -i -B 1 '\"Destination\": \"/etc/pihole\"' > ${OS_TMP}/remote_container_pihole_etc.log
-            sed -i '$d' ${OS_TMP}/remote_container_pihole_etc.log; sed -i 's/"Source": "//' ${OS_TMP}/remote_container_pihole_etc.log; sed -i 's/",//' ${OS_TMP}/remote_container_pihole_etc.log; sed -i 's/ //g' ${OS_TMP}/remote_container_pihole_etc.log
-            
+            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} sudo docker container inspect ${INPUT_REMOTE_DOCKER_CONTAINER} | grep -i -B 1 '\"Destination\": \"/etc/pihole\"' > ${OS_TMP}/local_container_pihole_etc.log
             ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} sudo docker container inspect ${INPUT_REMOTE_DOCKER_CONTAINER} | grep -i -B 1 '\"Destination\": \"/etc/dnsmasq.d\"' > ${OS_TMP}/local_container_dnsmasq_etc.log
-            sed -i '$d' ${OS_TMP}/local_container_dnsmasq_etc.log; sed -i 's/"Source": "//' ${OS_TMP}/local_container_dnsmasq_etc.log; sed -i 's/",//' ${OS_TMP}/local_container_dnsmasq_etc.log; sed -i 's/ //g' ${OS_TMP}/local_container_dnsmasq_etc.log
         elif [ "${REMOTE_PIHOLE_TYPE}" == "podman" ]; then
-            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} sudo podman container inspect ${INPUT_REMOTE_DOCKER_CONTAINER} | grep -i -B 1 '\"Destination\": \"/etc/pihole\"' > ${OS_TMP}/remote_container_pihole_etc.log
-            sed -i '$d' ${OS_TMP}/remote_container_pihole_etc.log; sed -i 's/"Source": "//' ${OS_TMP}/remote_container_pihole_etc.log; sed -i 's/",//' ${OS_TMP}/remote_container_pihole_etc.log; sed -i 's/ //g' ${OS_TMP}/remote_container_pihole_etc.log
-            
+            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} sudo podman container inspect ${INPUT_REMOTE_DOCKER_CONTAINER} | grep -i -B 1 '\"Destination\": \"/etc/pihole\"' > ${OS_TMP}/local_container_pihole_etc.log
             ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} sudo podman container inspect ${INPUT_REMOTE_DOCKER_CONTAINER} | grep -i -B 1 '\"Destination\": \"/etc/dnsmasq.d\"' > ${OS_TMP}/local_container_dnsmasq_etc.log
-            sed -i '$d' ${OS_TMP}/local_container_dnsmasq_etc.log; sed -i 's/"Source": "//' ${OS_TMP}/local_container_dnsmasq_etc.log; sed -i 's/",//' ${OS_TMP}/local_container_dnsmasq_etc.log; sed -i 's/ //g' ${OS_TMP}/local_container_dnsmasq_etc.log
         fi
+
+        MESSAGE="Obtaining remote configuration file 1"
+        RSYNC_REPATH="sudo rsync"
+        RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${OS_TMP}/local_container_pihole_etc.log"
+        RSYNC_TARGET="${OS_TMP}/remote_container_pihole_etc.log"
+        create_rsynccmd
+
+        MESSAGE="Obtaining remote configuration file 1"
+        RSYNC_REPATH="sudo rsync"
+        RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${OS_TMP}/local_container_dnsmasq_etc.log"
+        RSYNC_TARGET="${OS_TMP}/remote_container_dnsmasq_etc.log"
+        create_rsynccmd
+
+        sed -i '$d' ${OS_TMP}/remote_container_pihole_etc.log; sed -i 's/"Source": "//' ${OS_TMP}/remote_container_pihole_etc.log; sed -i 's/",//' ${OS_TMP}/remote_container_pihole_etc.log; sed -i 's/ //g' ${OS_TMP}/remote_container_pihole_etc.log
+        sed -i '$d' ${OS_TMP}/remote_container_dnsmasq_etc.log; sed -i 's/"Source": "//' ${OS_TMP}/remote_container_dnsmasq_etc.log; sed -i 's/",//' ${OS_TMP}/remote_container_dnsmasq_etc.log; sed -i 's/ //g' ${OS_TMP}/remote_container_dnsmasq_etc.log
 
         INPUT_LOCAL_PIHOLE_DIRECTORY=$(cat ${OS_TMP}/remote_container_pihole_etc.log)
         INPUT_LOCAL_DNSMASQ_DIRECTORY=$(cat ${OS_TMP}/remote_container_dnsmasq_etc.log)
