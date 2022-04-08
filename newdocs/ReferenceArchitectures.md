@@ -15,7 +15,7 @@ This design requires the least amount of overhead, or additional software/networ
 1. Client requests an IP address from a DHCP server on the network and receives it along with DNS and gateway information back. Two DNS servers (Pi-hole) are returned to the client.
 2. Client queries one of the two DNS servers, and Pi-hole does it's thing.
 
-You can make changes to your block-list, exceptions, etc, on either Pi-hole and they will be sync'd to the other within the timeframe you establish (here, 15 minutes.) The downside in the above design is you have two places where your clients are logging lookup requests to. Gravity Sync will let you change filter settings in either location, but if you're doing it often things may get overwritten.
+You can make changes to your block-list, exceptions, etc, on either Pi-hole and they will be sync'd to the other within roughly five minutes. The downside in the above design is you have two places where your clients are logging lookup requests to. Gravity Sync will let you change filter settings in either location, but if you're doing it often things may get overwritten.
 
 ### Stay Alive
 
@@ -27,4 +27,4 @@ One way to get around having logging in two places is by using keepalived and pr
 2. The VIP managed by the keepalived service will determine which Pi-hole responds. You make your configuration changes to the active VIP address.
 3. Client queries the single DNS servers, and Pi-hole does it's thing.
 
-You make your configuration changes to the active VIP address and they will be sync'd to the other within the timeframe you establish (here, 15 minutes.)
+You make your configuration changes to the active VIP address and they will be sync'd to the other within roughly five minutes.

@@ -2,7 +2,7 @@
 
 ## Gravity Sync 4
 
-With Gravity Sync running on both Pi-hole instances, running `gravity-sync` on either node will detect changes made to components on either side and decide which way the data needs to go to be in-sync. So if the `gravity.db` has been modified on the remoet Pi-hole, but the `custom.list` file has been changed on the local, Gravity Sync will do a _pull_ of the `gravity.db` then _push_ the `custom.list` and then restart the correct components on each server.
+With Gravity Sync running on both Pi-hole instances, running `gravity-sync` on either node will detect changes made to components on either side and decide which way the data needs to go to be in-sync. So if the `gravity.db` has been modified on the remote Pi-hole, but the `custom.list` file has been changed on the local, Gravity Sync will do a _pull_ of the `gravity.db` then _push_ the `custom.list` and then restart the correct components on each server.
 
 It will also only perform a sync of each component if there are changes within each type to replicate. In this example if you've not any changes to your CNAME settings as part of your DNS changes, they will be skipped. It also means that if you only make a small change to your  DNS settings, it doesn't kickoff the larger `gravity.db` replication.
 

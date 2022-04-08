@@ -38,4 +38,4 @@ Yes.
 
 No.
 
-- Pi-hole 5 implemented a new database called `gravity.db` that contains all the active blocklist settings. Gravity Sync was written specifically for Pi-hole 5.x.
+- Pi-hole 5 implemented a new database called `gravity.db` that contains all the active block list settings. Gravity Sync was written specifically for Pi-hole 5.x.
