@@ -2090,7 +2090,7 @@ case $# in
                 start_gs
                 task_cname ;;    
             *)
-                start_gs
+                start_gs_noconfig
                 task_invalid ;;
         esac
     ;;
