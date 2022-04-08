@@ -1164,7 +1164,7 @@ function logs_export {
     echo -e ${REMOTE_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CNAME_CONF_MD5_LOG} 1> /dev/null
     echo -e ${LOCAL_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CNAME_CONF_MD5_LOG} 1> /dev/null
     
-    if [ ${GS_PEERLESS_MODE} != "1" ]; then
+    if [ "${GS_PEERLESS_MODE}" != "1" ]; then
         sudo rm -f ${OS_TMP}/*.md5
         echo -e ${LOCAL_DB_MD5} | sudo tee -a ${OS_TMP}/${GS_GRAVITY_FI_MD5_LOG} 1> /dev/null
         echo -e ${REMOTE_DB_MD5} | sudo tee -a ${OS_TMP}/${GS_GRAVITY_FI_MD5_LOG} 1> /dev/null
