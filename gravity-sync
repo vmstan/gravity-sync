@@ -2066,7 +2066,7 @@ case $# in
                 start_gs_noconfig
                 task_devmode ;;
             logs|log)
-                start_gs
+                start_gs_noconfig
                 task_logs ;;
             compare)
                 start_gs
@@ -2081,7 +2081,7 @@ case $# in
                 start_gs
                 task_purge ;;
             sudo)
-                start_gs
+                start_gs_noconfig
                 task_sudo ;;
             info)
                 start_gs
@@ -2096,7 +2096,7 @@ case $# in
     ;;
     
     *)
-        start_gs
+        start_gs_noconfig
         task_invalid ;;
 esac
 
