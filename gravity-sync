@@ -1610,7 +1610,7 @@ function advanced_config_generate {
     if [ "${REMOTE_PIHOLE_TYPE}" == "docker" ] || [ "${REMOTE_PIHOLE_TYPE}" == "podman" ]; then        
         
         if [ "${REMOTE_PIHOLE_TYPE}" == "docker" ]; then
-            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo docker ps -a | awk '\{print \$NF\}' > /tmp/gs_local_container.log"
+            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo docker ps -a | awk '{print \$NF}' > /tmp/gs_local_container.log"
         elif [ "${REMOTE_PIHOLE_TYPE}" == "podman" ]; then
             ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo podman container ls > /tmp/gs_local_container.log"
         fi
