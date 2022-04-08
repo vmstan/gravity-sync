@@ -129,19 +129,10 @@ UI_CONFIG_AREYOUSURE='Proceeding will replace your existing configuration'
 UI_CONFIG_ERASING='Erasing existing'
 UI_CONFIG_REQUIRED='required settings'
 UI_CONFIG_LOCAL='local host'
-UI_CONFIG_CONT_DETECT='Docker or Podman container engine'
-UI_CONFIG_LOCALSEC='Local'
-UI_CONFIG_REMOTEPRI='Remote'
-UI_CONFIG_INSTANCENAME='instance name required'
 UI_CONFIG_CONTAINER_NAME='container name'
-UI_CONFIG_IMAGES='running instances'
 UI_CONFIG_SAVING='Saving'
 UI_CONFIG_ETC_VOLPATH="'etc' volume path"
-UI_CONFIG_ETC_VOLPATH_EXAMPLE="Example, '/opt/pihole/etc-pihole'"
-UI_CONFIG_ETC_VOLDNSQ_EXAMPLE="Example, '/opt/pihole/etc-dnsmasq.d'"
-UI_CONFIG_SETTING_REQUIRED='This setting is required!'
 UI_CONFIG_VOLUME_OWNER='volume ownership'
-UI_CONFIG_DEFAULT_LEAVE="Leave blank for default"
 
 ## Script Colors
 RED='\033[0;91m'
@@ -1610,7 +1601,7 @@ function advanced_config_generate {
         sudo sed -i "/# LOCAL_DOCKER_CONTAINER=''/c\LOCAL_DOCKER_CONTAINER='${INPUT_LOCAL_DOCKER_CONTAINER}'" ${GS_ETC_PATH}/${GS_CONFIG_FILE}
         error_validate
 
-        MESSAGE="Examining container configuration"
+        MESSAGE="Examining local container configuration"
         echo_stat
 
         if [ "${LOCAL_PIHOLE_TYPE}" == "docker" ]; then
@@ -1626,39 +1617,15 @@ function advanced_config_generate {
 
         echo_good
 
-        # MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH}" 
-        # echo_inf1
-        # MESSAGE="${UI_CONFIG_ETC_VOLPATH_EXAMPLE}"
-        # echo_need
-        # read -r INPUT_LOCAL_PIHOLE_DIRECTORY
-        
-        if [ "${INPUT_LOCAL_PIHOLE_DIRECTORY}" != "" ]; then
-            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH} to ${GS_CONFIG_FILE}"
-            echo_stat
-            sudo sed -i "/# LOCAL_PIHOLE_DIRECTORY=''/c\LOCAL_PIHOLE_DIRECTORY='${INPUT_LOCAL_PIHOLE_DIRECTORY}'" ${GS_ETC_PATH}/${GS_CONFIG_FILE}
-            error_validate
-        else
-            MESSAGE="${UI_CONFIG_SETTING_REQUIRED}"
-            echo_warn
-            exit_withchange
-        fi
-        
-        # MESSAGE="${UI_CONFIG_LOCALSEC} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH}"
-        # echo_inf1
-        # MESSAGE="${UI_CONFIG_ETC_VOLDNSQ_EXAMPLE}"
-        # echo_need
-        # read -r INPUT_LOCAL_DNSMASQ_DIRECTORY
-        
-        if [ "${INPUT_LOCAL_DNSMASQ_DIRECTORY}" != "" ]; then
-            MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH} to ${GS_CONFIG_FILE}"
-            echo_stat
-            sudo sed -i "/# LOCAL_DNSMASQ_DIRECTORY=''/c\LOCAL_DNSMASQ_DIRECTORY='${INPUT_LOCAL_DNSMASQ_DIRECTORY}'" ${GS_ETC_PATH}/${GS_CONFIG_FILE}
-            error_validate
-        else
-            MESSAGE="${UI_CONFIG_SETTING_REQUIRED}"
-            echo_warn
-            exit_withchange
-        fi
+        MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH} to ${GS_CONFIG_FILE}"
+        echo_stat
+        sudo sed -i "/# LOCAL_PIHOLE_DIRECTORY=''/c\LOCAL_PIHOLE_DIRECTORY='${INPUT_LOCAL_PIHOLE_DIRECTORY}'" ${GS_ETC_PATH}/${GS_CONFIG_FILE}
+        error_validate
+
+        MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH} to ${GS_CONFIG_FILE}"
+        echo_stat
+        sudo sed -i "/# LOCAL_DNSMASQ_DIRECTORY=''/c\LOCAL_DNSMASQ_DIRECTORY='${INPUT_LOCAL_DNSMASQ_DIRECTORY}'" ${GS_ETC_PATH}/${GS_CONFIG_FILE}
+        error_validate
         
         MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_VOLUME_OWNER} to ${GS_CONFIG_FILE}"
         echo_stat
@@ -1690,40 +1657,38 @@ function advanced_config_generate {
         echo_stat
         sudo sed -i "/# REMOTE_DOCKER_CONTAINER=''/c\REMOTE_DOCKER_CONTAINER='${INPUT_REMOTE_DOCKER_CONTAINER}'" ${GS_ETC_PATH}/${GS_CONFIG_FILE}
         error_validate
-        
-        MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH}"
-        echo_inf1
-        MESSAGE="${UI_CONFIG_ETC_VOLPATH_EXAMPLE}"
-        echo_need
-        read -r INPUT_REMOTE_PIHOLE_DIRECTORY
-        
-        if [ "${INPUT_REMOTE_PIHOLE_DIRECTORY}" != "" ]; then
-            MESSAGE="${UI_CONFIG_SAVING} remote host ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH} to ${GS_CONFIG_FILE}"
-            echo_stat
-            sudo sed -i "/# REMOTE_PIHOLE_DIRECTORY=''/c\REMOTE_PIHOLE_DIRECTORY='${INPUT_REMOTE_PIHOLE_DIRECTORY}'" ${GS_ETC_PATH}/${GS_CONFIG_FILE}
-            error_validate
-        else
-            MESSAGE="${UI_CONFIG_SETTING_REQUIRED}"
-            echo_warn
-            exit_withchange
+
+        MESSAGE="Examining remote container configuration"
+        echo_stat
+
+        if [ "${REMOTE_PIHOLE_TYPE}" == "docker" ]; then
+            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} sudo docker container inspect ${INPUT_REMOTE_DOCKER_CONTAINER} | grep -i -B 1 '\"Destination\": \"/etc/pihole\"' > ${OS_TMP}/remote_container_pihole_etc.log
+            sed -i '$d' ${OS_TMP}/remote_container_pihole_etc.log; sed -i 's/"Source": "//' ${OS_TMP}/remote_container_pihole_etc.log; sed -i 's/",//' ${OS_TMP}/remote_container_pihole_etc.log; sed -i 's/ //g' ${OS_TMP}/remote_container_pihole_etc.log
+            
+            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} sudo docker container inspect ${INPUT_LOCAL_DOCKER_CONTAINER} | grep -i -B 1 '\"Destination\": \"/etc/dnsmasq.d\"' > ${OS_TMP}/local_container_dnsmasq_etc.log
+            sed -i '$d' ${OS_TMP}/local_container_dnsmasq_etc.log; sed -i 's/"Source": "//' ${OS_TMP}/local_container_dnsmasq_etc.log; sed -i 's/",//' ${OS_TMP}/local_container_dnsmasq_etc.log; sed -i 's/ //g' ${OS_TMP}/local_container_dnsmasq_etc.log
+        elif [ "${REMOTE_PIHOLE_TYPE}" == "podman" ]; then
+            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} sudo podman container inspect ${INPUT_REMOTE_DOCKER_CONTAINER} | grep -i -B 1 '\"Destination\": \"/etc/pihole\"' > ${OS_TMP}/remote_container_pihole_etc.log
+            sed -i '$d' ${OS_TMP}/remote_container_pihole_etc.log; sed -i 's/"Source": "//' ${OS_TMP}/remote_container_pihole_etc.log; sed -i 's/",//' ${OS_TMP}/remote_container_pihole_etc.log; sed -i 's/ //g' ${OS_TMP}/remote_container_pihole_etc.log
+            
+            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} sudo podman container inspect ${INPUT_LOCAL_DOCKER_CONTAINER} | grep -i -B 1 '\"Destination\": \"/etc/dnsmasq.d\"' > ${OS_TMP}/local_container_dnsmasq_etc.log
+            sed -i '$d' ${OS_TMP}/local_container_dnsmasq_etc.log; sed -i 's/"Source": "//' ${OS_TMP}/local_container_dnsmasq_etc.log; sed -i 's/",//' ${OS_TMP}/local_container_dnsmasq_etc.log; sed -i 's/ //g' ${OS_TMP}/local_container_dnsmasq_etc.log
         fi
+
+        INPUT_LOCAL_PIHOLE_DIRECTORY=$(cat ${OS_TMP}/remote_container_pihole_etc.log)
+        INPUT_LOCAL_DNSMASQ_DIRECTORY=$(cat ${OS_TMP}/remote_container_dnsmasq_etc.log)
+
+        echo_good
         
-        MESSAGE="${UI_CONFIG_REMOTEPRI} ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH}"
-        echo_inf1
-        MESSAGE="${UI_CONFIG_ETC_VOLDNSQ_EXAMPLE}"
-        echo_need
-        read -r INPUT_REMOTE_DNSMASQ_DIRECTORY
+        MESSAGE="${UI_CONFIG_SAVING} remote host ${UI_CORE_APP} ${UI_CONFIG_ETC_VOLPATH} to ${GS_CONFIG_FILE}"
+        echo_stat
+        sudo sed -i "/# REMOTE_PIHOLE_DIRECTORY=''/c\REMOTE_PIHOLE_DIRECTORY='${INPUT_REMOTE_PIHOLE_DIRECTORY}'" ${GS_ETC_PATH}/${GS_CONFIG_FILE}
+        error_validate
         
-        if [ "${INPUT_REMOTE_DNSMASQ_DIRECTORY}" != "" ]; then
-            MESSAGE="${UI_CONFIG_SAVING} remote host ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH} to ${GS_CONFIG_FILE}"
-            echo_stat
-            sudo sed -i "/# REMOTE_DNSMASQ_DIRECTORY=''/c\REMOTE_DNSMASQ_DIRECTORY='${INPUT_REMOTE_DNSMASQ_DIRECTORY}'" ${GS_ETC_PATH}/${GS_CONFIG_FILE}
-            error_validate
-        else
-            MESSAGE="${UI_CONFIG_SETTING_REQUIRED}"
-            echo_warn
-            exit_withchange
-        fi
+        MESSAGE="${UI_CONFIG_SAVING} remote host ${UI_CORE_APP_DNS} ${UI_CONFIG_ETC_VOLPATH} to ${GS_CONFIG_FILE}"
+        echo_stat
+        sudo sed -i "/# REMOTE_DNSMASQ_DIRECTORY=''/c\REMOTE_DNSMASQ_DIRECTORY='${INPUT_REMOTE_DNSMASQ_DIRECTORY}'" ${GS_ETC_PATH}/${GS_CONFIG_FILE}
+        error_validate
         
         MESSAGE="${UI_CONFIG_SAVING} remote host ${UI_CONFIG_VOLUME_OWNER} to ${GS_CONFIG_FILE}"
         echo_stat
@@ -1761,26 +1726,6 @@ function config_delete {
         error_validate
 
     config_generate
-}
-
-## Detect Docker
-function docker_detect {
-    if hash docker 2>/dev/null; then
-        PH_FTL_CHECK=$(sudo docker container ls | grep 'pihole/pihole')
-        if [ "$PH_FTL_CHECK" != "" ]; then
-            OS_DOCKER_READY="1"
-        fi
-    fi
-}
-
-## Detect Podman
-function podman_detect {
-    if hash podman 2>/dev/null; then
-        PH_FTL_CHECK=$(sudo podman container ls | grep 'pihole/pihole')
-        if [ "$PH_FTL_CHECK" != "" ]; then
-            OS_PODMAN_READY="1"
-        fi
-    fi
 }
 
 ## Master Branch
