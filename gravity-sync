@@ -1312,10 +1312,10 @@ function detect_gs_peer {
         echo_good
     else
         GS_PEERLESS_MODE="1"
-        MESSAGE="${PROGRAM} remote peerless mode enabled"
+        MESSAGE="${PROGRAM} falling back to peerless mode"
         echo_good
 
-        MESSAGE="Please install and configure ${PROGRAM} on remote host"
+        MESSAGE="Please configure ${PROGRAM} on remote host"
         echo_warn
     fi
 }
