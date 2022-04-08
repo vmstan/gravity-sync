@@ -2145,7 +2145,7 @@ case $# in
                 start_gs
                 task_disable_automate ;;
             purge|uninstall|remove)
-                start_gs
+                start_gs_no_config
                 task_purge ;;
             sudo)
                 start_gs_no_config
