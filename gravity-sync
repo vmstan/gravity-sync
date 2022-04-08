@@ -1315,7 +1315,7 @@ function detect_gs_peer {
         MESSAGE="${PROGRAM} remote peerless mode enabled"
         echo_good
 
-        MESSAGE="Install and configure ${PROGRAM} for full functionality"
+        MESSAGE="Please install and configure ${PROGRAM} on remote host"
         echo_warn
     fi
 }
@@ -2016,8 +2016,7 @@ function task_purge {
     echo -e "  ${UI_CORE_APP} binaries, configuration and services ARE NOT impacted!"
     echo -e "  Your devices will continue to resolve and block DNS requests,"
     echo -e "  but your ${UI_GRAVITY_NAME} and ${UI_CUSTOM_NAME} WILL NOT sync anymore,"
-    echo -e "  until you reconfigure ${PROGRAM} on this device. Backup files will not "
-    echo -e "  be removed but you can manually remove '.${GS_BACKUP_EXT}' files if desired."
+    echo -e "  until you reconfigure ${PROGRAM} on this device."
     echo_blank
     echo -e "  In order to fully remove ${PROGRAM} from your infrastructure, you will also"
     echo -e "  need to run this same command from the peer instance as well."
