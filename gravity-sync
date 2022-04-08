@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2086,SC1091
 GS_RUN_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
@@ -1966,12 +1967,15 @@ function task_purge {
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
     
-    echo -e "  THIS WILL REMOVE YOUR GRAVITY SYNC INSTALLATION" \
+    echo -e "  THIS WILL REMOVE YOUR ENTIRE GRAVITY SYNC INSTALLATION" \
             "  ${UI_CORE_APP} binaries, configuration and services ARE NOT impacted!" \
             "  Your devices will continue to resolve and block DNS requests," \
             "  but your ${UI_GRAVITY_NAME} and ${UI_CUSTOM_NAME} WILL NOT sync anymore," \
             "  until you reconfigure ${PROGRAM} on this device. Backup files will not" \
-            "  be removed but you can manually remove '.${GS_BACKUP_EXT}' files if desired." \
+            "  be removed but you can manually remove '.${GS_BACKUP_EXT}' files if desired."
+    echo_blank
+    echo -e "  In order to fully remove ${PROGRAM} from your infrastructure, you will also" \
+            "  need to run this same command from the peer instance as well."
         
     intent_validate
 
