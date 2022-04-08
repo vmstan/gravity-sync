@@ -6,14 +6,14 @@ GS_RUN_START=$SECONDS
 PROGRAM='Gravity Sync'
 GS_VERSION='4.0.0'
 
-# For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
+# For documentation or the changelog/updates visit https://github.com/vmstan/gravity-sync
 # Requires Pi-Hole 5.x or higher already be installed, for help visit https://pi-hole.net
 
 # REQUIRED SETTINGS ##########################
 
 # Run 'gravity-sync config' to get started, it will customize the script for your environment
-# You should not to change the values of any variables here here to customize your install
-# Add replacement variables to gravity-sync.conf, which will overwrite these defaults.
+# You should NOT to change the values of any variables here, to customize your install
+# Only add replacement variables to gravity-sync.conf, which will overwrite these defaults
 # Gravity Sync 4.0 introduces a new configuration file format, there is no direct upgrade path
 
 # CUSTOM VARIABLES ###########################
@@ -56,21 +56,21 @@ GS_BACKUP_EXT='gsb'                             # replace in gravity-sync.conf t
 GS_FILEPATH='/usr/local/bin/gravity-sync'			
 GS_ETC_PATH="/etc/gravity-sync"		            # replace in gravity-sync.conf to overwrite
 GS_CONFIG_FILE='gravity-sync.conf' 	            # replace in gravity-sync.conf to overwrite
-GS_SYNCING_LOG='gravity-sync.log' 		        # replace in gravity-sync.conf to overwrite
-GS_GRAVITY_FI_MD5_LOG='gravity.md5'             # replace in gravity-sync.conf to overwrite
-GS_CUSTOM_DNS_MD5_LOG='clist.md5'               # replace in gravity-sync.conf to overwrite
-GS_CNAME_CONF_MD5_LOG='cname.md5'               # replace in gravity-sync.conf to overwrite
+GS_SYNCING_LOG='gs-sync.log' 		            # replace in gravity-sync.conf to overwrite
+GS_GRAVITY_FI_MD5_LOG='gs-gravity.md5'          # replace in gravity-sync.conf to overwrite
+GS_CUSTOM_DNS_MD5_LOG='gs-clist.md5'            # replace in gravity-sync.conf to overwrite
+GS_CNAME_CONF_MD5_LOG='gs-cname.md5'            # replace in gravity-sync.conf to overwrite
 
 # SSH Customization
-GS_SSH_PORT='22' 						            # replace in gravity-sync.conf to overwrite
-GS_SSH_PKIF="${GS_ETC_PATH}/gravity-sync.rsa"      # replace in gravity-sync.conf to overwrite
+GS_SSH_PORT='22' 						        # replace in gravity-sync.conf to overwrite
+GS_SSH_PKIF="${GS_ETC_PATH}/gravity-sync.rsa"   # replace in gravity-sync.conf to overwrite
 
 # Github Customization
 GS_LOCAL_REPO="${GS_ETC_PATH}/.gs"              # replace in gravity-sync.conf to overwrite
 
 # OS Settings
-OS_DAEMON_PATH='/etc/systemd/system'               # replace in gravity-sync.conf to overwrite
-OS_TMP='/tmp'                                   # replace in gravity-sync.conf to overwrite
+OS_DAEMON_PATH='/etc/systemd/system'
+OS_TMP='/tmp'
 OS_SSH_CMD='ssh'
 
 ##############################################
