@@ -1635,9 +1635,6 @@ function advanced_config_generate {
     
     if [ "${REMOTE_PIHOLE_TYPE}" == "docker" ] || [ "${REMOTE_PIHOLE_TYPE}" == "podman" ]; then        
         
-        MESSAGE="Remote running container images"
-        echo_info
-        echo_lines
         if [ "${LOCAL_PIHOLE_TYPE}" == "docker" ]; then
             ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo docker container ls" > ${OS_TMP}/gs_local_container.log
         elif [ "${LOCAL_PIHOLE_TYPE}" == "podman" ]; then
@@ -1650,6 +1647,9 @@ function advanced_config_generate {
         RSYNC_TARGET="${OS_TMP}/gs_remote_container.log"
         create_rsynccmd
 
+        MESSAGE="Remote running container images"
+        echo_info
+        echo_lines
         cat ${OS_TMP}/gs_remote_container.log
         echo_lines
 
