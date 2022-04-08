@@ -1665,13 +1665,13 @@ function advanced_config_generate {
             ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} sudo docker container inspect ${INPUT_REMOTE_DOCKER_CONTAINER} | grep -i -B 1 '\"Destination\": \"/etc/pihole\"' > ${OS_TMP}/remote_container_pihole_etc.log
             sed -i '$d' ${OS_TMP}/remote_container_pihole_etc.log; sed -i 's/"Source": "//' ${OS_TMP}/remote_container_pihole_etc.log; sed -i 's/",//' ${OS_TMP}/remote_container_pihole_etc.log; sed -i 's/ //g' ${OS_TMP}/remote_container_pihole_etc.log
             
-            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} sudo docker container inspect ${INPUT_LOCAL_DOCKER_CONTAINER} | grep -i -B 1 '\"Destination\": \"/etc/dnsmasq.d\"' > ${OS_TMP}/local_container_dnsmasq_etc.log
+            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} sudo docker container inspect ${INPUT_REMOTE_DOCKER_CONTAINER} | grep -i -B 1 '\"Destination\": \"/etc/dnsmasq.d\"' > ${OS_TMP}/local_container_dnsmasq_etc.log
             sed -i '$d' ${OS_TMP}/local_container_dnsmasq_etc.log; sed -i 's/"Source": "//' ${OS_TMP}/local_container_dnsmasq_etc.log; sed -i 's/",//' ${OS_TMP}/local_container_dnsmasq_etc.log; sed -i 's/ //g' ${OS_TMP}/local_container_dnsmasq_etc.log
         elif [ "${REMOTE_PIHOLE_TYPE}" == "podman" ]; then
             ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} sudo podman container inspect ${INPUT_REMOTE_DOCKER_CONTAINER} | grep -i -B 1 '\"Destination\": \"/etc/pihole\"' > ${OS_TMP}/remote_container_pihole_etc.log
             sed -i '$d' ${OS_TMP}/remote_container_pihole_etc.log; sed -i 's/"Source": "//' ${OS_TMP}/remote_container_pihole_etc.log; sed -i 's/",//' ${OS_TMP}/remote_container_pihole_etc.log; sed -i 's/ //g' ${OS_TMP}/remote_container_pihole_etc.log
             
-            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} sudo podman container inspect ${INPUT_LOCAL_DOCKER_CONTAINER} | grep -i -B 1 '\"Destination\": \"/etc/dnsmasq.d\"' > ${OS_TMP}/local_container_dnsmasq_etc.log
+            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} sudo podman container inspect ${INPUT_REMOTE_DOCKER_CONTAINER} | grep -i -B 1 '\"Destination\": \"/etc/dnsmasq.d\"' > ${OS_TMP}/local_container_dnsmasq_etc.log
             sed -i '$d' ${OS_TMP}/local_container_dnsmasq_etc.log; sed -i 's/"Source": "//' ${OS_TMP}/local_container_dnsmasq_etc.log; sed -i 's/",//' ${OS_TMP}/local_container_dnsmasq_etc.log; sed -i 's/ //g' ${OS_TMP}/local_container_dnsmasq_etc.log
         fi
 
