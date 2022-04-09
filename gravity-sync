@@ -1974,6 +1974,17 @@ function task_disable_automate {
     exit_with_changes
 }
 
+function task_monitor {
+    GS_TASK_TYPE='MONITOR'
+    MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
+    echo_good
+
+    MESSAGE="Press CTRL+Z to exit MONITOR mode"
+    echo_warn
+
+    sudo journalctl -f -u gravity-sync
+}
+
 function kill_automation_service {
     if systemctl is-active --quiet gravity-sync; then
         MESSAGE="Stopping ${PROGRAM} timer"
@@ -2074,19 +2085,22 @@ function list_gs_arguments {
     echo_blank
     echo -e "Setup Options:"
     echo -e " ${YELLOW}config${NC}      Creates a new ${PROGRAM} configuration file"
-    echo -e " ${YELLOW}auto${NC}        Schedules the ${PROGRAM} replication task using systemd"
-    echo -e " ${YELLOW}disable${NC}     Disables the ${PROGRAM} automated replication task"
-    echo -e " ${YELLOW}version${NC}     Shows the installed version of ${PROGRAM} and check for updates"
-    echo -e " ${YELLOW}update${NC}      Upgrades ${PROGRAM} to the latest available version using Git"
-    echo -e " ${YELLOW}dev${NC}         Sets update command to use a development version of ${PROGRAM}"
-    echo -e " ${YELLOW}sudo${NC}        Configures password-less sudo for current user"
-    echo -e " ${YELLOW}purge${NC}       Uninstall ${PROGRAM}"
+    echo -e " ${YELLOW}version${NC}     Lists the installed version of ${PROGRAM} and checks for updates"
+    echo -e " ${YELLOW}upgrade${NC}     Upgrades ${PROGRAM} to the latest available version on GitHub"
+    echo -e " ${YELLOW}dev${NC}         Sets upgrade command to use a development version of ${PROGRAM} (toggle on/off)"
+    echo -e " ${YELLOW}sudo${NC}        Enables password-less sudo for current user"
+    echo -e " ${YELLOW}purge${NC}       Uninstalls ${PROGRAM} from this system"
     echo_blank
     echo -e "Replication Options:"
-    echo -e " ${YELLOW}smart${NC}       Detects ${UI_CORE_APP} changes on remote and local and then combines them"
-    echo -e " ${YELLOW}pull${NC}        Brings the remote ${UI_CORE_APP} configuration to this server"
-    echo -e " ${YELLOW}push${NC}        Sends the local ${UI_CORE_APP} configuration to the remote"
-    echo -e " ${YELLOW}compare${NC}     Just checks for ${UI_CORE_APP} differences at each side without making changes"
+    echo -e " ${YELLOW}smart${NC}       Reviews all ${UI_CORE_APP} changes syncs them (default)"
+    echo -e " ${YELLOW}pull${NC}        Syncs only the remote ${UI_CORE_APP} configuration to this server"
+    echo -e " ${YELLOW}push${NC}        Syncs only the local ${UI_CORE_APP} configuration to the remote"
+    echo -e " ${YELLOW}compare${NC}     Checks for ${UI_CORE_APP} differences without making changes"
+    echo_blank
+    echo -e "Automation Options:"
+    echo -e " ${YELLOW}auto${NC}        Schedules ${PROGRAM} replication tasks using systemd timers"
+    echo -e " ${YELLOW}monitor${NC}     Monitors the ${PROGRAM} replication job in real time"
+    echo -e " ${YELLOW}disable${NC}     Disables the ${PROGRAM} automated replication task"
     echo_blank
     echo -e "Debug Options:"
     echo -e " ${YELLOW}logs${NC}        Shows the recent successful replication jobs/times"
@@ -2136,6 +2150,9 @@ case $# in
             disable)
                 start_gs
                 task_disable_automate ;;
+            monitor|follow)
+                start_gs_no_config
+                task_monitor ;;
             purge|uninstall|remove)
                 start_gs_no_config
                 task_purge ;;
