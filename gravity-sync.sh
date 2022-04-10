@@ -11,7 +11,7 @@ LOCAL_FOLDR=$(dirname $GS_FILEPATH)
 function check_old_version {
     echo -e "Checker"
 
-    if [ -f settings/gravity-sync.conf ]
+    if [ -f settings/gravity-sync.conf ]; then
         echo -e "Old configuration detected"
     else
         echo -e "No old config detected"
@@ -78,37 +78,53 @@ function upgrade_to_4 {
     sudo sed -i "/REMOTE_HOST=''/c\REMOTE_HOST='${REMOTE_HOST}'" /etc/gravity-sync/gravity-sync.conf
     sudo sed -i "/REMOTE_USER=''/c\REMOTE_HOST='${REMOTE_USER}'" /etc/gravity-sync/gravity-sync.conf
 
-    if [ "${LOCAL_PIHOLE_DIRECTORY}" != '' ] || [ "${LOCAL_PIHOLE_DIRECTORY}" != '/etc/pihole' ]; then
+    if [ "${LOCAL_PIHOLE_DIRECTORY}" == '' ] || [ "${LOCAL_PIHOLE_DIRECTORY}" == '/etc/pihole' ]; then
+        SKIP="1"
+    else
         sudo sed -i "/LOCAL_PIHOLE_DIRECTORY=''/c\LOCAL_PIHOLE_DIRECTORY='${LOCAL_PIHOLE_DIRECTORY}'" /etc/gravity-sync/gravity-sync.conf
     fi
 
-    if [ "${REMOTE_PIHOLE_DIRECTORY}" != '' ] || [ "${REMOTE_PIHOLE_DIRECTORY}" != '/etc/pihole' ]; then
+    if [ "${REMOTE_PIHOLE_DIRECTORY}" == '' ] || [ "${REMOTE_PIHOLE_DIRECTORY}" == '/etc/pihole' ]; then
+        SKIP="1"
+    else
         sudo sed -i "/REMOTE_PIHOLE_DIRECTORY=''/c\REMOTE_PIHOLE_DIRECTORY='${REMOTE_PIHOLE_DIRECTORY}'" /etc/gravity-sync/gravity-sync.conf
     fi
 
-    if [ "${LOCAL_DNSMASQ_DIRECTORY}" != '' ] || [ "${LOCAL_DNSMASQ_DIRECTORY}" != '/etc/dnsmasq.d' ]; then
+    if [ "${LOCAL_DNSMASQ_DIRECTORY}" == '' ] || [ "${LOCAL_DNSMASQ_DIRECTORY}" == '/etc/dnsmasq.d' ]; then
+        SKIP="1"
+    else
         sudo sed -i "/LOCAL_DNSMASQ_DIRECTORY=''/c\LOCAL_DNSMASQ_DIRECTORY='${LOCAL_DNSMASQ_DIRECTORY}'" /etc/gravity-sync/gravity-sync.conf
     fi
 
-    if [ "${REMOTE_DNSMASQ_DIRECTORY}" != '' ] || [ "${REMOTE_DNSMASQ_DIRECTORY}" != '/etc/dnsmasq.d' ]; then
+    if [ "${REMOTE_DNSMASQ_DIRECTORY}" == '' ] || [ "${REMOTE_DNSMASQ_DIRECTORY}" == '/etc/dnsmasq.d' ]; then
+        SKIP="1"
+    else
         sudo sed -i "/REMOTE_DNSMASQ_DIRECTORY=''/c\REMOTE_DNSMASQ_DIRECTORY='${REMOTE_DNSMASQ_DIRECTORY}'" /etc/gravity-sync/gravity-sync.conf
     fi
 
-    if [ "${LOCAL_FILE_OWNER}" != '' ]; then
+    if [ "${LOCAL_FILE_OWNER}" == '' ]; then
         sudo sed -i "/LOCAL_FILE_OWNER=''/c\LOCAL_FILE_OWNER='${LOCAL_FILE_OWNER}'" /etc/gravity-sync/gravity-sync.conf
     fi
 
-    if [ "${REMOTE_FILE_OWNER}" != '' ]; then
+    if [ "${REMOTE_FILE_OWNER}" == '' ]; then
+        SKIP="1"
+    else
         sudo sed -i "/REMOTE_FILE_OWNER=''/c\REMOTE_FILE_OWNER='${REMOTE_FILE_OWNER}'" /etc/gravity-sync/gravity-sync.conf
     fi
 
-    if [ "${LOCAL_DOCKER_CONTAINER}" != '' ] || [ "${LOCAL_DOCKER_CONTAINER}" != 'pihole' ]; then
+    if [ "${LOCAL_DOCKER_CONTAINER}" == '' ] || [ "${LOCAL_DOCKER_CONTAINER}" == 'pihole' ]; then
+        SKIP="1"
+    else
         sudo sed -i "/LOCAL_DOCKER_CONTAINER=''/c\LOCAL_DOCKER_CONTAINER='${LOCAL_DOCKER_CONTAINER}'" /etc/gravity-sync/gravity-sync.conf
     fi
 
-    if [ "${REMOTE_DOCKER_CONTAINER}" != '' ] || [ "${REMOTE_DOCKER_CONTAINER}" != 'pihole' ]; then
+    if [ "${REMOTE_DOCKER_CONTAINER}" == '' ] || [ "${REMOTE_DOCKER_CONTAINER}" == 'pihole' ]; then
+        SKIP="1"
+    else
         sudo sed -i "/REMOTE_DOCKER_CONTAINER=''/c\REMOTE_DOCKER_CONTAINER='${REMOTE_DOCKER_CONTAINER}'" /etc/gravity-sync/gravity-sync.conf
     fi
+
+    echo -e "${SKIP}"
 }
 
 function remove_old_version {
