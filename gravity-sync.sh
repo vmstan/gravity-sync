@@ -1,198 +1,430 @@
-#!/bin/bash
-SCRIPT_START=$SECONDS
+#!/usr/bin/env bash
 
 # GRAVITY SYNC BY VMSTAN #####################
+# GS 3.x to 4.0 Upgrade Utility ##############
+
+# Run only to upgrade your existing Gravity Sync 3.x installation to 4.0 format
 PROGRAM='Gravity Sync'
-VERSION='3.7.0'
 
-# For documentation or downloading updates visit https://github.com/vmstan/gravity-sync
-# Requires Pi-Hole 5.x or higher already be installed, for help visit https://pi-hole.net
+GS_FILEPATH=$(realpath $0)
+LOCAL_FOLDR=$(dirname $GS_FILEPATH)
 
-# REQUIRED SETTINGS ##########################
+GS_ETC_PATH="/etc/gravity-sync"
+GS_GRAVITY_FI_MD5_LOG='gs-gravity.md5'
+GS_CUSTOM_DNS_MD5_LOG='gs-clist.md5'
+GS_CNAME_CONF_MD5_LOG='gs-cname.md5'
 
-# Run './gravity-sync.sh config' to get started, it will customize the script for your environment
-# You should not to change the values of any variables here here to customize your install
-# Add replacement variables to gravity-sync.conf, which will overwrite these defaults.
+OS_DAEMON_PATH='/etc/systemd/system'
 
-# STANDARD VARIABLES #########################
+## Script Colors
+RED='\033[0;91m'
+GREEN='\033[0;92m'
+CYAN='\033[0;96m'
+YELLOW='\033[0;93m'
+PURPLE='\033[0;95m'
+BLUE='\033[0;94m'
+BOLD='\033[1m'
+NC='\033[0m'
 
-# Installation Types
-PH_IN_TYPE='default'				# Pi-hole install type, `default`, `docker`, or `podman` (local)
-RH_IN_TYPE='default'				# Pi-hole install type, `default`, `docker`, or `podman` (remote)
+## Message Codes
+FAIL="${RED}✗${NC}"
+WARN="${PURPLE}!${NC}"
+GOOD="${GREEN}✓${NC}"
+STAT="${CYAN}∞${NC}"
+INFO="${YELLOW}»${NC}"
+INF1="${CYAN}›${NC}"
+NEED="${BLUE}?${NC}"
+LOGO="${PURPLE}∞${NC}"
 
-# Pi-hole Folder/File Customization
-PIHOLE_DIR='/etc/pihole' 			# default Pi-hole data directory (local)
-RIHOLE_DIR='/etc/pihole'			# default Pi-hole data directory (remote)
-DNSMAQ_DIR='/etc/dnsmasq.d'         # default DNSMASQ data directory (local)
-RNSMAQ_DIR='/etc/dnsmasq.d'         # default DNSMASQ data directory (remote)
-PIHOLE_BIN='/usr/local/bin/pihole' 	# default Pi-hole binary directory (local)
-RIHOLE_BIN='/usr/local/bin/pihole' 	# default Pi-hole binary directory (remote)
-DOCKER_BIN='/usr/bin/docker'		# default Docker binary directory (local)
-ROCKER_BIN='/usr/bin/docker'		# default Docker binary directory (remote)
-PODMAN_BIN='/usr/bin/podman'        # default Podman binary directory (local)
-RODMAN_BIN='/usr/bin/podman'        # default Podman binary directory (remote)
-FILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (local)
-RILE_OWNER='pihole:pihole'			# default Pi-hole file owner and group (remote)
-DOCKER_CON='pihole'					# default Pi-hole container name (local)
-ROCKER_CON='pihole'					# default Pi-hole container name (remote)
-CONTAIMAGE='pihole/pihole'          # official Pi-hole container image
+## Echo Stack
+### Informative
+function echo_info {
+    echo -e "${INFO} ${YELLOW}${MESSAGE}${NC}"
+}
 
-GRAVITY_FI='gravity.db' 			        # default Pi-hole database file
-CUSTOM_DNS='custom.list'			        # default Pi-hole local DNS lookups
-CNAME_CONF='05-pihole-custom-cname.conf'    # default DNSMASQ CNAME alias file
-GSLAN_CONF='08-gs-lan.conf'                 # default DNSMASQ GS managed file
+function echo_prompt {
+    echo -e "${INF1} ${CYAN}${MESSAGE}${NC}"
+}
 
-# Interaction Customization
-VERIFY_PASS='0'						# replace in gravity-sync.conf to overwrite
-SKIP_CUSTOM='0'						# replace in gravity-sync.conf to overwrite
-INCLUDE_CNAME='0'					# replace in gravity-sync.conf to overwrite
-DATE_OUTPUT='0'						# replace in gravity-sync.conf to overwrite
-PING_AVOID='0'						# replace in gravity-sync.conf to overwrite
-ROOT_CHECK_AVOID='0'				# replace in gravity-sync.conf to overwrite
+### Warning
+function echo_warn {
+    echo -e "${WARN} ${PURPLE}${MESSAGE}${NC}"
+}
 
-# Backup Customization
-BACKUP_TIMEOUT='240'                # replace in gravity-sync.conf to overwrite
-BACKUP_INTEGRITY_WAIT='5'           # replace in gravity-sync.conf to overwrite
+### Executing
+function echo_stat {
+    echo -en "${STAT} ${MESSAGE}"
+}
 
-# SSH Customization
-SSH_PORT='22' 						# default SSH port
-SSH_PKIF='.ssh/id_rsa'				# default local SSH key
+### Success
+function echo_good {
+    echo -e "\r${GOOD} ${MESSAGE}"
+}
 
-# GS Folder/File Locations
-GS_FILEPATH=$(realpath $0)			# auto determined - do not change!
-LOCAL_FOLDR=$(dirname $GS_FILEPATH) # auto determined - do not change!
-CONFIG_FILE='gravity-sync.conf' 	# must exist with primary host/user configured
-GS_FILENAME='gravity-sync.sh'		# must exist because it's this script
-BACKUP_FOLD='backup' 				# must exist as subdirectory in LOCAL_FOLDR
-LOG_PATH="${LOCAL_FOLDR}/logs"		# replace in gravity-sync.conf to overwrite
-SYNCING_LOG='gravity-sync.log' 		# replace in gravity-sync.conf to overwrite
-CRONJOB_LOG='gravity-sync.cron' 	# replace in gravity-sync.conf to overwrite
-HISTORY_MD5='gravity-sync.md5'		# replace in gravity-sync.conf to overwrite
+### Success
+function echo_good_clean {
+    echo -e "\r${GOOD} ${MESSAGE}"
+}
 
-# OS Settings
-BASH_PATH='/bin/bash'				# default OS bash path
-DAEMON_PATH='/etc/systemd/system'   # systemd timer/service folder
+### Failure
+function echo_fail {
+    echo -e "\r${FAIL} ${MESSAGE}"
+}
 
-##############################################
-### NEVER CHANGE ANYTHING BELOW THIS LINE! ###
-##############################################
+### Request
+function echo_need {
+    echo -en "${NEED} ${BOLD}${MESSAGE}:${NC} "
+}
 
-# Import UI Fields
-source ${LOCAL_FOLDR}/includes/gs-ui.sh
+### Indent
+function echo_over {
+    echo -e "  ${MESSAGE}"
+}
 
-# Import Color/Message Includes
-source ${LOCAL_FOLDR}/includes/gs-colors.sh
+### Gravity Sync Logo
+function echo_grav {
+    echo -e "${LOGO} ${BOLD}${MESSAGE}${NC}"
+}
 
-# FUNCTION DEFINITIONS #######################
+### Lines
+function echo_blank {
+    echo -e ""
+}
 
-# Core Functions
-source ${LOCAL_FOLDR}/includes/gs-core.sh
+## Error Validation
+function error_validate {
+    if [ "$?" != "0" ]; then
+        echo_fail
+        exit 1
+    else
+        echo_good
+    fi
+}
 
-# Gravity Replication Functions
-source ${LOCAL_FOLDR}/includes/gs-pull.sh
-source ${LOCAL_FOLDR}/includes/gs-push.sh
-source ${LOCAL_FOLDR}/includes/gs-smart.sh
-source ${LOCAL_FOLDR}/includes/gs-backup.sh
+function start_gs_no_config {
+    MESSAGE="Gravity Sync 3.x to 4.0 Migration Utility"
+    echo_grav
+}
 
-# Hashing & SSH Functions
-source ${LOCAL_FOLDR}/includes/gs-hashing.sh
-source ${LOCAL_FOLDR}/includes/gs-ssh.sh
+function check_old_version {
+    MESSAGE="Checking for 3.x Configuration File"
+    echo_stat
 
-# Logging Functions
-source ${LOCAL_FOLDR}/includes/gs-logging.sh
+    if [ -f settings/gravity-sync.conf ]; then
+        echo_good
+    else
+        echo_fail
+        exit 1
+    fi
 
-# Validation Functions
-source ${LOCAL_FOLDR}/includes/gs-validate.sh
-source ${LOCAL_FOLDR}/includes/gs-intent.sh
-source ${LOCAL_FOLDR}/includes/gs-root.sh
+}
 
-# Configuration Management
-source ${LOCAL_FOLDR}/includes/gs-config.sh
-source ${LOCAL_FOLDR}/includes/gs-update.sh
-source ${LOCAL_FOLDR}/includes/gs-automate.sh
-source ${LOCAL_FOLDR}/includes/gs-purge.sh
+function install_new_gravity {
+    MESSAGE="Installing Gravity Sync 4.0"
+    echo_info
 
-# Exit Codes
-source ${LOCAL_FOLDR}/includes/gs-exit.sh
+    if [ -d /etc/gravity-sync/.gs ]; then
+        MESSAGE="Removing existing GitHub cache"
+        echo_stat
+        sudo rm -fr /etc/gravity-sync/.gs
+        error_validate
+    fi
+
+    if [ ! -d /etc/gravity-sync ]; then
+        MESSAGE="Creating new configuration directory"
+        echo_stat
+        sudo mkdir /etc/gravity-sync
+        error_validate
+    fi
+
+    MESSAGE="Validating configuration directory permissions"
+    echo_stat
+    sudo chmod 775 /etc/gravity-sync
+    error_validate
+
+    if [ -f /usr/local/bin/gravity-sync ]; then
+        MESSAGE="Removing old Gravity Sync binary"
+        echo_stat
+        sudo rm -f /usr/local/bin/gravity-sync
+        error_validate
+    fi
+
+    MESSAGE="Creating new GitHub cache"
+    echo_prompt
+
+    sudo git clone https://github.com/vmstan/gravity-sync.git /etc/gravity-sync/.gs
+    
+    # MESSAGE="Enabling beta updates"
+    # echo_stat
+    # sudo touch /etc/gravity-sync/.gs/dev
+    # echo -e "BRANCH='origin/4.0.0'" | sudo tee /etc/gravity-sync/.gs/dev 1> /dev/null
+    # error_validate
+
+    sudo cp /etc/gravity-sync/.gs/gravity-sync /usr/local/bin
+}
+
+function upgrade_to_4 {
+    MESSAGE="Migrating Previous Configuration"
+    echo_info
+    
+    MESSAGE="Transferring SSH keys"
+    sudo cp $HOME/.ssh/id_rsa /etc/gravity-sync/gravity-sync.rsa
+    sudo cp $HOME/.ssh/id_rsa.pub /etc/gravity-sync/gravity-sync.rsa.pub
+    error_validate
+
+    REMOTE_HOST=''
+    REMOTE_USER=''
+
+    PIHOLE_DIR=''
+    RIHOLE_DIR=''
+    DNSMAQ_DIR=''
+    RNSMAQ_DIR=''
+    FILE_OWNER=''
+    RILE_OWNER=''
+    DOCKER_CON=''
+    ROCKER_CON=''
+
+    MESSAGE="Reviewing old configuration file settings"
+    echo_stat
+    source settings/gravity-sync.conf
+    error_validate
+
+    MESSAGE="Creating new configuration file from template"
+    echo_stat
+    sudo cp /etc/gravity-sync/.gs/templates/gravity-sync.conf.example /etc/gravity-sync/gravity-sync.conf
+    error_validate
+    
+    LOCAL_PIHOLE_DIRECTORY=${PIHOLE_DIR}
+    REMOTE_PIHOLE_DIRECTORY=${RIHOLE_DIR}
+    LOCAL_DNSMASQ_DIRECTORY=${DNSMAQ_DIR}
+    REMOTE_DNSMASQ_DIRECTORY=${RNSMAQ_DIR}
+    LOCAL_FILE_OWNER=${FILE_OWNER}
+    REMOTE_FILE_OWNER=${RILE_OWNER}
+    LOCAL_DOCKER_CONTAINER=${DOCKER_CON}
+    REMOTE_DOCKER_CONTAINER=${ROCKER_CON}
+
+    MESSAGE="Migrating remote host settings"
+    echo_stat
+    sudo sed -i "/REMOTE_HOST=''/c\REMOTE_HOST='${REMOTE_HOST}'" /etc/gravity-sync/gravity-sync.conf
+    error_validate
+    
+    MESSAGE="Migrating remote user settings"
+    echo_stat
+    sudo sed -i "/REMOTE_USER=''/c\REMOTE_USER='${REMOTE_USER}'" /etc/gravity-sync/gravity-sync.conf
+    error_validate
+
+    if [ "${LOCAL_PIHOLE_DIRECTORY}" == '' ] || [ "${LOCAL_PIHOLE_DIRECTORY}" == '/etc/pihole' ]; then
+        MESSAGE="Defaulting local Pi-hole directory setting"
+        echo_good_clean
+    else
+        MESSAGE="Migrating local Pi-hole directory setting"
+        echo_stat
+        sudo sed -i "/LOCAL_PIHOLE_DIRECTORY=''/c\LOCAL_PIHOLE_DIRECTORY='${LOCAL_PIHOLE_DIRECTORY}'" /etc/gravity-sync/gravity-sync.conf
+        error_validate
+    fi
+
+    if [ "${REMOTE_PIHOLE_DIRECTORY}" == '' ] || [ "${REMOTE_PIHOLE_DIRECTORY}" == '/etc/pihole' ]; then
+        MESSAGE="Defaulting remote Pi-hole directory setting"
+        echo_good_clean
+    else
+        MESSAGE="Migrating remote Pi-hole directory setting"
+        echo_stat
+        sudo sed -i "/REMOTE_PIHOLE_DIRECTORY=''/c\REMOTE_PIHOLE_DIRECTORY='${REMOTE_PIHOLE_DIRECTORY}'" /etc/gravity-sync/gravity-sync.conf
+        error_validate
+    fi
+
+    if [ "${LOCAL_DNSMASQ_DIRECTORY}" == '' ] || [ "${LOCAL_DNSMASQ_DIRECTORY}" == '/etc/dnsmasq.d' ]; then
+        MESSAGE="Defaulting local DNSMASQ directory setting"
+        echo_good_clean
+    else
+        MESSAGE="Migrating local DNSMASQ directory setting"
+        echo_stat
+        sudo sed -i "/LOCAL_DNSMASQ_DIRECTORY=''/c\LOCAL_DNSMASQ_DIRECTORY='${LOCAL_DNSMASQ_DIRECTORY}'" /etc/gravity-sync/gravity-sync.conf
+        error_validate
+    fi
+
+    if [ "${REMOTE_DNSMASQ_DIRECTORY}" == '' ] || [ "${REMOTE_DNSMASQ_DIRECTORY}" == '/etc/dnsmasq.d' ]; then
+        MESSAGE="Defaulting remote DNSMASQ directory setting"
+        echo_good_clean
+    else
+        MESSAGE="Migrating remote DNSMASQ directory setting"
+        echo_stat
+        sudo sed -i "/REMOTE_DNSMASQ_DIRECTORY=''/c\REMOTE_DNSMASQ_DIRECTORY='${REMOTE_DNSMASQ_DIRECTORY}'" /etc/gravity-sync/gravity-sync.conf
+        error_validate
+    fi
+
+    if [ "${LOCAL_FILE_OWNER}" == '' ]; then
+        MESSAGE="Defaulting local file owner setting"
+        echo_good_clean
+    else
+        MESSAGE="Migrating local file owner setting"
+        echo_stat
+        sudo sed -i "/LOCAL_FILE_OWNER=''/c\LOCAL_FILE_OWNER='${LOCAL_FILE_OWNER}'" /etc/gravity-sync/gravity-sync.conf
+        error_validate
+    fi
+
+    if [ "${REMOTE_FILE_OWNER}" == '' ]; then
+        MESSAGE="Defaulting remote file owner setting"
+        echo_good_clean
+    else
+        MESSAGE="Migrating remote file owner setting"
+        echo_stat
+        sudo sed -i "/REMOTE_FILE_OWNER=''/c\REMOTE_FILE_OWNER='${REMOTE_FILE_OWNER}'" /etc/gravity-sync/gravity-sync.conf
+        error_validate
+    fi
+
+    if [ "${LOCAL_DOCKER_CONTAINER}" == '' ] || [ "${LOCAL_DOCKER_CONTAINER}" == 'pihole' ]; then
+        MESSAGE="Defaulting local Pi-hole container setting"
+        echo_good_clean
+    else
+        MESSAGE="Migrating local Pi-hole container setting"
+        echo_stat
+        sudo sed -i "/LOCAL_DOCKER_CONTAINER=''/c\LOCAL_DOCKER_CONTAINER='${LOCAL_DOCKER_CONTAINER}'" /etc/gravity-sync/gravity-sync.conf
+        error_validate
+    fi
+
+    if [ "${REMOTE_DOCKER_CONTAINER}" == '' ] || [ "${REMOTE_DOCKER_CONTAINER}" == 'pihole' ]; then
+        MESSAGE="Defaulting remote Pi-hole container setting"
+        echo_good_clean
+    else
+        MESSAGE="Migrating local Pi-hole container setting"
+        echo_stat
+        sudo sed -i "/REMOTE_DOCKER_CONTAINER=''/c\REMOTE_DOCKER_CONTAINER='${REMOTE_DOCKER_CONTAINER}'" /etc/gravity-sync/gravity-sync.conf
+        error_validate
+    fi
+
+    MESSAGE="Migrating task history"
+    echo_stat
+    sudo cp logs/gravity-sync.log /etc/gravity-sync/gs-sync.log
+    error_validate
+
+    MESSAGE="Migrating hashing tables"
+    echo_stat
+    if [ -f "logs/gravity-sync.md5" ]; then
+        REMOTE_DB_MD5=$(sed "1q;d" logs/gravity-sync.md5)
+        LOCAL_DB_MD5=$(sed "2q;d" logs/gravity-sync.md5)
+        REMOTE_CL_MD5=$(sed "3q;d" logs/gravity-sync.md5)
+        LOCAL_CL_MD5=$(sed "4q;d" logs/gravity-sync.md5)
+        REMOTE_CN_MD5=$(sed "5q;d" logs/gravity-sync.md5)
+        LOCAL_CN_MD5=$(sed "6q;d" logs/gravity-sync.md5)
+        
+        echo -e ${REMOTE_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_GRAVITY_FI_MD5_LOG} 1> /dev/null
+        echo -e ${LOCAL_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_GRAVITY_FI_MD5_LOG} 1> /dev/null
+        echo -e ${REMOTE_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CUSTOM_DNS_MD5_LOG} 1> /dev/null
+        echo -e ${LOCAL_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CUSTOM_DNS_MD5_LOG} 1> /dev/null
+        echo -e ${REMOTE_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CNAME_CONF_MD5_LOG} 1> /dev/null
+        echo -e ${LOCAL_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CNAME_CONF_MD5_LOG} 1> /dev/null
+    else
+        REMOTE_DB_MD5="0"
+        LOCAL_DB_MD5="0"
+        REMOTE_CL_MD5="0"
+        LOCAL_CL_MD5="0"
+        REMOTE_CN_MD5="0"
+        LOCAL_CN_MD5="0"
+
+        echo -e ${REMOTE_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_GRAVITY_FI_MD5_LOG} 1> /dev/null
+        echo -e ${LOCAL_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_GRAVITY_FI_MD5_LOG} 1> /dev/null
+        echo -e ${REMOTE_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CUSTOM_DNS_MD5_LOG} 1> /dev/null
+        echo -e ${LOCAL_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CUSTOM_DNS_MD5_LOG} 1> /dev/null
+        echo -e ${REMOTE_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CNAME_CONF_MD5_LOG} 1> /dev/null
+        echo -e ${LOCAL_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CNAME_CONF_MD5_LOG} 1> /dev/null
+    fi
+    error_validate
+}
+
+function remove_old_version {
+    MESSAGE="Removing Old Version & Settings"
+    echo_info
+
+    if hash crontab 2>/dev/null; then
+        MESSAGE="Clearing automation from crontab"
+        echo_stat
+            crontab -l > cronjob-old.tmp
+            sed "/gravity-sync.sh/d" cronjob-old.tmp > cronjob-new.tmp
+            crontab cronjob-new.tmp
+        error_validate
+    fi
+
+    kill_automation_service
+
+    if [ -f /etc/bash.bashrc ]; then
+         MESSAGE="Cleaning up bash.bashrc"
+         echo_info
+         sudo sed -i "/gravity-sync.sh/d" /etc/bash.bashrc
+         error_validate
+    fi
+
+    MESSAGE="Removing old Gravity Sync folder"
+    echo_stat
+    sudo rm -fr ${LOCAL_FOLDR}
+    error_validate
+}
+
+function kill_automation_service {
+    if systemctl is-active --quiet gravity-sync; then
+        MESSAGE="Stopping ${PROGRAM} timer"
+        echo_stat
+        sudo systemctl stop gravity-sync
+        error_validate
+
+        MESSAGE="Disabling ${PROGRAM} automation service"
+        echo_stat
+        sudo systemctl disable gravity-sync --quiet
+        error_validate
+
+        MESSAGE="Removing systemd timer"
+        echo_stat
+        sudo rm -f ${OS_DAEMON_PATH}/gravity-sync.timer
+        error_validate
+
+        MESSAGE="Removing systemd service"
+        echo_stat
+        sudo rm -f ${OS_DAEMON_PATH}/gravity-sync.service
+        error_validate
+
+        MESSAGE="Reloading systemd daemon"
+        echo_stat
+        sudo systemctl daemon-reload --quiet
+        error_validate
+    fi
+}
+
+function end_migration {
+    MESSAGE="Migration Complete"
+    echo_info
+
+
+}
 
 # SCRIPT EXECUTION ###########################
 
 case $# in
     0)
-        start_gs
-    task_smart ;;
+        start_gs_no_config
+        check_old_version
+        install_new_gravity
+        upgrade_to_4 
+        remove_old_version 
+        end_migration ;;
     1)
         case $1 in
-            smart|sync)
-                start_gs
-                task_smart ;;
-            pull)
-                start_gs
-                task_pull ;;
-            push)
-                start_gs
-                task_push ;;
-            version)
-                start_gs_noconfig
-                task_version ;;
-            update|upgrade)
-                start_gs_noconfig
-                task_update ;;
-            dev|devmode|development|develop)
-                start_gs_noconfig
-                task_devmode ;;
-            logs|log)
-                start_gs
-                task_logs ;;
-            compare)
-                start_gs
-                task_compare ;;
-            cron)
-                start_gs
-                task_autocron ;;
-            config|configure)
-                start_gs_noconfig
-                task_configure ;;
-            auto|automate)
-                start_gs
-                task_automate ;;
-            purge)
-                start_gs
-                task_purge ;;
-            sudo)
-                start_gs
-                task_sudo ;;
-            info)
-                start_gs
-                task_info ;;
-            cname)
-                start_gs
-                task_cname ;;    
             *)
-                start_gs
-                task_invalid ;;
-        esac
-    ;;
-    
-    2)
-        case $1 in
-            auto|automate)
-                start_gs
-                task_automate ;;
-        esac
-    ;;
-    
-    3)
-        case $1 in
-            auto|automate)
-                start_gs
-                task_automate $2 ;;
+                start_gs_no_config
+                check_old_version
+                install_new_gravity
+                upgrade_to_4 
+                remove_old_version
+                end_migration ;;
         esac
     ;;
     
     *)
-        start_gs
-        task_invalid ;;
+        start_gs_no_config
+        check_old_version
+        install_new_gravity
+        upgrade_to_4 
+        remove_old_version
+        end_migration ;;
 esac
 
 # END OF SCRIPT ##############################

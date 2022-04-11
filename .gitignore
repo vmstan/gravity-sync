@@ -1,10 +1,6 @@
-gravity-sync.log
-gravity-sync.cron
-gravity-sync.conf
-gravity-sync.md5
-logs/*
-settings/gravity-sync.conf
 dev
 .vscode
 .DS_Store
 .nova
+settings/*
+logs/*
