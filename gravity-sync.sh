@@ -348,6 +348,13 @@ function remove_old_version {
 
     kill_automation_service
 
+    if [ -f /etc/bash.bashrc ]; then
+         MESSAGE="Cleaning up bash.bashrc"
+         echo_info
+         sudo sed -i "/gravity-sync.sh/d" /etc/bash.bashrc
+         error_validate
+    fi
+
     MESSAGE="Removing old Gravity Sync folder"
     echo_stat
     sudo rm -fr ${LOCAL_FOLDR}

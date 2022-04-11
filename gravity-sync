@@ -1557,11 +1557,12 @@ function config_generate {
 
 function end_config {
     echo_blank
-    echo -e "  Configuration has been completed successfully, your next step is to push all of the of data from"
-    echo -e "  the currently authoritative ${UI_CORE_APP} instance."
+    echo -e "  Configuration has been completed successfully, once ${PROGRAM} has been installed your other
+    echo -e "  node, your next step is to push all of the of data from the currently authoritative"
+    echo -e "  ${UI_CORE_APP} instance to the other."
     echo -e "  ex: ${YELLOW}gravity-sync push${NC}" 
     echo_blank
-    echo -e "  If this completes successfully you can automate future sync jobs to run at a regular interval on"
+    echo -e "  If that completes successfully you can automate future sync jobs to run at a regular interval on"
     echo -e "  both of your ${PROGRAM} peers."
     echo -e "  ex: ${YELLOW}gravity-sync auto${NC}"
     echo_blank
