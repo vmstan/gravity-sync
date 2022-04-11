@@ -158,7 +158,7 @@ function install_new_gravity {
     MESSAGE="Enabling beta updates"
     echo_stat
     sudo touch /etc/gravity-sync/.gs/dev
-    echo -e "origin/4.0.0" | sudo tee /etc/gravity-sync/.gs/dev
+    echo -e "origin/4.0.0" | sudo tee /etc/gravity-sync/.gs/dev 1> /dev/null
     error_validate
 
     sudo cp /etc/gravity-sync/.gs/gravity-sync /usr/local/bin
@@ -192,7 +192,7 @@ function upgrade_to_4 {
 
     MESSAGE="Creating new configuration file from template"
     echo_stat
-    sudo cp /etc/gravity-sync/.gs/gravity-sync/templates/gravity-sync.conf.example /etc/gravity-sync/gravity-sync.conf
+    sudo cp /etc/gravity-sync/.gs/templates/gravity-sync.conf.example /etc/gravity-sync/gravity-sync.conf
     error_validate
     
     LOCAL_PIHOLE_DIRECTORY=${PIHOLE_DIR}
@@ -385,7 +385,7 @@ function end_migration {
     MESSAGE="Migration Complete"
     echo_info
 
-    
+
 }
 
 # SCRIPT EXECUTION ###########################
