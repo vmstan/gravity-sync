@@ -2003,6 +2003,7 @@ function kill_automation_service {
         echo_stat
         sudo systemctl stop gravity-sync
         error_validate
+    fi
 
         MESSAGE="Disabling ${PROGRAM} automation service"
         echo_stat
@@ -2023,7 +2024,6 @@ function kill_automation_service {
         echo_stat
         sudo systemctl daemon-reload --quiet
         error_validate
-    fi
 }
 
 ## Purge Task
