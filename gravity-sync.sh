@@ -211,7 +211,7 @@ function upgrade_to_4 {
     
     MESSAGE="Migrating remote user settings"
     echo_stat
-    sudo sed -i "/REMOTE_USER=''/c\REMOTE_HOST='${REMOTE_USER}'" /etc/gravity-sync/gravity-sync.conf
+    sudo sed -i "/REMOTE_USER=''/c\REMOTE_USER='${REMOTE_USER}'" /etc/gravity-sync/gravity-sync.conf
     error_validate
 
     if [ "${LOCAL_PIHOLE_DIRECTORY}" == '' ] || [ "${LOCAL_PIHOLE_DIRECTORY}" == '/etc/pihole' ]; then
