@@ -148,18 +148,17 @@ function install_new_gravity {
         sudo rm -f /usr/local/bin/gravity-sync
         error_validate
     fi
-    
-    # change to master before final release
+
     MESSAGE="Creating new GitHub cache"
     echo_prompt
 
-    sudo git clone -b "4.0.0" https://github.com/vmstan/gravity-sync.git /etc/gravity-sync/.gs
+    sudo git clone https://github.com/vmstan/gravity-sync.git /etc/gravity-sync/.gs
     
-    MESSAGE="Enabling beta updates"
-    echo_stat
-    sudo touch /etc/gravity-sync/.gs/dev
-    echo -e "BRANCH='origin/4.0.0'" | sudo tee /etc/gravity-sync/.gs/dev 1> /dev/null
-    error_validate
+    # MESSAGE="Enabling beta updates"
+    # echo_stat
+    # sudo touch /etc/gravity-sync/.gs/dev
+    # echo -e "BRANCH='origin/4.0.0'" | sudo tee /etc/gravity-sync/.gs/dev 1> /dev/null
+    # error_validate
 
     sudo cp /etc/gravity-sync/.gs/gravity-sync /usr/local/bin
 }

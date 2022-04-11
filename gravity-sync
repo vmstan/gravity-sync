@@ -1743,7 +1743,7 @@ function config_delete {
 
 ## Master Branch
 function update_gs {
-        bash ${GS_LOCAL_REPO}/update.sh
+    bash ${GS_LOCAL_REPO}/update.sh
 }
 
 ## Show Version
