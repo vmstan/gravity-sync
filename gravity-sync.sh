@@ -158,7 +158,7 @@ function install_new_gravity {
     MESSAGE="Enabling beta updates"
     echo_stat
     sudo touch /etc/gravity-sync/.gs/dev
-    echo -e "origin/4.0.0" | sudo tee /etc/gravity-sync/.gs/dev 1> /dev/null
+    echo -e "BRANCH='origin/4.0.0'" | sudo tee /etc/gravity-sync/.gs/dev 1> /dev/null
     error_validate
 
     sudo cp /etc/gravity-sync/.gs/gravity-sync /usr/local/bin

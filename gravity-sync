@@ -240,7 +240,7 @@ function import_gs_config {
         echo_fail
         
         MESSAGE="Missing ${GS_CONFIG_FILE}"
-        echo_prompt
+        echo_warn
         
         GS_TASK_TYPE='CONFIG'
         config_generate
@@ -778,7 +778,7 @@ function backup_local_custom {
         error_validate
     else
         MESSAGE="No local ${PH_CUSTOM_DNS} detected"
-        echo_prompt
+        echo_warn
     fi
 }
 
@@ -791,7 +791,7 @@ function backup_local_cname {
         error_validate
     else
         MESSAGE="No local ${PH_CNAME_CONF} detected"
-        echo_prompt
+        echo_warn
     fi
 }
 
@@ -922,17 +922,17 @@ function md5_compare {
             fi
         else
             MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_REMOTE}"
-            echo_prompt
+            echo_warn
         fi
     else
         if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}; then
             REMOTE_PH_CUSTOM_DNS="1"
             MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_REMOTE}"
             GS_HASH_MARK=$((GS_HASH_MARK+1))
-            echo_prompt
+            echo_warn
         fi
         MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_LOCAL}"
-        echo_prompt
+        echo_warn
     fi
 
     if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} ]; then
@@ -958,18 +958,18 @@ function md5_compare {
             fi
         else
             MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_REMOTE}"
-            echo_prompt
+            echo_warn
         fi
     else
         if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}; then
             REMOTE_CNAME_DNS="1"
             MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_REMOTE}"
             GS_HASH_MARK=$((GS_HASH_MARK+1))
-            echo_prompt
+            echo_warn
         fi
         
         MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_LOCAL}"
-        echo_prompt
+        echo_warn
     fi
     
     if [ "$GS_HASH_MARK" != "0" ]; then
@@ -978,7 +978,7 @@ function md5_compare {
         GS_HASH_MARK=$((GS_HASH_MARK+0))
     else
         MESSAGE="No replication is required at this time"
-        echo_prompt
+        echo_warn
         exit_no_change
     fi
 }
@@ -1138,7 +1138,7 @@ function export_ssh_key {
 
 function show_target {
     MESSAGE="Remote ${UI_CORE_APP}: ${REMOTE_USER}@${REMOTE_HOST}"
-    echo_prompt
+    echo_info
 }
 
 ## Logs Task
