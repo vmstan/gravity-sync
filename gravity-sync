@@ -187,6 +187,11 @@ function echo_need {
     echo -en "${NEED} ${BOLD}${MESSAGE}:${NC} "
 }
 
+### Indent
+function echo_over {
+    echo -e "  ${MESSAGE}"
+}
+
 ### Gravity Sync Logo
 function echo_grav {
     echo -e "${LOGO} ${BOLD}${MESSAGE}${NC}"
@@ -1988,25 +1993,30 @@ function task_monitor {
 function kill_automation_service {
     if systemctl is-active --quiet gravity-sync; then
         MESSAGE="Stopping ${PROGRAM} timer"
+        echo_stat
         sudo systemctl stop gravity-sync
         error_validate
+
+        MESSAGE="Disabling ${PROGRAM} automation service"
+        echo_stat
+        sudo systemctl disable gravity-sync --quiet
+        error_validate
+
+        MESSAGE="Removing systemd timer"
+        echo_stat
+        sudo rm -f ${OS_DAEMON_PATH}/gravity-sync.timer
+        error_validate
+
+        MESSAGE="Removing systemd service"
+        echo_stat
+        sudo rm -f ${OS_DAEMON_PATH}/gravity-sync.service
+        error_validate
+
+        MESSAGE="Reloading systemd daemon"
+        echo_stat
+        sudo systemctl daemon-reload --quiet
+        error_validate
     fi
-
-    MESSAGE="Disabling ${PROGRAM} automation service"
-    sudo systemctl disable gravity-sync --quiet
-    error_validate
-
-    MESSAGE="Removing systemd timer"
-    sudo rm -f ${OS_DAEMON_PATH}/gravity-sync.timer
-    error_validate
-
-    MESSAGE="Removing systemd service"
-    sudo rm -f ${OS_DAEMON_PATH}/gravity-sync.service
-    error_validate
-
-    MESSAGE="Reloading systemd daemon"
-    sudo systemctl daemon-reload --quiet
-    error_validate
 }
 
 ## Purge Task
