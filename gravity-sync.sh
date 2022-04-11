@@ -337,12 +337,14 @@ function remove_old_version {
     MESSAGE="Removing Old Version & Settings"
     echo_info
 
-    MESSAGE="Clearing automation from crontab"
-    echo_stat
-        crontab -l > cronjob-old.tmp
-        sed "/gravity-sync.sh/d" cronjob-old.tmp > cronjob-new.tmp
-        crontab cronjob-new.tmp
-    error_validate
+    if hash crontab; then
+        MESSAGE="Clearing automation from crontab"
+        echo_stat
+            crontab -l > cronjob-old.tmp
+            sed "/gravity-sync.sh/d" cronjob-old.tmp > cronjob-new.tmp
+            crontab cronjob-new.tmp
+        error_validate
+    fi
 
     kill_automation_service
 
