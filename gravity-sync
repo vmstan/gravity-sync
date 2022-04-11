@@ -1040,16 +1040,16 @@ function md5_recheck {
             error_validate
         else
             MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_REMOTE}"
-            echo_prompt
+            echo_warn
         fi
     else
         if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}; then
             REMOTE_PH_CUSTOM_DNS="1"
             MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_REMOTE}"
-            echo_prompt
+            echo_warn
         fi
         MESSAGE="${UI_CUSTOM_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_LOCAL}"
-        echo_prompt
+        echo_warn
     fi
     
     if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} ]; then
@@ -1067,17 +1067,17 @@ function md5_recheck {
             error_validate
         else
             MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_REMOTE}"
-            echo_prompt
+            echo_warn
         fi
     else
         if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}; then
             REMOTE_CNAME_DNS="1"
             MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_REMOTE}"
-            echo_prompt
+            echo_warn
         fi
         
         MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_LOCAL}"
-        echo_prompt
+        echo_warn
     fi
 }
 
@@ -1639,7 +1639,7 @@ function advanced_config_generate {
         MESSAGE="Querying running containers on ${REMOTE_HOST}"
         echo_stat
         if [ "${REMOTE_PIHOLE_TYPE}" == "docker" ]; then
-            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo docker ps -a --format 'table {{.ID}}\t{{.Names}}' > /tmp/gs_local_container.log"
+            ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo docker ps -a --format 'table {{.Image}}\t{{.Names}}' > /tmp/gs_local_container.log"
             error_validate
         elif [ "${REMOTE_PIHOLE_TYPE}" == "podman" ]; then
             ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo podman container ls > /tmp/gs_local_container.log"
