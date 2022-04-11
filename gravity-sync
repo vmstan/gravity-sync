@@ -1781,7 +1781,13 @@ function show_info {
         sudo podman exec -it pihole pihole -v
     fi
     
-    lsb_release -d
+    if [ -f /etc/os-release ]; then
+        . /etc/os-release
+        OS_OS=$NAME
+        OS_VER=$VERSION_ID
+        echo -e "${OS_OS} ${OS_VER}" 
+    fi
+
     uname -srm
     echo -e "bash $BASH_VERSION"
     ssh -V
