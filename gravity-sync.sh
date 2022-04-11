@@ -381,6 +381,13 @@ function kill_automation_service {
     fi
 }
 
+function end_migration {
+    MESSAGE="Migration Complete"
+    echo_info
+
+    
+}
+
 # SCRIPT EXECUTION ###########################
 
 case $# in
@@ -389,7 +396,8 @@ case $# in
         check_old_version
         install_new_gravity
         upgrade_to_4 
-        remove_old_version ;;
+        remove_old_version 
+        end_migration ;;
     1)
         case $1 in
             *)
@@ -397,7 +405,8 @@ case $# in
                 check_old_version
                 install_new_gravity
                 upgrade_to_4 
-                remove_old_version ;;
+                remove_old_version
+                end_migration ;;
         esac
     ;;
     
@@ -406,7 +415,8 @@ case $# in
         check_old_version
         install_new_gravity
         upgrade_to_4 
-        remove_old_version ;;
+        remove_old_version
+        end_migration ;;
 esac
 
 # END OF SCRIPT ##############################

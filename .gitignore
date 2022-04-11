@@ -2,3 +2,5 @@ dev
 .vscode
 .DS_Store
 .nova
+settings/*
+logs/*
