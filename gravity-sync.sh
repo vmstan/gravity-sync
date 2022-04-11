@@ -337,7 +337,7 @@ function remove_old_version {
     MESSAGE="Removing Old Version & Settings"
     echo_info
 
-    if hash crontab; then
+    if hash crontab 2>/dev/null; then
         MESSAGE="Clearing automation from crontab"
         echo_stat
             crontab -l > cronjob-old.tmp
