@@ -1994,8 +1994,8 @@ function task_automate {
     if [ "${GS_SYSLOG_REDIRECT}" != '' ]; then
         MESSAGE="Customizing standard output location"
         echo_stat
-        sudo sed -i "/[Service]/a StandardOutput=file:${GS_SYSLOG_REDIRECT}" ${OS_TMP}/gravity-sync.service
-        sudo sed -i "/[Service]/a StandardError=file:${GS_SYSLOG_REDIRECT}" ${OS_TMP}/gravity-sync.service
+        sudo sed -i "/[Service]/a\StandardOutput=file:${GS_SYSLOG_REDIRECT}" ${OS_TMP}/gravity-sync.service
+        sudo sed -i "/[Service]/a\StandardError=file:${GS_SYSLOG_REDIRECT}" ${OS_TMP}/gravity-sync.service
         error_validate
     fi
 
