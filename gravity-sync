@@ -1464,7 +1464,7 @@ function task_configure {
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
 
-    if [ "$2" == '' ] || [ "$2" == '22' ]; then
+    if [[ "${2}" == '' ]] || [[ "${2}" == '22' ]]; then
         GS_SSH_PORT='22'
     else
         GS_SSH_PORT=$2
