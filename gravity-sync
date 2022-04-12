@@ -2178,7 +2178,7 @@ case $# in
                 task_compare ;;
             config|configure)
                 start_gs_no_config
-                task_configure ;;
+                task_configure "$@";;
             auto|automate)
                 start_gs
                 task_automate ;;
@@ -2200,14 +2200,6 @@ case $# in
             *)
                 start_gs_no_config
                 task_invalid ;;
-        esac
-    ;;
-    
-    2)
-        case $1 in
-            config|configure)
-                start_gs_no_config
-                task_configure $2 ;;
         esac
     ;;
 
