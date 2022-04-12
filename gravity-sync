@@ -4,7 +4,7 @@ GS_RUN_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-GS_VERSION='4.0.1'
+GS_VERSION='4.0.2'
 
 # For documentation or the changelog/updates visit https://github.com/vmstan/gravity-sync
 # Requires Pi-Hole 5.x or higher already be installed, for help visit https://pi-hole.net
@@ -2180,22 +2180,22 @@ function list_gs_arguments {
 # SCRIPT EXECUTION ###########################
 
 case "${1}" in
-  "" | "smart" | "sync" ) task_smart;;
-  "pull" ) task_pull;;
-  "push" ) task_push;;
-  "compare" ) task_compare;;
-  "config" | "conf" | "configure" ) INPUT_SSH=$2; task_configure;;
-  "auto" | "automate" ) task_automate;;
-  "disable" | "stop" ) task_disable_automate;;
-  "monitor" | "follow" ) task_monitor;;
-  "purge" | "uninstall" | "remove" ) task_purge;;
-  "sudo" ) task_sudo;;
-  "version" | "ver" ) task_version;;
-  "info" ) task_info;;
-  "update" | "upgrade" | "up" ) task_update;;
-  "dev" | "beta" ) task_dev;;
-  "logs" | "log" ) task_logs;;
-  * ) task_invalid;;
+    "" | "smart" | "sync" )             task_smart;;
+    "pull" )                            task_pull;;
+    "push" )                            task_push;;
+    "compare" )                         task_compare;;
+    "config" | "conf" | "configure" )   INPUT_SSH=$2; task_configure;;
+    "auto" | "automate" )               task_automate;;
+    "disable" | "stop" )                task_disable_automate;;
+    "monitor" | "follow" )              task_monitor;;
+    "purge" | "uninstall" | "remove" )  task_purge;;
+    "sudo" )                            task_sudo;;
+    "version" | "ver" )                 task_version;;
+    "info" )                            task_info;;
+    "update" | "upgrade" | "up" )       task_update;;
+    "dev" | "beta" )                    task_dev;;
+    "logs" | "log" )                    task_logs;;
+    * )                                 task_invalid;;
 esac
 
 # END OF SCRIPT ##############################
