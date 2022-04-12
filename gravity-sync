@@ -1448,7 +1448,7 @@ function task_configure {
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
 
-    if [[ $2 =~ ^[1-65535]?$ ]]
+    if [[ $2 != '' ]]
 	then
 		GS_SSH_PORT=$2
 	fi
