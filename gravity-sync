@@ -1978,44 +1978,74 @@ function task_automate {
     echo_good
 
     MESSAGE="Customizing service file username"
+    echo_stat
     OS_CURRENT_USER=$(whoami)
     sudo sed -i "/User=unknown/c\User=${OS_CURRENT_USER}" ${GS_LOCAL_REPO}/templates/gravity-sync.service
     error_validate
 
     MESSAGE="Customizing service file executable path"
+    echo_stat
     sudo sed -i "/ExecStart=/c\ExecStart=${GS_FILEPATH}" ${GS_LOCAL_REPO}/templates/gravity-sync.service
     error_validate
 
-    MESSAGE="Randomizing service timers"
-    ACTIVE_REP=$((( RANDOM % 4 ) + 1 ))
-    RANDOM_REP=$((( RANDOM % 8 ) + 2 ))
+    if [ "${GS_SYSLOG_REDIRECT}" != '' ]; then
+        MESSAGE="Customizing standard output location"
+        echo_stat
+        sudo echo -e "StandardOutput=file:${GS_SYSLOG_REDIRECT}" | sudo tee -a ${GS_LOCAL_REPO}/templates/gravity-sync.service
+        sudo echo -e "StandardError=file:${GS_SYSLOG_REDIRECT}" | sudo tee -a ${GS_LOCAL_REPO}/templates/gravity-sync.service
+        error_validate
+    fi
+
+    if [ "${INPUT_SPEED}" == 'slow' ]; then
+        MESSAGE="Randomizing service timers (slow)"
+        echo_stat
+        ACTIVE_REP=$((( RANDOM % 4 ) + 55 ))
+        RANDOM_REP=$((( RANDOM % 8 ) + 57 ))
+    elif [ "${INPUT_SPEED}" == 'half' ]; then
+        MESSAGE="Randomizing service timers (half)"
+        echo_stat
+        ACTIVE_REP=$((( RANDOM % 4 ) + 25 ))
+        RANDOM_REP=$((( RANDOM % 8 ) + 27 ))
+    else
+        MESSAGE="Randomizing service timers"
+        echo_stat
+        ACTIVE_REP=$((( RANDOM % 4 ) + 1 ))
+        RANDOM_REP=$((( RANDOM % 8 ) + 2 ))
+    fi
+
     sudo sed -i "/OnUnitInactiveSec=5m/c\OnUnitInactiveSec=${ACTIVE_REP}m" ${GS_LOCAL_REPO}/templates/gravity-sync.timer
     sudo sed -i "/RandomizedDelaySec=5m/c\RandomizedDelaySec=${RANDOM_REP}m" ${GS_LOCAL_REPO}/templates/gravity-sync.timer
     error_validate
 
     if systemctl is-active --quiet gravity-sync.timer; then
         MESSAGE="Stopping existing systemd service"
+        echo_stat
         sudo systemctl stop gravity-sync
         error_validate
     fi
 
     MESSAGE="Moving systemd timer into place"
+    echo_stat
     sudo cp ${GS_LOCAL_REPO}/templates/gravity-sync.timer ${OS_DAEMON_PATH}
     error_validate
 
     MESSAGE="Moving systemd service into place"
+    echo_stat
     sudo cp ${GS_LOCAL_REPO}/templates/gravity-sync.service ${OS_DAEMON_PATH}
     error_validate
 
     MESSAGE="Reloading systemd daemon"
+    echo_stat
     sudo systemctl daemon-reload --quiet
     error_validate
 
     MESSAGE="Enabling ${PROGRAM} timer"
+    echo_stat
     sudo systemctl enable gravity-sync.timer --quiet
     error_validate
 
     MESSAGE="Starting ${PROGRAM} service"
+    echo_stat
     sudo systemctl start gravity-sync --quiet
     error_validate
     
@@ -2154,7 +2184,7 @@ function list_gs_arguments {
     echo -e "Setup Options:"
     echo -e " ${YELLOW}config${NC}      Creates a new ${PROGRAM} configuration file"
     echo -e " ${YELLOW}version${NC}     Lists the installed version of ${PROGRAM} and checks for updates"
-    echo -e " ${YELLOW}upgrade${NC}     Upgrades ${PROGRAM} to the latest available version on GitHub"
+    echo -e " ${YELLOW}update${NC}      Upgrades ${PROGRAM} to the latest available version on GitHub"
     echo -e " ${YELLOW}dev${NC}         Sets upgrade command to use a development version of ${PROGRAM} (toggle on/off)"
     echo -e " ${YELLOW}sudo${NC}        Enables password-less sudo for current user"
     echo -e " ${YELLOW}purge${NC}       Uninstalls ${PROGRAM} from this system"
@@ -2185,7 +2215,7 @@ case "${1}" in
     "push" )                            task_push;;
     "compare" )                         task_compare;;
     "config" | "conf" | "configure" )   INPUT_SSH=$2; task_configure;;
-    "auto" | "automate" )               task_automate;;
+    "auto" | "automate" )               INPUT_SPEED=$2 task_automate;;
     "disable" | "stop" )                task_disable_automate;;
     "monitor" | "follow" )              task_monitor;;
     "purge" | "uninstall" | "remove" )  task_purge;;
