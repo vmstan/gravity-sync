@@ -1999,17 +1999,17 @@ function task_automate {
     if [ "${INPUT_SPEED}" == 'slow' ]; then
         MESSAGE="Randomizing service timers (slow)"
         echo_stat
-        ACTIVE_REP=$((( RANDOM % 4 ) + 55 ))
-        RANDOM_REP=$((( RANDOM % 8 ) + 57 ))
+        ACTIVE_REP=$((( RANDOM % 60 ) + 55 ))
+        RANDOM_REP=$((( RANDOM % 8 ) + 2 ))
     elif [ "${INPUT_SPEED}" == 'half' ]; then
         MESSAGE="Randomizing service timers (half)"
         echo_stat
-        ACTIVE_REP=$((( RANDOM % 4 ) + 25 ))
-        RANDOM_REP=$((( RANDOM % 8 ) + 27 ))
+        ACTIVE_REP=$((( RANDOM % 30 ) + 25 ))
+        RANDOM_REP=$((( RANDOM % 8 ) + 2 ))
     else
         MESSAGE="Randomizing service timers"
         echo_stat
-        ACTIVE_REP=$((( RANDOM % 4 ) + 1 ))
+        ACTIVE_REP=$((( RANDOM % 7 ) + 2 ))
         RANDOM_REP=$((( RANDOM % 8 ) + 2 ))
     fi
 
