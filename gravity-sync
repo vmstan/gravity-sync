@@ -1448,10 +1448,15 @@ function task_configure {
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
 
-    if [[ $1 =~ ^[0-9][0-9][0-9][0-9][0-9]?$ ]]
+    if [[ $1 =~ ^[1-65535]?$ ]]
 	then
 		GS_SSH_PORT=$1
 	fi
+
+    if [ "${GS_SSH_PORT}" != '22' ]; then
+        MESSAGE="TARGET HOST SSH PORT SET TO ${GS_SSH_PORT}"
+        echo_warn
+    fi
     
     if [ -f ${GS_ETC_PATH}/${GS_CONFIG_FILE} ]; then		
         config_delete
