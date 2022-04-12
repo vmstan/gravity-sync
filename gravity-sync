@@ -1890,7 +1890,7 @@ function task_dev {
     else
         MESSAGE="Enabling ${GS_TASK_TYPE}"
         echo_stat
-        touch ${GS_LOCAL_REPO}/dev
+        sudo touch ${GS_LOCAL_REPO}/dev
         error_validate
         
         MESSAGE="Checking available branches"
