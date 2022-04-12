@@ -1448,9 +1448,9 @@ function task_configure {
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
 
-    if [[ $1 =~ ^[1-65535]?$ ]]
+    if [[ $2 =~ ^[1-65535]?$ ]]
 	then
-		GS_SSH_PORT=$1
+		GS_SSH_PORT=$2
 	fi
 
     if [ "${GS_SSH_PORT}" != '22' ]; then
@@ -2178,7 +2178,7 @@ case $# in
                 task_compare ;;
             config|configure)
                 start_gs_no_config
-                task_configure "$@";;
+                task_configure "$2";;
             auto|automate)
                 start_gs
                 task_automate ;;
