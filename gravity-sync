@@ -1464,8 +1464,8 @@ function task_configure {
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
 
-    if [[ $2 =~ ^[0-9]+$ ]]; then
-        GS_SSH_PORT=$2
+    if [[ ${INPUT_SSH} =~ ^[0-9]+$ ]]; then
+        GS_SSH_PORT=${INPUT_SSH}
         MESSAGE="TARGET HOST SSH PORT SET TO ${GS_SSH_PORT}"
         echo_warn
     fi
@@ -2179,7 +2179,7 @@ case "${1}" in
   "pull" ) task_pull;;
   "push" ) task_push;;
   "compare" ) task_compare;;
-  "config" | "conf" | "configure" ) task_configure "$2";;
+  "config" | "conf" | "configure" ) INPUT_SSH=$2; task_configure;;
   "auto" | "automate" ) task_automate;;
   "disable" | "stop" ) task_disable_automate;;
   "monitor" | "follow" ) task_monitor;;
