@@ -1977,22 +1977,25 @@ function task_automate {
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
 
+    sudo cp ${GS_LOCAL_REPO}/templates/gravity-sync.service ${OS_TMP}/gravity-sync.service
+    sudo cp ${GS_LOCAL_REPO}/templates/gravity-sync.timer ${OS_TMP}/gravity-sync.timer
+
     MESSAGE="Customizing service file username"
     echo_stat
     OS_CURRENT_USER=$(whoami)
-    sudo sed -i "/User=unknown/c\User=${OS_CURRENT_USER}" ${GS_LOCAL_REPO}/templates/gravity-sync.service
+    sudo sed -i "/User=unknown/c\User=${OS_CURRENT_USER}" ${OS_TMP}/gravity-sync.service
     error_validate
 
     MESSAGE="Customizing service file executable path"
     echo_stat
-    sudo sed -i "/ExecStart=/c\ExecStart=${GS_FILEPATH}" ${GS_LOCAL_REPO}/templates/gravity-sync.service
+    sudo sed -i "/ExecStart=/c\ExecStart=${GS_FILEPATH}" ${OS_TMP}/gravity-sync.service
     error_validate
 
     if [ "${GS_SYSLOG_REDIRECT}" != '' ]; then
         MESSAGE="Customizing standard output location"
         echo_stat
-        sudo echo -e "StandardOutput=file:${GS_SYSLOG_REDIRECT}" | sudo tee -a ${GS_LOCAL_REPO}/templates/gravity-sync.service
-        sudo echo -e "StandardError=file:${GS_SYSLOG_REDIRECT}" | sudo tee -a ${GS_LOCAL_REPO}/templates/gravity-sync.service
+        sudo echo -e "StandardOutput=file:${GS_SYSLOG_REDIRECT}" | sudo tee -a ${OS_TMP}/gravity-sync.service
+        sudo echo -e "StandardError=file:${GS_SYSLOG_REDIRECT}" | sudo tee -a ${OS_TMP}/gravity-sync.service
         error_validate
     fi
 
@@ -2013,8 +2016,8 @@ function task_automate {
         RANDOM_REP=$((( RANDOM % 8 ) + 2 ))
     fi
 
-    sudo sed -i "/OnUnitInactiveSec=5m/c\OnUnitInactiveSec=${ACTIVE_REP}m" ${GS_LOCAL_REPO}/templates/gravity-sync.timer
-    sudo sed -i "/RandomizedDelaySec=5m/c\RandomizedDelaySec=${RANDOM_REP}m" ${GS_LOCAL_REPO}/templates/gravity-sync.timer
+    sudo sed -i "/OnUnitInactiveSec=5m/c\OnUnitInactiveSec=${ACTIVE_REP}m" ${OS_TMP}/gravity-sync.timer
+    sudo sed -i "/RandomizedDelaySec=5m/c\RandomizedDelaySec=${RANDOM_REP}m" ${OS_TMP}/gravity-sync.timer
     error_validate
 
     if systemctl is-active --quiet gravity-sync.timer; then
@@ -2026,12 +2029,12 @@ function task_automate {
 
     MESSAGE="Moving systemd timer into place"
     echo_stat
-    sudo cp ${GS_LOCAL_REPO}/templates/gravity-sync.timer ${OS_DAEMON_PATH}
+    sudo cp ${OS_TMP}/gravity-sync.timer ${OS_DAEMON_PATH}
     error_validate
 
     MESSAGE="Moving systemd service into place"
     echo_stat
-    sudo cp ${GS_LOCAL_REPO}/templates/gravity-sync.service ${OS_DAEMON_PATH}
+    sudo cp ${OS_TMP}/gravity-sync.service ${OS_DAEMON_PATH}
     error_validate
 
     MESSAGE="Reloading systemd daemon"
