@@ -369,7 +369,7 @@ function remove_old_version {
 }
 
 function kill_automation_service {
-    if systemctl is-active --quiet gravity-sync; then
+    if systemctl is-active --quiet gravity-sync.timer; then
         MESSAGE="Stopping ${PROGRAM} timer"
         echo_stat
         sudo systemctl stop gravity-sync

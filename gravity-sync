@@ -1948,7 +1948,7 @@ function task_automate {
     sudo sed -i "/RandomizedDelaySec=5m/c\RandomizedDelaySec=${RANDOM_REP}m" ${GS_LOCAL_REPO}/templates/gravity-sync.timer
     error_validate
 
-    if systemctl is-active --quiet gravity-sync; then
+    if systemctl is-active --quiet gravity-sync.timer; then
         MESSAGE="Stopping existing systemd service"
         sudo systemctl stop gravity-sync
         error_validate
@@ -1998,12 +1998,11 @@ function task_monitor {
 }
 
 function kill_automation_service {
-    if systemctl is-active --quiet gravity-sync; then
+    if systemctl is-active --quiet gravity-sync.timer; then
         MESSAGE="Stopping ${PROGRAM} timer"
         echo_stat
         sudo systemctl stop gravity-sync
         error_validate
-    fi
 
         MESSAGE="Disabling ${PROGRAM} automation service"
         echo_stat
@@ -2024,6 +2023,7 @@ function kill_automation_service {
         echo_stat
         sudo systemctl daemon-reload --quiet
         error_validate
+    fi
 }
 
 ## Purge Task
