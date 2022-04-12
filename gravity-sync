@@ -2175,7 +2175,7 @@ function list_gs_arguments {
 # SCRIPT EXECUTION ###########################
 
 case "${1}" in
-  "smart" | "sync" ) task_smart;;
+  "" | "smart" | "sync" ) task_smart;;
   "pull" ) task_pull;;
   "push" ) task_push;;
   "compare" ) task_compare;;
