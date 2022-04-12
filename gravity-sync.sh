@@ -192,6 +192,8 @@ function upgrade_to_4 {
     DOCKER_CON=''
     ROCKER_CON=''
 
+    SSH_PORT=''
+
     MESSAGE="Reviewing old configuration file settings"
     echo_stat
     source settings/gravity-sync.conf
@@ -220,6 +222,14 @@ function upgrade_to_4 {
     echo_stat
     sudo sed -i "/REMOTE_USER=''/c\REMOTE_USER='${REMOTE_USER}'" /etc/gravity-sync/gravity-sync.conf
     error_validate
+
+    if [ "${SSH_PORT}" != "" ]; then
+        GS_SSH_PORT=${SSH_PORT}
+        MESSAGE="Migrating target host SSH settings"
+        echo_stat
+        echo -e "GS_SSH_PORT='${GS_SSH_PORT}" | sudo tee -a /etc/gravity-sync/gravity-sync.conf 1> /dev/null
+        error_validate
+    fi
 
     if [ "${LOCAL_PIHOLE_DIRECTORY}" == '' ] || [ "${LOCAL_PIHOLE_DIRECTORY}" == '/etc/pihole' ]; then
         MESSAGE="Defaulting local Pi-hole directory setting"
