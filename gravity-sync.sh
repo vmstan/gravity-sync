@@ -167,9 +167,17 @@ function upgrade_to_4 {
     MESSAGE="Migrating Previous Configuration"
     echo_info
     
+    CURRENTUSER=$(whoami)
     MESSAGE="Transferring SSH keys"
+    echo_stat
     sudo cp $HOME/.ssh/id_rsa /etc/gravity-sync/gravity-sync.rsa
     sudo cp $HOME/.ssh/id_rsa.pub /etc/gravity-sync/gravity-sync.rsa.pub
+    error_validate
+
+    MESSAGE="Setting SSH key owner"
+    echo_stat
+    sudo chown ${CURRENTUSER}:${CURRENTUSER} /etc/gravity-sync/gravity-sync.rsa
+    sudo chown ${CURRENTUSER}:${CURRENTUSER} /etc/gravity-sync/gravity-sync.rsa.pub
     error_validate
 
     REMOTE_HOST=''
