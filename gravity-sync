@@ -1882,10 +1882,10 @@ function task_dev {
         
         MESSAGE="Checking available branches"
         echo_stat
-        (cd ${GS_LOCAL_REPO} || exit; git fetch --all >/dev/null 2>&1)
+        (cd ${GS_LOCAL_REPO} || exit; sudo git fetch --all >/dev/null 2>&1)
         error_validate
         
-        (cd ${GS_LOCAL_REPO} || exit; git branch -r)
+        (cd ${GS_LOCAL_REPO} || exit; sudo git branch -r)
         
         MESSAGE="Select GitHub branch to update against"
         echo_need
