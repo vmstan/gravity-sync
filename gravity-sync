@@ -1796,7 +1796,7 @@ function show_version {
     if [ -z "$GS_GIT_VERSION" ]; then
         MESSAGE="Latest version: ${RED}Unknown${NC}"
     else
-        if [ "$GS_GIT_VERSION" != "GS_VERSION" ]; then
+        if [ "${GS_GIT_VERSION}" != "${GS_VERSION}" ]; then
             MESSAGE="Update available: ${RED}${GS_GIT_VERSION}${NC}"
         else
             MESSAGE="Latest version: ${GREEN}${GS_GIT_VERSION}${NC}"
