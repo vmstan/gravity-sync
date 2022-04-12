@@ -1146,7 +1146,12 @@ function export_ssh_key {
 }
 
 function show_target {
-    MESSAGE="Remote ${UI_CORE_APP}: ${REMOTE_USER}@${REMOTE_HOST}"
+    if [ "${GS_SSH_PORT}" != '22' ]; then
+        MESSAGE="Remote target ${REMOTE_USER}@${REMOTE_HOST}:${GS_SSH_PORT}"
+    else
+        MESSAGE="Remote target ${REMOTE_USER}@${REMOTE_HOST}"
+    fi
+
     echo_info
 }
 
