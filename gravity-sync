@@ -4,7 +4,7 @@ GS_RUN_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-GS_VERSION='4.0.0'
+GS_VERSION='4.0.1'
 
 # For documentation or the changelog/updates visit https://github.com/vmstan/gravity-sync
 # Requires Pi-Hole 5.x or higher already be installed, for help visit https://pi-hole.net
@@ -249,6 +249,7 @@ function import_gs_config {
 
 ## Invalid Tasks
 function task_invalid {
+    start_gs_no_config
     echo_fail
     list_gs_arguments
 }
@@ -289,6 +290,8 @@ function  set_pihole_exec {
 
 ## Compare Task
 function task_compare {
+    start_gs
+
     GS_TASK_TYPE='COMPARE'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
@@ -303,6 +306,8 @@ function task_compare {
 
 ## Pull Task
 function task_pull {
+    start_gs
+
     GS_TASK_TYPE='PULL'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
@@ -418,6 +423,8 @@ function pull_gs {
 
 ## Push Task
 function task_push {
+    start_gs
+
     GS_TASK_TYPE='PUSH'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
@@ -552,6 +559,8 @@ function push_gs {
 
 ## Smart Task
 function task_smart {
+    start_gs
+
     GS_TASK_TYPE='SMART'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
@@ -1137,12 +1146,19 @@ function export_ssh_key {
 }
 
 function show_target {
-    MESSAGE="Remote ${UI_CORE_APP}: ${REMOTE_USER}@${REMOTE_HOST}"
+    if [ "${GS_SSH_PORT}" != '22' ]; then
+        MESSAGE="Remote target ${REMOTE_USER}@${REMOTE_HOST}:${GS_SSH_PORT}"
+    else
+        MESSAGE="Remote target ${REMOTE_USER}@${REMOTE_HOST}"
+    fi
+
     echo_info
 }
 
 ## Logs Task
 function task_logs {
+    start_gs_no_config
+
     GS_TASK_TYPE='LOGS'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
@@ -1397,6 +1413,8 @@ function intent_validate {
 
 ## Sudo Creation Task
 function task_sudo {
+    start_gs_no_config
+
     GS_TASK_TYPE='SUDO'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
@@ -1443,10 +1461,19 @@ function validate_sudo_status {
 }
 
 ## Configure Task
-function task_configure {				
+function task_configure {
+    
+    start_gs_no_config
+
     GS_TASK_TYPE='CONFIGURE'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
+
+    if [[ ${INPUT_SSH} =~ ^[0-9]+$ ]]; then
+        GS_SSH_PORT=${INPUT_SSH}
+        MESSAGE="TARGET HOST SSH PORT SET TO ${GS_SSH_PORT}"
+        echo_warn
+    fi
     
     if [ -f ${GS_ETC_PATH}/${GS_CONFIG_FILE} ]; then		
         config_delete
@@ -1504,6 +1531,14 @@ function config_generate {
     
     MESSAGE="${UI_CORE_LOADING} ${GS_CONFIG_FILE}"
     echo_stat
+
+    if [ "${GS_SSH_PORT}" != '22' ]; then
+        MESSAGE="${UI_CONFIG_SAVING} custom SSH port to ${GS_CONFIG_FILE}"
+        echo_stat
+        echo -e "GS_SSH_PORT='${GS_SSH_PORT}'" | sudo tee -a ${GS_ETC_PATH}/${GS_CONFIG_FILE} 1> /dev/null
+        error_validate
+    fi
+
     # shellcheck source=/etc/gravity-sync/gravity-sync.conf
     source ${GS_ETC_PATH}/${GS_CONFIG_FILE}
     error_validate
@@ -1749,22 +1784,22 @@ function update_gs {
 ## Show Version
 function show_version {
     if [ -f ${GS_LOCAL_REPO}/dev ]; then
-        GS_DEV_VERSION="-dev"
+        GS_DEV_VERSION="Beta"
     else
         GS_DEV_VERSION=""
     fi
     
-    MESSAGE="Running version: ${GREEN}${GS_VERSION}${NC}${GS_DEV_VERSION}"
+    MESSAGE="Running version: ${GREEN}${GS_VERSION}${NC} ${GS_DEV_VERSION}"
     echo_info
     
     GS_GIT_VERSION=$(curl -sf https://raw.githubusercontent.com/vmstan/gravity-sync/master/VERSION)
     if [ -z "$GS_GIT_VERSION" ]; then
         MESSAGE="Latest version: ${RED}Unknown${NC}"
     else
-        if [ "$GS_GIT_VERSION" != "GS_VERSION" ]; then
-            MESSAGE="Update available: ${RED}${GS_GIT_VERSION}${NC}"
-        else
+        if [[ ! "${GS_GIT_VERSION}" > "${GS_VERSION}" ]]; then
             MESSAGE="Latest version: ${GREEN}${GS_GIT_VERSION}${NC}"
+        else
+            MESSAGE="Update available: ${RED}${GS_GIT_VERSION}${NC}"
         fi
     fi
     echo_info
@@ -1865,6 +1900,8 @@ function show_info {
 
 ## Dev Task
 function task_dev {
+    start_gs_no_config
+
     GS_TASK_TYPE='DEV'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
@@ -1900,6 +1937,8 @@ function task_dev {
 
 ## Update Task
 function task_update {
+    start_gs_no_config
+
     GS_TASK_TYPE='UPDATE'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
@@ -1909,6 +1948,8 @@ function task_update {
 
 ## Version Task
 function task_version {
+    start_gs_no_config
+
     GS_TASK_TYPE='VERSION'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
@@ -1919,6 +1960,8 @@ function task_version {
 ## Info Task
 
 function task_info {
+    start_gs
+
     GS_TASK_TYPE='INFO'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
@@ -1928,6 +1971,8 @@ function task_info {
 
 ## Automate Task
 function task_automate {
+    start_gs
+
     GS_TASK_TYPE='AUTOMATE'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
@@ -1978,6 +2023,8 @@ function task_automate {
 }
 
 function task_disable_automate {
+    start_gs_no_config
+
     GS_TASK_TYPE='DISABLE'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
@@ -1987,6 +2034,8 @@ function task_disable_automate {
 }
 
 function task_monitor {
+    start_gs_no_config
+
     GS_TASK_TYPE='MONITOR'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
@@ -2028,6 +2077,8 @@ function kill_automation_service {
 
 ## Purge Task
 function task_purge {
+    start_gs_no_config
+
     GS_TASK_TYPE="PURGE"
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
@@ -2128,66 +2179,23 @@ function list_gs_arguments {
 
 # SCRIPT EXECUTION ###########################
 
-case $# in
-    0)
-        start_gs
-        task_smart ;;
-    1)
-        case $1 in
-            smart|sync)
-                start_gs
-                task_smart ;;
-            pull)
-                start_gs
-                task_pull ;;
-            push)
-                start_gs
-                task_push ;;
-            version)
-                start_gs_no_config
-                task_version ;;
-            update|upgrade)
-                start_gs_no_config
-                task_update ;;
-            dev|development|develop)
-                start_gs_no_config
-                task_dev ;;
-            logs|log)
-                start_gs_no_config
-                task_logs ;;
-            compare)
-                start_gs
-                task_compare ;;
-            config|configure)
-                start_gs_no_config
-                task_configure ;;
-            auto|automate)
-                start_gs
-                task_automate ;;
-            disable)
-                start_gs_no_config
-                task_disable_automate ;;
-            monitor|follow)
-                start_gs_no_config
-                task_monitor ;;
-            purge|uninstall|remove)
-                start_gs_no_config
-                task_purge ;;
-            sudo)
-                start_gs_no_config
-                task_sudo ;;
-            info)
-                start_gs
-                task_info ;;
-            *)
-                start_gs_no_config
-                task_invalid ;;
-        esac
-    ;;
-    
-    *)
-        start_gs_no_config
-        task_invalid ;;
+case "${1}" in
+  "" | "smart" | "sync" ) task_smart;;
+  "pull" ) task_pull;;
+  "push" ) task_push;;
+  "compare" ) task_compare;;
+  "config" | "conf" | "configure" ) INPUT_SSH=$2; task_configure;;
+  "auto" | "automate" ) task_automate;;
+  "disable" | "stop" ) task_disable_automate;;
+  "monitor" | "follow" ) task_monitor;;
+  "purge" | "uninstall" | "remove" ) task_purge;;
+  "sudo" ) task_sudo;;
+  "version" | "ver" ) task_version;;
+  "info" ) task_info;;
+  "update" | "upgrade" | "up" ) task_update;;
+  "dev" | "beta" ) task_dev;;
+  "logs" | "log" ) task_logs;;
+  * ) task_invalid;;
 esac
 
 # END OF SCRIPT ##############################
