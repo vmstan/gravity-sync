@@ -2203,9 +2203,9 @@ case $# in
         esac
     ;;
 
-    *)
-        start_gs_no_config
-        task_invalid ;;
+    # *)
+    #    start_gs_no_config
+    #    task_invalid ;;
 esac
 
 # END OF SCRIPT ##############################
