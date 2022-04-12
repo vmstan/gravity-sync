@@ -54,5 +54,4 @@ Pi-hole is and the Pi-hole logo are [registered trademarks](https://pi-hole.net/
 Please refer to the [Wiki](https://github.com/vmstan/gravity-sync/wiki) for more information:
 
 - [Frequently Asked Questions](https://github.com/vmstan/gravity-sync/wiki/Frequent-Questions)
-- [Advanced Installation Options](https://github.com/vmstan/gravity-sync/wiki/Under-The-Covers)
 - [Changelog](https://github.com/vmstan/gravity-sync/wiki/Changelog)
