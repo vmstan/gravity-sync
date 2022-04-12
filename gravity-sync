@@ -249,6 +249,7 @@ function import_gs_config {
 
 ## Invalid Tasks
 function task_invalid {
+    start_gs_no_config
     echo_fail
     list_gs_arguments
 }
@@ -289,6 +290,8 @@ function  set_pihole_exec {
 
 ## Compare Task
 function task_compare {
+    start_gs
+
     GS_TASK_TYPE='COMPARE'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
@@ -303,6 +306,8 @@ function task_compare {
 
 ## Pull Task
 function task_pull {
+    start_gs
+
     GS_TASK_TYPE='PULL'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
@@ -418,6 +423,8 @@ function pull_gs {
 
 ## Push Task
 function task_push {
+    start_gs
+
     GS_TASK_TYPE='PUSH'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
@@ -552,6 +559,8 @@ function push_gs {
 
 ## Smart Task
 function task_smart {
+    start_gs
+
     GS_TASK_TYPE='SMART'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
@@ -1143,6 +1152,8 @@ function show_target {
 
 ## Logs Task
 function task_logs {
+    start_gs_no_config
+
     GS_TASK_TYPE='LOGS'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
@@ -1397,6 +1408,8 @@ function intent_validate {
 
 ## Sudo Creation Task
 function task_sudo {
+    start_gs_no_config
+
     GS_TASK_TYPE='SUDO'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
@@ -1443,15 +1456,18 @@ function validate_sudo_status {
 }
 
 ## Configure Task
-function task_configure {				
+function task_configure {
+    
+    start_gs_no_config
+
     GS_TASK_TYPE='CONFIGURE'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
 
-    if [ "$1" == '' ] || [ "$1" == '22' ]; then
+    if [ "$2" == '' ] || [ "$2" == '22' ]; then
         GS_SSH_PORT='22'
     else
-        GS_SSH_PORT=$1
+        GS_SSH_PORT=$2
         MESSAGE="TARGET HOST SSH PORT SET TO ${GS_SSH_PORT}"
         echo_warn
     fi
@@ -1881,6 +1897,8 @@ function show_info {
 
 ## Dev Task
 function task_dev {
+    start_gs_no_config
+
     GS_TASK_TYPE='DEV'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
@@ -1916,6 +1934,8 @@ function task_dev {
 
 ## Update Task
 function task_update {
+    start_gs_no_config
+
     GS_TASK_TYPE='UPDATE'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
@@ -1925,6 +1945,8 @@ function task_update {
 
 ## Version Task
 function task_version {
+    start_gs_no_config
+
     GS_TASK_TYPE='VERSION'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
@@ -1935,6 +1957,8 @@ function task_version {
 ## Info Task
 
 function task_info {
+    start_gs
+
     GS_TASK_TYPE='INFO'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
@@ -1944,6 +1968,8 @@ function task_info {
 
 ## Automate Task
 function task_automate {
+    start_gs
+
     GS_TASK_TYPE='AUTOMATE'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
@@ -1994,6 +2020,8 @@ function task_automate {
 }
 
 function task_disable_automate {
+    start_gs_no_config
+
     GS_TASK_TYPE='DISABLE'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
@@ -2003,6 +2031,8 @@ function task_disable_automate {
 }
 
 function task_monitor {
+    start_gs_no_config
+
     GS_TASK_TYPE='MONITOR'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
@@ -2044,6 +2074,8 @@ function kill_automation_service {
 
 ## Purge Task
 function task_purge {
+    start_gs_no_config
+
     GS_TASK_TYPE="PURGE"
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
@@ -2144,82 +2176,23 @@ function list_gs_arguments {
 
 # SCRIPT EXECUTION ###########################
 
-case $# in
-    0)
-        start_gs
-        task_smart ;;
-    1)
-        case $1 in
-            smart|sync)
-                start_gs
-                task_smart ;;
-            pull)
-                start_gs
-                task_pull ;;
-            push)
-                start_gs
-                task_push ;;
-            version)
-                start_gs_no_config
-                task_version ;;
-            update|upgrade)
-                start_gs_no_config
-                task_update ;;
-            dev|development|develop)
-                start_gs_no_config
-                task_dev ;;
-            logs|log)
-                start_gs_no_config
-                task_logs ;;
-            compare)
-                start_gs
-                task_compare ;;
-            config|configure)
-                start_gs_no_config
-                task_configure ;;
-            auto|automate)
-                start_gs
-                task_automate ;;
-            disable)
-                start_gs_no_config
-                task_disable_automate ;;
-            monitor|follow)
-                start_gs_no_config
-                task_monitor ;;
-            purge|uninstall|remove)
-                start_gs_no_config
-                task_purge ;;
-            sudo)
-                start_gs_no_config
-                task_sudo ;;
-            info)
-                start_gs
-                task_info ;;
-            *)
-                start_gs_no_config
-                task_invalid ;;
-        esac
-    ;;
-
-    2)
-   		case $1 in
-			config|configure)
-                start_gs_no_config
-                task_configure ;;
-		esac
-	;;
-
-	3)
-   		case $1 in
-			config|configure)
-                start_gs_no_config
-                task_configure $2 ;;	
-		esac
-	;;
-
-    *)
-        start_gs_no_config
-        task_invalid ;;
+case "${1}" in
+  "smart" | "sync" ) task_smart;;
+  "pull" ) task_pull;;
+  "push" ) task_push;;
+  "compare" ) task_compare;;
+  "config" | "conf" | "configure" ) task_configure "$2";;
+  "auto" | "automate" ) task_automate;;
+  "disable" | "stop" ) task_disable_automate;;
+  "monitor" | "follow" ) task_monitor;;
+  "purge" | "uninstall" | "remove" ) task_purge;;
+  "sudo" ) task_sudo;;
+  "version" | "ver" ) task_version;;
+  "info" ) task_info;;
+  "update" | "upgrade" | "up" ) task_update;;
+  "dev" | "beta" ) task_dev;;
+  "logs" | "log" ) task_logs;;
+  * ) task_invalid;;
 esac
 
 # END OF SCRIPT ##############################
