@@ -1784,22 +1784,22 @@ function update_gs {
 ## Show Version
 function show_version {
     if [ -f ${GS_LOCAL_REPO}/dev ]; then
-        GS_DEV_VERSION="-dev"
+        GS_DEV_VERSION="Beta"
     else
         GS_DEV_VERSION=""
     fi
     
-    MESSAGE="Running version: ${GREEN}${GS_VERSION}${NC}${GS_DEV_VERSION}"
+    MESSAGE="Running version: ${GREEN}${GS_VERSION}${NC} ${GS_DEV_VERSION}"
     echo_info
     
     GS_GIT_VERSION=$(curl -sf https://raw.githubusercontent.com/vmstan/gravity-sync/master/VERSION)
     if [ -z "$GS_GIT_VERSION" ]; then
         MESSAGE="Latest version: ${RED}Unknown${NC}"
     else
-        if [ "${GS_GIT_VERSION}" != "${GS_VERSION}" ]; then
-            MESSAGE="Update available: ${RED}${GS_GIT_VERSION}${NC}"
-        else
+        if [[ ! "${GS_GIT_VERSION}" > "${GS_VERSION}" ]]; then
             MESSAGE="Latest version: ${GREEN}${GS_GIT_VERSION}${NC}"
+        else
+            MESSAGE="Update available: ${RED}${GS_GIT_VERSION}${NC}"
         fi
     fi
     echo_info
