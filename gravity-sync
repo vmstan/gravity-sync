@@ -1447,6 +1447,11 @@ function task_configure {
     GS_TASK_TYPE='CONFIGURE'
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
+
+    if [[ $1 =~ ^[0-9][0-9][0-9][0-9][0-9]?$ ]]
+	then
+		GS_SSH_PORT=$1
+	fi
     
     if [ -f ${GS_ETC_PATH}/${GS_CONFIG_FILE} ]; then		
         config_delete
@@ -1504,6 +1509,14 @@ function config_generate {
     
     MESSAGE="${UI_CORE_LOADING} ${GS_CONFIG_FILE}"
     echo_stat
+
+    if [ "${GS_SSH_PORT}" != '22' ]; then
+        MESSAGE="${UI_CONFIG_SAVING} custom SSH port to ${GS_CONFIG_FILE}"
+        echo_stat
+        echo -e "GS_SSH_PORT='${GS_SSH_PORT}'" | sudo tee -a ${GS_ETC_PATH}/${GS_CONFIG_FILE} 1> /dev/null
+        error_validate
+    fi
+
     # shellcheck source=/etc/gravity-sync/gravity-sync.conf
     source ${GS_ETC_PATH}/${GS_CONFIG_FILE}
     error_validate
@@ -2185,6 +2198,14 @@ case $# in
         esac
     ;;
     
+    2)
+        case $1 in
+            config|configure)
+                start_gs_no_config
+                task_configure $2 ;;
+        esac
+    ;;
+
     *)
         start_gs_no_config
         task_invalid ;;
