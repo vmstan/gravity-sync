@@ -2002,18 +2002,18 @@ function task_automate {
     if [ "${INPUT_SPEED}" == 'slow' ]; then
         MESSAGE="Randomizing service timers (slow)"
         echo_stat
-        ACTIVE_REP=$((( RANDOM % 60 ) + 55 ))
-        RANDOM_REP=$((( RANDOM % 8 ) + 2 ))
+        ACTIVE_REP=$(shuf -i 50-55 -n1)
+        RANDOM_REP=$(shuf -i 7-10 -n1)
     elif [ "${INPUT_SPEED}" == 'half' ]; then
         MESSAGE="Randomizing service timers (half)"
         echo_stat
-        ACTIVE_REP=$((( RANDOM % 30 ) + 25 ))
-        RANDOM_REP=$((( RANDOM % 8 ) + 2 ))
+        ACTIVE_REP=$(shuf -i 25-30 -n1)
+        RANDOM_REP=$(shuf -i 5-7 -n1)
     else
         MESSAGE="Randomizing service timers"
         echo_stat
-        ACTIVE_REP=$((( RANDOM % 7 ) + 2 ))
-        RANDOM_REP=$((( RANDOM % 8 ) + 2 ))
+        ACTIVE_REP=$(shuf -i 3-7 -n1)
+        RANDOM_REP=$(shuf -i 2-5 -n1)
     fi
 
     sudo sed -i "/OnUnitInactiveSec=5m/c\OnUnitInactiveSec=${ACTIVE_REP}m" ${OS_TMP}/gravity-sync.timer
