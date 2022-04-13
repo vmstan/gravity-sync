@@ -4,7 +4,7 @@ GS_RUN_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-GS_VERSION='4.0.1'
+GS_VERSION='4.0.2'
 
 # For documentation or the changelog/updates visit https://github.com/vmstan/gravity-sync
 # Requires Pi-Hole 5.x or higher already be installed, for help visit https://pi-hole.net
@@ -1977,45 +1977,83 @@ function task_automate {
     MESSAGE="${MESSAGE}: ${GS_TASK_TYPE}"
     echo_good
 
+    sudo cp ${GS_LOCAL_REPO}/templates/gravity-sync.service ${OS_TMP}/gravity-sync.service
+    sudo cp ${GS_LOCAL_REPO}/templates/gravity-sync.timer ${OS_TMP}/gravity-sync.timer
+
     MESSAGE="Customizing service file username"
+    echo_stat
     OS_CURRENT_USER=$(whoami)
-    sudo sed -i "/User=unknown/c\User=${OS_CURRENT_USER}" ${GS_LOCAL_REPO}/templates/gravity-sync.service
+    sudo sed -i "/User=unknown/c\User=${OS_CURRENT_USER}" ${OS_TMP}/gravity-sync.service
     error_validate
 
     MESSAGE="Customizing service file executable path"
-    sudo sed -i "/ExecStart=/c\ExecStart=${GS_FILEPATH}" ${GS_LOCAL_REPO}/templates/gravity-sync.service
+    echo_stat
+    sudo sed -i "/ExecStart=/c\ExecStart=${GS_FILEPATH}" ${OS_TMP}/gravity-sync.service
     error_validate
 
-    MESSAGE="Randomizing service timers"
-    ACTIVE_REP=$((( RANDOM % 4 ) + 1 ))
-    RANDOM_REP=$((( RANDOM % 8 ) + 2 ))
-    sudo sed -i "/OnUnitInactiveSec=5m/c\OnUnitInactiveSec=${ACTIVE_REP}m" ${GS_LOCAL_REPO}/templates/gravity-sync.timer
-    sudo sed -i "/RandomizedDelaySec=5m/c\RandomizedDelaySec=${RANDOM_REP}m" ${GS_LOCAL_REPO}/templates/gravity-sync.timer
+    if [ "${GS_SYSLOG_REDIRECT}" != '' ]; then
+        MESSAGE="Customizing standard output location"
+        echo_stat
+        sudo sed -i "/Type=simple/a\StandardOutput=file:${GS_SYSLOG_REDIRECT}" ${OS_TMP}/gravity-sync.service
+        sudo sed -i "/Type=simple/a\StandardError=file:${GS_SYSLOG_REDIRECT}" ${OS_TMP}/gravity-sync.service
+        error_validate
+    fi
+
+    if [ "${INPUT_SPEED}" == 'slow' ] || [ "${INPUT_SPEED}" == 'hour' ]; then
+        MESSAGE="Randomizing service timers (hour)"
+        echo_stat
+        ACTIVE_REP=$(shuf -i 50-55 -n1)
+        RANDOM_REP=$(shuf -i 7-10 -n1)
+    elif [ "${INPUT_SPEED}" == 'half' ]; then
+        MESSAGE="Randomizing service timers (half)"
+        echo_stat
+        ACTIVE_REP=$(shuf -i 25-30 -n1)
+        RANDOM_REP=$(shuf -i 5-7 -n1)
+    elif [ "${INPUT_SPEED}" == 'quad' ]; then
+        MESSAGE="Randomizing service timers (quad)"
+        echo_stat
+        ACTIVE_REP=$(shuf -i 12-15 -n1)
+        RANDOM_REP=$(shuf -i 3-5 -n1)
+    else
+        MESSAGE="Randomizing service timers"
+        echo_stat
+        ACTIVE_REP=$(shuf -i 3-10 -n1)
+        RANDOM_REP=$(shuf -i 2-5 -n1)
+    fi
+
+    sudo sed -i "/OnUnitInactiveSec=5m/c\OnUnitInactiveSec=${ACTIVE_REP}m" ${OS_TMP}/gravity-sync.timer
+    sudo sed -i "/RandomizedDelaySec=5m/c\RandomizedDelaySec=${RANDOM_REP}m" ${OS_TMP}/gravity-sync.timer
     error_validate
 
     if systemctl is-active --quiet gravity-sync.timer; then
         MESSAGE="Stopping existing systemd service"
+        echo_stat
         sudo systemctl stop gravity-sync
         error_validate
     fi
 
     MESSAGE="Moving systemd timer into place"
-    sudo cp ${GS_LOCAL_REPO}/templates/gravity-sync.timer ${OS_DAEMON_PATH}
+    echo_stat
+    sudo cp ${OS_TMP}/gravity-sync.timer ${OS_DAEMON_PATH}
     error_validate
 
     MESSAGE="Moving systemd service into place"
-    sudo cp ${GS_LOCAL_REPO}/templates/gravity-sync.service ${OS_DAEMON_PATH}
+    echo_stat
+    sudo cp ${OS_TMP}/gravity-sync.service ${OS_DAEMON_PATH}
     error_validate
 
     MESSAGE="Reloading systemd daemon"
+    echo_stat
     sudo systemctl daemon-reload --quiet
     error_validate
 
     MESSAGE="Enabling ${PROGRAM} timer"
+    echo_stat
     sudo systemctl enable gravity-sync.timer --quiet
     error_validate
 
     MESSAGE="Starting ${PROGRAM} service"
+    echo_stat
     sudo systemctl start gravity-sync --quiet
     error_validate
     
@@ -2154,7 +2192,7 @@ function list_gs_arguments {
     echo -e "Setup Options:"
     echo -e " ${YELLOW}config${NC}      Creates a new ${PROGRAM} configuration file"
     echo -e " ${YELLOW}version${NC}     Lists the installed version of ${PROGRAM} and checks for updates"
-    echo -e " ${YELLOW}upgrade${NC}     Upgrades ${PROGRAM} to the latest available version on GitHub"
+    echo -e " ${YELLOW}update${NC}      Upgrades ${PROGRAM} to the latest available version on GitHub"
     echo -e " ${YELLOW}dev${NC}         Sets upgrade command to use a development version of ${PROGRAM} (toggle on/off)"
     echo -e " ${YELLOW}sudo${NC}        Enables password-less sudo for current user"
     echo -e " ${YELLOW}purge${NC}       Uninstalls ${PROGRAM} from this system"
@@ -2180,22 +2218,22 @@ function list_gs_arguments {
 # SCRIPT EXECUTION ###########################
 
 case "${1}" in
-  "" | "smart" | "sync" ) task_smart;;
-  "pull" ) task_pull;;
-  "push" ) task_push;;
-  "compare" ) task_compare;;
-  "config" | "conf" | "configure" ) INPUT_SSH=$2; task_configure;;
-  "auto" | "automate" ) task_automate;;
-  "disable" | "stop" ) task_disable_automate;;
-  "monitor" | "follow" ) task_monitor;;
-  "purge" | "uninstall" | "remove" ) task_purge;;
-  "sudo" ) task_sudo;;
-  "version" | "ver" ) task_version;;
-  "info" ) task_info;;
-  "update" | "upgrade" | "up" ) task_update;;
-  "dev" | "beta" ) task_dev;;
-  "logs" | "log" ) task_logs;;
-  * ) task_invalid;;
+    "" | "smart" | "sync" )             task_smart;;
+    "pull" )                            task_pull;;
+    "push" )                            task_push;;
+    "compare" )                         task_compare;;
+    "config" | "conf" | "configure" )   INPUT_SSH=$2; task_configure;;
+    "auto" | "automate" )               INPUT_SPEED=$2 task_automate;;
+    "disable" | "stop" )                task_disable_automate;;
+    "monitor" | "follow" )              task_monitor;;
+    "purge" | "uninstall" | "remove" )  task_purge;;
+    "sudo" )                            task_sudo;;
+    "version" | "ver" )                 task_version;;
+    "info" )                            task_info;;
+    "update" | "upgrade" | "up" )       task_update;;
+    "dev" | "beta" )                    task_dev;;
+    "logs" | "log" )                    task_logs;;
+    * )                                 task_invalid;;
 esac
 
 # END OF SCRIPT ##############################
