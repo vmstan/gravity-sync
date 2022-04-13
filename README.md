@@ -10,7 +10,7 @@
 
 ###
 
-What is better than a [Pi-hole](https://github.com/pi-hole/pi-hole) blocking trackers, advertisements, and other malicious domains on your network? That's right, **two** Pi-hole blocking all that junk on your network! 
+What is better than a [Pi-hole](https://github.com/pi-hole/pi-hole) blocking trackers, advertisements, and other malicious domains on your network? That's right, **two** Pi-hole blocking all that junk on your network!
 
 - [Seriously. Why two Pi-hole?](https://github.com/vmstan/gravity-sync/wiki/Frequent-Questions#why-do-i-need-more-than-one-pi-hole)
 
@@ -40,8 +40,8 @@ Gravity Sync will **not**:
 1. [Review System Requirements](https://github.com/vmstan/gravity-sync/wiki/System-Requirements)
 2. [Install Gravity Sync](https://github.com/vmstan/gravity-sync/wiki/Installing)
 3. [Configure Gravity Sync](https://github.com/vmstan/gravity-sync/wiki/Installing#configuration)
-4. [Execute Gravity Sync](https://github.com/vmstan/gravity-sync/wiki/Installing#execution)
-5. [Automate Gravity Sync](https://github.com/vmstan/gravity-sync/wiki/Installing#automation)
+4. [Execute Gravity Sync](https://github.com/vmstan/gravity-sync/wiki/Engaging)
+5. [Automate Gravity Sync](https://github.com/vmstan/gravity-sync/wiki/Automation)
 
 ## Disclaimer
 
