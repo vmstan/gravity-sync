@@ -8,7 +8,7 @@
 
 </span>
 
-###
+### [Find out what's new in version 4.0!](https://github.com/vmstan/gravity-sync/wiki/4.0)
 
 What is better than a [Pi-hole](https://github.com/pi-hole/pi-hole) blocking trackers, advertisements, and other malicious domains on your network? That's right, **two** Pi-hole blocking all that junk on your network!
 
