@@ -959,7 +959,7 @@ function md5_compare {
             LOCAL_CN_MD5=$(md5sum ${LOCAL_DNSMASQ_DIRECTORY}/${DNS_CONF_FILE_0} | sed 's/\s.*$//')
             error_validate
             
-            if [ "$REMOTE_CN_MD5" == "$LAST_REMOTE_CN_MD5" ] && [ "$LOCAL_CN_MD5" == "$LAST_LOCAL_CN_MD5" ]; then
+            if [ "$REMOTE_CN_MD5" == "$LAST_REMOTE_CN_MD5_1" ] && [ "$LOCAL_CN_MD5" == "$LAST_LOCAL_CN_MD5_1" ]; then
                 GS_HASH_MARK=$((GS_HASH_MARK+0))
             else
                 MESSAGE="${UI_HASHING_DIFFERENCE} ${DNS_CONF_NAME_0}"
