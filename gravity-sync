@@ -673,11 +673,11 @@ function smart_gs {
         GS_PULL_RESTART="1"
     fi
     
-    if [ "${REMOTE_CN_MD5}" != "${LAST_REMOTE_CN_MD5}" ]; then
+    if [ "${REMOTE_CN_MD5}" != "${LAST_REMOTE_CN_MD5_1}" ]; then
         REMOTE_CNAME_CHANGE="1"
     fi
     
-    if [ "${LOCAL_CN_MD5}" != "${LAST_LOCAL_CN_MD5}" ]; then
+    if [ "${LOCAL_CN_MD5}" != "${LAST_LOCAL_CN_MD5_1}" ]; then
         LOCAL_CNAME_CHANGE="1"
     fi
     
@@ -1012,14 +1012,16 @@ function previous_md5 {
 
     for i in 0 1 2 3 4 5; do
         DNS_CONF_FILE="DNS_CONF_FILE_$i"
-            echo -e ${DNS_CONF_FILE}
         if [ -f "${GS_ETC_PATH}/${DNS_CONF_FILE}.md5" ]; then
-            echo -e ${DNS_CONF_FILE}
-            LAST_REMOTE_CN_MD5=$(sed "1q;d" ${GS_ETC_PATH}/${DNS_CONF_FILE}.md5)
-            LAST_LOCAL_CN_MD5=$(sed "2q;d" ${GS_ETC_PATH}/${DNS_CONF_FILE}.md5)
+            #LAST_REMOTE_CN_MD5=$(sed "1q;d" ${GS_ETC_PATH}/${DNS_CONF_FILE}.md5)
+            #LAST_LOCAL_CN_MD5=$(sed "2q;d" ${GS_ETC_PATH}/${DNS_CONF_FILE}.md5)
+            LAST_REMOTE_CONF_MD5_[i]=$(sed "1q;d" ${GS_ETC_PATH}/${DNS_CONF_FILE}.md5)
+            LAST_LOCAL_CONF_MD5_[i]=$(sed "2q;d" ${GS_ETC_PATH}/${DNS_CONF_FILE}.md5)
         else
-            LAST_REMOTE_CN_MD5="0"
-            LAST_LOCAL_CN_MD5="0"
+            #LAST_REMOTE_CN_MD5="0"
+            #LAST_LOCAL_CN_MD5="0"
+            LAST_REMOTE_CONF_MD5_[i]="0"
+            LAST_LOCAL_CONF_MD5_[i]="0"
         fi
     done
 }
