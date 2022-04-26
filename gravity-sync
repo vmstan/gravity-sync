@@ -1010,13 +1010,15 @@ function previous_md5 {
         LAST_LOCAL_CL_MD5="0"
     fi
 
-    if [ -f "${GS_ETC_PATH}/${DNS_CONF_FILE_0}.md5" ]; then
-        LAST_REMOTE_CN_MD5=$(sed "1q;d" ${GS_ETC_PATH}/${DNS_CONF_FILE_0}.md5)
-        LAST_LOCAL_CN_MD5=$(sed "2q;d" ${GS_ETC_PATH}/${DNS_CONF_FILE_0}.md5)
-    else
-        LAST_REMOTE_CN_MD5="0"
-        LAST_LOCAL_CN_MD5="0"
-    fi
+    for i in 0 1 2 3 4 5; do
+        if [ -f "${GS_ETC_PATH}/${DNS_CONF_FILE}$i.md5" ]; then
+            LAST_REMOTE_CN_MD5=$(sed "1q;d" ${GS_ETC_PATH}/${DNS_CONF_FILE}$i.md5)
+            LAST_LOCAL_CN_MD5=$(sed "2q;d" ${GS_ETC_PATH}/${DNS_CONF_FILE}$i.md5)
+        else
+            LAST_REMOTE_CN_MD5="0"
+            LAST_LOCAL_CN_MD5="0"
+        fi
+    done
 }
 
 function md5_recheck {
