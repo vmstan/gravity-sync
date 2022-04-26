@@ -673,11 +673,11 @@ function smart_gs {
         GS_PULL_RESTART="1"
     fi
     
-    if [ "${REMOTE_CN_MD5}" != "${LAST_REMOTE_CN_MD5_0}" ]; then
+    if [ "${REMOTE_CN_MD5}" != "${LAST_REMOTE_CONF_MD5_0}" ]; then
         REMOTE_CNAME_CHANGE="1"
     fi
     
-    if [ "${LOCAL_CN_MD5}" != "${LAST_LOCAL_CN_MD5_0}" ]; then
+    if [ "${LOCAL_CN_MD5}" != "${LAST_LOCAL_CONF_MD5_0}" ]; then
         LOCAL_CNAME_CHANGE="1"
     fi
     
@@ -959,7 +959,7 @@ function md5_compare {
             LOCAL_CN_MD5=$(md5sum ${LOCAL_DNSMASQ_DIRECTORY}/${DNS_CONF_FILE_0} | sed 's/\s.*$//')
             error_validate
             
-            if [ "$REMOTE_CN_MD5" == "$LAST_REMOTE_CN_MD5_0" ] && [ "$LOCAL_CN_MD5" == "$LAST_LOCAL_CN_MD5_0" ]; then
+            if [ "$REMOTE_CN_MD5" == "$LAST_REMOTE_CONF_MD5_0" ] && [ "$LOCAL_CN_MD5" == "$LAST_LOCAL_CONF_MD5_0" ]; then
                 GS_HASH_MARK=$((GS_HASH_MARK+0))
             else
                 MESSAGE="${UI_HASHING_DIFFERENCE} ${DNS_CONF_NAME_0}"
