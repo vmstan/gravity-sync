@@ -66,7 +66,6 @@ GS_CONFIG_FILE='gravity-sync.conf' 	            # replace in gravity-sync.conf t
 GS_SYNCING_LOG='gs-sync.log' 		            # replace in gravity-sync.conf to overwrite
 GS_GRAVITY_FI_MD5_LOG='gs-gravity.md5'          # replace in gravity-sync.conf to overwrite
 GS_CUSTOM_DNS_MD5_LOG='gs-clist.md5'            # replace in gravity-sync.conf to overwrite
-GS_CNAME_CONF_MD5_LOG='gs-cname.md5'            # replace in gravity-sync.conf to overwrite
 
 # SSH Customization
 GS_SSH_PORT='22' 						        # replace in gravity-sync.conf to overwrite
@@ -1011,9 +1010,9 @@ function previous_md5 {
         LAST_LOCAL_CL_MD5="0"
     fi
 
-    if [ -f "${GS_ETC_PATH}/${GS_CNAME_CONF_MD5_LOG}" ]; then
-        LAST_REMOTE_CN_MD5=$(sed "1q;d" ${GS_ETC_PATH}/${GS_CNAME_CONF_MD5_LOG})
-        LAST_LOCAL_CN_MD5=$(sed "2q;d" ${GS_ETC_PATH}/${GS_CNAME_CONF_MD5_LOG})
+    if [ -f "${GS_ETC_PATH}/${DNS_CONF_FILE_0}.md5" ]; then
+        LAST_REMOTE_CN_MD5=$(sed "1q;d" ${GS_ETC_PATH}/${DNS_CONF_FILE_0}.md5)
+        LAST_LOCAL_CN_MD5=$(sed "2q;d" ${GS_ETC_PATH}/${DNS_CONF_FILE_0}.md5)
     else
         LAST_REMOTE_CN_MD5="0"
         LAST_LOCAL_CN_MD5="0"
@@ -1177,8 +1176,8 @@ function logs_export {
     echo -e ${LOCAL_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_GRAVITY_FI_MD5_LOG} 1> /dev/null
     echo -e ${REMOTE_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CUSTOM_DNS_MD5_LOG} 1> /dev/null
     echo -e ${LOCAL_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CUSTOM_DNS_MD5_LOG} 1> /dev/null
-    echo -e ${REMOTE_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CNAME_CONF_MD5_LOG} 1> /dev/null
-    echo -e ${LOCAL_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CNAME_CONF_MD5_LOG} 1> /dev/null
+    echo -e ${REMOTE_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${DNS_CONF_FILE_0}.md5 1> /dev/null
+    echo -e ${LOCAL_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${DNS_CONF_FILE_0}.md5 1> /dev/null
     
     if [ "${GS_PEERLESS_MODE}" != "1" ]; then
         sudo rm -f ${OS_TMP}/*.md5
@@ -1186,8 +1185,8 @@ function logs_export {
         echo -e ${REMOTE_DB_MD5} | sudo tee -a ${OS_TMP}/${GS_GRAVITY_FI_MD5_LOG} 1> /dev/null
         echo -e ${LOCAL_CL_MD5} | sudo tee -a ${OS_TMP}/${GS_CUSTOM_DNS_MD5_LOG} 1> /dev/null
         echo -e ${REMOTE_CL_MD5} | sudo tee -a ${OS_TMP}/${GS_CUSTOM_DNS_MD5_LOG} 1> /dev/null
-        echo -e ${LOCAL_CN_MD5} | sudo tee -a ${OS_TMP}/${GS_CNAME_CONF_MD5_LOG} 1> /dev/null
-        echo -e ${REMOTE_CN_MD5} | sudo tee -a ${OS_TMP}/${GS_CNAME_CONF_MD5_LOG} 1> /dev/null
+        echo -e ${LOCAL_CN_MD5} | sudo tee -a ${OS_TMP}/${DNS_CONF_FILE_0}.md5 1> /dev/null
+        echo -e ${REMOTE_CN_MD5} | sudo tee -a ${OS_TMP}/${DNS_CONF_FILE_0}.md5 1> /dev/null
         error_validate
 
         MESSAGE="Sending hashes to ${PROGRAM} peer"

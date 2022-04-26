@@ -336,8 +336,8 @@ function upgrade_to_4 {
         echo -e ${LOCAL_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_GRAVITY_FI_MD5_LOG} 1> /dev/null
         echo -e ${REMOTE_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CUSTOM_DNS_MD5_LOG} 1> /dev/null
         echo -e ${LOCAL_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CUSTOM_DNS_MD5_LOG} 1> /dev/null
-        echo -e ${REMOTE_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CNAME_CONF_MD5_LOG} 1> /dev/null
-        echo -e ${LOCAL_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CNAME_CONF_MD5_LOG} 1> /dev/null
+        echo -e ${REMOTE_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${DNS_CONF_FILE_0}.md5 1> /dev/null
+        echo -e ${LOCAL_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${DNS_CONF_FILE_0}.md5 1> /dev/null
     else
         REMOTE_DB_MD5="0"
         LOCAL_DB_MD5="0"
@@ -350,8 +350,8 @@ function upgrade_to_4 {
         echo -e ${LOCAL_DB_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_GRAVITY_FI_MD5_LOG} 1> /dev/null
         echo -e ${REMOTE_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CUSTOM_DNS_MD5_LOG} 1> /dev/null
         echo -e ${LOCAL_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CUSTOM_DNS_MD5_LOG} 1> /dev/null
-        echo -e ${REMOTE_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CNAME_CONF_MD5_LOG} 1> /dev/null
-        echo -e ${LOCAL_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CNAME_CONF_MD5_LOG} 1> /dev/null
+        echo -e ${REMOTE_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${DNS_CONF_FILE_0}.md5 1> /dev/null
+        echo -e ${LOCAL_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${DNS_CONF_FILE_0}.md5 1> /dev/null
     fi
     error_validate
 }
