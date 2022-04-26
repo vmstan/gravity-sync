@@ -50,7 +50,9 @@ PIHOLE_CONTAINER_IMAGE='pihole/pihole'          # Official Pi-hole container ima
 
 PH_GRAVITY_FI='gravity.db' 			            # Pi-hole database file name
 PH_CUSTOM_DNS='custom.list'			            # Pi-hole DNS lookup filename
-PH_CNAME_CONF='05-pihole-custom-cname.conf'     # DNSMASQ CNAME alias file
+
+DNS_CONF_FILE_0='05-pihole-custom-cname.conf'
+DNS_CONF_NAME_0='DNS CNAMEs'
 
 # Backup Customization
 GS_BACKUP_TIMEOUT='240'                         # replace in gravity-sync.conf to overwrite
@@ -81,7 +83,7 @@ OS_SSH_CMD='ssh'
 # Interface Settings
 UI_GRAVITY_NAME='Gravity Database'
 UI_CUSTOM_NAME='DNS Records'
-UI_CNAME_NAME='DNS CNAMEs'
+
 # Reused UI Text
 UI_CORE_LOADING='Loading'
 UI_CORE_EVALUATING='Evaluating arguments'
@@ -368,16 +370,16 @@ function pull_gs_cname {
         backup_local_cname
         backup_remote_cname
         
-        MESSAGE="${UI_PULL_REMOTE} ${UI_CNAME_NAME}"
+        MESSAGE="${UI_PULL_REMOTE} ${DNS_CONF_NAME_0}"
         echo_stat
         RSYNC_REPATH="sudo rsync"
-        RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${PH_CNAME_CONF}.${GS_BACKUP_EXT}"
-        RSYNC_TARGET="${OS_TMP}/${PH_CNAME_CONF}.${GS_BACKUP_EXT}"
+        RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${DNS_CONF_FILE_0}.${GS_BACKUP_EXT}"
+        RSYNC_TARGET="${OS_TMP}/${DNS_CONF_FILE_0}.${GS_BACKUP_EXT}"
         create_rsync_cmd
         
-        MESSAGE="${UI_REPLACE_LOCAL} ${UI_CNAME_NAME}"
+        MESSAGE="${UI_REPLACE_LOCAL} ${DNS_CONF_NAME_0}"
         echo_stat
-        sudo mv ${OS_TMP}/${PH_CNAME_CONF}.${GS_BACKUP_EXT} ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} >/dev/null 2>&1
+        sudo mv ${OS_TMP}/${DNS_CONF_FILE_0}.${GS_BACKUP_EXT} ${LOCAL_DNSMASQ_DIRECTORY}/${DNS_CONF_FILE_0} >/dev/null 2>&1
         error_validate
         
         validate_cname_permissions
@@ -495,24 +497,24 @@ function push_gs_cname {
         backup_remote_cname
         backup_local_cname
         
-        MESSAGE="${UI_PUSH_LOCAL} ${UI_CNAME_NAME}"
+        MESSAGE="${UI_PUSH_LOCAL} ${DNS_CONF_NAME_0}"
         echo_stat
         RSYNC_REPATH="sudo rsync"
-        RSYNC_SOURCE="${LOCAL_PIHOLE_DIRECTORY}/${PH_CNAME_CONF}.${GS_BACKUP_EXT}"
-        RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}"
+        RSYNC_SOURCE="${LOCAL_PIHOLE_DIRECTORY}/${DNS_CONF_FILE_0}.${GS_BACKUP_EXT}"
+        RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DNSMASQ_DIRECTORY}/${DNS_CONF_FILE_0}"
         create_rsync_cmd
         
-        MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${UI_CNAME_NAME}"
+        MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${DNS_CONF_NAME_0}"
         echo_stat
         CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
-        CMD_REQUESTED="sudo chown root:root ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}"
+        CMD_REQUESTED="sudo chown root:root ${REMOTE_DNSMASQ_DIRECTORY}/${DNS_CONF_FILE_0}"
         create_ssh_cmd
         
                     
-        MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_CNAME_NAME}"
+        MESSAGE="${UI_SET_FILE_PERMISSION} ${DNS_CONF_NAME_0}"
         echo_stat
         CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
-        CMD_REQUESTED="sudo chmod 644 ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}"
+        CMD_REQUESTED="sudo chmod 644 ${REMOTE_DNSMASQ_DIRECTORY}/${DNS_CONF_FILE_0}"
         create_ssh_cmd
     fi
 }
@@ -680,23 +682,23 @@ function smart_gs {
         LOCAL_CNAME_CHANGE="1"
     fi
     
-    if [ -f "${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}" ]; then
+    if [ -f "${LOCAL_DNSMASQ_DIRECTORY}/${DNS_CONF_FILE_0}" ]; then
         if [ "${REMOTE_CNAME_CHANGE}" == "${LOCAL_CNAME_CHANGE}" ]; then
             if [ "${REMOTE_CNAME_CHANGE}" != "0" ]; then
-                MESSAGE="Both ${UI_CNAME_NAME} have Changed"
+                MESSAGE="Both ${DNS_CONF_NAME_0} have Changed"
                 echo_warn
                 
-                REMOTE_CNAME_DATE=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}")
-                LOCAL_CNAME_DATE=$(stat -c %Y ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF})
+                REMOTE_CNAME_DATE=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_DNSMASQ_DIRECTORY}/${DNS_CONF_FILE_0}")
+                LOCAL_CNAME_DATE=$(stat -c %Y ${LOCAL_DNSMASQ_DIRECTORY}/${DNS_CONF_FILE_0})
                 
                 if (( "$REMOTE_CNAME_DATE" >= "$LOCAL_CNAME_DATE" )); then
-                    MESSAGE="Remote ${UI_CNAME_NAME} was last changed"
+                    MESSAGE="Remote ${DNS_CONF_NAME_0} was last changed"
                     echo_warn
                     
                     pull_gs_cname
                     GS_PULL_RESTART="1"
                 else
-                    MESSAGE="Local ${UI_CNAME_NAME} was last changed"
+                    MESSAGE="Local ${DNS_CONF_NAME_0} was last changed"
                     echo_warn
                     
                     push_gs_cname
@@ -792,14 +794,14 @@ function backup_local_custom {
 }
 
 function backup_local_cname {
-    if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} ]; then
-        MESSAGE="${UI_BACKUP_LOCAL} ${UI_CNAME_NAME}"
+    if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${DNS_CONF_FILE_0} ]; then
+        MESSAGE="${UI_BACKUP_LOCAL} ${DNS_CONF_NAME_0}"
         echo_stat
         
-        sudo cp ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} ${LOCAL_PIHOLE_DIRECTORY}/${PH_CNAME_CONF}.${GS_BACKUP_EXT}
+        sudo cp ${LOCAL_DNSMASQ_DIRECTORY}/${DNS_CONF_FILE_0} ${LOCAL_PIHOLE_DIRECTORY}/${DNS_CONF_FILE_0}.${GS_BACKUP_EXT}
         error_validate
     else
-        MESSAGE="No local ${PH_CNAME_CONF} detected"
+        MESSAGE="No local ${DNS_CONF_FILE_0} detected"
         echo_warn
     fi
 }
@@ -865,11 +867,11 @@ function backup_remote_custom {
 }
 
 function backup_remote_cname {
-        MESSAGE="${UI_BACKUP_REMOTE} ${UI_CNAME_NAME}"
+        MESSAGE="${UI_BACKUP_REMOTE} ${DNS_CONF_NAME_0}"
         echo_stat
         
         CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
-        CMD_REQUESTED="sudo cp ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} ${REMOTE_PIHOLE_DIRECTORY}/${PH_CNAME_CONF}.${GS_BACKUP_EXT}"
+        CMD_REQUESTED="sudo cp ${REMOTE_DNSMASQ_DIRECTORY}/${DNS_CONF_FILE_0} ${REMOTE_PIHOLE_DIRECTORY}/${DNS_CONF_FILE_0}.${GS_BACKUP_EXT}"
         create_ssh_cmd
 }
 
@@ -944,40 +946,40 @@ function md5_compare {
         echo_warn
     fi
 
-    if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} ]; then
-        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}; then
+    if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${DNS_CONF_FILE_0} ]; then
+        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${DNS_CONF_FILE_0}; then
             REMOTE_CNAME_DNS="1"
-            MESSAGE="${UI_HASHING_HASHING} ${UI_CNAME_NAME}"
+            MESSAGE="${UI_HASHING_HASHING} ${DNS_CONF_NAME_0}"
             echo_stat
             
-            REMOTE_CN_MD5=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} | sed 's/\s.*$//'")
+            REMOTE_CN_MD5=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_DNSMASQ_DIRECTORY}/${DNS_CONF_FILE_0} | sed 's/\s.*$//'")
             error_validate
             
-            MESSAGE="${UI_HASHING_COMPARING} ${UI_CNAME_NAME}"
+            MESSAGE="${UI_HASHING_COMPARING} ${DNS_CONF_NAME_0}"
             echo_stat
-            LOCAL_CN_MD5=$(md5sum ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} | sed 's/\s.*$//')
+            LOCAL_CN_MD5=$(md5sum ${LOCAL_DNSMASQ_DIRECTORY}/${DNS_CONF_FILE_0} | sed 's/\s.*$//')
             error_validate
             
             if [ "$REMOTE_CN_MD5" == "$LAST_REMOTE_CN_MD5" ] && [ "$LOCAL_CN_MD5" == "$LAST_LOCAL_CN_MD5" ]; then
                 GS_HASH_MARK=$((GS_HASH_MARK+0))
             else
-                MESSAGE="${UI_HASHING_DIFFERENCE} ${UI_CNAME_NAME}"
+                MESSAGE="${UI_HASHING_DIFFERENCE} ${DNS_CONF_NAME_0}"
                 echo_warn
                 GS_HASH_MARK=$((GS_HASH_MARK+1))
             fi
         else
-            MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_REMOTE}"
+            MESSAGE="${DNS_CONF_NAME_0} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_REMOTE}"
             echo_warn
         fi
     else
-        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}; then
+        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${DNS_CONF_FILE_0}; then
             REMOTE_CNAME_DNS="1"
-            MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_REMOTE}"
+            MESSAGE="${DNS_CONF_NAME_0} ${UI_HASHING_DETECTED} ${UI_HASHING_REMOTE}"
             GS_HASH_MARK=$((GS_HASH_MARK+1))
             echo_warn
         fi
         
-        MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_LOCAL}"
+        MESSAGE="${DNS_CONF_NAME_0} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_LOCAL}"
         echo_warn
     fi
     
@@ -1061,31 +1063,31 @@ function md5_recheck {
         echo_warn
     fi
     
-    if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} ]; then
-        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}; then
+    if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${DNS_CONF_FILE_0} ]; then
+        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${DNS_CONF_FILE_0}; then
             REMOTE_CNAME_DNS="1"
-            MESSAGE="${UI_HASHING_REHASHING} ${UI_CNAME_NAME}"
+            MESSAGE="${UI_HASHING_REHASHING} ${DNS_CONF_NAME_0}"
             echo_stat
             
-            REMOTE_CN_MD5=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} | sed 's/\s.*$//'")
+            REMOTE_CN_MD5=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_DNSMASQ_DIRECTORY}/${DNS_CONF_FILE_0} | sed 's/\s.*$//'")
             error_validate
             
-            MESSAGE="${UI_HASHING_RECOMPARING} ${UI_CNAME_NAME}"
+            MESSAGE="${UI_HASHING_RECOMPARING} ${DNS_CONF_NAME_0}"
             echo_stat
-            LOCAL_CN_MD5=$(md5sum ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} | sed 's/\s.*$//')
+            LOCAL_CN_MD5=$(md5sum ${LOCAL_DNSMASQ_DIRECTORY}/${DNS_CONF_FILE_0} | sed 's/\s.*$//')
             error_validate
         else
-            MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_REMOTE}"
+            MESSAGE="${DNS_CONF_NAME_0} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_REMOTE}"
             echo_warn
         fi
     else
-        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}; then
+        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${DNS_CONF_FILE_0}; then
             REMOTE_CNAME_DNS="1"
-            MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_REMOTE}"
+            MESSAGE="${DNS_CONF_NAME_0} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_REMOTE}"
             echo_warn
         fi
         
-        MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_LOCAL}"
+        MESSAGE="${DNS_CONF_NAME_0} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_LOCAL}"
         echo_warn
     fi
 }
@@ -1375,14 +1377,14 @@ function validate_custom_permissions {
 
 ## Validate Local DNS CNAME Permissions
 function validate_cname_permissions {
-    MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${UI_CNAME_NAME}"
+    MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${DNS_CONF_NAME_0}"
     echo_stat
-    sudo chown root:root ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} >/dev/null 2>&1
+    sudo chown root:root ${LOCAL_DNSMASQ_DIRECTORY}/${DNS_CONF_FILE_0} >/dev/null 2>&1
     error_validate
     
-    MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_CNAME_NAME}"
+    MESSAGE="${UI_SET_FILE_PERMISSION} ${DNS_CONF_NAME_0}"
     echo_stat
-    sudo chmod 644 ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} >/dev/null 2>&1
+    sudo chmod 644 ${LOCAL_DNSMASQ_DIRECTORY}/${DNS_CONF_FILE_0} >/dev/null 2>&1
     error_validate
 }
 
