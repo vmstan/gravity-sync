@@ -1013,6 +1013,7 @@ function previous_md5 {
     for i in 0 1 2 3 4 5; do
         DNS_CONF_FILE="DNS_CONF_FILE_$i"
         if [ -f "${GS_ETC_PATH}/${DNS_CONF_FILE}.md5" ]; then
+            echo -e ${DNS_CONF_FILE}
             LAST_REMOTE_CN_MD5=$(sed "1q;d" ${GS_ETC_PATH}/${DNS_CONF_FILE}.md5)
             LAST_LOCAL_CN_MD5=$(sed "2q;d" ${GS_ETC_PATH}/${DNS_CONF_FILE}.md5)
         else
