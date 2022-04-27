@@ -1015,12 +1015,16 @@ function previous_md5 {
         if [ -f "${GS_ETC_PATH}/${DNS_CONF_FILE}.md5" ]; then
             #LAST_REMOTE_CN_MD5=$(sed "1q;d" ${GS_ETC_PATH}/${DNS_CONF_FILE}.md5)
             #LAST_LOCAL_CN_MD5=$(sed "2q;d" ${GS_ETC_PATH}/${DNS_CONF_FILE}.md5)
-            LAST_REMOTE_CONF_MD5_[i]=$(sed "1q;d" ${GS_ETC_PATH}/${DNS_CONF_FILE}.md5)
-            LAST_LOCAL_CONF_MD5_[i]=$(sed "2q;d" ${GS_ETC_PATH}/${DNS_CONF_FILE}.md5)
+            declare LAST_REMOTE_CONF_MD5_[i]
+            LAST_REMOTE_CONF_MD5_[i]=$(sed "1q;d" ${GS_ETC_PATH}/${DNS_CONF_FILE}_$i.md5)
+            declare LAST_LOCAL_CONF_MD5_[i]
+            LAST_LOCAL_CONF_MD5_[i]=$(sed "2q;d" ${GS_ETC_PATH}/${DNS_CONF_FILE}_$i.md5)
         else
             #LAST_REMOTE_CN_MD5="0"
             #LAST_LOCAL_CN_MD5="0"
+            declare LAST_REMOTE_CONF_MD5_[i]
             LAST_REMOTE_CONF_MD5_[i]="0"
+            declare LAST_LOCAL_CONF_MD5_[i]
             LAST_LOCAL_CONF_MD5_[i]="0"
         fi
     done
