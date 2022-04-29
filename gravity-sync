@@ -65,7 +65,7 @@ GS_ETC_PATH="/etc/gravity-sync"		            # replace in gravity-sync.conf to o
 GS_CONFIG_FILE='gravity-sync.conf' 	            # replace in gravity-sync.conf to overwrite
 GS_SYNCING_LOG='gs-sync.log' 		            # replace in gravity-sync.conf to overwrite
 GS_GRAVITY_FI_MD5_LOG='gs-gravity.md5'          # replace in gravity-sync.conf to overwrite
-GS_CUSTOM_DNS_MD5_LOG='gs-clist.md5'            # replace in gravity-sync.conf to overwrite
+GS_CUSTOM_DNS_MD5_LOG='gs-custom.list.md5'      # replace in gravity-sync.conf to overwrite
 
 # SSH Customization
 GS_SSH_PORT='22' 						        # replace in gravity-sync.conf to overwrite
@@ -673,11 +673,11 @@ function smart_gs {
         GS_PULL_RESTART="1"
     fi
     
-    if [ "${REMOTE_CN_MD5}" != "${LAST_REMOTE_CN_MD5}" ]; then
+    if [ "${REMOTE_CN_MD5}" != "${LAST_REMOTE_CONF_MD5_0}" ]; then
         REMOTE_CNAME_CHANGE="1"
     fi
     
-    if [ "${LOCAL_CN_MD5}" != "${LAST_LOCAL_CN_MD5}" ]; then
+    if [ "${LOCAL_CN_MD5}" != "${LAST_LOCAL_CONF_MD5_0}" ]; then
         LOCAL_CNAME_CHANGE="1"
     fi
     
@@ -959,7 +959,7 @@ function md5_compare {
             LOCAL_CN_MD5=$(md5sum ${LOCAL_DNSMASQ_DIRECTORY}/${DNS_CONF_FILE_0} | sed 's/\s.*$//')
             error_validate
             
-            if [ "$REMOTE_CN_MD5" == "$LAST_REMOTE_CN_MD5" ] && [ "$LOCAL_CN_MD5" == "$LAST_LOCAL_CN_MD5" ]; then
+            if [ "$REMOTE_CN_MD5" == "$LAST_REMOTE_CONF_MD5_0" ] && [ "$LOCAL_CN_MD5" == "$LAST_LOCAL_CONF_MD5_0" ]; then
                 GS_HASH_MARK=$((GS_HASH_MARK+0))
             else
                 MESSAGE="${UI_HASHING_DIFFERENCE} ${DNS_CONF_NAME_0}"
@@ -1010,13 +1010,24 @@ function previous_md5 {
         LAST_LOCAL_CL_MD5="0"
     fi
 
-    if [ -f "${GS_ETC_PATH}/${DNS_CONF_FILE_0}.md5" ]; then
-        LAST_REMOTE_CN_MD5=$(sed "1q;d" ${GS_ETC_PATH}/${DNS_CONF_FILE_0}.md5)
-        LAST_LOCAL_CN_MD5=$(sed "2q;d" ${GS_ETC_PATH}/${DNS_CONF_FILE_0}.md5)
-    else
-        LAST_REMOTE_CN_MD5="0"
-        LAST_LOCAL_CN_MD5="0"
-    fi
+    for i in 0 1 2 3 4 5; do
+        DNS_CONF_FILE="DNS_CONF_FILE_$i"
+        if [ -f "${GS_ETC_PATH}/${DNS_CONF_FILE}.md5" ]; then
+            #LAST_REMOTE_CN_MD5=$(sed "1q;d" ${GS_ETC_PATH}/${DNS_CONF_FILE}.md5)
+            #LAST_LOCAL_CN_MD5=$(sed "2q;d" ${GS_ETC_PATH}/${DNS_CONF_FILE}.md5)
+            declare LAST_REMOTE_CONF_MD5_[i]
+            LAST_REMOTE_CONF_MD5_[i]=$(sed "1q;d" ${GS_ETC_PATH}/${DNS_CONF_FILE}_$i.md5)
+            declare LAST_LOCAL_CONF_MD5_[i]
+            LAST_LOCAL_CONF_MD5_[i]=$(sed "2q;d" ${GS_ETC_PATH}/${DNS_CONF_FILE}_$i.md5)
+        else
+            #LAST_REMOTE_CN_MD5="0"
+            #LAST_LOCAL_CN_MD5="0"
+            declare LAST_REMOTE_CONF_MD5_[i]
+            LAST_REMOTE_CONF_MD5_[i]="0"
+            declare LAST_LOCAL_CONF_MD5_[i]
+            LAST_LOCAL_CONF_MD5_[i]="0"
+        fi
+    done
 }
 
 function md5_recheck {
