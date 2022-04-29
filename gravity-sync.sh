@@ -12,7 +12,7 @@ LOCAL_FOLDR=$(dirname $GS_FILEPATH)
 GS_ETC_PATH="/etc/gravity-sync"
 GS_GRAVITY_FI_MD5_LOG='gs-gravity.md5'
 GS_CUSTOM_DNS_MD5_LOG='gs-clist.md5'
-GS_CNAME_CONF_MD5_LOG='gs-cname.md5'
+GS_CNAME_CONF_MD5_LOG='05-pihole-custom-cname.conf.md5'
 
 OS_DAEMON_PATH='/etc/systemd/system'
 
@@ -166,19 +166,6 @@ function install_new_gravity {
 function upgrade_to_4 {
     MESSAGE="Migrating Previous Configuration"
     echo_info
-    
-    CURRENTUSER=$(whoami)
-    MESSAGE="Transferring SSH keys"
-    echo_stat
-    sudo cp $HOME/.ssh/id_rsa /etc/gravity-sync/gravity-sync.rsa
-    sudo cp $HOME/.ssh/id_rsa.pub /etc/gravity-sync/gravity-sync.rsa.pub
-    error_validate
-
-    MESSAGE="Setting SSH key owner"
-    echo_stat
-    sudo chown ${CURRENTUSER}:${CURRENTUSER} /etc/gravity-sync/gravity-sync.rsa
-    sudo chown ${CURRENTUSER}:${CURRENTUSER} /etc/gravity-sync/gravity-sync.rsa.pub
-    error_validate
 
     REMOTE_HOST=''
     REMOTE_USER=''
@@ -193,6 +180,7 @@ function upgrade_to_4 {
     ROCKER_CON=''
 
     SSH_PORT=''
+    SSH_PKIF=''
 
     MESSAGE="Reviewing old configuration file settings"
     echo_stat
@@ -212,6 +200,24 @@ function upgrade_to_4 {
     REMOTE_FILE_OWNER=${RILE_OWNER}
     LOCAL_DOCKER_CONTAINER=${DOCKER_CON}
     REMOTE_DOCKER_CONTAINER=${ROCKER_CON}
+
+    CURRENTUSER=$(whoami)
+    MESSAGE="Transferring SSH keys"
+    echo_stat
+        if [ "${SSH_PKIF}" == "" ]; then
+            sudo cp $HOME/.ssh/id_rsa /etc/gravity-sync/gravity-sync.rsa
+            sudo cp $HOME/.ssh/id_rsa.pub /etc/gravity-sync/gravity-sync.rsa.pub
+        else
+            sudo cp ${SSH_PKIF} /etc/gravity-sync/gravity-sync.rsa
+            sudo cp ${SSH_PKIF}.pub /etc/gravity-sync/gravity-sync.rsa.pub
+        fi
+    error_validate
+
+    MESSAGE="Setting SSH key owner"
+    echo_stat
+    sudo chown ${CURRENTUSER}:${CURRENTUSER} /etc/gravity-sync/gravity-sync.rsa
+    sudo chown ${CURRENTUSER}:${CURRENTUSER} /etc/gravity-sync/gravity-sync.rsa.pub
+    error_validate
 
     MESSAGE="Migrating remote host settings"
     echo_stat

@@ -4,7 +4,7 @@ GS_RUN_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-GS_VERSION='4.0.2'
+GS_VERSION='4.0.3'
 
 # For documentation or the changelog/updates visit https://github.com/vmstan/gravity-sync
 # Requires Pi-Hole 5.x or higher already be installed, for help visit https://pi-hole.net
@@ -59,12 +59,12 @@ GS_BACKUP_EXT='gsb'                             # replace in gravity-sync.conf t
 
 # GS Folder/File Locations
 GS_FILEPATH='/usr/local/bin/gravity-sync'			
-GS_ETC_PATH="/etc/gravity-sync"		            # replace in gravity-sync.conf to overwrite
-GS_CONFIG_FILE='gravity-sync.conf' 	            # replace in gravity-sync.conf to overwrite
-GS_SYNCING_LOG='gs-sync.log' 		            # replace in gravity-sync.conf to overwrite
-GS_GRAVITY_FI_MD5_LOG='gs-gravity.md5'          # replace in gravity-sync.conf to overwrite
-GS_CUSTOM_DNS_MD5_LOG='gs-clist.md5'            # replace in gravity-sync.conf to overwrite
-GS_CNAME_CONF_MD5_LOG='gs-cname.md5'            # replace in gravity-sync.conf to overwrite
+GS_ETC_PATH="/etc/gravity-sync"		                                # replace in gravity-sync.conf to overwrite
+GS_CONFIG_FILE='gravity-sync.conf' 	                                # replace in gravity-sync.conf to overwrite
+GS_SYNCING_LOG='gs-sync.log' 		                                # replace in gravity-sync.conf to overwrite
+GS_GRAVITY_FI_MD5_LOG='gs-gravity.md5'                              # replace in gravity-sync.conf to overwrite
+GS_CUSTOM_DNS_MD5_LOG='gs-clist.md5'                                # replace in gravity-sync.conf to overwrite
+GS_CNAME_CONF_MD5_LOG='05-pihole-custom-cname.conf.md5'             # replace in gravity-sync.conf to overwrite
 
 # SSH Customization
 GS_SSH_PORT='22' 						        # replace in gravity-sync.conf to overwrite
@@ -1507,6 +1507,12 @@ function config_generate {
     echo_need
     read -r INPUT_REMOTE_HOST
 
+        if [ "${INPUT_REMOTE_HOST}" == "" ]; then
+            MESSAGE="Remote host cannot be blank!"
+            echo_fail
+            exit_no_change
+        fi
+
     MESSAGE="${UI_CONFIG_SAVING} ${INPUT_REMOTE_HOST} host to ${GS_CONFIG_FILE}"
     echo_stat
     sudo sed -i "/REMOTE_HOST=''/c\REMOTE_HOST='${INPUT_REMOTE_HOST}'" ${GS_ETC_PATH}/${GS_CONFIG_FILE}
@@ -1518,6 +1524,12 @@ function config_generate {
     MESSAGE="User"
     echo_need
     read -r INPUT_REMOTE_USER
+
+        if [ "${INPUT_REMOTE_USER}" == "" ]; then
+            MESSAGE="User name cannot be blank!"
+            echo_fail
+            exit_no_change
+        fi
     
     MESSAGE="${UI_CONFIG_SAVING} ${INPUT_REMOTE_USER}@${INPUT_REMOTE_HOST} to ${GS_CONFIG_FILE}"
     echo_stat
@@ -1631,6 +1643,12 @@ function advanced_config_generate {
         echo_need
         read -r INPUT_LOCAL_DOCKER_CONTAINER
 
+            if [ "${INPUT_LOCAL_DOCKER_CONTAINER}" == "" ]; then
+                MESSAGE="Container name cannot be blank!"
+                echo_fail
+                exit_no_change
+            fi
+
         MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_CONTAINER_NAME} to ${GS_CONFIG_FILE}"
         echo_stat
         sudo sed -i "/# LOCAL_DOCKER_CONTAINER=''/c\LOCAL_DOCKER_CONTAINER='${INPUT_LOCAL_DOCKER_CONTAINER}'" ${GS_ETC_PATH}/${GS_CONFIG_FILE}
@@ -1698,6 +1716,12 @@ function advanced_config_generate {
         MESSAGE="ex, 'pihole'"
         echo_need
         read -r INPUT_REMOTE_DOCKER_CONTAINER
+
+            if [ "${INPUT_REMOTE_DOCKER_CONTAINER}" == "" ]; then
+                MESSAGE="Container name cannot be blank!"
+                echo_fail
+                exit_no_change
+            fi
         
         MESSAGE="${UI_CONFIG_SAVING} remote host ${UI_CONFIG_CONTAINER_NAME} to ${GS_CONFIG_FILE}"
         echo_stat
