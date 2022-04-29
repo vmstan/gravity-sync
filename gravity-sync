@@ -59,12 +59,12 @@ GS_BACKUP_EXT='gsb'                             # replace in gravity-sync.conf t
 
 # GS Folder/File Locations
 GS_FILEPATH='/usr/local/bin/gravity-sync'			
-GS_ETC_PATH="/etc/gravity-sync"		            # replace in gravity-sync.conf to overwrite
-GS_CONFIG_FILE='gravity-sync.conf' 	            # replace in gravity-sync.conf to overwrite
-GS_SYNCING_LOG='gs-sync.log' 		            # replace in gravity-sync.conf to overwrite
-GS_GRAVITY_FI_MD5_LOG='gs-gravity.md5'          # replace in gravity-sync.conf to overwrite
-GS_CUSTOM_DNS_MD5_LOG='gs-clist.md5'            # replace in gravity-sync.conf to overwrite
-GS_CNAME_CONF_MD5_LOG='gs-cname.md5'            # replace in gravity-sync.conf to overwrite
+GS_ETC_PATH="/etc/gravity-sync"		                                # replace in gravity-sync.conf to overwrite
+GS_CONFIG_FILE='gravity-sync.conf' 	                                # replace in gravity-sync.conf to overwrite
+GS_SYNCING_LOG='gs-sync.log' 		                                # replace in gravity-sync.conf to overwrite
+GS_GRAVITY_FI_MD5_LOG='gs-gravity.md5'                              # replace in gravity-sync.conf to overwrite
+GS_CUSTOM_DNS_MD5_LOG='gs-clist.md5'                                # replace in gravity-sync.conf to overwrite
+GS_CNAME_CONF_MD5_LOG='05-pihole-custom-cname.conf.md5'             # replace in gravity-sync.conf to overwrite
 
 # SSH Customization
 GS_SSH_PORT='22' 						        # replace in gravity-sync.conf to overwrite

@@ -12,7 +12,7 @@ LOCAL_FOLDR=$(dirname $GS_FILEPATH)
 GS_ETC_PATH="/etc/gravity-sync"
 GS_GRAVITY_FI_MD5_LOG='gs-gravity.md5'
 GS_CUSTOM_DNS_MD5_LOG='gs-clist.md5'
-GS_CNAME_CONF_MD5_LOG='gs-cname.md5'
+GS_CNAME_CONF_MD5_LOG='05-pihole-custom-cname.conf.md5'
 
 OS_DAEMON_PATH='/etc/systemd/system'
 
