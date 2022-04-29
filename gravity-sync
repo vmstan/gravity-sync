@@ -1507,6 +1507,12 @@ function config_generate {
     echo_need
     read -r INPUT_REMOTE_HOST
 
+        if [ "${INPUT_REMOTE_HOST}" == "" ]; then
+            MESSAGE="Remote host cannot be blank!"
+            echo_fail
+            exit_no_change
+        fi
+
     MESSAGE="${UI_CONFIG_SAVING} ${INPUT_REMOTE_HOST} host to ${GS_CONFIG_FILE}"
     echo_stat
     sudo sed -i "/REMOTE_HOST=''/c\REMOTE_HOST='${INPUT_REMOTE_HOST}'" ${GS_ETC_PATH}/${GS_CONFIG_FILE}
@@ -1518,6 +1524,12 @@ function config_generate {
     MESSAGE="User"
     echo_need
     read -r INPUT_REMOTE_USER
+
+        if [ "${INPUT_REMOTE_USER}" == "" ]; then
+            MESSAGE="User name cannot be blank!"
+            echo_fail
+            exit_no_change
+        fi
     
     MESSAGE="${UI_CONFIG_SAVING} ${INPUT_REMOTE_USER}@${INPUT_REMOTE_HOST} to ${GS_CONFIG_FILE}"
     echo_stat
@@ -1631,6 +1643,12 @@ function advanced_config_generate {
         echo_need
         read -r INPUT_LOCAL_DOCKER_CONTAINER
 
+            if [ "${INPUT_LOCAL_DOCKER_CONTAINER}" == "" ]; then
+                MESSAGE="Container name cannot be blank!"
+                echo_fail
+                exit_no_change
+            fi
+
         MESSAGE="${UI_CONFIG_SAVING} ${UI_CONFIG_LOCAL} ${UI_CONFIG_CONTAINER_NAME} to ${GS_CONFIG_FILE}"
         echo_stat
         sudo sed -i "/# LOCAL_DOCKER_CONTAINER=''/c\LOCAL_DOCKER_CONTAINER='${INPUT_LOCAL_DOCKER_CONTAINER}'" ${GS_ETC_PATH}/${GS_CONFIG_FILE}
@@ -1698,6 +1716,12 @@ function advanced_config_generate {
         MESSAGE="ex, 'pihole'"
         echo_need
         read -r INPUT_REMOTE_DOCKER_CONTAINER
+
+            if [ "${INPUT_REMOTE_DOCKER_CONTAINER}" == "" ]; then
+                MESSAGE="Container name cannot be blank!"
+                echo_fail
+                exit_no_change
+            fi
         
         MESSAGE="${UI_CONFIG_SAVING} remote host ${UI_CONFIG_CONTAINER_NAME} to ${GS_CONFIG_FILE}"
         echo_stat
