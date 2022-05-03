@@ -815,7 +815,7 @@ function smart_gs {
             fi
         fi
     else
-        pull_gs_cname
+        pull_gs_sdhcp
         GS_PULL_RESTART="1"
     fi
     
