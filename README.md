@@ -18,22 +18,25 @@ But if you have redundant Pi-hole in your network you'll want a simple way to ke
 
 ## Features
 
-Gravity Sync replicates the core of Pi-hole's resolver settings, which includes:
+Gravity Sync replicates the core of Pi-hole's ad/telemetry blocking settings, which includes:
 
 - Adlist settings with status and comments.
-- Domain whitelist and blacklist along with status with comments.
-- Custom RegEx whitelist and blacklists.
-- Clients and groups, along with any list assignments.
+- Domain/RegEx whitelists and blacklist along with status and comments.
+- Clients and group assignments, along with status and descriptions.
+
+Gravity Sync also replicates local network DNS/DHCP settings, which includes:
+
 - Local DNS Records.
 - Local CNAME Records.
+- Static DHCP Assignments.
 
 ### Limitations
 
 Gravity Sync will **not**:
 
-- Modify the individual Pi-hole's upstream DNS resolvers.
-- Sync DHCP settings or monitor device leases.
-- Merge long term data, query logs, or statistics.
+- Modify or sync the individual Pi-hole's upstream DNS resolvers.
+- Merge query logs, statistics, long-term data, caches, or other resolution information.
+- Sync individual Pi-hole DHCP scoping information or leases.
 
 ## Setup Steps
 
