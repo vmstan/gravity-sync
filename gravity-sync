@@ -51,6 +51,7 @@ PIHOLE_CONTAINER_IMAGE='pihole/pihole'          # Official Pi-hole container ima
 PH_GRAVITY_FI='gravity.db' 			            # Pi-hole database file name
 PH_CUSTOM_DNS='custom.list'			            # Pi-hole DNS lookup filename
 PH_CNAME_CONF='05-pihole-custom-cname.conf'     # DNSMASQ CNAME alias file
+PH_SDHCP_CONF='04-pihole-static-dhcp.conf'      # DNSMASQ Static DHCP file
 
 # Backup Customization
 GS_BACKUP_TIMEOUT='240'                         # replace in gravity-sync.conf to overwrite
@@ -65,6 +66,7 @@ GS_SYNCING_LOG='gs-sync.log' 		                                # replace in grav
 GS_GRAVITY_FI_MD5_LOG='gs-gravity.md5'                              # replace in gravity-sync.conf to overwrite
 GS_CUSTOM_DNS_MD5_LOG='gs-clist.md5'                                # replace in gravity-sync.conf to overwrite
 GS_CNAME_CONF_MD5_LOG='05-pihole-custom-cname.conf.md5'             # replace in gravity-sync.conf to overwrite
+GS_SDHCP_CONF_MD5_LOG='04-pihole-static-dhcp.conf.md5'              # replace in gravity-sync.conf to overwrite
 
 # SSH Customization
 GS_SSH_PORT='22' 						        # replace in gravity-sync.conf to overwrite
@@ -82,6 +84,7 @@ OS_SSH_CMD='ssh'
 UI_GRAVITY_NAME='Gravity Database'
 UI_CUSTOM_NAME='DNS Records'
 UI_CNAME_NAME='DNS CNAMEs'
+UI_SDHCP_NAME='Static DHCP Addresses'
 # Reused UI Text
 UI_CORE_LOADING='Loading'
 UI_CORE_EVALUATING='Evaluating arguments'
@@ -384,6 +387,28 @@ function pull_gs_cname {
     fi
 }
 
+## Pull DHCP
+function pull_gs_sdhcp {
+    if [ "$REMOTE_CNAME_DNS" == "1" ]; then
+        backup_local_sdhcp
+        backup_remote_sdhcp
+        
+        MESSAGE="${UI_PULL_REMOTE} ${UI_SDHCP_NAME}"
+        echo_stat
+        RSYNC_REPATH="sudo rsync"
+        RSYNC_SOURCE="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PIHOLE_DIRECTORY}/${PH_SDHCP_CONF}.${GS_BACKUP_EXT}"
+        RSYNC_TARGET="${OS_TMP}/${PH_SDHCP_CONF}.${GS_BACKUP_EXT}"
+        create_rsync_cmd
+        
+        MESSAGE="${UI_REPLACE_LOCAL} ${UI_SDHCP_NAME}"
+        echo_stat
+        sudo mv ${OS_TMP}/${PH_SDHCP_CONF}.${GS_BACKUP_EXT} ${LOCAL_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF} >/dev/null 2>&1
+        error_validate
+        
+        validate_sdhcp_permissions
+    fi
+}
+
 ## Pull Reload
 function pull_gs_reload {
     sleep 1
@@ -394,7 +419,7 @@ function pull_gs_reload {
     error_validate
     
     if [ "${GS_TASK_TYPE}" == SMART ]; then 
-        if [ "${REMOTE_DNS_CHANGE}" == "1" ] || [ "${LOCAL_DNS_CHANGE}" == "1" ] || [ "${REMOTE_CNAME_CHANGE}" == "1" ] || [ "${LOCAL_CNAME_CHANGE}" == "1" ]; then
+        if [ "${REMOTE_DNS_CHANGE}" == "1" ] || [ "${LOCAL_DNS_CHANGE}" == "1" ] || [ "${REMOTE_CNAME_CHANGE}" == "1" ] || [ "${LOCAL_CNAME_CHANGE}" == "1" ] || [ "${REMOTE_SDHCP_CHANGE}" == "1" ] || [ "${LOCAL_SDHCP_CHANGE}" == "1" ]; then
             MESSAGE="${UI_FTLDNS_CONFIG_PULL_RELOAD}"
             echo_stat
             ${PH_EXEC} restartdns >/dev/null 2>&1
@@ -415,6 +440,7 @@ function pull_gs {
     pull_gs_grav
     pull_gs_custom
     pull_gs_cname
+    pull_gs_sdhcp
     pull_gs_reload
     md5_recheck
     logs_export
@@ -517,6 +543,34 @@ function push_gs_cname {
     fi
 }
 
+## Push Custom
+function push_gs_sdhcp {
+    if [ "$REMOTE_SDHCP_DNS" == "1" ]; then
+        backup_remote_sdhcp
+        backup_local_sdhcp
+        
+        MESSAGE="${UI_PUSH_LOCAL} ${UI_SDHCP_NAME}"
+        echo_stat
+        RSYNC_REPATH="sudo rsync"
+        RSYNC_SOURCE="${LOCAL_PIHOLE_DIRECTORY}/${PH_SDHCP_CONF}.${GS_BACKUP_EXT}"
+        RSYNC_TARGET="${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF}"
+        create_rsync_cmd
+        
+        MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${UI_SDHCP_NAME}"
+        echo_stat
+        CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
+        CMD_REQUESTED="sudo chown root:root ${REMOTE_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF}"
+        create_ssh_cmd
+        
+                    
+        MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_SDHCP_NAME}"
+        echo_stat
+        CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
+        CMD_REQUESTED="sudo chmod 644 ${REMOTE_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF}"
+        create_ssh_cmd
+    fi
+}
+
 ## Push Reload
 function push_gs_reload {
     sleep 1
@@ -528,7 +582,7 @@ function push_gs_reload {
     create_ssh_cmd
     
     if [ "${GS_TASK_TYPE}" == SMART ]; then 
-        if [ "${REMOTE_DNS_CHANGE}" == "1" ] || [ "${LOCAL_DNS_CHANGE}" == "1" ] || [ "${REMOTE_CNAME_CHANGE}" == "1" ] || [ "${LOCAL_CNAME_CHANGE}" == "1" ]; then
+        if [ "${REMOTE_DNS_CHANGE}" == "1" ] || [ "${LOCAL_DNS_CHANGE}" == "1" ] || [ "${REMOTE_CNAME_CHANGE}" == "1" ] || [ "${LOCAL_CNAME_CHANGE}" == "1" ] || [ "${REMOTE_SDHCP_CHANGE}" == "1" ] || [ "${LOCAL_SDHCP_CHANGE}" == "1" ]; then
             MESSAGE="${UI_FTLDNS_CONFIG_PUSH_RELOAD}"
             echo_stat
             CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
@@ -551,6 +605,7 @@ function push_gs {
     push_gs_grav
     push_gs_custom
     push_gs_cname
+    push_gs_sdhcp
     push_gs_reload
     md5_recheck
     logs_export
@@ -586,6 +641,8 @@ function smart_gs {
     LOCAL_DNS_CHANGE="0"
     REMOTE_CNAME_CHANGE="0"
     LOCAL_CNAME_CHANGE="0"
+    REMOTE_SDHCP_CHANGE="0"
+    LOCAL_SDHCP_CHANGE="0"
     
     if [ "${REMOTE_DB_MD5}" != "${LAST_REMOTE_DB_MD5}" ]; then
         REMOTE_GRAVITY_CHANGE="1"
@@ -716,6 +773,51 @@ function smart_gs {
         pull_gs_cname
         GS_PULL_RESTART="1"
     fi
+
+    if [ "${REMOTE_SDHCP_MD5}" != "${LAST_REMOTE_SDHCP_MD5}" ]; then
+        REMOTE_SDHCP_CHANGE="1"
+    fi
+    
+    if [ "${LOCAL_SDHCP_MD5}" != "${LAST_LOCAL_SDHCP_MD5}" ]; then
+        LOCAL_SDHCP_CHANGE="1"
+    fi
+    
+    if [ -f "${LOCAL_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF}" ]; then
+        if [ "${REMOTE_SDHCP_CHANGE}" == "${LOCAL_SDHCP_CHANGE}" ]; then
+            if [ "${REMOTE_SDHCP_CHANGE}" != "0" ]; then
+                MESSAGE="Both ${UI_SDHCP_NAME} have Changed"
+                echo_warn
+                
+                REMOTE_SDHCP_DATE=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "stat -c %Y ${REMOTE_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF}")
+                LOCAL_SDHCP_DATE=$(stat -c %Y ${LOCAL_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF})
+                
+                if (( "$REMOTE_SDHCP_DATE" >= "$LOCAL_SDHCP_DATE" )); then
+                    MESSAGE="Remote ${UI_SDHCP_NAME} was last changed"
+                    echo_warn
+                    
+                    pull_gs_sdhcp
+                    GS_PULL_RESTART="1"
+                else
+                    MESSAGE="Local ${UI_SDHCP_NAME} was last changed"
+                    echo_warn
+                    
+                    push_gs_sdhcp
+                    GS_PUSH_RESTART="1"
+                fi
+            fi
+        else
+            if [ "${REMOTE_SDHCP_CHANGE}" != "0" ]; then
+                pull_gs_sdhcp
+                GS_PULL_RESTART="1"
+            elif [ "${LOCAL_SDHCP_CHANGE}" != "0" ]; then
+                push_gs_sdhcp
+                GS_PUSH_RESTART="1"
+            fi
+        fi
+    else
+        pull_gs_cname
+        GS_PULL_RESTART="1"
+    fi
     
     if [ "$GS_PULL_RESTART" == "1" ]; then
         pull_gs_reload
@@ -804,6 +906,19 @@ function backup_local_cname {
     fi
 }
 
+function backup_local_sdhcp {
+    if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF} ]; then
+        MESSAGE="${UI_BACKUP_LOCAL} ${UI_SDHCP_NAME}"
+        echo_stat
+        
+        sudo cp ${LOCAL_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF} ${LOCAL_PIHOLE_DIRECTORY}/${PH_SDHCP_CONF}.${GS_BACKUP_EXT}
+        error_validate
+    else
+        MESSAGE="No local ${PH_SDHCP_CONF} detected"
+        echo_warn
+    fi
+}
+
 function backup_remote_gravity {
     MESSAGE="${UI_BACKUP_REMOTE} ${UI_GRAVITY_NAME}"
     echo_stat
@@ -870,6 +985,15 @@ function backup_remote_cname {
         
         CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
         CMD_REQUESTED="sudo cp ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} ${REMOTE_PIHOLE_DIRECTORY}/${PH_CNAME_CONF}.${GS_BACKUP_EXT}"
+        create_ssh_cmd
+}
+
+function backup_remote_sdhcp {
+        MESSAGE="${UI_BACKUP_REMOTE} ${UI_SDHCP_NAME}"
+        echo_stat
+        
+        CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
+        CMD_REQUESTED="sudo cp ${REMOTE_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF} ${REMOTE_PIHOLE_DIRECTORY}/${PH_SDHCP_CONF}.${GS_BACKUP_EXT}"
         create_ssh_cmd
 }
 
@@ -980,6 +1104,43 @@ function md5_compare {
         MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_LOCAL}"
         echo_warn
     fi
+
+    if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF} ]; then
+        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF}; then
+            REMOTE_SDHCP_DNS="1"
+            MESSAGE="${UI_HASHING_HASHING} ${UI_SDHCP_NAME}"
+            echo_stat
+            
+            REMOTE_SDHCP_MD5=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF} | sed 's/\s.*$//'")
+            error_validate
+            
+            MESSAGE="${UI_HASHING_COMPARING} ${UI_SDHCP_NAME}"
+            echo_stat
+            LOCAL_SDHCP_MD5=$(md5sum ${LOCAL_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF} | sed 's/\s.*$//')
+            error_validate
+            
+            if [ "$REMOTE_SDHCP_MD5" == "$LAST_REMOTE_SDHCP_MD5" ] && [ "$LOCAL_SDHCP_MD5" == "$LAST_LOCAL_SDHCP_MD5" ]; then
+                GS_HASH_MARK=$((GS_HASH_MARK+0))
+            else
+                MESSAGE="${UI_HASHING_DIFFERENCE} ${UI_SDHCP_NAME}"
+                echo_warn
+                GS_HASH_MARK=$((GS_HASH_MARK+1))
+            fi
+        else
+            MESSAGE="${UI_SDHCP_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_REMOTE}"
+            echo_warn
+        fi
+    else
+        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF}; then
+            REMOTE_SDHCP_DNS="1"
+            MESSAGE="${UI_SDHCP_NAME} ${UI_HASHING_DETECTED} ${UI_HASHING_REMOTE}"
+            GS_HASH_MARK=$((GS_HASH_MARK+1))
+            echo_warn
+        fi
+        
+        MESSAGE="${UI_SDHCP_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_LOCAL}"
+        echo_warn
+    fi
     
     if [ "$GS_HASH_MARK" != "0" ]; then
         MESSAGE="Replication of ${UI_CORE_APP} settings is required"
@@ -1015,6 +1176,14 @@ function previous_md5 {
     else
         LAST_REMOTE_CN_MD5="0"
         LAST_LOCAL_CN_MD5="0"
+    fi
+
+    if [ -f "${GS_ETC_PATH}/${GS_SDHCP_CONF_MD5_LOG}" ]; then
+        LAST_REMOTE_SDHCP_MD5=$(sed "1q;d" ${GS_ETC_PATH}/${GS_SDHCP_CONF_MD5_LOG})
+        LAST_LOCAL_SDHCP_MD5=$(sed "2q;d" ${GS_ETC_PATH}/${GS_SDHCP_CONF_MD5_LOG})
+    else
+        LAST_REMOTE_SDHCP_MD5="0"
+        LAST_LOCAL_SDHCP_MD5="0"
     fi
 }
 
@@ -1086,6 +1255,34 @@ function md5_recheck {
         fi
         
         MESSAGE="${UI_CNAME_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_LOCAL}"
+        echo_warn
+    fi
+
+    if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF} ]; then
+        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF}; then
+            REMOTE_SDHCP_DNS="1"
+            MESSAGE="${UI_HASHING_REHASHING} ${UI_SDHCP_NAME}"
+            echo_stat
+            
+            REMOTE_SDHCP_MD5=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "md5sum ${REMOTE_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF} | sed 's/\s.*$//'")
+            error_validate
+            
+            MESSAGE="${UI_HASHING_RECOMPARING} ${UI_SDHCP_NAME}"
+            echo_stat
+            LOCAL_SDHCP_MD5=$(md5sum ${LOCAL_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF} | sed 's/\s.*$//')
+            error_validate
+        else
+            MESSAGE="${UI_SDHCP_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_REMOTE}"
+            echo_warn
+        fi
+    else
+        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF}; then
+            REMOTE_SDHCP_DNS="1"
+            MESSAGE="${UI_SDHCP_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_REMOTE}"
+            echo_warn
+        fi
+        
+        MESSAGE="${UI_SDHCP_NAME} ${UI_HASHING_NOT_DETECTED} ${UI_HASHING_LOCAL}"
         echo_warn
     fi
 }
@@ -1177,6 +1374,8 @@ function logs_export {
     echo -e ${LOCAL_CL_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CUSTOM_DNS_MD5_LOG} 1> /dev/null
     echo -e ${REMOTE_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CNAME_CONF_MD5_LOG} 1> /dev/null
     echo -e ${LOCAL_CN_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_CNAME_CONF_MD5_LOG} 1> /dev/null
+    echo -e ${REMOTE_SDHCP_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_SDHCP_CONF_MD5_LOG} 1> /dev/null
+    echo -e ${LOCAL_SDHCP_MD5} | sudo tee -a ${GS_ETC_PATH}/${GS_SDHCP_CONF_MD5_LOG} 1> /dev/null
     
     if [ "${GS_PEERLESS_MODE}" != "1" ]; then
         sudo rm -f ${OS_TMP}/*.md5
@@ -1186,6 +1385,8 @@ function logs_export {
         echo -e ${REMOTE_CL_MD5} | sudo tee -a ${OS_TMP}/${GS_CUSTOM_DNS_MD5_LOG} 1> /dev/null
         echo -e ${LOCAL_CN_MD5} | sudo tee -a ${OS_TMP}/${GS_CNAME_CONF_MD5_LOG} 1> /dev/null
         echo -e ${REMOTE_CN_MD5} | sudo tee -a ${OS_TMP}/${GS_CNAME_CONF_MD5_LOG} 1> /dev/null
+        echo -e ${LOCAL_SDHCP_MD5} | sudo tee -a ${OS_TMP}/${GS_SDHCP_CONF_MD5_LOG} 1> /dev/null
+        echo -e ${REMOTE_SDHCP_MD5} | sudo tee -a ${OS_TMP}/${GS_SDHCP_CONF_MD5_LOG} 1> /dev/null
         error_validate
 
         MESSAGE="Sending hashes to ${PROGRAM} peer"
@@ -1383,6 +1584,18 @@ function validate_cname_permissions {
     MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_CNAME_NAME}"
     echo_stat
     sudo chmod 644 ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} >/dev/null 2>&1
+    error_validate
+}
+
+function validate_sdhcp_permissions {
+    MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${UI_SDHCP_NAME}"
+    echo_stat
+    sudo chown root:root ${LOCAL_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF} >/dev/null 2>&1
+    error_validate
+    
+    MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_SDHCP_NAME}"
+    echo_stat
+    sudo chmod 644 ${LOCAL_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF} >/dev/null 2>&1
     error_validate
 }
 
