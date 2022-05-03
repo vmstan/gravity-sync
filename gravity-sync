@@ -389,7 +389,7 @@ function pull_gs_cname {
 
 ## Pull DHCP
 function pull_gs_sdhcp {
-    if [ "$REMOTE_CNAME_DNS" == "1" ]; then
+    if [ "$REMOTE_SDHCP_DNS" == "1" ]; then
         backup_local_sdhcp
         backup_remote_sdhcp
         
