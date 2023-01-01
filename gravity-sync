@@ -1653,8 +1653,8 @@ function validate_sudo_status {
     if [ ! "$EUID" -ne 0 ]; then
         OS_LOCAL_ADMIN=""
     else
-        OS_SUDO_CHECK=$(groups ${OS_CURRENT_USER} | grep -e 'sudo' -e 'wheel')
-        if [ "$OS_SUDO_CHECK" == "" ]; then
+        OS_SUDO_CHECK=$(/usr/bin/sudo --validate)
+        if [ "$OS_SUDO_CHECK" -ne 0 ]; then
             OS_LOCAL_ADMIN="nosudo"
         else
             OS_LOCAL_ADMIN="sudo"
