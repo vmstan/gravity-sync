@@ -1653,8 +1653,9 @@ function validate_sudo_status {
     if [ ! "$EUID" -ne 0 ]; then
         OS_LOCAL_ADMIN=""
     else
-        OS_SUDO_CHECK=$(/usr/bin/sudo --validate)
-        if [ "$OS_SUDO_CHECK" -ne 0 ]; then
+        /usr/bin/sudo -u ${OS_CURRENT_USER} --validate
+        OS_SUDO_CHECK=$?
+        if [ $OS_SUDO_CHECK -ne 0 ]; then
             OS_LOCAL_ADMIN="nosudo"
         else
             OS_LOCAL_ADMIN="sudo"
