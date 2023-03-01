@@ -2,10 +2,8 @@
 <img src="https://vmstan.com/content/images/2021/02/gs-logo.svg" width="300" alt="Gravity Sync">
 </p>
 
-<span align="center">
-
 # Gravity-sync ENVs
-This table is a list of all gravity-sync settings, that can be tweaked via ENVs. Keep in mind that some of them are stored in `/etc/gravity-sync/gravity-sync.conf` after running `gravity-sync configure` and that `gravity-sync.conf` has higher priority than ENVs.
+These tables are a list of all gravity-sync settings, that can be tweaked via ENVs. Keep in mind that some of them are stored in `/etc/gravity-sync/gravity-sync.conf` after running `gravity-sync configure` and that `gravity-sync.conf` has higher priority than ENVs.
 
 ### Local and remote paths & settings
 These settings will determine, from where (locally) to where (remotely) will be synced and with which account/permissions
