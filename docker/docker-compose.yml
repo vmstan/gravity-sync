@@ -1,29 +1,46 @@
 version: "2.1"
 services:
-  gs1:
-    image: gravitysync
+  sh1:
+    image: sync-hole
     build: .
-    container_name: gs1
-    hostname: gravity-sync
+    container_name: main
+    hostname: sync-hole
     environment:
       WEBPASSWORD: "admin"
+      # SSH port of the secondary container (not required for pull mode though)
       GS_SSH_PORT: 2223
     ports:
       - 8080:80
+      # SSH port of the primary container
       - 2222:2222
     restart: unless-stopped
-  gs2:
-    image: gravitysync
+  sh2:
+    image: sync-hole
     build: .
-    container_name: gs2
-    hostname: gravity-sync
+    container_name: secondary
+    hostname: sync-hole
     environment:
       WEBPASSWORD: "admin"
+      # SSH port of the main container
       GS_SSH_PORT: 2222
       GS_AUTO_MODE: pull
       GS_AUTO_DEBUG: true
       GS_AUTO_ENABLE: true
     ports:
       - 8081:80
+      # SSH port of the secondary container
       - 2223:2222
     restart: unless-stopped
+
+# After container setup, run
+
+### Retrieve link password
+# docker exec -it sh1 cat password
+
+### Link secondary to main (pull enabled via docker-compose above)
+# docker exec -it sh2 gravity-sync configure
+#   Enter IP of your host system
+#   Enter SSH user: gs
+#   Enter the link password trieved earlier
+# Now enable the automatic pull
+# docker exec -it sh2 gravity-sync auto

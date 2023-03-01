@@ -13,88 +13,62 @@ It is a drop-in replacement for pi-hole and ideally, you just replace your exist
 
 ## Features
 
-All features of [pi-hole](https://github.com/pi-hole/docker-pi-hole) and [gravity-sync](https://github.com/vmstan/gravity-sync) in one unified docker image!
-The configuration is mainly performed via the ENVs of [pi-hole](https://hub.docker.com/r/pihole/pihole) and the ones made available by [gravity-sync](https://github.com/vmstan/gravity-sync/wiki/Installing#configuration).
+We bundled all features of [pi-hole](https://github.com/pi-hole/docker-pi-hole) and [gravity-sync](https://github.com/vmstan/gravity-sync) including an openssh-server in one unified docker image!
+The configuration is mainly performed via the ENVs of [pi-hole](https://hub.docker.com/r/pihole/pihole) and the ones made available by [gravity-sync](../ENV.md). Keep in mind, that gravity-sync also stores settings in a `gravity-sync.conf` config-file, that always has higher priority than ENVs.
 
-### Gravity-sync ENVs
+There are unique ENVs besides the one for pi-hole and gravity-sync in order to configure this container for your needs.
 | Variable | Default | Value | Description |
 | -------- | ------- | ----- | ---------- |
-| LOCAL_PIHOLE_DIRECTORY | path | `/etc/pihole` | Path, where pihole is installed locally.
-| REMOTE_PIHOLE_DIRECTORY | path | '/etc/pihole'}           # replace in gravity-sync.conf to overwrite
-| LOCAL_DNSMASQ_DIRECTORY | path | '/etc/dnsmasq.d'}        # replace in gravity-sync.conf to overwrite
-| REMOTE_DNSMASQ_DIRECTORY | path | '/etc/dnsmasq.d'}      # replace in gravity-sync.conf to overwrite
-| LOCAL_FILE_OWNER | string | 'pihole:pihole'}                       # replace in gravity-sync.conf to overwrite
-| REMOTE_FILE_OWNER | string | 'pihole:pihole'}                     # replace in gravity-sync.conf to overwrite
+| `LOCAL_USER` | `gs` | username | SSH user to access this container via gravity-sync
+| `LOCAL_PASSWORD` | unset | string | SSH password for `LOCAL_USER`. If unset, a random password will be generated everytime the container starts. See further below, on how to retrieve the temporary password.
+| `PASSWORD_MIN_LEN` | `8` | integer | Minimal length for externally set static password via `LOCAL_PASSWORD`
+| `GS_AUTO_MODE` | `sync` | sync-mode |  Synchroniztion mode of this container. Valid options are `sync`, `smart` (which are the same), `pull` and `push`. See more [here](https://github.com/vmstan/gravity-sync/wiki/Pull-vs-Push)
+| `GS_AUTO_DELAY` | unset | minutes | If set, this will become interval for running the sync in minutes. If unset, it take value from gravity-sync.
+| `GS_AUTO_JITTER` | unset | minutes | If set, this will become the additional random delay/jitter on `GS_AUTO_DELAY` to randomize sync times. Ideally, keep this below `GS_AUTO_DELAY`/2. If unset, it take value from gravity-sync.
+| `GS_AUTO_DEBUG` | unset | boolean| If set to true, the synchronization will run every minute with no jitter in order to allow debugging sync easily.
 
-# Pi-hole Docker/Podman container name - Docker will pattern match anything set below
-| LOCAL_DOCKER_CONTAINER | string | 'pihole'}                  # replace in gravity-sync.conf to overwrite
-| REMOTE_DOCKER_CONTAINER | string | 'pihole'}                # replace in gravity-sync.conf to overwrite
-
-# STANDARD VARIABLES #########################
-
-| DEFAULT_PIHOLE_DIRECTORY | path | '/etc/pihole'
-| LOCAL_PIHOLE_BINARY | path | '/usr/local/bin/pihole'
-| REMOTE_PIHOLE_BINARY |  path| '/usr/local/bin/pihole'
-| LOCAL_FTL_BINARY | path | '/usr/bin/pihole-FTL'
-| REMOTE_FTL_BINARY | path | '/usr/bin/pihole-FTL'
-| LOCAL_DOCKER_BINARY | path | '/usr/bin/docker'
-| REMOTE_DOCKER_BINARY | path | '/usr/bin/docker'
-| LOCAL_PODMAN_BINARY | path | '/usr/bin/podman'
-| REMOTE_PODMAN_BINARY | path | '/usr/bin/podman'
-| PIHOLE_CONTAINER_IMAGE | path | 'pihole/pihole'
-
-###############################################
-####### THE NEEDS OF THE MANY, OUTWEIGH #######
-############ THE NEEDS OF THE FEW #############
-###############################################
-
-| PH_GRAVITY_FI | | 'gravity.db'
-| PH_CUSTOM_DNS | | 'custom.list'
-| PH_CNAME_CONF | | '05-pihole-custom-cname.conf'
-| PH_SDHCP_CONF | | '04-pihole-static-dhcp.conf'
-
-# Backup Customization
-| GS_BACKUP_TIMEOUT | | '240'
-| GS_BACKUP_INTEGRITY_WAIT | | '5'
-| GS_BACKUP_EXT | | 'gsb'
-
-# GS Folder/File Locations
-| GS_ETC_PATH | | "/etc/gravity-sync"
-| GS_CONFIG_FILE | | 'gravity-sync.conf'
-| GS_SYNCING_LOG | | 'gs-sync.log'
-| GS_GRAVITY_FI_MD5_LOG | | 'gs-gravity.md5'
-| GS_CUSTOM_DNS_MD5_LOG | | 'gs-clist.md5'
-| GS_CNAME_CONF_MD5_LOG | | '05-pihole-custom-cname.conf.md5'
-| GS_SDHCP_CONF_MD5_LOG | | '04-pihole-static-dhcp.conf.md5'
-
-# SSH Customization
-| GS_SSH_PORT=${GS_SSH_PORT:-'22'}                                # replace in gravity-sync.conf to overwrite
-| GS_SSH_PKIF=${GS_SSH_PKIF:-"${GS_ETC_PATH}/gravity-sync.rsa"}   # replace in gravity-sync.conf to overwrite
-
-# Github Customization
-| GS_LOCAL_REPO=${GS_LOCAL_REPO:-"${GS_ETC_PATH}/.gs"}            # replace in gravity-sync.conf to overwrite
-
-
-| `TZ` | UTC | `<Timezone>` | Set your [timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) to make sure logs rotate at local midnight instead of at UTC midnight.
-| `WEBPASSWORD` | random | `<Admin password>` | http://pi.hole/admin password. Run `docker logs pihole \| grep random` to find your random pass.
-| `FTLCONF_LOCAL_IPV4` | unset | `<Host's IP>` | Set to your server's LAN IP, used by web block modes.
-
-
-/[gravity-sync enhanced](https://github.com/vmstan/gravity-sync/wiki/Hidden-Figures)
-Ontop of the ENVs of pihole and gravity-sync, you can set the following ENVs for tweaking this container.
-
-- LOCAL_USER: Default: gs. SSH user to access this container via gravity-sync
-- LOCAL_PASSWORD: Default: <empty>. SSH password for LOCAL_USER. If empty, a random password will be generated everytime the container starts. Can be overwritten via docker ENVs
-- PASSWORD_MIN_LEN: Default: 8. Minimal length for externally set static password via LOCAL_PASSWORD
-- GS_AUTO_MODE: Default: sync. Synchroniztion mode of this container. Valid options are "sync", "smart" (which are the same), "pull" and "push".
-- GS_AUTO_DELAY: Default: <empty>. If set, this is the default interval for running the sync in minutes.
-- GS_AUTO_JITTER: Default: <empty>. If set, this is the default additional random delay/jitter on GS_AUTO_DELAY to randomize sync times. Ideally, keep this below GS_AUTO_DELAY/2.
-- GS_AUTO_DEBUG: Default: <empty>. If set to true, the synchronization will run every minute with no jitter.
 
 ## Setup Steps
 
-#TODO Show a working docker-compose yml
+### Container Preparation
+Configure two (or more) `sync-hole` containers (or gravity-sync enabled hosts) as you would configure your pihole containers as described (here)[https://hub.docker.com/r/pihole/pihole]. docker-compose is highly suggested.
 
-1. Configure your pihole instance(s) like described (here)[https://hub.docker.com/r/pihole/pihole]. docker-compose is highly suggested.
-2. Link the containers... TODO: docker exec -it <remote container> cat password to get the (temporary) SSH password of that container.
-3. Enable auto sync docker exec -it <local container> gravity-sync configure
+### Link the containers
+There are several ways to link the containers.
+1. Sync: When using only two containers, using `GS_AUTO_MODE`=`sync` might the most straight forward approach: Both `sync-hole` instances will respectively accept local changes and synchronizes them regularily to their remote ends. Changes on either `sync-hole` instance will be reflected on the other instance.
+2. Push: Alternatively, you can define one main `sync-hole` instance which pushes (`GS_AUTO_MODE`=`push` on main) its changes to one secondary instance. Everything on the secondary instance will get overwritten by the main instance.
+3. Pull: Or if you want to scale even more horizontally (one main instances, multiple secondary instances), you should configure your secondary instances with `GS_AUTO_MODE`=`pull` to pull from the main instance.
+
+For all three possible setups, you need to link your `sync-hole` instances. How to do this is described below
+
+#### 1.: Two pihole instances only with sync between both (both directions)
+Explicitely setting `GS_AUTO_MODE`=`auto` on your `sync-hole` containers is not necessary: This is the default value after all.
+You need to first retrieve the link-password from both `sync-hole` instances: `docker exec -t <sync_hole_main> cat password` and `docker exec -t <sync_hole_secondary> cat password` on their respective hosts.
+
+Lets now start the link process from main -> secondary: If you need to specify a custom remote SSH port, replace `<SSH_PORT>` with that port. The default remote port will be `2222`.
+Run `docker exec -it <sync_hole_main> gravity-sync config <SSH_PORT>` and enter the IP of the remote secondary host, then the username (Default: `gs`) and then the link password retrieved from `sync_hole_secondary`.
+Now activate the sync: `docker exec -it <sync_hole_main> gravity-sync auto`
+
+Same for linking secondary -> main:
+Run `docker exec -it <sync_hole_secondary> gravity-sync config <SSH_PORT>` and enter the IP of the main remote host, then the username (Default: `gs`) and then the link password retrieved from `sync_hole_main`.
+Now activate the sync: `docker exec -it <sync_hole_secondary> gravity-sync auto`
+
+NOTE: In principle, only linking one container to the other container might be sufficient for proper syncing but keeping both containers linked to each other respectively is the best way to go.
+
+#### 2.: Two pihole instances only with push from main to secondary
+Explicitely set `GS_AUTO_MODE`=`push` on your `sync-hole` main containers.
+You need to first retrieve the link-password of the secondary `sync-hole` instance: `docker exec -t <sync_hole_secondary> cat password`
+
+Lets now start the link process from main -> secondary: If you need to specify a custom remote SSH port, replace `<SSH_PORT>` with that port. The default remote port will be `2222`.
+Run `docker exec -it <sync_hole_main> gravity-sync config <SSH_PORT>` and enter the IP of the remote secondary host, then the username (Default: `gs`) and then the link password retrieved from `sync_hole_secondary`.
+
+#### 3.: Multiple pihole instances with pull from a single main instance to multiple secondary instances
+Explicitely set `GS_AUTO_MODE`=`pull` on your `sync-hole` secondary containers.
+You need to first retrieve the link-password of the main `sync-hole` instance: `docker exec -t <sync_hole_main> cat password`
+
+Lets now start the link process each secondary -> main: If you need to specify a custom remote SSH port, replace `<SSH_PORT>` with that port. The default remote port will be `2222`.
+Run `docker exec -it <sync_hole_secondy_N> gravity-sync config <SSH_PORT>` and enter the IP of the remote main host, then the username (Default: `gs`) and then the link password retrieved from `sync_hole_main`.
+Repeat this for all other `N` hosts of `sync_hole_secondy_N`.
+
+## Example of two sync-hole instances (docker-compose)
+Take a look at the `docker-compose.yml`. It shows you a basic configurtion for link-option 3 (above).
