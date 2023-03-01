@@ -1,0 +1,99 @@
+#!/command/with-contenv bash
+
+# Local username for SSH access
+LOCAL_USER=${LOCAL_USER:-"gs"}
+PASSWORD_RANDOM_LEN=16
+# Minimal password length, when manually set via docker. If you really hate yourself and shit on security, you lower this value. Ideally you rely on the radomly generated password (anyway only required once), that changes every container start and is at last RANDOM_PASSWORD_LEN long
+PASSWORD_MIN_LEN=${PASSWORD_MIN_LEN:-8}
+
+# Prepare persistent storage (ssh keys, gravity-sync config, known_hosts)
+mkdir -p /config/{.ssh,cron.d,home/.ssh,ssh_host_keys,gravity-sync}
+
+# symlink ssh config directory & generate host keys
+if [[ ! -L /etc/ssh ]]; then
+    if [ ! -f /config/ssh_host_keys/sshd_config ]; then
+        cp -a /etc/ssh/sshd_config /config/ssh_host_keys/
+    fi
+    rm -Rf /etc/ssh
+    ln -s /config/ssh_host_keys /etc/ssh
+    ssh-keygen -A
+fi
+
+# Symlink cron directory: Remember gravity-sync's automated sync-tasks across docker-container updates
+if [[ ! -L /etc/cron.d ]]; then
+    cp -aT /etc/cron.d /config/cron.d
+    rm -Rf /etc/cron.d
+    ln -s /config/cron.d /etc/cron.d
+fi
+# HACK HACK HACK Trigger crond, to read back in changed files (especially important, when crond starts before this script, which is the case)
+for f in /etc/cron.d/*; do 
+    touch $f
+done
+
+# symlink root's ssh config (known_hosts): root is used in the container to run gravity-sync and needs to remember the remote hosts key-fingerprint across docker-container updates
+if [[ ! -L /root/.ssh ]]; then
+    ln -s /config/.ssh /root/.ssh
+fi
+
+# symlink gravity-sync directory: Remember all settings made to GS across docker-container updates
+if [[ ! -L /etc/gravity-sync ]]; then
+    cp -aT /etc/gravity-sync /config/gravity-sync
+    rm -Rf /etc/gravity-sync
+    ln -s /config/gravity-sync /etc/gravity-sync
+fi
+
+# Prepare $LOCAL_USER for ssh access (necessary for remote accessing this container via gravity-sync)
+# Are we using an unpreviliged, none built-in user?
+if [ "$(awk -F: '($3<1000){print $1}' /etc/passwd | grep ${LOCAL_USER})" == "${LOCAL_USER}" ] || [ "${LOCAL_USER}" == "nobody" ]; then
+    LOCAL_USER="gs"
+    echo "  [✗] ERROR: SSH user via ENV 'LOCAL_USER' can't be the built-in user '$LOCAL_USER'. Setting SSH user to default '${LOCAL_USER}'"
+fi
+
+# Create new unpreviliged user (if it does not exist yet)
+if [ "$(awk -F: '($3>=1000){print $1}' /etc/passwd | grep ${LOCAL_USER})" != "${LOCAL_USER}" ]; then
+    echo "  [✓] Creating new SSH user '${LOCAL_USER}'"
+    useradd -d /config/home ${LOCAL_USER}
+    chsh -s /bin/bash ${LOCAL_USER}
+    echo "${LOCAL_USER} ALL=NOPASSWD: ALL" > /etc/sudoers.d/gravity-sync
+    chmod 440 /etc/sudoers.d/gravity-sync
+fi
+touch /config/home/.ssh/authorized_keys
+
+# Set password for the user and store it in /password for initial setup of gravity-sync
+echo "  [i] SSH user: ${LOCAL_USER}"
+echo "SSH user: ${LOCAL_USER}" > /password
+if [ "${#LOCAL_PASSWORD}" -lt $PASSWORD_MIN_LEN ]; then
+    echo "  [✗] ERROR: SSH password via ENV 'LOCAL_PASSWORD' too short!"
+    LOCAL_PASSWORD=""
+fi
+if [ -z "$LOCAL_PASSWORD" ] ; then
+    echo "  [✓] SSH password randomly generated"
+    echo "     [i] Retrieve SSH password via 'docker exec -it <container_name> cat password'"
+    LOCAL_PASSWORD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c"${PASSWORD_RANDOM_LEN}"; echo;)
+    echo "SSH password: ${LOCAL_PASSWORD}" >> /password
+else
+    echo "  [✓] SSH password: **REDACTED**"
+    echo "SSH password: Password has been manually set via 'LOCAL_PASSWORD' ENV in either docker or docker-compose!" >> /password
+fi
+echo "${LOCAL_USER}:${LOCAL_PASSWORD}" | chpasswd
+
+# Allow enabling gravity-sync auto mode via ENV and a config file for GS does exist
+# TODO Checking for known_keys agains the remove might be helpful... But I expect the user of this container to link against the remote actively (they might 100% know, what they do)
+if [ -n "$GS_AUTO_ENABLE" ] && [ -f "/etc/gravity-sync/gravity-sync.conf" ] ; then
+    gravity-sync auto
+    systemctl start gravity-sync
+fi
+
+# set ownership and permissions
+chown -R "${LOCAL_USER}":"${LOCAL_USER}" \
+    /config/home
+chmod go-w \
+    /config/home
+chmod 700 \
+    /config/home/.ssh
+chmod 600 \
+    /config/home/.ssh/authorized_keys
+chmod 700 \
+    /config/.ssh
+chmod 000 \
+    /password

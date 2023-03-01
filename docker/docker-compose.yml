@@ -1,0 +1,29 @@
+version: "2.1"
+services:
+  gs1:
+    image: gravitysync
+    build: .
+    container_name: gs1
+    hostname: gravity-sync
+    environment:
+      WEBPASSWORD: "admin"
+      GS_SSH_PORT: 2223
+    ports:
+      - 8080:80
+      - 2222:2222
+    restart: unless-stopped
+  gs2:
+    image: gravitysync
+    build: .
+    container_name: gs2
+    hostname: gravity-sync
+    environment:
+      WEBPASSWORD: "admin"
+      GS_SSH_PORT: 2222
+      GS_AUTO_MODE: pull
+      GS_AUTO_DEBUG: true
+      GS_AUTO_ENABLE: true
+    ports:
+      - 8081:80
+      - 2223:2222
+    restart: unless-stopped

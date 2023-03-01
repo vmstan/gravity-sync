@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+# Dummy systemctl wrapper to translate some basic functions for GravitySync towards "cron"
+
+SCRIPT_NAME="'systemctl' cron-wrapper for GravitySync"
+
+OS_DAEMON_PATH='/etc/systemd/system'
+OS_CRON_PATH='/etc/cron.d'
+
+# Checks, if first supplied argument is a valid int
+function is_int {
+    if [ -n "$1" ] && [ "$1" -eq "$1" ] 2>/dev/null; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+function is_true {
+    arg=$1
+    if [ -n "$arg" ]; then arg=${arg,,}; fi
+    if [ "$arg" == "1" ]; then return 0; fi
+    if [ "$arg" == "true" ]; then return 0; fi
+    if [ "$arg" == "yes" ]; then return 0; fi
+    return 1
+}
+
+# Check, if a crontask exists
+function task_is_active {
+    if [ -f "${OS_CRON_PATH}/gravity-sync" ]; then
+        return 0
+    else
+        return 3
+    fi
+}
+
+# Generate the cron task
+function task_start {
+    rm ${OS_CRON_PATH}/gravity-sync 2> /dev/null
+    DELAY=$(cat ${OS_DAEMON_PATH}/gravity-sync.timer | awk -F'=' '$1 == "OnUnitInactiveSec" {print $2}')
+    DELAY=${DELAY::-1}
+    JITTER=$(cat ${OS_DAEMON_PATH}/gravity-sync.timer | awk -F'=' '$1 == "RandomizedDelaySec" {print $2}')
+    JITTER=${JITTER::-1}
+    
+    if ! is_int $DELAY || ! is_int $JITTER; then
+        # Error when parsing values from original gravity-sync.timer task: Apply default values to keep the container working. But report the error!
+        >&2 echo "  [✗] ERROR: ${SCRIPT_NAME}: Invalid delay or jitter when parsing 'gravity-sync.timer'. Falling back to default"
+        DELAY=5
+        JITTER=2
+    fi
+    
+    # Allow overwriting the DELAY and JITTER via ENV
+    DELAY=${GS_AUTO_DELAY:-$DELAY}
+    JITTER=${GS_AUTO_JITTER:-$JITTER}
+    
+    if ! is_int $DELAY || ! is_int $JITTER; then
+        >&2 echo "  [✗] ERROR: ${SCRIPT_NAME}: Invalid CUSTOM delay or jitter via Docker ENVs. Falling back to default"
+        DELAY=5
+        JITTER=2
+    fi
+    
+    # Limit the jitter to some reasonable time below the delay
+    if [ $JITTER -ge $(($DELAY/2)) ]; then
+        JITTER=$(($DELAY/2))
+    fi
+    
+    # Enable cron-debug mode, that will result in updates every minute
+    if is_true $GS_AUTO_DEBUG; then
+        DELAY=1
+        JITTER=0
+    fi
+    
+    # Write contab file: Append $PATH of current user, so everything will work, when calling gravity-sync (cron by default has a very limited ENV & PATH)
+    echo "PATH=$PATH" > ${OS_CRON_PATH}/gravity-sync
+    echo "*/${DELAY} * * * * root sleep \$(echo | awk '{print rand()*60*${JITTER}};') && /usr/local/bin/_gs_cron" >> ${OS_CRON_PATH}/gravity-sync
+    
+    return 0
+}
+
+# Remove the crontask
+function task_stop {
+    rm ${OS_CRON_PATH}/gravity-sync 2> /dev/null
+    
+    return 0
+}
+
+function task_invalid {
+    echo "${SCRIPT_NAME}"
+    printf "\nInvalid arguments detected"
+    echo "Please do not use this 'systemctl' wrapper directly. It only works with GravitySync and is 'very dumb'"
+    return 0
+}
+
+function task_void {
+    return 0
+}
+
+case "${1}" in
+    "start" )                   task_start;;
+    "stop" )                    task_stop;;
+    "is-active" )               task_is_active;;
+    "enable" )                  task_void;;
+    "disable" )                 task_void;;
+    "daemon-reload" )           task_void;;
+    * )                         task_invalid;;
+esac
