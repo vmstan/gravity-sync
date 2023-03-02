@@ -19,6 +19,9 @@ if [[ ! -L /etc/ssh ]]; then
     ssh-keygen -A
 fi
 
+# Patch sudo, to import ENVs
+sed -i 's/Defaults[[:space:]]*env_reset/Defaults !env_reset/g' /etc/sudoers
+
 # Symlink cron directory: Remember gravity-sync's automated sync-tasks across docker-container updates
 if [[ ! -L /etc/cron.d ]]; then
     cp -aT /etc/cron.d /config/cron.d
@@ -77,8 +80,7 @@ else
 fi
 echo "${LOCAL_USER}:${LOCAL_PASSWORD}" | chpasswd
 
-# Allow enabling gravity-sync auto mode via ENV and a config file for GS does exist
-# TODO Checking for known_keys agains the remove might be helpful... But I expect the user of this container to link against the remote actively (they might 100% know, what they do)
+# Allow enabling gravity-sync auto mode via ENV if a config file for GS does (already) exist
 if [ -n "$GS_AUTO_ENABLE" ] && [ -f "/etc/gravity-sync/gravity-sync.conf" ] ; then
     gravity-sync auto
     systemctl start gravity-sync
