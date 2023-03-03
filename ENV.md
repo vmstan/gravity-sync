@@ -82,4 +82,4 @@ Customize parameters for accessing the remote end via SSH
 Gravity-sync is locally installed as a github repo. In order to upgrade your local gravity-sync instance via `gravity-sync upgrade` to the latest version, the path to that git-repo must be known and can be specified below.
 | Variable | Default | Value | Description |
 | -------- | ------- | ----- | ---------- |
-| `GS_LOCAL_REPO` | `{<GS_ETC_PATH>/.gs"` | path | Local install path of the gravity-sync repo
+| `GS_LOCAL_REPO` | `<GS_ETC_PATH>/.gs"` | path | Local install path of the gravity-sync repo
