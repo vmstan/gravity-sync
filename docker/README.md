@@ -16,7 +16,10 @@ It is a drop-in replacement for pi-hole and ideally, you just replace your exist
 We bundled all features of [pi-hole](https://github.com/pi-hole/docker-pi-hole) and [gravity-sync](https://github.com/vmstan/gravity-sync) including an openssh-server in one unified docker image!
 
 ### Configuration
-The configuration is mainly performed via the ENVs of [pi-hole](https://github.com/pi-hole/docker-pi-hole) and the ones made available by [gravity-sync](../ENV.md).
+The configuration is mainly performed via the ENVs. See the respective documatation for
+1. [pi-hole](https://github.com/pi-hole/docker-pi-hole)
+2. [gravity-sync](../ENV.md).
+
 Keep in mind, that gravity-sync also stores settings in a `gravity-sync.conf` config-file, that always has higher priority than ENVs. You can overwrite this file by bind-mounting it into the container to `/config/gravity-sync/gravity-sync.conf`.
 
 The config, SSH-Keys and fingerprints used by `gravity-sync` are persistent across container updates: The folder `/config` inside the container lives on a `volume` and persists the config. If you want, you can even bind-mount to that folder `/config`.
