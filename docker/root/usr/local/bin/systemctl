@@ -98,8 +98,8 @@ case "${1}" in
     "start" )                   task_start;;
     "stop" )                    task_stop;;
     "is-active" )               task_is_active;;
-    "enable" )                  task_void;;
-    "disable" )                 task_void;;
+    "enable" )                  task_start;;
+    "disable" )                 task_stop;;
     "daemon-reload" )           task_void;;
     * )                         task_invalid;;
 esac
