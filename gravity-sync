@@ -1239,7 +1239,11 @@ function md5_recheck {
     fi
     
     if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} ]; then
-        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}; then
+        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}; then
+            CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
+            CMD_REQUESTED="sudo touch ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}"
+            create_ssh_cmd
+            
             REMOTE_CNAME_DNS="1"
             MESSAGE="${UI_HASHING_REHASHING} ${UI_CNAME_NAME}"
             echo_stat
@@ -1267,7 +1271,11 @@ function md5_recheck {
     fi
 
     if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF} ]; then
-        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF}; then
+        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}; then
+            CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
+            CMD_REQUESTED="sudo touch ${REMOTE_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF}"
+            create_ssh_cmd
+            
             REMOTE_SDHCP_DNS="1"
             MESSAGE="${UI_HASHING_REHASHING} ${UI_SDHCP_NAME}"
             echo_stat
