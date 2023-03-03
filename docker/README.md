@@ -63,7 +63,7 @@ No matter, which setup you will chose, you need to link your `sync-hole` instanc
 | Push                 | `docker exec -it <container_name> gravity-sync push`              | Pushes local changes to remote end. This `<container_name>` must be already configured                                                           |
 | Pull                 | `docker exec -it <container_name> gravity-sync pull`              | Pulls remote changes to local end. This `<container_name>` must be already configured                                                            |
 
-### 1.: Two pihole instances with sync between both (both directions)
+### 1.: Two pihole instances with sync between both (sync = push & pull)
 Set up two `sync-hole` instances, e.g. via docker-compose
 Explicitely setting `GS_AUTO_MODE`=`auto` on your `sync-hole` containers is not necessary: This is the default value after all.
 
