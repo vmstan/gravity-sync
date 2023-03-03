@@ -1,46 +1,78 @@
+# Test-containers for development of sync-hole
+
 version: "2.1"
 services:
-  sh1:
+  main:
     image: sync-hole
     build: .
     container_name: main
-    hostname: sync-hole
+    hostname: main
+    restart: unless-stopped
     environment:
       WEBPASSWORD: "admin"
-      # SSH port of the secondary container (not required for pull mode though)
-      GS_SSH_PORT: 2223
+      # (Re)-enable GS, when a config file exists in the system
+      GS_AUTO_ENABLE: true
+      GS_AUTO_DEBUG: true
     ports:
+      # Webinterface on HOST of main
       - 8080:80
-      # SSH port of the primary container
+      # SSH port on HOST of main (for DEBUGGING)
       - 2222:2222
-    restart: unless-stopped
-  sh2:
+    networks:
+      static:
+          ipv4_address: 10.0.0.101
+    
+  secondary:
     image: sync-hole
     build: .
     container_name: secondary
-    hostname: sync-hole
+    hostname: secondary
+    restart: unless-stopped
     environment:
       WEBPASSWORD: "admin"
-      # SSH port of the main container
-      GS_SSH_PORT: 2222
-      GS_AUTO_MODE: pull
-      GS_AUTO_DEBUG: true
+      # (Re)-enable GS, when a config file exists in the system
       GS_AUTO_ENABLE: true
+      GS_AUTO_DEBUG: true
     ports:
+      # Webinterface on HOST of secondary
       - 8081:80
-      # SSH port of the secondary container
+      # SSH port on HOST of secondary (for DEBUGGING)
       - 2223:2222
-    restart: unless-stopped
+    networks:
+      static:
+          ipv4_address: 10.0.0.102
 
-# After container setup, run
+#sync-hole test network
+networks:
+  static:
+    ipam:
+      config:
+        - subnet: 10.0.0.0/24
+    
+# Once the containers are started up, run the following
 
 ### Retrieve link password
-# docker exec -it sh1 cat password
+# docker exec -it main cat password
+# docker exec -it secondary cat password
 
-### Link secondary to main (pull enabled via docker-compose above)
-# docker exec -it sh2 gravity-sync configure
-#   Enter IP of your host system
+### Link main to secondary & enable automatic mode
+# docker exec -it main gravity-sync configure
+#   Enter IP of secondary: 10.0.0.102
 #   Enter SSH user: gs
-#   Enter the link password trieved earlier
-# Now enable the automatic pull
-# docker exec -it sh2 gravity-sync auto
+#   Confirm authenticity of host: Write 'yes'
+#   Enter the link password of 'secondary'
+# Now enable the automatic sync
+# docker exec -it main gravity-sync auto
+
+### OPTIONAL (but suggested): Link secondary to main & enable automatic mode
+# docker exec -it secondary gravity-sync configure
+#   Enter IP of main: 10.0.0.101
+#   Enter SSH user: gs
+#   Confirm authenticity of host: Write 'yes'
+#   Enter the link password of 'main'
+# Now enable the automatic sync
+# docker exec -it secondary gravity-sync auto
+
+# If you want to oberseve the automatic sync, run
+# docker exec -it main gravity-sync monitor
+# docker exec -it secondary gravity-sync monitor
