@@ -14,9 +14,14 @@ It is a drop-in replacement for pi-hole and ideally, you just replace your exist
 ## Features
 
 We bundled all features of [pi-hole](https://github.com/pi-hole/docker-pi-hole) and [gravity-sync](https://github.com/vmstan/gravity-sync) including an openssh-server in one unified docker image!
-The configuration is mainly performed via the ENVs of [pi-hole](https://github.com/pi-hole/docker-pi-hole) and the ones made available by [gravity-sync](../ENV.md). Keep in mind, that gravity-sync also stores settings in a `gravity-sync.conf` config-file, that always has higher priority than ENVs.
 
-There are unique ENVs besides the one for pi-hole and gravity-sync in order to configure this container for your needs.
+### Configuration
+The configuration is mainly performed via the ENVs of [pi-hole](https://github.com/pi-hole/docker-pi-hole) and the ones made available by [gravity-sync](../ENV.md).
+Keep in mind, that gravity-sync also stores settings in a `gravity-sync.conf` config-file, that always has higher priority than ENVs. You can overwrite this file by bind-mounting it into the container to `/config/gravity-sync/gravity-sync.conf`.
+The config, SSH-Keys and fingerprints used by `gravity-sync` are persistent across container updates: The folder `/config` inside the container lives on a `volume` and persists the config. If you want, you can even bind-mount to that folder `/config`.
+The config of [pi-hole](https://github.com/pi-hole/docker-pi-hole) is **not** persistent across container updates: Please refere to the [pi-hole documentation](https://github.com/pi-hole/docker-pi-hole) on how to persist changes.
+
+There are additionally unique ENVs on top of the ones for [pi-hole](https://github.com/pi-hole/docker-pi-hole) and [gravity-sync](../ENV.md), which you can use to tailor this container for your needs.
 | Variable           | Default | Value     | Description                                                                                                                                                                                    |
 |--------------------|---------|-----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `LOCAL_USER`       | `gs`    | username  | SSH user to access this container via gravity-sync                                                                                                                                             |
@@ -28,9 +33,9 @@ There are unique ENVs besides the one for pi-hole and gravity-sync in order to c
 | `GS_AUTO_DEBUG`    | unset   | boolean   | If set to true, the synchronization will run every minute with no jitter in order to allow debugging sync easily.                                                                              |
 
 
-## Setup Steps
+## Setup
 
-### Container Preparation
+### Container preparation
 Configure two (or more) `sync-hole` containers (or gravity-sync enabled hosts) as you would configure your pihole containers as described [here](https://hub.docker.com/r/pihole/pihole). docker-compose is highly suggested.
 
 ### Link the containers
