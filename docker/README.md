@@ -20,7 +20,9 @@ The configuration is mainly performed via the ENVs. See the respective documatat
 1. [pi-hole](https://github.com/pi-hole/docker-pi-hole)
 2. [gravity-sync](../ENV.md).
 
-Keep in mind, that gravity-sync also stores settings in a `gravity-sync.conf` config-file, that always has higher priority than ENVs. You can overwrite this file by bind-mounting it into the container to `/config/gravity-sync/gravity-sync.conf`.
+Keep in mind, that gravity-sync also stores settings in a `gravity-sync.conf` config-file, that always has higher priority than ENVs. 
+This file is generated and overwritten, when you run the intial configuration (see setup below).
+You can safely overwrite this file by bind-mounting it into the container to `/config/gravity-sync/gravity-sync.conf`.
 
 The config, SSH-Keys and fingerprints used by `gravity-sync` are persistent across container updates: The folder `/config` inside the container lives on a `volume` and persists the config. If you want, you can even bind-mount to that folder `/config`.
 
