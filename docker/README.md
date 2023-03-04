@@ -69,6 +69,7 @@ Explicit examples with `docker-compose.yml` code are shown below.
 Set up two `sync-hole` instances, e.g. via docker-compose
 Explicitely setting `GS_AUTO_MODE`=`auto` on your `sync-hole` containers is not necessary: This is the default value after all.
 
+### `docker-compose.yml` example
 ```yaml
 version: "2.1"
 services:
@@ -126,7 +127,7 @@ NOTE: In principle, only linking one container to the other container might be s
 Set up two `sync-hole` instances, e.g. via docker-compose
 Explicitely set `GS_AUTO_MODE`=`push` on your `sync-hole` `main` container.
 
-
+### `docker-compose.yml` example
 ```yaml
 version: "2.1"
 services:
@@ -179,6 +180,7 @@ Set up two or more `sync-hole` instances, e.g. via docker-compose
 Explicitely set `GS_AUTO_MODE`=`pull` on your `sync-hole` `secondary1`,`secondary2` and so on containers.
 NOTE: You do not necessarily need to sync all `secondary` nodes against a common `main` node: You can easily build a tree with a `main` node on the root, two or more `secondary` nodes as the first leaves on `main`, which then on their own will have `tertiary` nodes as leaves and so on.
 
+### `docker-compose.yml` example
 ```yaml
 version: "2.1"
 services:
