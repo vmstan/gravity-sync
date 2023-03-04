@@ -123,7 +123,7 @@ If you need to specify a custom remote SSH port, replace `<SSH_PORT>` with that 
 
 NOTE: In principle, only linking one container to the other container might be sufficient for proper syncing but keeping both containers linked to each other respectively is the best way to go.
 
-## Example 2: Two pihole instances only push from main to secondary
+## Example 2: Two pihole instances with push from main to secondary
 Set up two `sync-hole` instances, e.g. via docker-compose
 Explicitely set `GS_AUTO_MODE`=`push` on your `sync-hole` `main` container.
 
