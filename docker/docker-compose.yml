@@ -37,11 +37,11 @@ services:
       GS_AUTO_DEBUG: true
     ports:
       # Webinterface on HOST of secondary
-      - 8081:80
+      - "8081:80"
       - "5554:53/tcp"
       - "5554:53/udp"
       # SSH port on HOST of secondary (for DEBUGGING)
-      - 2223:2222
+      - "2223:2222"
     networks:
       static:
           ipv4_address: 10.0.0.102
