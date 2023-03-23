@@ -272,8 +272,8 @@ function  set_pihole_exec {
         PH_EXEC="${LOCAL_PIHOLE_BINARY}"
         FTL_EXEC="${LOCAL_FTL_BINARY}"
     elif [ "$LOCAL_PIHOLE_TYPE" == "docker" ]; then
-        PH_EXEC="sudo ${LOCAL_DOCKER_BINARY} exec $(sudo ${LOCAL_DOCKER_BINARY} ps -qf name=${LOCAL_DOCKER_CONTAINER}) pihole"
-        FTL_EXEC="sudo ${LOCAL_DOCKER_BINARY} exec $(sudo ${LOCAL_DOCKER_BINARY} ps -qf name=${LOCAL_DOCKER_CONTAINER}) pihole-FTL"
+        PH_EXEC="sudo ${LOCAL_DOCKER_BINARY} exec $(sudo ${LOCAL_DOCKER_BINARY} ps -qf name=^${LOCAL_DOCKER_CONTAINER}$) pihole"
+        FTL_EXEC="sudo ${LOCAL_DOCKER_BINARY} exec $(sudo ${LOCAL_DOCKER_BINARY} ps -qf name=^${LOCAL_DOCKER_CONTAINER}$) pihole-FTL"
     elif [ "$LOCAL_PIHOLE_TYPE" == "podman" ]; then
         PH_EXEC="sudo ${LOCAL_PODMAN_BINARY} exec ${LOCAL_DOCKER_CONTAINER} pihole"
         FTL_EXEC="sudo ${LOCAL_PODMAN_BINARY} exec ${LOCAL_DOCKER_CONTAINER} pihole-FTL"
@@ -283,8 +283,8 @@ function  set_pihole_exec {
         RH_EXEC="${REMOTE_PIHOLE_BINARY}"
         RFTL_EXEC="${REMOTE_FTL_BINARY}"
     elif [ "$REMOTE_PIHOLE_TYPE" == "docker" ]; then
-        RH_EXEC="sudo ${REMOTE_DOCKER_BINARY} exec \$(sudo ${REMOTE_DOCKER_BINARY} ps -qf name=${REMOTE_DOCKER_CONTAINER}) pihole"
-        RFTL_EXEC="sudo ${REMOTE_DOCKER_BINARY} exec \$(sudo ${REMOTE_DOCKER_BINARY} ps -qf name=${REMOTE_DOCKER_CONTAINER}) pihole-FTL"
+        RH_EXEC="sudo ${REMOTE_DOCKER_BINARY} exec \$(sudo ${REMOTE_DOCKER_BINARY} ps -qf name=^${REMOTE_DOCKER_CONTAINER}$) pihole"
+        RFTL_EXEC="sudo ${REMOTE_DOCKER_BINARY} exec \$(sudo ${REMOTE_DOCKER_BINARY} ps -qf name=^${REMOTE_DOCKER_CONTAINER}$) pihole-FTL"
     elif [ "$REMOTE_PIHOLE_TYPE" == "podman" ]; then
         RH_EXEC="sudo ${REMOTE_PODMAN_BINARY} exec ${REMOTE_DOCKER_CONTAINER} pihole"
         RFTL_EXEC="sudo ${REMOTE_PODMAN_BINARY} exec ${REMOTE_DOCKER_CONTAINER} pihole"
