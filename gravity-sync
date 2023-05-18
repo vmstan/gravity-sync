@@ -19,61 +19,61 @@ GS_VERSION='4.0.4'
 # CUSTOM VARIABLES ###########################
 
 # Pi-hole Folder/File Customization - Only need to be customized when using containers
-LOCAL_PIHOLE_DIRECTORY='/etc/pihole' 			# replace in gravity-sync.conf to overwrite
-REMOTE_PIHOLE_DIRECTORY='/etc/pihole'			# replace in gravity-sync.conf to overwrite
-LOCAL_DNSMASQ_DIRECTORY='/etc/dnsmasq.d'        # replace in gravity-sync.conf to overwrite
-REMOTE_DNSMASQ_DIRECTORY='/etc/dnsmasq.d'       # replace in gravity-sync.conf to overwrite
-LOCAL_FILE_OWNER='pihole:pihole'			    # replace in gravity-sync.conf to overwrite
-REMOTE_FILE_OWNER='pihole:pihole'			    # replace in gravity-sync.conf to overwrite
+LOCAL_PIHOLE_DIRECTORY=${LOCAL_PIHOLE_DIRECTORY:-'/etc/pihole'}             # replace in gravity-sync.conf to overwrite
+REMOTE_PIHOLE_DIRECTORY=${REMOTE_PIHOLE_DIRECTORY:-'/etc/pihole'}           # replace in gravity-sync.conf to overwrite
+LOCAL_DNSMASQ_DIRECTORY=${LOCAL_DNSMASQ_DIRECTORY:-'/etc/dnsmasq.d'}        # replace in gravity-sync.conf to overwrite
+REMOTE_DNSMASQ_DIRECTORY=${REMOTE_DNSMASQ_DIRECTORY:-'/etc/dnsmasq.d'}      # replace in gravity-sync.conf to overwrite
+LOCAL_FILE_OWNER=${LOCAL_FILE_OWNER:-'pihole:pihole'}                       # replace in gravity-sync.conf to overwrite
+REMOTE_FILE_OWNER=${REMOTE_FILE_OWNER:-'pihole:pihole'}                     # replace in gravity-sync.conf to overwrite
 
 # Pi-hole Docker/Podman container name - Docker will pattern match anything set below
-LOCAL_DOCKER_CONTAINER='pihole'					# replace in gravity-sync.conf to overwrite
-REMOTE_DOCKER_CONTAINER='pihole'				# replace in gravity-sync.conf to overwrite
+LOCAL_DOCKER_CONTAINER=${LOCAL_DOCKER_CONTAINER:-'pihole'}                  # replace in gravity-sync.conf to overwrite
+REMOTE_DOCKER_CONTAINER=${REMOTE_DOCKER_CONTAINER:-'pihole'}                # replace in gravity-sync.conf to overwrite
 
 # STANDARD VARIABLES #########################
 
-DEFAULT_PIHOLE_DIRECTORY='/etc/pihole'			# Default Pi-hole data directory
-LOCAL_PIHOLE_BINARY='/usr/local/bin/pihole' 	# Local Pi-hole binary directory (default)
-REMOTE_PIHOLE_BINARY='/usr/local/bin/pihole' 	# Remote Pi-hole binary directory (default)
-LOCAL_FTL_BINARY='/usr/bin/pihole-FTL'          # Local FTL binary directory (default)
-REMOTE_FTL_BINARY='/usr/bin/pihole-FTL'         # Remote FTL binary directory (default)
-LOCAL_DOCKER_BINARY='/usr/bin/docker'		    # Local Docker binary directory (default)
-REMOTE_DOCKER_BINARY='/usr/bin/docker'		    # Remote Docker binary directory (default)
-LOCAL_PODMAN_BINARY='/usr/bin/podman'           # Local Podman binary directory (default)
-REMOTE_PODMAN_BINARY='/usr/bin/podman'          # Remote Podman binary directory (default)
-PIHOLE_CONTAINER_IMAGE='pihole/pihole'          # Official Pi-hole container image name
+DEFAULT_PIHOLE_DIRECTORY=${DEFAULT_PIHOLE_DIRECTORY:-'/etc/pihole'}         # Default Pi-hole data directory
+LOCAL_PIHOLE_BINARY=${LOCAL_PIHOLE_BINARY:-'/usr/local/bin/pihole'}         # Local Pi-hole binary directory (default)
+REMOTE_PIHOLE_BINARY=${REMOTE_PIHOLE_BINARY:-'/usr/local/bin/pihole'}       # Remote Pi-hole binary directory (default)
+LOCAL_FTL_BINARY=${LOCAL_FTL_BINARY:-'/usr/bin/pihole-FTL'}                 # Local FTL binary directory (default)
+REMOTE_FTL_BINARY=${REMOTE_FTL_BINARY:-'/usr/bin/pihole-FTL'}               # Remote FTL binary directory (default)
+LOCAL_DOCKER_BINARY=${LOCAL_DOCKER_BINARY:-'/usr/bin/docker'}               # Local Docker binary directory (default)
+REMOTE_DOCKER_BINARY=${REMOTE_DOCKER_BINARY:-'/usr/bin/docker'}             # Remote Docker binary directory (default)
+LOCAL_PODMAN_BINARY=${LOCAL_PODMAN_BINARY:-'/usr/bin/podman'}               # Local Podman binary directory (default)
+REMOTE_PODMAN_BINARY=${REMOTE_PODMAN_BINARY:-'/usr/bin/podman'}             # Remote Podman binary directory (default)
+PIHOLE_CONTAINER_IMAGE=${PIHOLE_CONTAINER_IMAGE:-'pihole/pihole'}           # Official Pi-hole container image name
 
 ###############################################
 ####### THE NEEDS OF THE MANY, OUTWEIGH #######
 ############ THE NEEDS OF THE FEW #############
 ###############################################
 
-PH_GRAVITY_FI='gravity.db' 			            # Pi-hole database file name
-PH_CUSTOM_DNS='custom.list'			            # Pi-hole DNS lookup filename
-PH_CNAME_CONF='05-pihole-custom-cname.conf'     # DNSMASQ CNAME alias file
-PH_SDHCP_CONF='04-pihole-static-dhcp.conf'      # DNSMASQ Static DHCP file
+PH_GRAVITY_FI=${PH_GRAVITY_FI:-'gravity.db'}                        # Pi-hole database file name
+PH_CUSTOM_DNS=${PH_CUSTOM_DNS:-'custom.list'}                       # Pi-hole DNS lookup filename
+PH_CNAME_CONF=${PH_CNAME_CONF:-'05-pihole-custom-cname.conf'}       # DNSMASQ CNAME alias file
+PH_SDHCP_CONF=${PH_SDHCP_CONF:-'04-pihole-static-dhcp.conf'}        # DNSMASQ Static DHCP file
 
 # Backup Customization
-GS_BACKUP_TIMEOUT='240'                         # replace in gravity-sync.conf to overwrite
-GS_BACKUP_INTEGRITY_WAIT='5'                    # replace in gravity-sync.conf to overwrite
-GS_BACKUP_EXT='gsb'                             # replace in gravity-sync.conf to overwrite
+GS_BACKUP_TIMEOUT=${GS_BACKUP_TIMEOUT:-'240'}                       # replace in gravity-sync.conf to overwrite
+GS_BACKUP_INTEGRITY_WAIT=${GS_BACKUP_INTEGRITY_WAIT:-'5'}           # replace in gravity-sync.conf to overwrite
+GS_BACKUP_EXT=${GS_BACKUP_EXT:-'gsb'}                               # replace in gravity-sync.conf to overwrite
 
 # GS Folder/File Locations
 GS_FILEPATH='/usr/local/bin/gravity-sync'
-GS_ETC_PATH="/etc/gravity-sync"		                                # replace in gravity-sync.conf to overwrite
-GS_CONFIG_FILE='gravity-sync.conf' 	                                # replace in gravity-sync.conf to overwrite
-GS_SYNCING_LOG='gs-sync.log' 		                                # replace in gravity-sync.conf to overwrite
-GS_GRAVITY_FI_MD5_LOG='gs-gravity.md5'                              # replace in gravity-sync.conf to overwrite
-GS_CUSTOM_DNS_MD5_LOG='gs-clist.md5'                                # replace in gravity-sync.conf to overwrite
-GS_CNAME_CONF_MD5_LOG='05-pihole-custom-cname.conf.md5'             # replace in gravity-sync.conf to overwrite
-GS_SDHCP_CONF_MD5_LOG='04-pihole-static-dhcp.conf.md5'              # replace in gravity-sync.conf to overwrite
+GS_ETC_PATH=${GS_ETC_PATH:-"/etc/gravity-sync"}                                     # replace in gravity-sync.conf to overwrite
+GS_CONFIG_FILE=${GS_CONFIG_FILE:-'gravity-sync.conf'}                               # replace in gravity-sync.conf to overwrite
+GS_SYNCING_LOG=${GS_SYNCING_LOG:-'gs-sync.log'}                                     # replace in gravity-sync.conf to overwrite
+GS_GRAVITY_FI_MD5_LOG=${GS_GRAVITY_FI_MD5_LOG:-'gs-gravity.md5'}                    # replace in gravity-sync.conf to overwrite
+GS_CUSTOM_DNS_MD5_LOG=${GS_CUSTOM_DNS_MD5_LOG:-'gs-clist.md5'}                      # replace in gravity-sync.conf to overwrite
+GS_CNAME_CONF_MD5_LOG=${GS_CNAME_CONF_MD5_LOG:-'05-pihole-custom-cname.conf.md5'}   # replace in gravity-sync.conf to overwrite
+GS_SDHCP_CONF_MD5_LOG=${GS_SDHCP_CONF_MD5_LOG:-'04-pihole-static-dhcp.conf.md5'}    # replace in gravity-sync.conf to overwrite
 
 # SSH Customization
-GS_SSH_PORT='22' 						        # replace in gravity-sync.conf to overwrite
-GS_SSH_PKIF="${GS_ETC_PATH}/gravity-sync.rsa"   # replace in gravity-sync.conf to overwrite
+GS_SSH_PORT=${GS_SSH_PORT:-'22'}                                # replace in gravity-sync.conf to overwrite
+GS_SSH_PKIF=${GS_SSH_PKIF:-"${GS_ETC_PATH}/gravity-sync.rsa"}   # replace in gravity-sync.conf to overwrite
 
 # Github Customization
-GS_LOCAL_REPO="${GS_ETC_PATH}/.gs"              # replace in gravity-sync.conf to overwrite
+GS_LOCAL_REPO=${GS_LOCAL_REPO:-"${GS_ETC_PATH}/.gs"}            # replace in gravity-sync.conf to overwrite
 
 # OS Settings
 OS_DAEMON_PATH='/etc/systemd/system'
@@ -1069,7 +1069,11 @@ function md5_compare {
     fi
 
     if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} ]; then
-        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}; then
+        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}; then
+            CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
+            CMD_REQUESTED="sudo touch ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}"
+            create_ssh_cmd
+            
             REMOTE_CNAME_DNS="1"
             MESSAGE="${UI_HASHING_HASHING} ${UI_CNAME_NAME}"
             echo_stat
@@ -1106,7 +1110,11 @@ function md5_compare {
     fi
 
     if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF} ]; then
-        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF}; then
+        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}; then
+            CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
+            CMD_REQUESTED="sudo touch ${REMOTE_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF}"
+            create_ssh_cmd
+        
             REMOTE_SDHCP_DNS="1"
             MESSAGE="${UI_HASHING_HASHING} ${UI_SDHCP_NAME}"
             echo_stat
@@ -1231,7 +1239,11 @@ function md5_recheck {
     fi
 
     if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} ]; then
-        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}; then
+        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}; then
+            CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
+            CMD_REQUESTED="sudo touch ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}"
+            create_ssh_cmd
+            
             REMOTE_CNAME_DNS="1"
             MESSAGE="${UI_HASHING_REHASHING} ${UI_CNAME_NAME}"
             echo_stat
@@ -1259,7 +1271,11 @@ function md5_recheck {
     fi
 
     if [ -f ${LOCAL_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF} ]; then
-        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF}; then
+        if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_DNSMASQ_DIRECTORY}; then
+            CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
+            CMD_REQUESTED="sudo touch ${REMOTE_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF}"
+            create_ssh_cmd
+            
             REMOTE_SDHCP_DNS="1"
             MESSAGE="${UI_HASHING_REHASHING} ${UI_SDHCP_NAME}"
             echo_stat
@@ -1997,7 +2013,13 @@ function advanced_config_generate {
 ## Delete Existing Configuration
 function config_delete {
     # shellcheck source=/etc/gravity-sync/gravity-sync.conf
+    if [ -n "${GS_SSH_PORT}" ]; then
+        _GS_SSH_PORT=${GS_SSH_PORT}
+    fi
     source ${GS_ETC_PATH}/${GS_CONFIG_FILE}
+    if [ -n "${_GS_SSH_PORT}" ]; then
+        GS_SSH_PORT=${_GS_SSH_PORT}
+    fi  
     MESSAGE="${GS_CONFIG_FILE} ${UI_CONFIG_ALREADY}"
     echo_warn
 
