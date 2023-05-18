@@ -1471,7 +1471,7 @@ function detect_local_pihole {
         LOCAL_PIHOLE_TYPE="default"
         echo_good
     elif hash docker 2>/dev/null; then
-        PH_FTL_CHECK=$(sudo docker container ls | grep 'pihole/pihole')
+        PH_FTL_CHECK=$(sudo docker container ls | grep ${PIHOLE_CONTAINER_IMAGE})
         if [ "$PH_FTL_CHECK" != "" ]; then
             LOCAL_PIHOLE_TYPE="docker"
             echo_good
@@ -1480,7 +1480,7 @@ function detect_local_pihole {
             echo_fail
         fi
     elif hash podman 2>/dev/null; then
-        PH_FTL_CHECK=$(sudo podman container ls | grep 'pihole/pihole')
+        PH_FTL_CHECK=$(sudo podman container ls | grep ${PIHOLE_CONTAINER_IMAGE})
         if [ "$PH_FTL_CHECK" != "" ]; then
             LOCAL_PIHOLE_TYPE="podman"
             echo_good
@@ -1501,9 +1501,9 @@ function detect_remote_pihole {
     if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_BINARY}; then
         REMOTE_PIHOLE_TYPE="default"
         echo_good
-    else
-        REMOTE_DETECT_DOCKER=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo docker container ls | grep 'pihole/pihole'" 2>/dev/null)
-        REMOTE_DETECT_PODMAN=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo podman container ls | grep 'pihole/pihole'" 2>/dev/null)
+    else   
+        REMOTE_DETECT_DOCKER=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo docker container ls | grep ${PIHOLE_CONTAINER_IMAGE}" 2>/dev/null)
+        REMOTE_DETECT_PODMAN=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo podman container ls | grep ${PIHOLE_CONTAINER_IMAGE}" 2>/dev/null)
 
         if [ "${REMOTE_DETECT_DOCKER}" != "" ]; then
             REMOTE_PIHOLE_TYPE="docker"
