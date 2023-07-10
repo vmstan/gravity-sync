@@ -4,7 +4,7 @@ GS_RUN_START=$SECONDS
 
 # GRAVITY SYNC BY VMSTAN #####################
 PROGRAM='Gravity Sync'
-GS_VERSION='4.0.4'
+GS_VERSION='4.0.5'
 
 # For documentation or the changelog/updates visit https://github.com/vmstan/gravity-sync
 # Requires Pi-Hole 5.x or higher already be installed, for help visit https://pi-hole.net
