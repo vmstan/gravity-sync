@@ -5,7 +5,6 @@ RUN apt update && apt install --no-install-recommends --yes openssh-server git s
 
 ##### Install gravity-sync
 RUN curl -sSL https://raw.githubusercontent.com/vmstan/gs-install/main/gs-install.sh | GS_DOCKER=1 bash
-RUN cd /etc/gravity-sync/.gs && git remote set-url origin https://github.com/systemofapwne/gravity-sync.git && git pull && gravity-sync upgrade
 
 ##### Copy files to container
 COPY /root /
