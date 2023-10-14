@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://vmstan.com/content/images/2021/02/gs-logo.svg" width="300" alt="Gravity Sync">
+<img src="images/gs-logo.svg" width="300" alt="Gravity Sync">
 </p>
 
 <span align="center">
