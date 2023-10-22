@@ -504,7 +504,7 @@ function push_gs_custom {
         MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${UI_CUSTOM_NAME}"
         echo_stat
         CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
-        CMD_REQUESTED="sudo chown root:root ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}"
+        CMD_REQUESTED="sudo chown ${REMOTE_FILE_OWNER} ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}"
         create_ssh_cmd
 
         MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_CUSTOM_NAME}"
@@ -531,7 +531,7 @@ function push_gs_cname {
         MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${UI_CNAME_NAME}"
         echo_stat
         CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
-        CMD_REQUESTED="sudo chown root:root ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}"
+        CMD_REQUESTED="sudo chown ${REMOTE_FILE_OWNER} ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}"
         create_ssh_cmd
 
 
@@ -559,7 +559,7 @@ function push_gs_sdhcp {
         MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${UI_SDHCP_NAME}"
         echo_stat
         CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
-        CMD_REQUESTED="sudo chown root:root ${REMOTE_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF}"
+        CMD_REQUESTED="sudo chown ${REMOTE_FILE_OWNER} ${REMOTE_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF}"
         create_ssh_cmd
 
 
@@ -1073,7 +1073,7 @@ function md5_compare {
             CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
             CMD_REQUESTED="sudo touch ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}"
             create_ssh_cmd
-            
+
             REMOTE_CNAME_DNS="1"
             MESSAGE="${UI_HASHING_HASHING} ${UI_CNAME_NAME}"
             echo_stat
@@ -1114,7 +1114,7 @@ function md5_compare {
             CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
             CMD_REQUESTED="sudo touch ${REMOTE_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF}"
             create_ssh_cmd
-        
+
             REMOTE_SDHCP_DNS="1"
             MESSAGE="${UI_HASHING_HASHING} ${UI_SDHCP_NAME}"
             echo_stat
@@ -1243,7 +1243,7 @@ function md5_recheck {
             CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
             CMD_REQUESTED="sudo touch ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}"
             create_ssh_cmd
-            
+
             REMOTE_CNAME_DNS="1"
             MESSAGE="${UI_HASHING_REHASHING} ${UI_CNAME_NAME}"
             echo_stat
@@ -1275,7 +1275,7 @@ function md5_recheck {
             CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
             CMD_REQUESTED="sudo touch ${REMOTE_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF}"
             create_ssh_cmd
-            
+
             REMOTE_SDHCP_DNS="1"
             MESSAGE="${UI_HASHING_REHASHING} ${UI_SDHCP_NAME}"
             echo_stat
@@ -1517,15 +1517,17 @@ function detect_remote_pihole {
     if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_BINARY}; then
         REMOTE_PIHOLE_TYPE="default"
         echo_good
-    else   
-        REMOTE_DETECT_DOCKER=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo docker container ls | grep ${PIHOLE_CONTAINER_IMAGE}" 2>/dev/null)
-        REMOTE_DETECT_PODMAN=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo podman container ls | grep ${PIHOLE_CONTAINER_IMAGE}" 2>/dev/null)
+    else
+	    REMOTE_DETECT_DOCKER=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo ${REMOTE_DOCKER_BINARY} container ls | grep ${PIHOLE_CONTAINER_IMAGE}" 2>/dev/null)
+        REMOTE_DETECT_PODMAN=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo ${REMOTE_PODMAN_BINARY} container ls | grep ${PIHOLE_CONTAINER_IMAGE}" 2>/dev/null)
 
         if [ "${REMOTE_DETECT_DOCKER}" != "" ]; then
             REMOTE_PIHOLE_TYPE="docker"
-            echo_good
+            MESSAGE="${MESSAGE} - docker"
+	        echo_good
         elif [ "${REMOTE_DETECT_PODMAN}" != "" ]; then
             REMOTE_PIHOLE_TYPE="podman"
+            MESSAGE="${MESSAGE} - podman"
             echo_good
         else
             REMOTE_PIHOLE_TYPE="none"
@@ -1581,7 +1583,7 @@ function validate_gravity_permissions {
 function validate_custom_permissions {
     MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${UI_CUSTOM_NAME}"
     echo_stat
-    sudo chown root:root ${LOCAL_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} >/dev/null 2>&1
+    sudo chown ${LOCAL_FILE_OWNER} ${LOCAL_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS} >/dev/null 2>&1
     error_validate
 
     MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_CUSTOM_NAME}"
@@ -1594,7 +1596,7 @@ function validate_custom_permissions {
 function validate_cname_permissions {
     MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${UI_CNAME_NAME}"
     echo_stat
-    sudo chown root:root ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} >/dev/null 2>&1
+    sudo chown ${LOCAL_FILE_OWNER}${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} >/dev/null 2>&1
     error_validate
 
     MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_CNAME_NAME}"
@@ -1606,7 +1608,7 @@ function validate_cname_permissions {
 function validate_sdhcp_permissions {
     MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${UI_SDHCP_NAME}"
     echo_stat
-    sudo chown root:root ${LOCAL_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF} >/dev/null 2>&1
+    sudo chown ${LOCAL_FILE_OWNER} ${LOCAL_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF} >/dev/null 2>&1
     error_validate
 
     MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_SDHCP_NAME}"
@@ -1705,7 +1707,7 @@ function task_configure {
         echo_warn
     fi
 
-    if [ -f ${GS_ETC_PATH}/${GS_CONFIG_FILE} ]; then		
+    if [ -f ${GS_ETC_PATH}/${GS_CONFIG_FILE} ]; then
         config_delete
     else
         config_generate
@@ -1819,7 +1821,7 @@ function config_generate {
     elif [ "${REMOTE_PIHOLE_TYPE}" == "podman" ]; then
         MESSAGE="Remote Podman container of ${UI_CORE_APP} detected"
         echo_good_clean
-    elif [ "${LOCAL_PIHOLE_TYPE}" == "none" ]; then
+    elif [ "${REMOTE_PIHOLE_TYPE}" == "none" ]; then
         MESSAGE="No remote ${UI_CORE_APP} installed detected"
         echo_warn
         end_config_no_pi
@@ -2019,7 +2021,7 @@ function config_delete {
     source ${GS_ETC_PATH}/${GS_CONFIG_FILE}
     if [ -n "${_GS_SSH_PORT}" ]; then
         GS_SSH_PORT=${_GS_SSH_PORT}
-    fi  
+    fi
     MESSAGE="${GS_CONFIG_FILE} ${UI_CONFIG_ALREADY}"
     echo_warn
 
