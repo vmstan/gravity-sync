@@ -275,8 +275,13 @@ function  set_pihole_exec {
         PH_EXEC="sudo ${LOCAL_DOCKER_BINARY} exec $(sudo ${LOCAL_DOCKER_BINARY} ps -qf name=^${LOCAL_DOCKER_CONTAINER}$) pihole"
         FTL_EXEC="sudo ${LOCAL_DOCKER_BINARY} exec $(sudo ${LOCAL_DOCKER_BINARY} ps -qf name=^${LOCAL_DOCKER_CONTAINER}$) pihole-FTL"
     elif [ "$LOCAL_PIHOLE_TYPE" == "podman" ]; then
-        PH_EXEC="sudo ${LOCAL_PODMAN_BINARY} exec ${LOCAL_DOCKER_CONTAINER} pihole"
-        FTL_EXEC="sudo ${LOCAL_PODMAN_BINARY} exec ${LOCAL_DOCKER_CONTAINER} pihole-FTL"
+        if [ "$ROOTLESS" == "" ]; then
+            PH_EXEC="sudo ${LOCAL_PODMAN_BINARY} exec ${LOCAL_DOCKER_CONTAINER} pihole"
+            FTL_EXEC="sudo ${LOCAL_PODMAN_BINARY} exec ${LOCAL_DOCKER_CONTAINER} pihole-FTL"
+        else
+            PH_EXEC="${LOCAL_PODMAN_BINARY} exec ${LOCAL_DOCKER_CONTAINER} pihole"
+            FTL_EXEC="${LOCAL_PODMAN_BINARY} exec ${LOCAL_DOCKER_CONTAINER} pihole-FTL"
+        fi
     fi
 
     if [ "$REMOTE_PIHOLE_TYPE" == "default" ]; then
@@ -286,8 +291,13 @@ function  set_pihole_exec {
         RH_EXEC="sudo ${REMOTE_DOCKER_BINARY} exec \$(sudo ${REMOTE_DOCKER_BINARY} ps -qf name=^${REMOTE_DOCKER_CONTAINER}$) pihole"
         RFTL_EXEC="sudo ${REMOTE_DOCKER_BINARY} exec \$(sudo ${REMOTE_DOCKER_BINARY} ps -qf name=^${REMOTE_DOCKER_CONTAINER}$) pihole-FTL"
     elif [ "$REMOTE_PIHOLE_TYPE" == "podman" ]; then
-        RH_EXEC="sudo ${REMOTE_PODMAN_BINARY} exec ${REMOTE_DOCKER_CONTAINER} pihole"
-        RFTL_EXEC="sudo ${REMOTE_PODMAN_BINARY} exec ${REMOTE_DOCKER_CONTAINER} pihole-FTL"
+        if [ $ROOTLESS == "" ];then
+            RH_EXEC="sudo ${REMOTE_PODMAN_BINARY} exec ${REMOTE_DOCKER_CONTAINER} pihole"
+            RFTL_EXEC="sudo ${REMOTE_PODMAN_BINARY} exec ${REMOTE_DOCKER_CONTAINER} pihole-FTL"
+        else
+            RH_EXEC="${REMOTE_PODMAN_BINARY} exec ${REMOTE_DOCKER_CONTAINER} pihole"
+            RFTL_EXEC="${REMOTE_PODMAN_BINARY} exec ${REMOTE_DOCKER_CONTAINER} pihole-FTL"
+        fi
     fi
 }
 
@@ -504,7 +514,7 @@ function push_gs_custom {
         MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${UI_CUSTOM_NAME}"
         echo_stat
         CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
-        CMD_REQUESTED="sudo chown root:root ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}"
+        CMD_REQUESTED="sudo chown ${REMOTE_FILE_OWNER} ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}"
         create_ssh_cmd
 
         MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_CUSTOM_NAME}"
@@ -844,8 +854,13 @@ function backup_local_gravity {
         sudo ${FTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI} ".backup '${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT}'"
         error_validate
     elif [ "$LOCAL_PIHOLE_TYPE" == "podman" ]; then
-        sudo ${FTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI} ".backup '${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT}'"
-        error_validate
+        if [ $ROOTLESS == "true" ]; then
+            ${FTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI} ".backup '${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT}'"
+            error_validate
+        else
+            sudo ${FTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI} ".backup '${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT}'"
+            error_validate
+        fi
     fi
 }
 
@@ -1073,7 +1088,7 @@ function md5_compare {
             CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
             CMD_REQUESTED="sudo touch ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}"
             create_ssh_cmd
-            
+
             REMOTE_CNAME_DNS="1"
             MESSAGE="${UI_HASHING_HASHING} ${UI_CNAME_NAME}"
             echo_stat
@@ -1114,7 +1129,7 @@ function md5_compare {
             CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
             CMD_REQUESTED="sudo touch ${REMOTE_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF}"
             create_ssh_cmd
-        
+
             REMOTE_SDHCP_DNS="1"
             MESSAGE="${UI_HASHING_HASHING} ${UI_SDHCP_NAME}"
             echo_stat
@@ -1243,7 +1258,7 @@ function md5_recheck {
             CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
             CMD_REQUESTED="sudo touch ${REMOTE_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF}"
             create_ssh_cmd
-            
+
             REMOTE_CNAME_DNS="1"
             MESSAGE="${UI_HASHING_REHASHING} ${UI_CNAME_NAME}"
             echo_stat
@@ -1275,7 +1290,7 @@ function md5_recheck {
             CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
             CMD_REQUESTED="sudo touch ${REMOTE_DNSMASQ_DIRECTORY}/${PH_SDHCP_CONF}"
             create_ssh_cmd
-            
+
             REMOTE_SDHCP_DNS="1"
             MESSAGE="${UI_HASHING_REHASHING} ${UI_SDHCP_NAME}"
             echo_stat
@@ -1465,8 +1480,14 @@ function validate_ph_folders {
         PH_FTL_CHECK=$(sudo podman container ls | grep "${PIHOLE_CONTAINER_IMAGE}")
         if [ "$PH_FTL_CHECK" == "" ]; then
             MESSAGE="${UI_VALIDATING_FAIL_CONTAINER} ${UI_CORE_APP}"
-            echo_fail
-            exit_no_change
+            echo "failed bitch"
+        else
+            PH_FTL_CHECK=$(podman container ls | grep "${PIHOLE_CONTAINER_IMAGE}")
+            if [ "$PH_FTL_CHECK" == "" ]; then
+                MESSAGE="${UI_VALIDATING_FAIL_CONTAINER} ${UI_CORE_APP}"
+                echo_fail
+                exit_no_change
+            fi
         fi
     fi
 
@@ -1501,8 +1522,15 @@ function detect_local_pihole {
             LOCAL_PIHOLE_TYPE="podman"
             echo_good
         else
-            LOCAL_PIHOLE_TYPE="none"
-            echo_fail
+            PH_FTL_CHECK=$(podman container ls | grep ${PIHOLE_CONTAINER_IMAGE})
+            if [ "$PH_FTL_CHECK" != "" ]; then
+                LOCAL_PIHOLE_TYPE="podman"
+                ROOTLESS="true"
+                echo_good
+            else
+                LOCAL_PIHOLE_TYPE="none"
+                echo_fail
+            fi
         fi
     else
         LOCAL_PIHOLE_TYPE="none"
@@ -1517,15 +1545,19 @@ function detect_remote_pihole {
     if ${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} test -e ${REMOTE_PIHOLE_BINARY}; then
         REMOTE_PIHOLE_TYPE="default"
         echo_good
-    else   
+    else
         REMOTE_DETECT_DOCKER=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo docker container ls | grep ${PIHOLE_CONTAINER_IMAGE}" 2>/dev/null)
         REMOTE_DETECT_PODMAN=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "sudo podman container ls | grep ${PIHOLE_CONTAINER_IMAGE}" 2>/dev/null)
-
+        REMOTE_DETECT_ROOTLESS_PODMAN=$(${OS_SSH_CMD} -p ${GS_SSH_PORT} -i "${GS_SSH_PKIF}" ${REMOTE_USER}@${REMOTE_HOST} "podman container ls | grep ${PIHOLE_CONTAINER_IMAGE}" 2>/dev/null)
         if [ "${REMOTE_DETECT_DOCKER}" != "" ]; then
             REMOTE_PIHOLE_TYPE="docker"
             echo_good
         elif [ "${REMOTE_DETECT_PODMAN}" != "" ]; then
             REMOTE_PIHOLE_TYPE="podman"
+            echo_good
+        elif [ "${REMOTE_DETECT_ROOTLESS_PODMAN}" != "" ]; then
+            REMOTE_PIHOLE_TYPE="podman"
+            ROOTLESS="true"
             echo_good
         else
             REMOTE_PIHOLE_TYPE="none"
@@ -1705,7 +1737,7 @@ function task_configure {
         echo_warn
     fi
 
-    if [ -f ${GS_ETC_PATH}/${GS_CONFIG_FILE} ]; then		
+    if [ -f ${GS_ETC_PATH}/${GS_CONFIG_FILE} ]; then
         config_delete
     else
         config_generate
@@ -2019,7 +2051,7 @@ function config_delete {
     source ${GS_ETC_PATH}/${GS_CONFIG_FILE}
     if [ -n "${_GS_SSH_PORT}" ]; then
         GS_SSH_PORT=${_GS_SSH_PORT}
-    fi  
+    fi
     MESSAGE="${GS_CONFIG_FILE} ${UI_CONFIG_ALREADY}"
     echo_warn
 
