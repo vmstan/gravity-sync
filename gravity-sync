@@ -24,7 +24,9 @@ REMOTE_PIHOLE_DIRECTORY=${REMOTE_PIHOLE_DIRECTORY:-'/etc/pihole'}           # re
 LOCAL_DNSMASQ_DIRECTORY=${LOCAL_DNSMASQ_DIRECTORY:-'/etc/dnsmasq.d'}        # replace in gravity-sync.conf to overwrite
 REMOTE_DNSMASQ_DIRECTORY=${REMOTE_DNSMASQ_DIRECTORY:-'/etc/dnsmasq.d'}      # replace in gravity-sync.conf to overwrite
 LOCAL_FILE_OWNER=${LOCAL_FILE_OWNER:-'pihole:pihole'}                       # replace in gravity-sync.conf to overwrite
+LOCAL_FILE_OWNER_R=${LOCAL_FILE_OWNER:-'root:root'}                         # replace in gravity-sync.conf to overwrite
 REMOTE_FILE_OWNER=${REMOTE_FILE_OWNER:-'pihole:pihole'}                     # replace in gravity-sync.conf to overwrite
+LOCAL_FILE_OWNER_R=${REMOTE_FILE_OWNER:-'root:root'}                        # replace in gravity-sync.conf to overwrite
 
 # Pi-hole Docker/Podman container name - Docker will pattern match anything set below
 LOCAL_DOCKER_CONTAINER=${LOCAL_DOCKER_CONTAINER:-'pihole'}                  # replace in gravity-sync.conf to overwrite
@@ -514,7 +516,7 @@ function push_gs_custom {
         MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${UI_CUSTOM_NAME}"
         echo_stat
         CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
-        CMD_REQUESTED="sudo chown ${REMOTE_FILE_OWNER} ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}"
+        CMD_REQUESTED="sudo chown ${REMOTE_FILE_OWNER_R} ${REMOTE_PIHOLE_DIRECTORY}/${PH_CUSTOM_DNS}"
         create_ssh_cmd
 
         MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_CUSTOM_NAME}"
