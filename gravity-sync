@@ -1482,7 +1482,6 @@ function validate_ph_folders {
         PH_FTL_CHECK=$(sudo podman container ls | grep "${PIHOLE_CONTAINER_IMAGE}")
         if [ "$PH_FTL_CHECK" == "" ]; then
             MESSAGE="${UI_VALIDATING_FAIL_CONTAINER} ${UI_CORE_APP}"
-            echo "failed bitch"
         else
             PH_FTL_CHECK=$(podman container ls | grep "${PIHOLE_CONTAINER_IMAGE}")
             if [ "$PH_FTL_CHECK" == "" ]; then
