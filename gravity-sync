@@ -949,9 +949,15 @@ function backup_remote_gravity {
         CMD_REQUESTED="sudo ${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI} \".backup '${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT}'\""
         create_ssh_cmd
     elif [ "$REMOTE_PIHOLE_TYPE" == "podman" ]; then
-        CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
-        CMD_REQUESTED="sudo ${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI} \".backup '${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT}'\""
-        create_ssh_cmd
+        if [ "$ROOTLESS" == ""  ]; then
+            CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
+            CMD_REQUESTED="sudo ${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI} \".backup '${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT}'\""
+            create_ssh_cmd
+        elif [ "$ROOTLESS" == "TRUE" ]; then
+            CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
+            CMD_REQUESTED="sudo ${RFTL_EXEC} sql ${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI} \".backup '${DEFAULT_PIHOLE_DIRECTORY}/${PH_GRAVITY_FI}.${GS_BACKUP_EXT}'\""
+            create_ssh_cmd
+        fi
     fi
 }
 
