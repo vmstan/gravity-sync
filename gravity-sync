@@ -1486,7 +1486,7 @@ function detect_local_pihole {
     if hash pihole 2>/dev/null; then
         LOCAL_PIHOLE_TYPE="default"
         echo_good
-    elif hash docker 2>/dev/null; then
+    elif sudo docker container ls | grep ${PIHOLE_CONTAINER_IMAGE} 2>/dev/null; then
         PH_FTL_CHECK=$(sudo docker container ls | grep ${PIHOLE_CONTAINER_IMAGE})
         if [ "$PH_FTL_CHECK" != "" ]; then
             LOCAL_PIHOLE_TYPE="docker"
@@ -1495,7 +1495,7 @@ function detect_local_pihole {
             LOCAL_PIHOLE_TYPE="none"
             echo_fail
         fi
-    elif hash podman 2>/dev/null; then
+    elif sudo podman container ls | grep ${PIHOLE_CONTAINER_IMAGE} 2>/dev/null; then
         PH_FTL_CHECK=$(sudo podman container ls | grep ${PIHOLE_CONTAINER_IMAGE})
         if [ "$PH_FTL_CHECK" != "" ]; then
             LOCAL_PIHOLE_TYPE="podman"
