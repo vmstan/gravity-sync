@@ -1596,7 +1596,7 @@ function validate_custom_permissions {
 function validate_cname_permissions {
     MESSAGE="${UI_SET_LOCAL_FILE_OWNERSHIP} ${UI_CNAME_NAME}"
     echo_stat
-    sudo chown ${LOCAL_FILE_OWNER}${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} >/dev/null 2>&1
+    sudo chown ${LOCAL_FILE_OWNER} ${LOCAL_DNSMASQ_DIRECTORY}/${PH_CNAME_CONF} >/dev/null 2>&1
     error_validate
 
     MESSAGE="${UI_SET_FILE_PERMISSION} ${UI_CNAME_NAME}"
