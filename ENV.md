@@ -1,29 +1,29 @@
 <p align="center">
-<img src="https://vmstan.com/content/images/2021/02/gs-logo.svg" width="300" alt="Gravity Sync">
+<img src="images/gs-logo.svg" width="300" alt="Gravity Sync">
 </p>
 
 <span align="center">
 
-# Gravity-sync ENVs
+# Gravity Sync ENVs
 
 </span>
 
-These tables are a list of all gravity-sync settings, that can be tweaked via ENVs. Keep in mind that some of them are stored in `/etc/gravity-sync/gravity-sync.conf` after running `gravity-sync configure` and that `gravity-sync.conf` has higher priority than ENVs.
+These tables are a list of all Gravity Sync settings, that can be tweaked via ENVs. Keep in mind that some of them are stored in `/etc/gravity-sync/gravity-sync.conf` after running `gravity-sync configure` and that `gravity-sync.conf` has higher priority than ENVs.
 
 ### Local and remote paths & settings
 These settings will determine, from where (locally) to where (remotely) will be synced and with which account/permissions
 | Variable                   | Default          | Value      | Description                                        |
 |----------------------------|------------------|------------|----------------------------------------------------|
 | `LOCAL_PIHOLE_DIRECTORY`   | `/etc/pihole`    | path       | Path to local pi-hole instance in the filesystem   |
-| `REMOTE_PIHOLE_DIRECTORY`  | `/etc/pihole`    | path       | Path to remote pi-hole instanc in the filesystem   |
+| `REMOTE_PIHOLE_DIRECTORY`  | `/etc/pihole`    | path       | Path to remote pi-hole instance in the filesystem  |
 | `LOCAL_DNSMASQ_DIRECTORY`  | `/etc/dnsmasq.d` | path       | Path to local dnsmasqd instance in the filesystem  |
 | `REMOTE_DNSMASQ_DIRECTORY` | `/etc/dnsmasq.d` | path       | Path to remote dnsmasqd instance in the filesystem |
 | `LOCAL_FILE_OWNER`         | `pihole:pihole`  | user:group | Local owner and group of the pi-hole config        |
 | `REMOTE_FILE_OWNER`        | `pihole:pihole`  | user:group | Remote owner and group of the pi-hole config       |
 
 ### Docker specific settings
-Gravity-sync will check your system for a native pi-hole install first (on local and remote site) and if does not detect any, tests against docker/podman pi-hole instances.
-Here, you can specific the docker or podman container name, that gravity-sync should interact with.
+Gravity-sync will check your system for a native Pi-hole install first (on local and remote site) and if does not detect any, tests against Docker/Podman Pi-hole instances.
+Here, you can specific the Docker or Podman container name, that Gravity Sync should interact with.
 | Variable                  | Default  | Value          | Description                                |
 |---------------------------|----------|----------------|--------------------------------------------|
 | `LOCAL_DOCKER_CONTAINER`  | `pihole` | container name | Container name of pi-hole running locally  |
@@ -33,7 +33,7 @@ Here, you can specific the docker or podman container name, that gravity-sync sh
 These settings are most likely the same on all systems. No need to touch them but nice to be able to touch them, if necessary.
 | Variable                   | Default                 | Value | Description                                                                                                                                                                                |
 |----------------------------|-------------------------|-------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `DEFAULT_PIHOLE_DIRECTORY` | `/etc/pihole`           | path  | Docker/Podman: Path to pi-hole instance within a docker/podman containrt. Don't mix up with `LOCAL_PIHOLE_DIRECTORY`, which is only used against local pi-hole instances (non-dockerized). |
+| `DEFAULT_PIHOLE_DIRECTORY` | `/etc/pihole`           | path  | Docker/Podman: Path to Pi-hole instance within a Docker/Podman container. Don't mix up with `LOCAL_PIHOLE_DIRECTORY`, which is only used against local Pi-hole instances (non-dockerized). |
 | `LOCAL_PIHOLE_BINARY`      | `/usr/local/bin/pihole` | path  | Path to `pihole` binary on local system                                                                                                                                                    |
 | `REMOTE_PIHOLE_BINARY`     | `/usr/local/bin/pihole` | path  | Path to `pihole` binary on remote system                                                                                                                                                   |
 | `LOCAL_FTL_BINARY`         | `/usr/bin/pihole-FTL`   | path  | Path to `pihole-FTL` binary on local system                                                                                                                                                |
@@ -45,7 +45,7 @@ These settings are most likely the same on all systems. No need to touch them bu
 | `PIHOLE_CONTAINER_IMAGE`   | `pihole/pihole`         | path  | Name of the default pi-hole docker image                                                                                                                                                   |
 
 ### Nitty-gritty finetuning the target files
-Here, you can specifiy the gravity, DNS (A, CNAME) and DHCP settings file of pi-hole. It is almost certain, that these filenames do never change (except upstream pi-hole decides so). Better do not touch them.
+Here, you can specifiy the Gravity, DNS (A, CNAME) and DHCP settings file of Pi-hole. It is almost certain, that these filenames do never change (except if upstream Pi-hole decides so).
 | Variable        | Default                       | Value | Description                                |
 |-----------------|-------------------------------|-------|--------------------------------------------|
 | `PH_GRAVITY_FI` | `gravity.db`                  | file  | The gravity filename (blocklist) of pihole |
@@ -78,8 +78,8 @@ Customize parameters for accessing the remote end via SSH
 | `GS_SSH_PORT` | `22`                             | port  | Port of the remote gravity-sync container/host                                                          |
 | `GS_SSH_PKIF` | `<GS_ETC_PATH>/gravity-sync.rsa` | file  | Path to the local SSH private key of gravity-sync, that will be used for pubkey auth against the remote |
 
-### Upgrade: Gravity-sync sourcecode location
-Gravity-sync is locally installed as a github repo. In order to upgrade your local gravity-sync instance via `gravity-sync upgrade` to the latest version, the path to that git-repo must be known and can be specified below.
+### Upgrade: Gravity Sync sourcecode location
+Gravity Sync is locally installed as a GitHub repo. In order to upgrade your local Gravity Sync instance via `gravity-sync upgrade` to the latest version, the path to that git repo must be known and can be specified below.
 | Variable        | Default             | Value | Description                                 |
 |-----------------|---------------------|-------|---------------------------------------------|
 | `GS_LOCAL_REPO` | `<GS_ETC_PATH>/.gs` | path  | Local install path of the gravity-sync repo |
