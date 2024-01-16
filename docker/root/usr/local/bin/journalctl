@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Dummy journalctl wrapper to translate some basic functions for GravitySync towards "cron"
+
+GS_LOG_FILE=/var/log/gs.log
+function task_log {
+    touch $GS_LOG_FILE
+    tail -f -n 20 $GS_LOG_FILE
+    return 0
+}
+
+function task_invalid {
+    echo "journalctl minimal log-wrapper for GravitySync"
+    printf "\nInvalid arguments detected"
+    echo "Please do not use this 'journalctl' wrapper directly. It only works with GravitySync and is 'very dumb'"
+    return 0
+}
+
+case "${2}" in
+    "gravity-sync" )            task_log;;
+    * )                         task_invalid;;
+esac

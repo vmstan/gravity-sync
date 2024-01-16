@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Called by a cronjob: Runs gravity-sync as specified via ENV vars in the container: sync/smart, push, pull
+
+# sync/smart, push, pull
+GS_AUTO_MODE=${GS_AUTO_MODE:-"sync"}
+GS_AUTO_MODE=${GS_AUTO_MODE,,}
+
+if [ "${GS_AUTO_MODE}" != "sync" ] && [ "${GS_AUTO_MODE}" != "smart" ] && [ "${GS_AUTO_MODE}" != "push" ] && [ "${GS_AUTO_MODE}" != "pull" ]; then
+    # Unsupported mode. Default back to sync
+    GS_AUTO_MODE="sync"
+fi
+
+# Logging
+stdbuf -oL gravity-sync ${GS_AUTO_MODE} | tee -a /var/log/gs.log
