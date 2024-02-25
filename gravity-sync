@@ -2408,6 +2408,11 @@ function task_purge {
     sudo rm -fr ${GS_ETC_PATH}
     error_validate
 
+    MESSAGE="Removing ${PROGRAM} password-less sudo"
+    echo_stat
+    sudo rm /etc/sudoers.d/gs-nopasswd
+    error_validate
+
     MESSAGE="Removing ${PROGRAM} binary"
     echo_stat
     sudo rm ${GS_FILEPATH}
