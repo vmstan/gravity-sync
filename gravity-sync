@@ -114,7 +114,9 @@ UI_PULL_REMOTE='Pulling the remote'
 UI_PUSH_LOCAL='Pushing the local'
 UI_REPLACE_LOCAL='Replacing the local'
 UI_FTLDNS_CONFIG_PULL_RELOAD='Reloading local FTLDNS services'
+UI_FTLDNS_CONFIG_PULL_UPDATE='Updating local FTLDNS configuration'
 UI_FTLDNS_CONFIG_PUSH_RELOAD='Reloading remote FTLDNS services'
+UI_FTLDNS_CONFIG_PUSH_UPDATE='Updating remote FTLDNS configuration'
 UI_LOGGING_RECENT_COMPLETE='Recent complete executions of'
 UI_BACKUP_REMOTE='Performing backup of remote'
 UI_BACKUP_LOCAL='Performing backup of local'
@@ -413,7 +415,7 @@ function pull_gs_sdhcp {
 function pull_gs_reload {
     sleep 1
 
-    MESSAGE="Updating local FTLDNS configuration"
+    MESSAGE="${UI_FTLDNS_CONFIG_PULL_UPDATE}"
     echo_stat
     ${PH_EXEC} restartdns reload-lists >/dev/null 2>&1
     error_validate
@@ -575,10 +577,10 @@ function push_gs_sdhcp {
 function push_gs_reload {
     sleep 1
 
-    MESSAGE="Updating remote FTLDNS configuration"
+    MESSAGE="${UI_FTLDNS_CONFIG_PUSH_UPDATE}"
     echo_stat
     CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
-    CMD_REQUESTED="${RH_EXEC} restartdns reload-lists"
+    CMD_REQUESTED="sudo ${RH_EXEC} restartdns reload-lists"
     create_ssh_cmd
 
     if [ "${GS_TASK_TYPE}" == SMART ]; then
@@ -586,14 +588,14 @@ function push_gs_reload {
             MESSAGE="${UI_FTLDNS_CONFIG_PUSH_RELOAD}"
             echo_stat
             CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
-            CMD_REQUESTED="${RH_EXEC} restartdns"
+            CMD_REQUESTED="sudo ${RH_EXEC} restartdns"
             create_ssh_cmd
         fi
     else
         MESSAGE="${UI_FTLDNS_CONFIG_PUSH_RELOAD}"
         echo_stat
         CMD_TIMEOUT=$GS_BACKUP_TIMEOUT
-        CMD_REQUESTED="${RH_EXEC} restartdns"
+        CMD_REQUESTED="sudo ${RH_EXEC} restartdns"
         create_ssh_cmd
     fi
 }
