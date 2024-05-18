@@ -1,1 +1,1 @@
-pi ALL=NOPASSWD: /etc/pihole
+pi ALL=(ALL:ALL) NOPASSWD: /usr/bin/mv, /usr/bin/rsync, /usr/local/bin/gravity-sync, /usr/bin/touch, /usr/bin/chown, /usr/bin/chmod, /usr/bin/rm, /usr/bin/cp, /usr/bin/tee, /usr/bin/sed, /usr/bin/git, /usr/bin/systemctl, /usr/bin/journalctl, /usr/bin/docker, /usr/bin/podman, /usr/bin/pihole-FTL, /usr/local/bin/pihole
