@@ -1656,7 +1656,7 @@ function task_sudo {
     echo_stat
 
     NEW_SUDO_USER=$(whoami)
-    echo -e "${NEW_SUDO_USER} ALL=(ALL) NOPASSWD: ALL" | sudo tee ${GS_LOCAL_REPO}/templates/gs-nopasswd.sudo 1> /dev/null
+    echo -e "${NEW_SUDO_USER} ALL=(ALL:ALL) NOPASSWD: /usr/bin/mv, /usr/bin/rsync, /usr/local/bin/gravity-sync, /usr/bin/touch, /usr/bin/chown, /usr/bin/chmod, /usr/bin/rm, /usr/bin/cp, /usr/bin/tee, /usr/bin/sed, /usr/bin/git, /usr/bin/systemctl, /usr/bin/journalctl, ${LOCAL_DOCKER_BINARY}, ${LOCAL_PODMAN_BINARY}, ${LOCAL_FTL_BINARY}, ${LOCAL_PIHOLE_BINARY}" | sudo tee ${GS_LOCAL_REPO}/templates/gs-nopasswd.sudo 1> /dev/null
     error_validate
 
     MESSAGE="Installing sudoers.d file on $HOSTNAME"
