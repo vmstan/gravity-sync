@@ -8,7 +8,9 @@
 
 </span>
 
-### [Find out what's new in version 4.0!](https://github.com/vmstan/gravity-sync/wiki/4.0)
+### Effective July 26, 2024, this project has been retired. Thank you for your use and enthusiasm for a project that began as a few lines of bash in a Slack channel and envolved into something far more complex, and used by many thousands of Pi-hole enthusiasts over the last four years. 
+
+### The last released version of Gravity Sync (4.0.7) should continue to work with Pi-hole 5.x, but not with Pi-hole 6+ due to architecture changes.
 
 What is better than a [Pi-hole](https://github.com/pi-hole/pi-hole) blocking trackers, advertisements, and other malicious domains on your network? That's right, **two** Pi-hole blocking all that junk on your network!
 
